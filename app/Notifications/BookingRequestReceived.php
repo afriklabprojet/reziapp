@@ -1,0 +1,62 @@
+<?php
+
+namespace App\Notifications;
+
+use App\Models\BookingRequest;
+use App\Models\Residence;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
+
+class BookingRequestReceived extends Notification implements ShouldQueue
+{
+    use Queueable;
+
+    public function __construct(
+        protected BookingRequest $bookingRequest,
+        protected Residence $residence,
+    ) {
+    }
+
+    public function via(object $notifiable): array
+    {
+        return ['mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        $guestName = $this->bookingRequest->user?->name ?? 'Un client';
+        $checkIn = $this->bookingRequest->check_in->format('d/m/Y');
+        $checkOut = $this->bookingRequest->check_out->format('d/m/Y');
+
+        return (new MailMessage())
+            ->subject("📋 Demande de réservation — {$this->residence->name}")
+            ->greeting("Bonjour {$notifiable->name},")
+            ->line("**{$guestName}** souhaite réserver votre résidence **{$this->residence->name}**.")
+            ->line("**Dates demandées :**")
+            ->line("• Arrivée : {$checkIn}")
+            ->line("• Départ : {$checkOut}")
+            ->line("• Voyageurs : {$this->bookingRequest->guests}")
+            ->when($this->bookingRequest->message, function ($mail) {
+                return $mail->line("**Message :** \"{$this->bookingRequest->message}\"");
+            })
+            ->action('Répondre à la demande', route('owner.bookings.requests'))
+            ->line('Vous avez 24h pour accepter ou refuser cette demande.')
+            ->salutation('L\'équipe REZI');
+    }
+
+    public function toArray(object $notifiable): array
+    {
+        return [
+            'type' => 'booking_request',
+            'booking_request_id' => $this->bookingRequest->id,
+            'residence_id' => $this->residence->id,
+            'residence_name' => $this->residence->name,
+            'guest_name' => $this->bookingRequest->user?->name ?? 'Client',
+            'check_in' => $this->bookingRequest->check_in->toDateString(),
+            'check_out' => $this->bookingRequest->check_out->toDateString(),
+            'message' => 'Demande de réservation pour ' . $this->residence->name,
+        ];
+    }
+}

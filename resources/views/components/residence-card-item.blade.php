@@ -1,0 +1,1 @@
+<x-residence-card :residence="$residence" />

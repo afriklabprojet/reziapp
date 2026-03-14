@@ -1,0 +1,439 @@
+<x-app-layout>
+    @section('title', 'Carte des résidences - REZI')
+
+    <div class="h-[calc(100vh-64px)] md:h-[calc(100vh-64px)] max-md:h-[calc(100vh-56px-64px)] flex flex-col lg:flex-row"
+        x-data="{
+            residences: @js(
+    $residences
+        ->map(
+            fn($r) => [
+                'id' => $r->id,
+                'title' => $r->name,
+                'price' => $r->price_per_month,
+                'thumbnail' => $r->primaryPhoto?->url,
+                'commune' => $r->commune,
+                'quartier' => $r->quartier,
+                'type' => $r->type,
+                'is_available' => (bool) $r->is_available,
+                'location' => [
+                    'latitude' => $r->latitude,
+                    'longitude' => $r->longitude,
+                    'commune' => $r->commune,
+                    'quartier' => $r->quartier,
+                ],
+            ],
+        )
+        ->toArray(),
+),
+            filteredResidences: [],
+            filterCommune: '',
+            filterPriceMin: {{ $priceMin }},
+            filterPriceMax: {{ $priceMax }},
+            priceMin: {{ $priceMin }},
+            priceMax: {{ $priceMax }},
+            filterType: '',
+            filterAvailability: 'available',
+            showSidebar: window.innerWidth >= 1024,
+            hoveredId: null,
+            sortBy: 'price_asc',
+            showFilters: false,
+        
+            init() {
+                this.applyFilters();
+                this.$watch('filterCommune', () => this.applyFilters());
+                this.$watch('filterPriceMin', () => this.applyFilters());
+                this.$watch('filterPriceMax', () => this.applyFilters());
+                this.$watch('filterType', () => this.applyFilters());
+                this.$watch('filterAvailability', () => this.applyFilters());
+                this.$watch('sortBy', () => this.applyFilters());
+        
+                window.addEventListener('map:residence-hover', (e) => this.hoveredId = e.detail.id);
+                window.addEventListener('map:residence-unhover', () => this.hoveredId = null);
+            },
+        
+            applyFilters() {
+                let result = [...this.residences];
+        
+                if (this.filterCommune) {
+                    result = result.filter(r => r.commune === this.filterCommune);
+                }
+                if (this.filterType) {
+                    result = result.filter(r => r.type === this.filterType);
+                }
+                if (this.filterAvailability === 'available') {
+                    result = result.filter(r => r.is_available);
+                } else if (this.filterAvailability === 'unavailable') {
+                    result = result.filter(r => !r.is_available);
+                }
+                result = result.filter(r => r.price >= this.filterPriceMin && r.price <= this.filterPriceMax);
+        
+                // Sort
+                if (this.sortBy === 'price_asc') {
+                    result.sort((a, b) => a.price - b.price);
+                } else if (this.sortBy === 'price_desc') {
+                    result.sort((a, b) => b.price - a.price);
+                }
+        
+                this.filteredResidences = result;
+        
+                // Notify map to update
+                window.dispatchEvent(new CustomEvent('map:update-residences', {
+                    detail: { residences: result }
+                }));
+            },
+        
+            resetFilters() {
+                this.filterCommune = '';
+                this.filterType = '';
+                this.filterAvailability = 'available';
+                this.filterPriceMin = this.priceMin;
+                this.filterPriceMax = this.priceMax;
+            },
+        
+            formatPrice(price) {
+                return new Intl.NumberFormat('fr-FR').format(price);
+            },
+        
+            highlightOnMap(id) {
+                window.dispatchEvent(new CustomEvent('map:highlight-residence', { detail: { id } }));
+            }
+        }">
+        {{-- Mobile Toggle + Controls --}}
+        <div
+            class="lg:hidden flex items-center justify-between bg-white border-b border-gray-200 px-3 py-2 shrink-0 z-10">
+            <div class="flex items-center gap-2">
+                <button @click="showSidebar = !showSidebar"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
+                    :class="showSidebar ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-700'">
+                    <svg x-show="!showSidebar" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h7" />
+                    </svg>
+                    <svg x-show="showSidebar" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                    </svg>
+                    <span x-text="showSidebar ? 'Carte' : 'Liste'"></span>
+                </button>
+                <button @click="showFilters = !showFilters"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 transition-all"
+                    :class="showFilters ? 'ring-2 ring-orange-300' : ''">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    </svg>
+                    Filtres
+                </button>
+            </div>
+            <span class="text-xs text-gray-500">
+                <span x-text="filteredResidences.filter(r => r.is_available).length"
+                    class="font-bold text-emerald-600"></span> dispo /
+                <span x-text="filteredResidences.length" class="font-bold text-orange-500"></span>
+            </span>
+        </div>
+
+        {{-- Mobile Filters Panel --}}
+        <div x-show="showFilters" x-cloak x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-2"
+            class="lg:hidden bg-white border-b border-gray-200 px-4 py-3 space-y-3 shrink-0 z-10">
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Commune</label>
+                    <select x-model="filterCommune"
+                        class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white">
+                        <option value="">Toutes</option>
+                        @foreach ($communes as $commune)
+                            <option value="{{ $commune }}">{{ $commune }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Type</label>
+                    <select x-model="filterType"
+                        class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white">
+                        <option value="">Tous</option>
+                        <option value="studio">Studio</option>
+                        <option value="appartement">Appartement</option>
+                        <option value="villa">Villa</option>
+                        <option value="chambre">Chambre</option>
+                        <option value="duplex">Duplex</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">
+                    Prix : <span x-text="formatPrice(filterPriceMin)" class="text-gray-700"></span> - <span
+                        x-text="formatPrice(filterPriceMax)" class="text-gray-700"></span> FCFA
+                </label>
+                <div class="flex gap-2 items-center">
+                    <input type="range" x-model.number="filterPriceMin" :min="priceMin" :max="priceMax"
+                        step="5000" class="flex-1 accent-orange-500">
+                    <input type="range" x-model.number="filterPriceMax" :min="priceMin" :max="priceMax"
+                        step="5000" class="flex-1 accent-orange-500">
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="flex gap-1.5 flex-1">
+                    <button @click="filterAvailability = 'available'"
+                        :class="filterAvailability === 'available' ? 'bg-emerald-50 text-emerald-700 border-emerald-300' :
+                            'bg-white text-gray-600 border-gray-200'"
+                        class="flex-1 text-xs font-medium py-1.5 px-2 rounded-lg border transition-all flex items-center justify-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Dispo
+                    </button>
+                    <button @click="filterAvailability = 'all'"
+                        :class="filterAvailability === 'all' ? 'bg-gray-100 text-gray-700 border-gray-400' :
+                            'bg-white text-gray-600 border-gray-200'"
+                        class="flex-1 text-xs font-medium py-1.5 px-2 rounded-lg border transition-all">
+                        Toutes
+                    </button>
+                </div>
+                <button @click="resetFilters()"
+                    class="text-xs text-orange-500 font-medium px-2 py-1.5">Réinitialiser</button>
+            </div>
+        </div>
+
+        <div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
+            {{-- Sidebar --}}
+            <div class="lg:w-105 bg-white border-r border-gray-200 flex flex-col overflow-hidden"
+                :class="showSidebar ? 'flex-1 lg:flex-none' : 'hidden lg:flex'">
+                {{-- Filters (desktop only — mobile has its own panel above) --}}
+                <div class="hidden lg:block p-4 border-b border-gray-100 space-y-3 shrink-0">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-bold text-gray-900">Filtres</h2>
+                        <button @click="resetFilters()"
+                            class="text-xs text-orange-500 hover:text-orange-600 font-medium">
+                            Réinitialiser
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        {{-- Commune --}}
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Commune</label>
+                            <select x-model="filterCommune"
+                                class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white">
+                                <option value="">Toutes</option>
+                                @foreach ($communes as $commune)
+                                    <option value="{{ $commune }}">{{ $commune }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        {{-- Type --}}
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Type</label>
+                            <select x-model="filterType"
+                                class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white">
+                                <option value="">Tous</option>
+                                <option value="studio">Studio</option>
+                                <option value="appartement">Appartement</option>
+                                <option value="villa">Villa</option>
+                                <option value="chambre">Chambre</option>
+                                <option value="duplex">Duplex</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Price Range --}}
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">
+                            Prix : <span x-text="formatPrice(filterPriceMin)" class="text-gray-700"></span> - <span
+                                x-text="formatPrice(filterPriceMax)" class="text-gray-700"></span> FCFA
+                        </label>
+                        <div class="flex gap-2 items-center">
+                            <input type="range" x-model.number="filterPriceMin" :min="priceMin"
+                                :max="priceMax" step="5000" class="flex-1 accent-orange-500">
+                            <input type="range" x-model.number="filterPriceMax" :min="priceMin"
+                                :max="priceMax" step="5000" class="flex-1 accent-orange-500">
+                        </div>
+                    </div>
+
+                    {{-- Disponibilité --}}
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Disponibilité</label>
+                        <div class="flex gap-1.5">
+                            <button @click="filterAvailability = 'available'"
+                                :class="filterAvailability === 'available' ?
+                                    'bg-emerald-50 text-emerald-700 border-emerald-300 ring-1 ring-emerald-200' :
+                                    'bg-white text-gray-600 border-gray-200 hover:border-gray-300'"
+                                class="flex-1 text-xs font-medium py-1.5 px-2 rounded-lg border transition-all flex items-center justify-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                Disponible
+                            </button>
+                            <button @click="filterAvailability = 'all'"
+                                :class="filterAvailability === 'all' ?
+                                    'bg-gray-100 text-gray-700 border-gray-400 ring-1 ring-gray-200' :
+                                    'bg-white text-gray-600 border-gray-200 hover:border-gray-300'"
+                                class="flex-1 text-xs font-medium py-1.5 px-2 rounded-lg border transition-all">
+                                Toutes
+                            </button>
+                            <button @click="filterAvailability = 'unavailable'"
+                                :class="filterAvailability === 'unavailable' ?
+                                    'bg-red-50 text-red-700 border-red-300 ring-1 ring-red-200' :
+                                    'bg-white text-gray-600 border-gray-200 hover:border-gray-300'"
+                                class="flex-1 text-xs font-medium py-1.5 px-2 rounded-lg border transition-all flex items-center justify-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-red-400"></span>
+                                Indispo.
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- Sort & Count --}}
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-500">
+                            <span x-text="filteredResidences.length" class="font-bold text-orange-500"></span>
+                            résultat(s)
+                        </span>
+                        <select x-model="sortBy"
+                            class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white">
+                            <option value="price_asc">Prix ↑</option>
+                            <option value="price_desc">Prix ↓</option>
+                        </select>
+                    </div>
+                </div>
+
+                {{-- Results List --}}
+                <div class="flex-1 overflow-y-auto p-3 space-y-2 relative">
+                    {{-- Mobile sort bar --}}
+                    <div class="flex items-center justify-between mb-2 lg:hidden">
+                        <span class="text-xs text-gray-500">
+                            <span x-text="filteredResidences.length" class="font-bold text-orange-500"></span>
+                            résultat(s)
+                        </span>
+                        <select x-model="sortBy"
+                            class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white">
+                            <option value="price_asc">Prix ↑</option>
+                            <option value="price_desc">Prix ↓</option>
+                        </select>
+                    </div>
+                    <template x-for="residence in filteredResidences" :key="residence.id">
+                        <a :href="'/residences/' + residence.id"
+                            class="block bg-white rounded-xl border border-gray-100 hover:border-orange-200 hover:shadow-md transition-all duration-200 overflow-hidden"
+                            :class="{
+                                'border-orange-400 shadow-md ring-2 ring-orange-100': hoveredId === residence.id,
+                                'opacity-60': !residence.is_available,
+                            }"
+                            @mouseenter="highlightOnMap(residence.id)" @mouseleave="highlightOnMap(null)">
+                            <div class="flex gap-3 p-3">
+                                {{-- Thumbnail --}}
+                                <div class="w-24 h-20 rounded-lg overflow-hidden bg-gray-100 shrink-0 relative">
+                                    <img :src="residence.thumbnail || '/images/placeholder-residence.jpg'"
+                                        :alt="residence.title" class="w-full h-full object-cover" loading="lazy"
+                                        :class="!residence.is_available ? 'grayscale' : ''">
+                                    {{-- Badge disponibilité sur la photo --}}
+                                    <div class="absolute top-1 left-1">
+                                        <span x-show="residence.is_available"
+                                            class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-emerald-500 text-white shadow-sm">
+                                            <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                    d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            Dispo
+                                        </span>
+                                        <span x-show="!residence.is_available"
+                                            class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-red-500 text-white shadow-sm">
+                                            <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                                            </svg>
+                                            Indispo
+                                        </span>
+                                    </div>
+                                </div>
+                                {{-- Info --}}
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-semibold text-gray-900 text-sm line-clamp-1"
+                                        x-text="residence.title"></h3>
+                                    <p class="text-xs text-gray-500 mt-0.5 flex items-center gap-1">
+                                        <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        </svg>
+                                        <span
+                                            x-text="(residence.commune || '') + (residence.quartier ? ', ' + residence.quartier : '')"
+                                            class="truncate"></span>
+                                    </p>
+                                    <div class="mt-2 flex items-center justify-between">
+                                        <span class="text-orange-500 font-bold text-sm">
+                                            <span x-text="formatPrice(residence.price)"></span> <span
+                                                class="text-xs font-normal text-gray-400">FCFA/<span
+                                                    x-text="residence.price_label || 'mois'"></span></span>
+                                        </span>
+                                        <span x-show="residence.type" x-text="residence.type"
+                                            class="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full capitalize"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </template>
+
+                    {{-- Empty state --}}
+                    <div x-show="filteredResidences.length === 0" class="text-center py-12">
+                        <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                        <p class="text-gray-500 text-sm">Aucune résidence trouvée</p>
+                        <button @click="resetFilters()"
+                            class="mt-2 text-orange-500 text-sm font-medium hover:underline">
+                            Réinitialiser les filtres
+                        </button>
+                    </div>
+
+                    {{-- Floating "Voir la carte" button on mobile list --}}
+                    <div x-show="showSidebar" class="lg:hidden sticky bottom-2 flex justify-center pt-4 z-10">
+                        <button @click="showSidebar = false"
+                            class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white rounded-full shadow-lg text-sm font-semibold hover:bg-gray-800 active:scale-95 transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                            </svg>
+                            Voir la carte
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Map --}}
+            <div class="flex-1 relative min-h-0" :class="showSidebar ? 'hidden lg:block' : 'flex-1'">
+                <x-map-search :residences="$residences
+                    ->map(
+                        fn($r) => [
+                            'id' => $r->id,
+                            'title' => $r->name,
+                            'price' => $r->price_per_month,
+                            'thumbnail' => $r->primaryPhoto?->url,
+                            'commune' => $r->commune,
+                            'type' => $r->type,
+                            'is_available' => (bool) $r->is_available,
+                            'location' => [
+                                'latitude' => $r->latitude,
+                                'longitude' => $r->longitude,
+                                'commune' => $r->commune,
+                                'quartier' => $r->quartier,
+                            ],
+                        ],
+                    )
+                    ->toArray()" :center="['lat' => config('rezi.default_latitude'), 'lng' => config('rezi.default_longitude')]" :radius="config('rezi.default_search_radius_km')" height="h-full"
+                    class="h-full rounded-none!" :showRadiusCircle="false" />
+
+                {{-- Floating "Voir la liste" button on mobile map --}}
+                <div x-show="!showSidebar" class="lg:hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
+                    <button @click="showSidebar = true"
+                        class="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-gray-800 rounded-full shadow-lg border border-gray-200 text-sm font-semibold hover:shadow-xl active:scale-95 transition-all">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h7" />
+                        </svg>
+                        Liste (<span x-text="filteredResidences.length"></span>)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</x-app-layout>

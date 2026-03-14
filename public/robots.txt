@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /profile/
+Disallow: /owner/
+Disallow: /client/
+Disallow: /api/
+
+Sitemap: https://rezi.ci/sitemap.xml

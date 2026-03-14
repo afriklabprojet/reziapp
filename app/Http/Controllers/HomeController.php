@@ -1,0 +1,208 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Category;
+use App\Models\Country;
+use App\Models\Residence;
+use App\Models\SponsoredListing;
+use App\Services\UserLocationService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+
+class HomeController extends Controller
+{
+    /**
+     * Display the homepage with search functionality
+     */
+    public function index(Request $request)
+    {
+        $residences = collect();
+        $searchPerformed = false;
+        $userLocation = null;
+
+        // If search parameters are provided
+        if ($request->has('latitude') && $request->has('longitude')) {
+            $searchPerformed = true;
+            $latitude = $request->input('latitude');
+            $longitude = $request->input('longitude');
+            $radius = $request->input('radius', 500); // Default 500m
+
+            $userLocation = [
+                'lat' => $latitude,
+                'lng' => $longitude,
+            ];
+
+            // Get residences within radius
+            $residences = Residence::approved()
+                ->available()
+                ->with(['photos', 'amenities', 'owner'])
+                ->withinRadius($latitude, $longitude, $radius)
+                ->get();
+        } elseif ($request->has('commune') || $request->has('quartier')) {
+            $searchPerformed = true;
+            $query = Residence::approved()
+                ->available()
+                ->with(['photos', 'amenities', 'owner']);
+
+            if ($request->filled('commune')) {
+                $commune = str_replace(['%', '_'], ['\%', '\_'], $request->commune);
+                $query->where('commune', 'like', '%'.$commune.'%');
+            }
+
+            if ($request->filled('quartier')) {
+                $quartier = str_replace(['%', '_'], ['\%', '\_'], $request->quartier);
+                $query->where('quartier', 'like', '%'.$quartier.'%');
+            }
+
+            $residences = $query->limit(50)->get();
+        }
+
+        // Featured residences — filtrées par localisation utilisateur (pays + ville)
+        $location = UserLocationService::current();
+        $locationKey = strtolower($location['country_code'] . '_' . ($location['city'] ?? 'all'));
+        $cacheTtl = config('rezi.cache_ttl');
+
+        $featuredResidences = Cache::remember("featured_residences_{$locationKey}", $cacheTtl, function () use ($location) {
+            $limit = config('rezi.pagination.home_featured');
+
+            // 1. Résidences sponsorisées (featured_home / premium_listing) — priorité absolue
+            $sponsoredIds = SponsoredListing::featuredHome()
+                ->pluck('residence_id')
+                ->unique()
+                ->toArray();
+
+            $sponsored = collect();
+            if (!empty($sponsoredIds)) {
+                $sponsored = Residence::listable()
+                    ->with(['photos', 'amenities', 'owner'])
+                    ->whereHas('photos')
+                    ->whereIn('id', $sponsoredIds)
+                    ->when($location['country_code'] ?? null, fn ($q, $cc) => $q->where('country_code', $cc))
+                    ->when($location['city'] ?? null, fn ($q, $city) => $q->where('city', $city))
+                    ->limit($limit)
+                    ->get();
+
+                // Enregistrer les impressions pour les résidences sponsorisées affichées
+                SponsoredListing::featuredHome()
+                    ->whereIn('residence_id', $sponsored->pluck('id'))
+                    ->each(fn ($sl) => $sl->recordImpression());
+            }
+
+            // 2. Compléter avec des résidences non-sponsorisées si nécessaire
+            $remaining = $limit - $sponsored->count();
+            $organic = collect();
+            if ($remaining > 0) {
+                $organic = Residence::listable()
+                    ->with(['photos', 'amenities', 'owner'])
+                    ->whereHas('photos')
+                    ->whereNotIn('id', $sponsoredIds)
+                    ->when($location['country_code'] ?? null, fn ($q, $cc) => $q->where('country_code', $cc))
+                    ->when($location['city'] ?? null, fn ($q, $city) => $q->where('city', $city))
+                    ->orderBy('created_at', 'desc')
+                    ->limit($remaining)
+                    ->get();
+            }
+
+            // Fusionner : sponsorisées d'abord, puis organiques
+            return $sponsored->concat($organic);
+        });
+
+        // Popular zones — filtrées par localisation utilisateur
+        $popularZones = Cache::remember("popular_zones_{$locationKey}", $cacheTtl, function () use ($location) {
+            $zones = Residence::approved()
+                ->when($location['country_code'] ?? null, fn ($q, $cc) => $q->where('country_code', $cc))
+                ->when($location['city'] ?? null, fn ($q, $city) => $q->where('city', $city))
+                ->select('commune', 'city', DB::raw('COUNT(*) as count'), DB::raw('MIN(price_per_month) as min_price'))
+                ->groupBy('commune', 'city')
+                ->orderBy('count', 'desc')
+                ->limit(config('rezi.pagination.home_featured'))
+                ->get();
+
+            // Récupérer une photo par commune en 2 requêtes au lieu de 12 (fix N+1)
+            $communeNames = $zones->pluck('commune');
+            $communePhotos = Residence::approved()
+                ->whereIn('commune', $communeNames)
+                ->whereHas('photos')
+                ->with('photos:id,residence_id,path')
+                ->select('id', 'commune')
+                ->get()
+                ->unique('commune')
+                ->mapWithKeys(fn ($r) => [$r->commune => $r->photos->first()?->path]);
+
+            return $zones->map(function ($zone) use ($communePhotos) {
+                $photoPath = $communePhotos->get($zone->commune);
+
+                return [
+                    'name' => $zone->commune,
+                    'city' => $zone->city,
+                    'count' => $zone->count,
+                    'min_price' => $zone->min_price,
+                    'image' => $photoPath ? storage_url($photoPath) : asset('images/placeholder-residence.jpg'),
+                ];
+            });
+        });
+
+        // Statistics — filtrées par localisation
+        $stats = Cache::remember("home_stats_{$locationKey}", $cacheTtl, function () use ($location) {
+            $base = Residence::listable()
+                ->when($location['country_code'] ?? null, fn ($q, $cc) => $q->where('country_code', $cc))
+                ->when($location['city'] ?? null, fn ($q, $city) => $q->where('city', $city));
+
+            return [
+                'residences' => (clone $base)->count(),
+                'owners' => (clone $base)->distinct('owner_id')->count('owner_id'),
+                'communes' => (clone $base)->distinct('commune')->count('commune'),
+                'contacts' => \App\Models\Contact::count(),
+            ];
+        });
+
+        // Témoignages (avis vedettes depuis la BDD)
+        $testimonials = Cache::remember('home_testimonials', $cacheTtl, function () {
+            $reviews = \App\Models\Review::where('status', 'approved')
+                ->where('rating', '>=', 4)
+                ->whereNotNull('comment')
+                ->with('user')
+                ->orderByDesc('is_featured')
+                ->orderByDesc('helpful_count')
+                ->orderByDesc('rating')
+                ->limit(config('rezi.pagination.home_testimonials'))
+                ->get();
+
+            if ($reviews->isEmpty()) {
+                return collect();
+            }
+
+            return $reviews->map(function ($review) {
+                return [
+                    'name' => $review->user->name ?? 'Utilisateur',
+                    'role' => 'Locataire',
+                    'content' => $review->comment,
+                    'avatar' => $review->user->getAvatarUrl(),
+                    'rating' => $review->rating,
+                ];
+            });
+        });
+
+        // Catégories actives avec compteur (approved + available)
+        $categories = Cache::remember('home_categories', $cacheTtl, function () {
+            return Category::active()
+                ->ordered()
+                ->withCount('availableResidences as residences_count')
+                ->get();
+        });
+
+        return view('home', compact(
+            'residences',
+            'searchPerformed',
+            'userLocation',
+            'featuredResidences',
+            'popularZones',
+            'stats',
+            'testimonials',
+            'categories',
+        ));
+    }
+}
+

@@ -1,0 +1,50 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+/**
+ * Validation pour la création d'une réservation instantanée.
+ *
+ * Extrait depuis BookingController::storeInstant() pour garder
+ * le contrôleur mince et réutiliser la logique de validation.
+ */
+class StoreInstantBookingRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return $this->user() !== null;
+    }
+
+    public function rules(): array
+    {
+        $residence = $this->route('residence');
+        $maxGuests = $residence?->max_guests ?? 20;
+
+        return [
+            'check_in' => 'required|date|after:today',
+            'check_out' => 'required|date|after:check_in',
+            'guests' => "required|integer|min:1|max:{$maxGuests}",
+            'adults' => 'required|integer|min:1',
+            'children' => 'nullable|integer|min:0',
+            'infants' => 'nullable|integer|min:0',
+            'check_in_time' => 'nullable|string',
+            'check_out_time' => 'nullable|string',
+            'message' => 'nullable|string|max:1000',
+            'promo_code' => 'nullable|string',
+            'coupon_code' => 'nullable|string',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'check_in.after' => 'La date d\'arrivée doit être dans le futur.',
+            'check_out.after' => 'La date de départ doit être après la date d\'arrivée.',
+            'guests.max' => 'Cette résidence accepte :max voyageurs maximum.',
+        ];
+    }
+}
