@@ -27,7 +27,7 @@
             <p class="text-sm text-gray-500 mt-1 ml-12">Choisissez votre moyen de paiement mobile</p>
         </div>
 
-        {{-- Error / Success alerts --}}
+        {{-- Error / Success / Info alerts --}}
         @if (session('error'))
             <div class="flex items-start gap-3 p-4 bg-red-50 rounded-2xl border border-red-200">
                 <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2"
@@ -42,17 +42,41 @@
             </div>
         @endif
 
-        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        @if (session('info'))
+            <div class="flex items-start gap-3 p-4 bg-blue-50 rounded-2xl border border-blue-200">
+                <svg class="w-5 h-5 text-blue-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zm-9-3.75h.008v.008H12V8.25z" />
+                </svg>
+                <p class="text-sm text-blue-700">{{ session('info') }}</p>
+            </div>
+        @endif
 
-            {{-- ====== Payment Form (3 cols) ====== --}}
-            <div class="lg:col-span-3">
-                <form action="{{ route('owner.marketing.sponsored.payment.confirm', $sponsored) }}" method="POST"
-                    x-data="{ method: 'wave', submitting: false }" @submit="submitting = true" class="space-y-6">
-                    @csrf
+        @if (!$jekoEnabled)
+            <div class="flex items-start gap-3 p-4 bg-amber-50 rounded-2xl border border-amber-200">
+                <svg class="w-5 h-5 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                </svg>
+                <div>
+                    <p class="text-sm font-semibold text-amber-700">Paiement temporairement indisponible</p>
+                    <p class="text-xs text-amber-600 mt-0.5">Le service de paiement mobile est momentanément désactivé. Veuillez réessayer plus tard ou contacter le support.</p>
+                </div>
+            </div>
+        @else
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
-                    {{-- Payment Methods --}}
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                        <h3 class="text-base font-bold text-gray-900 mb-5 flex items-center gap-2">
+                {{-- ====== Payment Form (3 cols) ====== --}}
+                <div class="lg:col-span-3">
+                    <form action="{{ route('owner.marketing.sponsored.payment.confirm', $sponsored) }}" method="POST"
+                        x-data="{ method: 'wave', submitting: false }" @submit="submitting = true" class="space-y-6">
+                        @csrf
+
+                        {{-- Payment Methods --}}
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                            <h3 class="text-base font-bold text-gray-900 mb-5 flex items-center gap-2">
                             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -366,5 +390,6 @@
                 </div>
             </div>
         </div>
+        @endif
     </div>
 @endsection
