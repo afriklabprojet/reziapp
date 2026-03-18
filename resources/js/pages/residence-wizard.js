@@ -10,6 +10,10 @@ export default function residenceWizard(config) {
         currentStep: 0,
         isSubmitting: false,
         isDragging: false,
+        aiLoading: false,
+        aiTitleLoading: false,
+        aiImproveLoading: false,
+        aiError: '',
 
         steps: [
             { title: 'Type' },
@@ -177,6 +181,82 @@ export default function residenceWizard(config) {
 
         formatPrice(price) {
             return new Intl.NumberFormat('fr-FR').format(price || 0);
+        },
+
+        getAiContext() {
+            return {
+                type: this.formData.type || '',
+                type_location: 'residence_meublee',
+                commune: this.formData.commune || '',
+                bedrooms: this.formData.bedrooms || '',
+                bathrooms: this.formData.bathrooms || '',
+                surface_area: this.formData.surface_area || '',
+                price: this.formData.price_per_day || '',
+            };
+        },
+
+        async aiGenerateDescription() {
+            this.aiError = '';
+            const ctx = this.getAiContext();
+            if (!ctx.type) { this.aiError = 'Veuillez d\'abord sélectionner le type de résidence.'; return; }
+            this.aiLoading = true;
+            try {
+                const res = await fetch((config.aiUrls && config.aiUrls.generateDescription) || '/owner/ai/generate-description', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': config.csrfToken, 'Accept': 'application/json' },
+                    body: JSON.stringify(ctx),
+                });
+                const data = await res.json();
+                if (data.description) {
+                    this.formData.description = data.description;
+                } else {
+                    this.aiError = data.error || 'Erreur lors de la génération.';
+                }
+            } catch (e) { this.aiError = 'Erreur de connexion.'; }
+            this.aiLoading = false;
+        },
+
+        async aiGenerateTitle() {
+            this.aiError = '';
+            const ctx = this.getAiContext();
+            if (!ctx.type) { this.aiError = 'Veuillez d\'abord sélectionner le type de résidence.'; return; }
+            this.aiTitleLoading = true;
+            try {
+                const res = await fetch((config.aiUrls && config.aiUrls.generateTitle) || '/owner/ai/generate-title', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': config.csrfToken, 'Accept': 'application/json' },
+                    body: JSON.stringify(ctx),
+                });
+                const data = await res.json();
+                if (data.title) {
+                    this.formData.name = data.title;
+                } else {
+                    this.aiError = data.error || 'Erreur lors de la génération.';
+                }
+            } catch (e) { this.aiError = 'Erreur de connexion.'; }
+            this.aiTitleLoading = false;
+        },
+
+        async aiImproveDescription() {
+            if (this.formData.description.length < 10) { this.aiError = 'Écrivez au moins quelques mots avant d\'améliorer.'; return; }
+            this.aiImproveLoading = true;
+            this.aiError = '';
+            try {
+                const ctx = this.getAiContext();
+                ctx.description = this.formData.description;
+                const res = await fetch((config.aiUrls && config.aiUrls.improveDescription) || '/owner/ai/improve-description', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': config.csrfToken, 'Accept': 'application/json' },
+                    body: JSON.stringify(ctx),
+                });
+                const data = await res.json();
+                if (data.description) {
+                    this.formData.description = data.description;
+                } else {
+                    this.aiError = data.error || 'Erreur lors de l\'amélioration.';
+                }
+            } catch (e) { this.aiError = 'Erreur de connexion.'; }
+            this.aiImproveLoading = false;
         },
 
         async submitForm() {

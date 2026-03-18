@@ -34,8 +34,8 @@ class BookingPolicy
      */
     public function view(User $user, Booking $booking): bool
     {
-        return $booking->user_id === $user->id
-            || $booking->residence->owner_id === $user->id;
+        return (int) $booking->user_id === (int) $user->id
+            || (int) ($booking->residence?->owner_id ?? 0) === (int) $user->id;
     }
 
     /**
@@ -44,12 +44,12 @@ class BookingPolicy
     public function cancel(User $user, Booking $booking): bool
     {
         // Le voyageur peut annuler ses propres réservations
-        if ($booking->user_id === $user->id) {
+        if ((int) $booking->user_id === (int) $user->id) {
             return $booking->canBeCancelled();
         }
 
         // Le propriétaire peut annuler les réservations de sa résidence
-        if ($booking->residence->owner_id === $user->id) {
+        if ((int) ($booking->residence?->owner_id ?? 0) === (int) $user->id) {
             return $booking->canBeCancelled();
         }
 
@@ -61,6 +61,15 @@ class BookingPolicy
      */
     public function update(User $user, Booking $booking): bool
     {
-        return $booking->user_id === $user->id;
+        return (int) $booking->user_id === (int) $user->id;
+    }
+
+    /**
+     * Le propriétaire de la résidence peut gérer la réservation
+     * (voir détails, confirmer, annuler, etc.)
+     */
+    public function manageAsOwner(User $user, Booking $booking): bool
+    {
+        return (int) ($booking->residence?->owner_id ?? 0) === (int) $user->id;
     }
 }

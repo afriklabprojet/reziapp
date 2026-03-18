@@ -30,7 +30,7 @@ Broadcast::channel('presence.conversation.{conversationId}', function ($user, $c
         return [
             'id' => $user->id,
             'name' => $user->name,
-            'avatar' => $user->avatar_url,
+            'avatar' => $user->getAvatarUrl(),
         ];
     }
 

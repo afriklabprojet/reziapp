@@ -7,7 +7,7 @@
     {{-- Header --}}
     @if($guidebook->cover_image)
     <div class="h-64 md:h-80 bg-cover bg-center relative" style="background-image: url('{{ Storage::url($guidebook->cover_image) }}')">
-        <div class="absolute inset-0 bg-gradient-to-b from-black/30 to-black/60"></div>
+        <div class="absolute inset-0 bg-linear-to-b from-black/30 to-black/60"></div>
         <div class="absolute bottom-0 left-0 right-0 p-6 md:p-10">
             <div class="max-w-4xl mx-auto">
                 <h1 class="text-3xl md:text-4xl font-bold text-white">{{ $guidebook->title }}</h1>

@@ -300,7 +300,7 @@
                                     <div class="min-w-0">
                                         <div class="h-3 bg-gray-200 rounded-full w-32 mb-2"></div>
                                         <div class="h-2 bg-gray-100 rounded-full w-24 mb-2"></div>
-                                        <div class="text-orange-500 font-bold text-sm">150 000 FCFA/mois</div>
+                                        <div class="text-orange-500 font-bold text-sm">15 000 FCFA/jour</div>
                                     </div>
                                 </div>
                                 <div class="bg-white rounded-2xl shadow-md p-4 flex gap-4 items-center ml-4 sm:ml-8">
@@ -315,7 +315,7 @@
                                     <div class="min-w-0">
                                         <div class="h-3 bg-gray-200 rounded-full w-28 mb-2"></div>
                                         <div class="h-2 bg-gray-100 rounded-full w-20 mb-2"></div>
-                                        <div class="text-blue-500 font-bold text-sm">250 000 FCFA/mois</div>
+                                        <div class="text-blue-500 font-bold text-sm">25 000 FCFA/jour</div>
                                     </div>
                                 </div>
                                 <div class="bg-white rounded-2xl shadow-md p-4 flex gap-4 items-center">
@@ -330,7 +330,7 @@
                                     <div class="min-w-0">
                                         <div class="h-3 bg-gray-200 rounded-full w-36 mb-2"></div>
                                         <div class="h-2 bg-gray-100 rounded-full w-28 mb-2"></div>
-                                        <div class="text-emerald-500 font-bold text-sm">85 000 FCFA/mois</div>
+                                        <div class="text-emerald-500 font-bold text-sm">8 500 FCFA/jour</div>
                                     </div>
                                 </div>
                             </div>

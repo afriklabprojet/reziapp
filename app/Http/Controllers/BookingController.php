@@ -7,8 +7,11 @@ use App\Http\Requests\StoreInstantBookingRequest;
 use App\Models\Booking;
 use App\Models\BookingRequest;
 use App\Models\Residence;
+use App\Models\User;
+use App\Notifications\GuestBookingConfirmation;
 use App\Services\BookingService;
 use App\Services\PricingService;
+use App\Services\JekoPaymentService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,12 +32,29 @@ class BookingController extends Controller
      */
     public function create(Residence $residence, Request $request)
     {
-        $checkIn = $request->query('check_in') ? Carbon::parse($request->query('check_in')) : null;
-        $checkOut = $request->query('check_out') ? Carbon::parse($request->query('check_out')) : null;
-        $guests = (int) $request->query('guests', 1);
-        $adults = (int) $request->query('adults', 1);
-        $children = (int) $request->query('children', 0);
-        $infants = (int) $request->query('infants', 0);
+        // Validation des inputs query string
+        $checkIn = null;
+        $checkOut = null;
+        try {
+            if ($request->query('check_in')) {
+                $checkIn = Carbon::parse($request->query('check_in'));
+            }
+            if ($request->query('check_out')) {
+                $checkOut = Carbon::parse($request->query('check_out'));
+            }
+            // Cohérence : check_out doit être après check_in
+            if ($checkIn && $checkOut && $checkOut->lte($checkIn)) {
+                $checkOut = $checkIn->copy()->addDay();
+            }
+        } catch (\Exception $e) {
+            // Dates invalides — on ignore silencieusement
+            $checkIn = null;
+            $checkOut = null;
+        }
+        $guests = max(1, min(50, (int) $request->query('guests', 1)));
+        $adults = max(1, min(50, (int) $request->query('adults', 1)));
+        $children = max(0, min(20, (int) $request->query('children', 0)));
+        $infants = max(0, min(10, (int) $request->query('infants', 0)));
 
         $pricePreview = null;
         if ($checkIn && $checkOut) {
@@ -124,9 +144,11 @@ class BookingController extends Controller
                 'availability' => $availability,
             ]);
         } catch (\Exception $e) {
+            report($e);
+
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error' => 'Une erreur est survenue lors du calcul du prix.',
             ], 422);
         }
     }
@@ -159,15 +181,13 @@ class BookingController extends Controller
     public function storeInstant(StoreInstantBookingRequest $request, Residence $residence)
     {
         try {
-            $booking = $this->bookingService->createInstantBooking(
+            $booking = $this->bookingService->createBooking(
                 $residence,
                 Auth::user(),
-                $request->all(),
+                array_merge($request->all(), ['booking_type' => 'instant']),
             );
 
-            // Rediriger vers le paiement
-            return redirect()->route('payments.checkout', ['booking' => $booking->id])
-                ->with('success', 'Réservation créée ! Procédez au paiement pour confirmer.');
+            return $this->redirectToPayment($booking, $request->input('payment_method', 'wave'));
         } catch (\Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
@@ -179,17 +199,98 @@ class BookingController extends Controller
     public function storeRequest(StoreBookingRequestRequest $request, Residence $residence)
     {
         try {
-            $bookingRequest = $this->bookingService->createBookingRequest(
+            $booking = $this->bookingService->createBooking(
                 $residence,
                 Auth::user(),
-                $request->all(),
+                array_merge($request->all(), ['booking_type' => 'request']),
             );
 
-            return redirect()->route('bookings.requests.show', $bookingRequest)
-                ->with('success', 'Demande envoyée ! Le propriétaire a 48h pour répondre.');
+            return $this->redirectToPayment($booking, $request->input('payment_method', 'wave'));
         } catch (\Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
+    }
+
+    /**
+     * Créer une demande de réservation en tant qu'invité
+     */
+    public function storeGuestRequest(Request $request, Residence $residence)
+    {
+        $request->validate([
+            'guest_name' => 'required|string|max:255',
+            'guest_email' => 'required|email|max:255',
+            'guest_phone' => 'required|string|max:20',
+            'check_in' => 'required|date|after:today',
+            'check_out' => 'required|date|after:check_in',
+            'guests' => 'required|integer|min:1',
+            'message' => 'nullable|string|max:1000',
+            'payment_method' => 'required|string|in:wave,orange,mtn,moov,djamo',
+        ]);
+
+        try {
+            // Créer ou récupérer le compte invité
+            $guestUser = User::createOrFindGuest(
+                $request->guest_email,
+                $request->guest_name,
+                $request->guest_phone,
+            );
+
+            // Créer la réservation (pas de BookingRequest, directement un Booking)
+            $booking = $this->bookingService->createBooking(
+                $residence,
+                $guestUser,
+                [
+                    'check_in' => $request->check_in,
+                    'check_out' => $request->check_out,
+                    'guests' => $request->guests,
+                    'adults' => $request->adults ?? $request->guests,
+                    'children' => $request->children ?? 0,
+                    'infants' => $request->infants ?? 0,
+                    'message' => $request->message,
+                    'booking_type' => $residence->instant_book ? 'instant' : 'request',
+                ],
+            );
+
+            return $this->redirectToPayment($booking, $request->input('payment_method', 'wave'));
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()])->withInput();
+        }
+    }
+
+    /**
+     * Afficher la page de confirmation après réservation
+     */
+    public function confirmation(Booking $booking)
+    {
+        $booking->load(['residence.photos', 'residence.owner', 'user']);
+
+        return view('bookings.confirmation', compact('booking'));
+    }
+
+    /**
+     * Initier le paiement Jeko et rediriger vers la page de paiement.
+     */
+    protected function redirectToPayment(Booking $booking, string $paymentMethod)
+    {
+        $jeko = app(JekoPaymentService::class);
+
+        if ($jeko->isEnabled()) {
+            $result = $jeko->createBookingPaymentRequest($booking, $paymentMethod);
+
+            if ($result['success'] && !empty($result['redirect_url'])) {
+                return redirect()->away($result['redirect_url']);
+            }
+
+            // Jeko failed — supprimer la réservation et renvoyer le client sur le formulaire pour réessayer
+            $booking->delete();
+
+            return back()
+                ->withErrors(['payment' => $result['error'] ?? 'Le paiement a échoué. Veuillez réessayer.'])
+                ->withInput();
+        }
+
+        // Jeko not enabled — redirect to confirmation page
+        return redirect()->route('bookings.confirmation', $booking->uuid);
     }
 
     /**
@@ -327,34 +428,46 @@ class BookingController extends Controller
             }
         }
 
-        // Recherche
+        // Recherche (wildcards LIKE échappés pour la sécurité)
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('reference', 'like', "%{$search}%")
-                  ->orWhereHas('user', function ($q2) use ($search) {
-                      $q2->where('name', 'like', "%{$search}%")
-                         ->orWhere('first_name', 'like', "%{$search}%")
-                         ->orWhere('last_name', 'like', "%{$search}%");
+            $safe = str_replace(['%', '_'], ['\%', '\_'], $search);
+            $query->where(function ($q) use ($safe) {
+                $q->where('reference', 'like', "%{$safe}%")
+                  ->orWhereHas('user', function ($q2) use ($safe) {
+                      $q2->where('name', 'like', "%{$safe}%")
+                         ->orWhere('first_name', 'like', "%{$safe}%")
+                         ->orWhere('last_name', 'like', "%{$safe}%");
                   })
-                  ->orWhereHas('residence', function ($q2) use ($search) {
-                      $q2->where('name', 'like', "%{$search}%");
+                  ->orWhereHas('residence', function ($q2) use ($safe) {
+                      $q2->where('name', 'like', "%{$safe}%");
                   });
             });
         }
 
         $bookings = $query->orderBy($sort, $dir)->paginate(12)->withQueryString();
 
-        // Stats enrichies
+        // Stats enrichies (1 requête agrégée au lieu de 7)
         $stats = $this->bookingService->getOwnerBookingStats(Auth::id());
 
         $residenceIds = \App\Models\Residence::where('owner_id', Auth::id())->pluck('id');
 
-        $stats['total_bookings']   = Booking::whereIn('residence_id', $residenceIds)->count();
-        $stats['completed_count']  = Booking::whereIn('residence_id', $residenceIds)->where('status', 'completed')->count();
-        $stats['cancelled_count']  = Booking::whereIn('residence_id', $residenceIds)->whereIn('status', ['cancelled_by_user', 'cancelled_by_owner'])->count();
-        $stats['total_revenue']    = Booking::whereIn('residence_id', $residenceIds)->where('status', 'completed')->sum('total_amount');
-        $stats['total_nights']     = Booking::whereIn('residence_id', $residenceIds)->whereIn('status', ['confirmed', 'completed'])->sum('nights');
-        $stats['avg_booking_value'] = Booking::whereIn('residence_id', $residenceIds)->where('status', 'completed')->avg('total_amount') ?? 0;
+        $aggregated = Booking::whereIn('residence_id', $residenceIds)
+            ->selectRaw("
+                COUNT(*) as total_bookings,
+                SUM(status = 'completed') as completed_count,
+                SUM(status IN ('cancelled_by_user', 'cancelled_by_owner')) as cancelled_count,
+                SUM(CASE WHEN status = 'completed' THEN total_amount ELSE 0 END) as total_revenue,
+                SUM(CASE WHEN status IN ('confirmed', 'completed') THEN nights ELSE 0 END) as total_nights,
+                AVG(CASE WHEN status = 'completed' THEN total_amount END) as avg_booking_value
+            ")
+            ->first();
+
+        $stats['total_bookings']   = (int) $aggregated->total_bookings;
+        $stats['completed_count']  = (int) $aggregated->completed_count;
+        $stats['cancelled_count']  = (int) $aggregated->cancelled_count;
+        $stats['total_revenue']    = (float) ($aggregated->total_revenue ?? 0);
+        $stats['total_nights']     = (int) $aggregated->total_nights;
+        $stats['avg_booking_value'] = (float) ($aggregated->avg_booking_value ?? 0);
 
         return view('owner.bookings.index', compact('bookings', 'stats', 'status', 'search', 'sort', 'dir'));
     }
@@ -378,7 +491,7 @@ class BookingController extends Controller
     public function approveRequest(Request $request, BookingRequest $bookingRequest)
     {
         // Vérifier que la résidence appartient à l'utilisateur
-        if ($bookingRequest->residence->owner_id !== Auth::id()) {
+        if ((int) ($bookingRequest->residence?->owner_id ?? 0) !== (int) Auth::id()) {
             abort(403);
         }
 
@@ -404,7 +517,7 @@ class BookingController extends Controller
      */
     public function rejectRequest(Request $request, BookingRequest $bookingRequest)
     {
-        if ($bookingRequest->residence->owner_id !== Auth::id()) {
+        if ((int) ($bookingRequest->residence?->owner_id ?? 0) !== (int) Auth::id()) {
             abort(403);
         }
 
@@ -423,9 +536,7 @@ class BookingController extends Controller
      */
     public function ownerShow(Booking $booking)
     {
-        if ($booking->residence->owner_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('manageAsOwner', $booking);
 
         $booking->load(['residence.photos', 'user', 'cancellationPolicy', 'review', 'coupon']);
 
@@ -457,9 +568,7 @@ class BookingController extends Controller
      */
     public function ownerCancel(Request $request, Booking $booking)
     {
-        if ($booking->residence->owner_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('manageAsOwner', $booking);
 
         $request->validate([
             'reason' => 'required|string|max:500',
@@ -484,9 +593,7 @@ class BookingController extends Controller
      */
     public function ownerConfirm(Booking $booking)
     {
-        if ($booking->residence->owner_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('manageAsOwner', $booking);
 
         if ($booking->status !== 'pending') {
             return back()->withErrors(['error' => 'Seules les réservations en attente peuvent être confirmées.']);

@@ -798,11 +798,11 @@ class ResidenceResource extends Resource
                             ->boolean(),
                         Infolists\Components\TextEntry::make('moderator.name')
                             ->label('Modéré par')
-                            ->default('Non modéré'),
+                            ->placeholder('Non modéré'),
                         Infolists\Components\TextEntry::make('moderated_at')
                             ->label('Date modération')
                             ->dateTime('d/m/Y H:i')
-                            ->default('Non modéré'),
+                            ->placeholder('Non modéré'),
                         Infolists\Components\TextEntry::make('approval_score')
                             ->label('Score qualité')
                             ->suffix('/100')

@@ -12,6 +12,109 @@
     <div class="grid lg:grid-cols-3 gap-8">
         {{-- Colonne principale --}}
         <div class="lg:col-span-2 space-y-8">
+
+            {{-- Recherches sauvegardées avec alertes --}}
+            @if (isset($savedSearches) && $savedSearches->count() > 0)
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 class="font-semibold text-gray-900">Mes alertes de recherche</h2>
+                                <p class="text-sm text-gray-500">Soyez notifié quand de nouvelles résidences correspondent à vos critères</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="divide-y divide-gray-100">
+                        @foreach ($savedSearches as $savedSearch)
+                            <div class="flex items-center justify-between p-4">
+                                <div class="flex items-center gap-3 min-w-0 flex-1">
+                                    <div class="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center shrink-0">
+                                        <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                                        </svg>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate">{{ $savedSearch->name }}</p>
+                                        <p class="text-xs text-gray-500">
+                                            {{ $savedSearch->location ?? 'Toute zone' }}
+                                            @if ($savedSearch->min_price || $savedSearch->max_price)
+                                                • {{ $savedSearch->min_price ? number_format($savedSearch->min_price, 0, ',', ' ') : '—' }}
+                                                – {{ $savedSearch->max_price ? number_format($savedSearch->max_price, 0, ',', ' ') : '—' }} FCFA
+                                            @endif
+                                            • {{ ucfirst($savedSearch->alert_frequency ?? 'quotidien') }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 shrink-0">
+                                    @if ($savedSearch->new_results_count > 0)
+                                        <span class="min-w-5 h-5 bg-purple-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">{{ $savedSearch->new_results_count }}</span>
+                                    @endif
+                                    <form action="{{ route('client.alerts.delete', $savedSearch) }}" method="POST" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="p-1.5 text-gray-400 hover:text-red-500 transition rounded-lg hover:bg-red-50" title="Supprimer cette alerte" onclick="return confirm('Supprimer cette alerte ?')">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            {{-- Alertes de prix réelles --}}
+            @if ($priceAlerts->count() > 0)
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                                <span class="text-xl">📉</span>
+                            </div>
+                            <div>
+                                <h2 class="font-semibold text-gray-900">Alertes de prix</h2>
+                                <p class="text-sm text-gray-500">Changements de prix sur vos résidences suivies</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="divide-y divide-gray-100">
+                        @foreach ($priceAlerts as $alert)
+                            <a href="{{ route('residences.show', $alert->residence) }}"
+                                class="flex items-center gap-4 p-4 hover:bg-gray-50 transition">
+                                <div class="w-20 h-16 rounded-lg overflow-hidden bg-gray-200 shrink-0">
+                                    @if ($alert->residence->photos->count() > 0)
+                                        <img loading="lazy" src="{{ storage_url($alert->residence->photos->first()?->path) }}"
+                                            alt="{{ $alert->residence->title }}" class="w-full h-full object-cover">
+                                    @endif
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-medium text-gray-900 truncate">{{ $alert->residence->title }}</h3>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="text-sm text-gray-400 line-through">{{ number_format($alert->original_price, 0, ',', ' ') }} FCFA</span>
+                                        <span class="text-sm font-semibold {{ $alert->price_change < 0 ? 'text-green-600' : 'text-red-600' }}">
+                                            {{ number_format($alert->current_price, 0, ',', ' ') }} FCFA
+                                        </span>
+                                        <span class="px-1.5 py-0.5 rounded text-xs font-medium {{ $alert->price_change < 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                            {{ $alert->price_change < 0 ? '' : '+' }}{{ number_format(($alert->price_change / $alert->original_price) * 100, 0) }}%
+                                        </span>
+                                    </div>
+                                </div>
+                                <svg class="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             {{-- Nouvelles résidences dans vos zones --}}
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100">
@@ -187,6 +290,12 @@
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                 <h3 class="font-semibold text-gray-900 mb-4">Résumé</h3>
                 <div class="space-y-3">
+                    @if (isset($savedSearches))
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Alertes recherche</span>
+                            <span class="font-semibold text-purple-600">{{ $savedSearches->count() }}</span>
+                        </div>
+                    @endif
                     <div class="flex justify-between items-center">
                         <span class="text-gray-600">Nouvelles résidences</span>
                         <span class="font-semibold text-green-600">{{ $newListings->count() }}</span>

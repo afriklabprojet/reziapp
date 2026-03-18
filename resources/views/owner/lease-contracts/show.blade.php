@@ -1,4 +1,4 @@
-@extends('layouts.owner')
+@extends('layouts.owner', ['sidebarActive' => 'lease-contracts'])
 
 @section('title', 'Contrat ' . $contract->reference)
 
@@ -11,6 +11,18 @@
         <span>›</span>
         <span class="text-gray-700 font-mono">{{ $contract->reference }}</span>
     </nav>
+
+    {{-- Alertes --}}
+    @if(session('success'))
+        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+            {{ session('error') }}
+        </div>
+    @endif
 
     {{-- En-tête --}}
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -63,14 +75,14 @@
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <h2 class="font-semibold text-gray-800 mb-4">Bien loué</h2>
                 <div class="flex items-start gap-4">
-                    @if($contract->residence->primary_photo_url)
-                    <img src="{{ $contract->residence->primary_photo_url }}" alt="" class="w-20 h-20 rounded-xl object-cover">
+                    @if($contract->residence->photos->count())
+                    <img src="{{ asset('storage/' . $contract->residence->photos->first()->path) }}" alt="" class="w-20 h-20 rounded-xl object-cover">
                     @endif
                     <div>
-                        <div class="font-semibold text-gray-900">{{ $contract->residence->title }}</div>
+                        <div class="font-semibold text-gray-900">{{ $contract->residence->name }}</div>
                         <div class="text-sm text-gray-500">{{ $contract->residence->address }}, {{ $contract->residence->commune }}</div>
-                        @if($contract->residence->surface)
-                        <div class="text-xs text-gray-400 mt-1">{{ $contract->residence->surface }} m²
+                        @if($contract->residence->surface_area)
+                        <div class="text-xs text-gray-400 mt-1">{{ $contract->residence->surface_area }} m²
                             @if($contract->residence->bedrooms) · {{ $contract->residence->bedrooms }} chambre(s) @endif
                         </div>
                         @endif
@@ -83,16 +95,16 @@
                 <h2 class="font-semibold text-gray-800 mb-4">Conditions financières</h2>
                 <div class="space-y-3">
                     <div class="flex justify-between">
-                        <span class="text-gray-600">Loyer mensuel</span>
+                        <span class="text-gray-600">{{ $contract->lease_type === 'short_term' ? 'Tarif par nuit' : 'Loyer mensuel' }}</span>
                         <span class="font-semibold text-gray-900">{{ number_format($contract->monthly_rent, 0, ',', ' ') }} FCFA</span>
                     </div>
                     @if($contract->charges_amount)
                     <div class="flex justify-between">
-                        <span class="text-gray-600">Charges mensuelles</span>
+                        <span class="text-gray-600">{{ $contract->lease_type === 'short_term' ? 'Frais de ménage' : 'Charges mensuelles' }}</span>
                         <span class="font-semibold">{{ number_format($contract->charges_amount, 0, ',', ' ') }} FCFA</span>
                     </div>
                     <div class="flex justify-between border-t pt-3 mt-3">
-                        <span class="text-gray-900 font-medium">Total mensuel</span>
+                        <span class="text-gray-900 font-medium">{{ $contract->lease_type === 'short_term' ? 'Total par nuit' : 'Total mensuel' }}</span>
                         <span class="font-bold text-emerald-600">{{ number_format($contract->monthly_rent + ($contract->charges_amount ?? 0), 0, ',', ' ') }} FCFA</span>
                     </div>
                     @endif
@@ -110,10 +122,24 @@
             </div>
 
             {{-- Clauses spéciales --}}
-            @if($contract->special_conditions)
+            @if($contract->special_clauses)
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <h2 class="font-semibold text-gray-800 mb-2">Clauses particulières</h2>
-                <p class="text-sm text-gray-600 leading-relaxed">{{ $contract->special_conditions }}</p>
+                <p class="text-sm text-gray-600 leading-relaxed whitespace-pre-line">{{ $contract->special_clauses }}</p>
+            </div>
+            @endif
+
+            {{-- Services inclus --}}
+            @if($contract->included_services && count($contract->included_services))
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h2 class="font-semibold text-gray-800 mb-3">Services inclus</h2>
+                <div class="flex flex-wrap gap-2">
+                    @foreach($contract->included_services as $service)
+                        <span class="inline-flex items-center px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-sm font-medium">
+                            ✓ {{ $service }}
+                        </span>
+                    @endforeach
+                </div>
             </div>
             @endif
 
@@ -130,9 +156,9 @@
                         <span class="text-gray-500">Type</span>
                         <span class="font-medium">
                             @switch($contract->lease_type)
+                                @case('short_term') Court terme @break
                                 @case('monthly') Mensuel @break
-                                @case('annual') Annuel @break
-                                @case('seasonal') Saisonnier @break
+                                @case('fixed_term') Durée déterminée @break
                                 @default {{ $contract->lease_type }}
                             @endswitch
                         </span>
@@ -201,7 +227,7 @@
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-2">
                 <h3 class="font-semibold text-gray-800 mb-3">Actions</h3>
 
-                @if($contract->canBeSignedByOwner(auth()->user()))
+                @if($contract->canBeSignedByOwner())
                 <form method="POST" action="{{ route('owner.lease-contracts.sign', $contract) }}">
                     @csrf
                     <button type="submit"
@@ -211,12 +237,20 @@
                 </form>
                 @endif
 
-                @if(in_array($contract->status, ['draft', 'pending_tenant']))
+                @if($contract->status === 'draft')
                 <form method="POST" action="{{ route('owner.lease-contracts.send-to-tenant', $contract) }}">
                     @csrf
                     <button type="submit"
                         class="w-full py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
                         📧 Envoyer au locataire
+                    </button>
+                </form>
+                @elseif($contract->status === 'pending_tenant' && !$contract->tenant_signed_at)
+                <form method="POST" action="{{ route('owner.lease-contracts.send-to-tenant', $contract) }}">
+                    @csrf
+                    <button type="submit"
+                        class="w-full py-2.5 bg-blue-100 text-blue-700 rounded-xl text-sm font-semibold hover:bg-blue-200 transition">
+                        🔄 Renvoyer la notification
                     </button>
                 </form>
                 @endif
@@ -228,7 +262,7 @@
                 </a>
                 @endif
 
-                @if($contract->securityDeposit === null && in_array($contract->status, ['active', 'pending_tenant', 'pending_owner']))
+                @if($contract->securityDeposit->isEmpty() && in_array($contract->status, ['active', 'pending_tenant', 'pending_owner']))
                 <a href="{{ route('owner.security-deposits.create', ['lease_contract_id' => $contract->id]) }}"
                     class="block w-full py-2.5 bg-amber-50 text-amber-700 rounded-xl text-sm font-semibold text-center hover:bg-amber-100 transition">
                     💰 Créer le dépôt de garantie

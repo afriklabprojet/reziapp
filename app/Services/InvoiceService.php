@@ -66,7 +66,7 @@ class InvoiceService
     {
         if ($booking && $booking->residence) {
             $residence = $booking->residence;
-            $nights = $booking->check_in_date->diffInDays($booking->check_out_date);
+            $nights = $booking->check_in->diffInDays($booking->check_out);
             $pricePerNight = $booking->price_per_night ?? ($booking->total_amount / max($nights, 1));
 
             // Séjour
@@ -79,7 +79,7 @@ class InvoiceService
 
             // Période
             $invoice->addLineItem(
-                "Du {$booking->check_in_date->format('d/m/Y')} au {$booking->check_out_date->format('d/m/Y')}",
+                "Du {$booking->check_in->format('d/m/Y')} au {$booking->check_out->format('d/m/Y')}",
                 1,
                 0,
             );

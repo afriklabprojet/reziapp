@@ -28,7 +28,7 @@ class PromotionPolicy
 
     public function view(User $user, Promotion $promotion): bool
     {
-        return $promotion->user_id === $user->id;
+        return (int) $promotion->user_id === (int) $user->id;
     }
 
     public function create(User $user): bool
@@ -38,16 +38,16 @@ class PromotionPolicy
 
     public function update(User $user, Promotion $promotion): bool
     {
-        return $promotion->user_id === $user->id;
+        return (int) $promotion->user_id === (int) $user->id;
     }
 
     public function delete(User $user, Promotion $promotion): bool
     {
-        return $promotion->user_id === $user->id;
+        return (int) $promotion->user_id === (int) $user->id;
     }
 
     public function toggle(User $user, Promotion $promotion): bool
     {
-        return $promotion->user_id === $user->id;
+        return (int) $promotion->user_id === (int) $user->id;
     }
 }

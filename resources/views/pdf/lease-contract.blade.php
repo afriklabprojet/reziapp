@@ -100,10 +100,10 @@
             <div class="info-label">Adresse</div>
             <div class="info-value">{{ $contract->residence->address }}, {{ $contract->residence->commune }}</div>
         </div>
-        @if($contract->residence->surface)
+        @if($contract->residence->surface_area)
         <div class="info-item">
             <div class="info-label">Surface</div>
-            <div class="info-value">{{ $contract->residence->surface }} m²</div>
+            <div class="info-value">{{ $contract->residence->surface_area }} m²</div>
         </div>
         @endif
         @if($contract->residence->bedrooms)
@@ -121,9 +121,9 @@
             <div class="info-label">Type de bail</div>
             <div class="info-value">
                 @switch($contract->lease_type)
+                    @case('short_term') Location court terme @break
                     @case('monthly') Location mensuelle @break
-                    @case('annual') Location annuelle @break
-                    @case('seasonal') Location saisonnière @break
+                    @case('fixed_term') Location durée déterminée @break
                     @default {{ $contract->lease_type }}
                 @endswitch
             </div>
@@ -152,16 +152,16 @@
             <th style="text-align:right;">Montant (FCFA)</th>
         </tr>
         <tr>
-            <td>Loyer mensuel</td>
+            <td>{{ $contract->lease_type === 'short_term' ? 'Tarif par nuit' : 'Loyer mensuel' }}</td>
             <td class="amount">{{ number_format($contract->monthly_rent, 0, ',', ' ') }} FCFA</td>
         </tr>
         @if($contract->charges_amount)
         <tr>
-            <td>Charges mensuelles</td>
+            <td>{{ $contract->lease_type === 'short_term' ? 'Frais de ménage' : 'Charges mensuelles' }}</td>
             <td class="amount">{{ number_format($contract->charges_amount, 0, ',', ' ') }} FCFA</td>
         </tr>
         <tr>
-            <td><strong>Total mensuel</strong></td>
+            <td><strong>{{ $contract->lease_type === 'short_term' ? 'Total par nuit' : 'Total mensuel' }}</strong></td>
             <td class="amount"><strong>{{ number_format($contract->monthly_rent + $contract->charges_amount, 0, ',', ' ') }} FCFA</strong></td>
         </tr>
         @endif
@@ -178,15 +178,25 @@
     @endif
 
     {{-- Clauses particulières --}}
-    @if($contract->special_conditions)
-    <h2>4. Clauses particulières</h2>
+    @php $sectionNum = 4; @endphp
+    @if($contract->included_services && count($contract->included_services))
+    <h2>{{ $sectionNum }}. Services inclus</h2>
     <div class="clause">
-        <div class="clause-text">{{ $contract->special_conditions }}</div>
+        <div class="clause-text">Les services suivants sont inclus dans le loyer : <strong>{{ implode(', ', $contract->included_services) }}</strong>.</div>
     </div>
+    @php $sectionNum++; @endphp
+    @endif
+
+    @if($contract->special_clauses)
+    <h2>{{ $sectionNum }}. Clauses particulières</h2>
+    <div class="clause">
+        <div class="clause-text">{{ $contract->special_clauses }}</div>
+    </div>
+    @php $sectionNum++; @endphp
     @endif
 
     {{-- Clauses légales --}}
-    <h2>{{ $contract->special_conditions ? 5 : 4 }}. Dispositions légales</h2>
+    <h2>{{ $sectionNum }}. Dispositions légales</h2>
 
     <div class="clause">
         <div class="clause-title">Obligations du bailleur</div>

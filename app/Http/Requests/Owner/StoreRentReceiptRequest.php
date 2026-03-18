@@ -28,8 +28,8 @@ class StoreRentReceiptRequest extends FormRequest
             'payment_reference'  => ['nullable', 'string', 'max:100'],
             'payment_date'       => ['required', 'date', 'before_or_equal:today'],
             'notes'              => ['nullable', 'string', 'max:1000'],
-            'send_by_email'      => ['boolean'],
-            'send_by_whatsapp'   => ['boolean'],
+            'sent_by_email'      => ['boolean'],
+            'sent_by_whatsapp'   => ['boolean'],
         ];
     }
 

@@ -2,7 +2,7 @@
     Composant Prix formaté — <x-price :amount="50000" />
     Usage : 
         <x-price :amount="$residence->price_per_day" />
-        <x-price :amount="$residence->price_per_day" suffix="/nuit" />
+        <x-price :amount="$residence->price_per_day" suffix="/jour" />
         <x-price :amount="$booking->total_amount" class="text-xl font-bold text-orange-600" />
         <x-price :amount="$discount" prefix="-" class="text-green-600" />
 --}}

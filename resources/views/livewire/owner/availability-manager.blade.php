@@ -5,7 +5,7 @@
             Calendrier de disponibilité
         </h2>
         <div class="text-sm text-gray-500">
-            Prix par défaut: <span class="font-semibold">{{ number_format($residence->price_per_day) }} FCFA/nuit</span>
+            Prix par défaut: <span class="font-semibold">{{ number_format($residence->price_per_day) }} FCFA/jour</span>
         </div>
     </div>
 
@@ -164,7 +164,7 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Prix/nuit (FCFA)</label>
+                        <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Prix/jour (FCFA)</label>
                         <input type="number" wire:model="customPrice" placeholder="{{ $residence->price_per_day }}"
                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-sm">
                     </div>

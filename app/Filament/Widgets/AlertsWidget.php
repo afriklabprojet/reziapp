@@ -23,6 +23,7 @@ class AlertsWidget extends BaseWidget
         return $table
             ->query(
                 FraudReport::query()
+                    ->with(['reporter:id,name', 'targetUser:id,name'])
                     ->where('status', 'pending')
                     ->latest()
                     ->limit(10)

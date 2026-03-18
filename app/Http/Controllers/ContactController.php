@@ -52,7 +52,7 @@ class ContactController extends Controller
         if ($residence->isSponsored()) {
             $activeSponsoredListing = $residence->activeSponsoredListing();
             if ($activeSponsoredListing) {
-                $activeSponsoredListing->recordContact();
+                $activeSponsoredListing->recordContact(request()->ip(), auth()->id());
             }
         }
 

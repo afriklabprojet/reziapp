@@ -133,8 +133,8 @@ class PhotoUploadService
      */
     private function validate(UploadedFile $file): void
     {
-        // Vérifier l'extension
-        $extension = strtolower($file->getClientOriginalExtension());
+        // Vérifier l'extension (basée sur le contenu réel du fichier, pas le nom client)
+        $extension = strtolower($file->guessExtension() ?? $file->getClientOriginalExtension());
         if (!in_array($extension, self::ALLOWED_EXTENSIONS)) {
             throw new \Exception('Extension non autorisée. Formats acceptés: '.implode(', ', self::ALLOWED_EXTENSIONS));
         }
@@ -156,7 +156,7 @@ class PhotoUploadService
      */
     private function generateFilename(UploadedFile $file): string
     {
-        $extension = $file->getClientOriginalExtension();
+        $extension = $file->guessExtension() ?? $file->getClientOriginalExtension();
 
         return Str::uuid().'.'.$extension;
     }

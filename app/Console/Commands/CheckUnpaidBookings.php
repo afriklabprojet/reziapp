@@ -40,7 +40,7 @@ class CheckUnpaidBookings extends Command
          * - check_in passé depuis au moins $minDays jours
          * - Non annulée
          */
-        $unpaidBookings = Booking::with(['user', 'residence.user'])
+        $unpaidBookings = Booking::with(['user', 'residence.owner'])
             ->where('status', 'confirmed')
             ->where('payment_status', '!=', 'paid')
             ->where('payment_status', '!=', 'refunded')
@@ -61,7 +61,7 @@ class CheckUnpaidBookings extends Command
 
         foreach ($unpaidBookings as $booking) {
             $daysOverdue = (int) $booking->check_in->diffInDays(now());
-            $owner       = $booking->residence?->user;
+            $owner       = $booking->residence?->owner;
 
             if (! $owner) {
                 $this->warn("  Réservation #{$booking->id} : propriétaire introuvable, ignorée.");

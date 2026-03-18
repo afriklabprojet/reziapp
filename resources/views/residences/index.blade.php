@@ -1,5 +1,24 @@
 <x-app-layout>
-    @section('title', 'Résidences meublées - REZI')
+    @section('title', 'Résidences meublées à louer' . (request('commune') ? ' à ' . request('commune') : '') . ' - REZI')
+    @section('description', 'Découvrez ' . ($residences->total() ?? '') . ' résidences meublées' . (request('commune') ? ' à ' . request('commune') : ' en Côte d\'Ivoire') . '. Recherche géolocalisée, photos, contact direct avec les propriétaires.')
+
+    {{-- JSON-LD ItemList pour les pages de résultats --}}
+    @push('meta')
+    <script type="application/ld+json">
+    {!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'ItemList',
+        'name' => 'Résidences meublées' . (request('commune') ? ' à ' . request('commune') : ''),
+        'numberOfItems' => $residences->total(),
+        'itemListElement' => $residences->map(fn ($r, $i) => [
+            '@type' => 'ListItem',
+            'position' => ($residences->currentPage() - 1) * $residences->perPage() + $i + 1,
+            'url' => route('residences.show', $r),
+            'name' => $r->name,
+        ])->values()->toArray(),
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+    </script>
+    @endpush
 
     <div class="min-h-screen bg-gray-50" x-data="residenceIndex">
         {{-- Sticky Filter Bar --}}

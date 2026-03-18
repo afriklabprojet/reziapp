@@ -28,7 +28,7 @@ class CoHostPolicy
 
     public function view(User $user, CoHost $coHost): bool
     {
-        return $coHost->owner_id === $user->id;
+        return (int) $coHost->owner_id === (int) $user->id;
     }
 
     public function create(User $user): bool
@@ -38,21 +38,21 @@ class CoHostPolicy
 
     public function update(User $user, CoHost $coHost): bool
     {
-        return $coHost->owner_id === $user->id;
+        return (int) $coHost->owner_id === (int) $user->id;
     }
 
     public function delete(User $user, CoHost $coHost): bool
     {
-        return $coHost->owner_id === $user->id;
+        return (int) $coHost->owner_id === (int) $user->id;
     }
 
     public function revoke(User $user, CoHost $coHost): bool
     {
-        return $coHost->owner_id === $user->id && $coHost->isActive();
+        return (int) $coHost->owner_id === (int) $user->id && $coHost->isActive();
     }
 
     public function resend(User $user, CoHost $coHost): bool
     {
-        return $coHost->owner_id === $user->id && $coHost->status === 'pending';
+        return (int) $coHost->owner_id === (int) $user->id && $coHost->status === 'pending';
     }
 }

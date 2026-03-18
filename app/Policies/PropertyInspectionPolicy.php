@@ -16,8 +16,8 @@ class PropertyInspectionPolicy
 
     public function view(User $user, PropertyInspection $inspection): bool
     {
-        return $user->id === $inspection->owner_id
-            || $user->id === $inspection->tenant_id
+        return (int) $user->id === (int) $inspection->owner_id
+            || (int) $user->id === (int) $inspection->tenant_id
             || $user->isAdmin();
     }
 
@@ -28,7 +28,7 @@ class PropertyInspectionPolicy
 
     public function update(User $user, PropertyInspection $inspection): bool
     {
-        return $user->id === $inspection->owner_id
+        return (int) $user->id === (int) $inspection->owner_id
             && in_array($inspection->status, [
                 PropertyInspection::STATUS_DRAFT,
                 PropertyInspection::STATUS_IN_PROGRESS,
@@ -37,20 +37,20 @@ class PropertyInspectionPolicy
 
     public function sign(User $user, PropertyInspection $inspection): bool
     {
-        return ($user->id === $inspection->owner_id && ! $inspection->owner_signed_at)
-            || ($user->id === $inspection->tenant_id && ! $inspection->tenant_signed_at);
+        return ((int) $user->id === (int) $inspection->owner_id && ! $inspection->owner_signed_at)
+            || ((int) $user->id === (int) $inspection->tenant_id && ! $inspection->tenant_signed_at);
     }
 
     public function download(User $user, PropertyInspection $inspection): bool
     {
-        return $user->id === $inspection->owner_id
-            || $user->id === $inspection->tenant_id
+        return (int) $user->id === (int) $inspection->owner_id
+            || (int) $user->id === (int) $inspection->tenant_id
             || $user->isAdmin();
     }
 
     public function delete(User $user, PropertyInspection $inspection): bool
     {
-        return $user->id === $inspection->owner_id
+        return (int) $user->id === (int) $inspection->owner_id
             && $inspection->status === PropertyInspection::STATUS_DRAFT;
     }
 }

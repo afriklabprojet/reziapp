@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\SponsoredListing;
+use App\Notifications\SponsoredListingCompleted;
 use Illuminate\Console\Command;
 
 class ManageSponsoredListingsCommand extends Command
@@ -24,6 +25,7 @@ class ManageSponsoredListingsCommand extends Command
 
         foreach ($expired as $sponsored) {
             $sponsored->complete();
+            $this->sendCompletionReport($sponsored);
             $residenceName = $sponsored->residence->name ?? 'N/A';
             $this->line("  ✅ Complétée: #{$sponsored->id} - {$residenceName}");
         }
@@ -51,6 +53,7 @@ class ManageSponsoredListingsCommand extends Command
 
         foreach ($pausedExpired as $sponsored) {
             $sponsored->complete();
+            $this->sendCompletionReport($sponsored);
             $this->line("  ✅ En pause → Complétée: #{$sponsored->id}");
         }
 
@@ -60,5 +63,17 @@ class ManageSponsoredListingsCommand extends Command
         $this->info("   - En pause expirées: {$pausedExpiredCount}");
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Envoyer le rapport de fin de campagne au propriétaire
+     */
+    private function sendCompletionReport(SponsoredListing $sponsored): void
+    {
+        $sponsored->load(['residence', 'user']);
+
+        if ($sponsored->user) {
+            $sponsored->user->notify(new SponsoredListingCompleted($sponsored));
+        }
     }
 }

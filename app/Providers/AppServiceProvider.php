@@ -69,6 +69,11 @@ class AppServiceProvider extends ServiceProvider
             \App\Events\LeaseContractSigned::class,
             \App\Listeners\SendLeaseContractSignedNotification::class,
         );
+
+        Event::listen(
+            \App\Events\PaymentCompleted::class,
+            \App\Listeners\SendPaymentConfirmationNotification::class,
+        );
     }
 
     /**
@@ -256,6 +261,24 @@ class AppServiceProvider extends ServiceProvider
         // Limite pour les paiements
         RateLimiter::for('payment', function (Request $request) {
             return Limit::perHour(20)->by($request->user()?->id ?: $request->ip());
+        });
+
+        // Limite stricte pour password reset (anti-spam email)
+        RateLimiter::for('password-reset', function (Request $request) {
+            return Limit::perHour(3)->by($request->ip());
+        });
+
+        // Limite stricte pour admin (protection du panel)
+        RateLimiter::for('admin', function (Request $request) {
+            return Limit::perMinute(30)->by($request->user()?->id ?: $request->ip());
+        });
+
+        // Limite stricte pour OTP/SMS
+        RateLimiter::for('otp', function (Request $request) {
+            return [
+                Limit::perMinute(1)->by($request->ip()),
+                Limit::perHour(5)->by($request->user()?->id ?: $request->ip()),
+            ];
         });
     }
 }

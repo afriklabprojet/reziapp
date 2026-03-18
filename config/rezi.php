@@ -50,7 +50,8 @@ return [
     'pricing' => [
         'service_fee_rate' => env('REZI_SERVICE_FEE_RATE', 0.10),       // 10% client
         'tax_rate' => env('REZI_TAX_RATE', 0.18),                       // 18% TVA
-        'owner_commission_rate' => env('REZI_OWNER_COMMISSION_RATE', 0.03), // 3% propriétaire
+        'owner_commission_rate' => env('REZI_OWNER_COMMISSION_RATE', 0.10), // 10% propriétaire (fallback, PlatformSetting a priorité)
+        'min_withdrawal' => env('REZI_MIN_WITHDRAWAL', 5000),            // 5 000 FCFA minimum
     ],
 
     /*

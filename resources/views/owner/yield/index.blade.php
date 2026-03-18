@@ -21,7 +21,7 @@
                     <div>
                         <p class="font-semibold text-gray-900">{{ $residence->name }}</p>
                         <p class="text-sm text-gray-500">
-                            Prix de base: {{ number_format($residence->price_per_night ?? $residence->price_per_day ?? 0, 0, ',', ' ') }} F/nuit
+                            Prix de base: {{ number_format($residence->price_per_night ?? $residence->price_per_day ?? 0, 0, ',', ' ') }} F/jour
                         </p>
                     </div>
                     <div class="text-right">

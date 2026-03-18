@@ -140,6 +140,53 @@
                 </div>
             @endif
 
+            {{-- Indicateur de complétion du profil --}}
+            @if ($profileCompletion['percentage'] < 100)
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6" x-data="{ showSteps: false }">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
+                                <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900">Complétez votre profil</p>
+                                <p class="text-xs text-gray-500">{{ $profileCompletion['completed'] }}/{{ $profileCompletion['total'] }} étapes — {{ $profileCompletion['percentage'] }}%</p>
+                            </div>
+                        </div>
+                        <button @click="showSteps = !showSteps" class="text-orange-500 hover:text-orange-600 text-sm font-medium transition">
+                            <span x-text="showSteps ? 'Masquer' : 'Voir les étapes'"></span>
+                        </button>
+                    </div>
+                    {{-- Barre de progression --}}
+                    <div class="w-full bg-gray-100 rounded-full h-2 mb-1">
+                        <div class="bg-orange-500 h-2 rounded-full transition-all duration-500" style="width: {{ $profileCompletion['percentage'] }}%"></div>
+                    </div>
+                    {{-- Détails des étapes --}}
+                    <div x-show="showSteps" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-cloak class="mt-4 space-y-2">
+                        @foreach ($profileCompletion['steps'] as $key => $step)
+                            <div class="flex items-center gap-3 py-1.5">
+                                @if ($step['done'])
+                                    <svg class="w-5 h-5 text-green-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+                                    </svg>
+                                @else
+                                    <div class="w-5 h-5 border-2 border-gray-300 rounded-full shrink-0"></div>
+                                @endif
+                                <span class="text-sm {{ $step['done'] ? 'text-gray-500 line-through' : 'text-gray-900 font-medium' }}">{{ $step['label'] }}</span>
+                                @if (!$step['done'] && $key !== 'first_search')
+                                    <a href="{{ route('profile.edit') }}" class="ml-auto text-xs text-orange-500 hover:text-orange-600 font-medium">Compléter</a>
+                                @elseif (!$step['done'] && $key === 'first_search')
+                                    <a href="{{ route('residences.index') }}" class="ml-auto text-xs text-orange-500 hover:text-orange-600 font-medium">Rechercher</a>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             {{-- Statistiques rapides (clickables) --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
                 <a href="{{ route('bookings.index') }}"

@@ -8,6 +8,7 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
@@ -28,13 +29,16 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     /**
      * The attributes that are mass assignable.
      *
+     * SECURITE : seuls les champs modifiables par l'utilisateur sont ici.
+     * Les champs sensibles (role, is_suspended, financial, 2FA, etc.)
+     * doivent être modifiés explicitement via $user->role = 'owner'.
+     *
      * @var list<string>
      */
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role',
         'phone',
         'profile_photo',
         'provider',
@@ -42,29 +46,29 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'avatar',
         'referral_code',
         'referred_by',
-        'referral_balance',
-        'wallet_credit',
-        // KYC & Verification
+        // KYC & Verification (set by admin/system only via explicit assignment)
         'email_verified',
         'phone_verified',
-        'identity_verified',
-        'identity_verified_at',
         'identity_verification_status',
         'identity_verification_data',
-        'verification_level',
-        'is_suspended',
-        'suspended_until',
-        'suspension_reason',
         'discrete_mode',
         'emergency_mode',
-        'two_factor_enabled',
-        'two_factor_secret',
-        'two_factor_recovery_codes',
-        'trusted_device_token',
-        'trusted_device_expires_at',
-        'last_security_check',
         'last_login_ip',
         'last_login_at',
+        'jeko_contact_id',
+    ];
+
+    /**
+     * Champs protégés contre le mass assignment.
+     * Modifiables uniquement via $user->field = value (code explicite).
+     */
+    protected $guarded_fields_note = [
+        // role, is_guest, guest_token, referral_balance, wallet_credit,
+        // identity_verified, identity_verified_at, verification_level,
+        // is_suspended, suspended_until, suspension_reason,
+        // two_factor_enabled, two_factor_secret, two_factor_recovery_codes,
+        // trusted_device_token, trusted_device_expires_at, last_security_check,
+        // withdrawal_pin, withdrawal_pin_set_at, withdrawal_pin_attempts, withdrawal_pin_locked_until,
     ];
 
     /**
@@ -78,6 +82,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'two_factor_secret',
         'two_factor_recovery_codes',
         'trusted_device_token',
+        'withdrawal_pin',
     ];
 
     /**
@@ -104,6 +109,8 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
             'trusted_device_expires_at' => 'datetime',
             'last_security_check' => 'datetime',
             'last_login_at' => 'datetime',
+            'withdrawal_pin_set_at' => 'datetime',
+            'withdrawal_pin_locked_until' => 'datetime',
         ];
     }
 
@@ -145,6 +152,50 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     public function hasAnyRole(array $roles): bool
     {
         return in_array($this->role, $roles, true);
+    }
+
+    /**
+     * Check if user is a guest (temporary account)
+     */
+    public function isGuest(): bool
+    {
+        return (bool) $this->is_guest;
+    }
+
+    /**
+     * Create or find a guest user by email
+     */
+    public static function createOrFindGuest(string $email, string $name, ?string $phone = null): self
+    {
+        $user = self::where('email', $email)->first();
+
+        if ($user) {
+            // If existing user is not a guest, return them
+            if (!$user->is_guest) {
+                return $user;
+            }
+            // Update guest info
+            $user->update([
+                'name' => $name,
+                'phone' => $phone ?? $user->phone,
+            ]);
+            return $user;
+        }
+
+        // Create new guest user
+        $guest = self::create([
+            'name' => $name,
+            'email' => $email,
+            'phone' => $phone,
+            'password' => bcrypt(Str::random(32)),
+        ]);
+        // Champs protégés : assignment explicite
+        $guest->role = 'user';
+        $guest->is_guest = true;
+        $guest->guest_token = Str::random(64);
+        $guest->save();
+
+        return $guest;
     }
 
     /**
@@ -316,7 +367,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     public function getAvatarUrl(): string
     {
         if ($this->avatar) {
-            return $this->avatar;
+            return asset('storage/'.$this->avatar);
         }
 
         if ($this->profile_photo) {
@@ -346,6 +397,30 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     public function searchHistories()
     {
         return $this->hasMany(SearchHistory::class);
+    }
+
+    /**
+     * Recherches sauvegardées (alertes)
+     */
+    public function savedSearches()
+    {
+        return $this->hasMany(SavedSearch::class);
+    }
+
+    /**
+     * Alertes de prix
+     */
+    public function priceAlerts()
+    {
+        return $this->hasMany(PriceAlert::class);
+    }
+
+    /**
+     * Contrats de bail (en tant que locataire)
+     */
+    public function leaseContracts()
+    {
+        return $this->hasMany(LeaseContract::class, 'tenant_id');
     }
 
     /**
@@ -705,5 +780,100 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         }
 
         return true;
+    }
+
+    // ===== WITHDRAWAL PIN SECURITY =====
+
+    /**
+     * Vérifier si le propriétaire a configuré un PIN de retrait.
+     */
+    public function hasWithdrawalPin(): bool
+    {
+        return ! empty($this->withdrawal_pin);
+    }
+
+    /**
+     * Définir ou mettre à jour le PIN de retrait (hashé).
+     */
+    public function setWithdrawalPin(string $pin): void
+    {
+        $this->update([
+            'withdrawal_pin' => \Illuminate\Support\Facades\Hash::make($pin),
+            'withdrawal_pin_set_at' => now(),
+            'withdrawal_pin_attempts' => 0,
+            'withdrawal_pin_locked_until' => null,
+        ]);
+    }
+
+    /**
+     * Vérifier si le PIN de retrait est correct.
+     */
+    public function verifyWithdrawalPin(string $pin): bool
+    {
+        // Vérifier si le compte est verrouillé
+        if ($this->isWithdrawalPinLocked()) {
+            return false;
+        }
+
+        if (\Illuminate\Support\Facades\Hash::check($pin, $this->withdrawal_pin)) {
+            // Réinitialiser les tentatives après succès
+            $this->update([
+                'withdrawal_pin_attempts' => 0,
+                'withdrawal_pin_locked_until' => null,
+            ]);
+            return true;
+        }
+
+        // Incrémenter les tentatives échouées
+        $attempts = $this->withdrawal_pin_attempts + 1;
+        $data = ['withdrawal_pin_attempts' => $attempts];
+
+        // Verrouiller après 5 tentatives échouées (30 min)
+        if ($attempts >= 5) {
+            $data['withdrawal_pin_locked_until'] = now()->addMinutes(30);
+            \Illuminate\Support\Facades\Log::warning('Withdrawal PIN locked', [
+                'user_id' => $this->id,
+                'attempts' => $attempts,
+                'locked_until' => $data['withdrawal_pin_locked_until'],
+                'ip' => request()->ip(),
+            ]);
+        }
+
+        $this->update($data);
+
+        return false;
+    }
+
+    /**
+     * Vérifier si les retraits sont verrouillés (trop de tentatives de PIN).
+     */
+    public function isWithdrawalPinLocked(): bool
+    {
+        if (! $this->withdrawal_pin_locked_until) {
+            return false;
+        }
+
+        if ($this->withdrawal_pin_locked_until->isPast()) {
+            // Déverrouiller automatiquement
+            $this->update([
+                'withdrawal_pin_attempts' => 0,
+                'withdrawal_pin_locked_until' => null,
+            ]);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Minutes restantes avant déverrouillage du PIN.
+     */
+    public function withdrawalPinLockRemainingMinutes(): int
+    {
+        if (! $this->withdrawal_pin_locked_until || $this->withdrawal_pin_locked_until->isPast()) {
+            return 0;
+        }
+
+        return (int) now()->diffInMinutes($this->withdrawal_pin_locked_until, false);
     }
 }

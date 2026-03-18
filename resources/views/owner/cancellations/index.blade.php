@@ -91,7 +91,7 @@
                                 @if ($cancellation->booking?->residence?->mainPhoto)
                                     <img loading="lazy"
                                         src="{{ storage_url($cancellation->booking->residence->mainPhoto->path) }}"
-                                        alt="" class="w-14 h-14 object-cover rounded-xl shrink-0">
+                                        alt="{{ $cancellation->booking->residence->title ?? 'Résidence' }}" class="w-14 h-14 object-cover rounded-xl shrink-0">
                                 @else
                                     <div class="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
                                         <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

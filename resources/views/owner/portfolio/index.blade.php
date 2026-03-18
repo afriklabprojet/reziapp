@@ -13,51 +13,50 @@
     <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <div class="bg-white rounded-2xl border border-gray-100 p-4">
             <p class="text-xs font-semibold text-gray-400 uppercase">Résidences</p>
-            <p class="text-2xl font-bold text-gray-900 mt-1">{{ count($residenceData) }}</p>
+            <p class="text-2xl font-bold text-gray-900 mt-1">{{ $summary['total_residences'] }}</p>
         </div>
         <div class="bg-white rounded-2xl border border-gray-100 p-4">
             <p class="text-xs font-semibold text-gray-400 uppercase">Revenus total</p>
-            <p class="text-2xl font-bold text-green-600 mt-1">{{ number_format(collect($residenceData)->sum('revenue'), 0, ',', ' ') }}</p>
+            <p class="text-2xl font-bold text-green-600 mt-1">{{ number_format($summary['total_revenue'], 0, ',', ' ') }}</p>
             <p class="text-xs text-gray-400">FCFA</p>
         </div>
         <div class="bg-white rounded-2xl border border-gray-100 p-4">
             <p class="text-xs font-semibold text-gray-400 uppercase">Dépenses total</p>
-            <p class="text-2xl font-bold text-red-600 mt-1">{{ number_format(collect($residenceData)->sum('expenses'), 0, ',', ' ') }}</p>
+            <p class="text-2xl font-bold text-red-600 mt-1">{{ number_format($summary['total_expenses'], 0, ',', ' ') }}</p>
             <p class="text-xs text-gray-400">FCFA</p>
         </div>
         <div class="bg-white rounded-2xl border border-gray-100 p-4">
             <p class="text-xs font-semibold text-gray-400 uppercase">Taux d'occupation moy.</p>
-            @php $avgOccupancy = count($residenceData) > 0 ? collect($residenceData)->avg('occupancy_rate') : 0; @endphp
-            <p class="text-2xl font-bold text-blue-600 mt-1">{{ round($avgOccupancy) }}%</p>
+            <p class="text-2xl font-bold text-blue-600 mt-1">{{ round($summary['avg_occupancy'] ?? 0) }}%</p>
         </div>
         <div class="bg-white rounded-2xl border border-gray-100 p-4">
             <p class="text-xs font-semibold text-gray-400 uppercase">Maintenance ouverte</p>
-            <p class="text-2xl font-bold text-amber-600 mt-1">{{ collect($residenceData)->sum('open_maintenance') }}</p>
+            <p class="text-2xl font-bold text-amber-600 mt-1">{{ $summary['total_maintenance'] }}</p>
         </div>
     </div>
 
     {{-- Per Residence Cards --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        @forelse($residenceData as $data)
+        @forelse($portfolioData as $data)
         <div class="bg-white rounded-2xl border border-gray-100 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div>
-                    <h3 class="font-bold text-gray-900">{{ $data['name'] }}</h3>
-                    <p class="text-sm text-gray-500">{{ $data['commune'] ?? '' }}</p>
+                    <h3 class="font-bold text-gray-900">{{ $data['residence']->name }}</h3>
+                    <p class="text-sm text-gray-500">{{ $data['residence']->commune ?? '' }}</p>
                 </div>
-                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold {{ $data['is_available'] ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
-                    {{ $data['is_available'] ? 'Disponible' : 'Indisponible' }}
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold {{ $data['residence']->is_available ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                    {{ $data['residence']->is_available ? 'Disponible' : 'Indisponible' }}
                 </span>
             </div>
 
             <div class="grid grid-cols-2 gap-3 mb-4">
                 <div class="p-3 bg-green-50 rounded-xl">
                     <p class="text-xs text-green-600 font-medium">Revenus</p>
-                    <p class="text-lg font-bold text-green-700">{{ number_format($data['revenue'], 0, ',', ' ') }}</p>
+                    <p class="text-lg font-bold text-green-700">{{ number_format($data['month_revenue'], 0, ',', ' ') }}</p>
                 </div>
                 <div class="p-3 bg-red-50 rounded-xl">
                     <p class="text-xs text-red-600 font-medium">Dépenses</p>
-                    <p class="text-lg font-bold text-red-700">{{ number_format($data['expenses'], 0, ',', ' ') }}</p>
+                    <p class="text-lg font-bold text-red-700">{{ number_format($data['month_expenses'], 0, ',', ' ') }}</p>
                 </div>
             </div>
 
@@ -77,9 +76,8 @@
                 <div class="flex items-center gap-4 text-xs text-gray-500 pt-1">
                     <span>🔧 {{ $data['open_maintenance'] }} maintenance</span>
                     <span>🧹 {{ $data['pending_cleaning'] }} ménage</span>
-                    @php $profit = $data['revenue'] - $data['expenses']; @endphp
-                    <span class="font-semibold {{ $profit >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                        {{ $profit >= 0 ? '+' : '' }}{{ number_format($profit, 0, ',', ' ') }} FCFA net
+                    <span class="font-semibold {{ $data['net_income'] >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                        {{ $data['net_income'] >= 0 ? '+' : '' }}{{ number_format($data['net_income'], 0, ',', ' ') }} FCFA net
                     </span>
                 </div>
             </div>

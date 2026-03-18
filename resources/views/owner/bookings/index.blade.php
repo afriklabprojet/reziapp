@@ -259,7 +259,7 @@
                                             <div class="w-20 h-16 rounded-xl overflow-hidden bg-gray-100">
                                                 <img loading="lazy"
                                                     src="{{ storage_url($booking->residence->photos->first()->path) }}"
-                                                    alt="" class="w-full h-full object-cover">
+                                                    alt="{{ $booking->residence->title ?? 'Résidence' }}" class="w-full h-full object-cover">
                                             </div>
                                         @else
                                             <div class="w-20 h-16 rounded-xl bg-gray-100 flex items-center justify-center">

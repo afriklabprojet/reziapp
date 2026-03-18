@@ -75,9 +75,9 @@ class EnsureOwnership
     private function isOwner($user, $resource, string $resourceType): bool
     {
         return match ($resourceType) {
-            'residence' => $resource->owner_id === $user->id,
-            'photo' => $resource->residence->owner_id === $user->id,
-            'contact' => $resource->owner_id === $user->id || $resource->user_id === $user->id,
+            'residence' => (int) $resource->owner_id === (int) $user->id,
+            'photo' => (int) $resource->residence->owner_id === (int) $user->id,
+            'contact' => (int) $resource->owner_id === (int) $user->id || (int) $resource->user_id === (int) $user->id,
             default => false,
         };
     }

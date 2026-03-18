@@ -28,6 +28,7 @@ class Conversation extends Model
         'owner_typing',
         'user_last_seen_at',
         'owner_last_seen_at',
+        'theme_color',
     ];
 
     protected $casts = [
@@ -47,6 +48,20 @@ class Conversation extends Model
     public const STATUS_ACTIVE = 'active';
     public const STATUS_ARCHIVED = 'archived';
     public const STATUS_BLOCKED = 'blocked';
+
+    /**
+     * Thèmes de couleur disponibles (style Messenger)
+     */
+    public const THEME_COLORS = [
+        'orange' => ['bg' => 'bg-orange-500', 'text' => 'text-white', 'hex' => '#f97316'],
+        'blue' => ['bg' => 'bg-blue-500', 'text' => 'text-white', 'hex' => '#3b82f6'],
+        'green' => ['bg' => 'bg-emerald-500', 'text' => 'text-white', 'hex' => '#10b981'],
+        'purple' => ['bg' => 'bg-purple-500', 'text' => 'text-white', 'hex' => '#8b5cf6'],
+        'pink' => ['bg' => 'bg-pink-500', 'text' => 'text-white', 'hex' => '#ec4899'],
+        'red' => ['bg' => 'bg-red-500', 'text' => 'text-white', 'hex' => '#ef4444'],
+        'yellow' => ['bg' => 'bg-amber-500', 'text' => 'text-white', 'hex' => '#f59e0b'],
+        'teal' => ['bg' => 'bg-teal-500', 'text' => 'text-white', 'hex' => '#14b8a6'],
+    ];
 
     /**
      * La résidence concernée

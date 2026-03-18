@@ -41,28 +41,28 @@ class PlatformSettings extends Page implements HasForms
         $settings = PlatformSetting::all()->keyBy('key');
 
         $this->commissionData = [
-            'commission_rate' => $settings['commission_rate']->value ?? 10,
-            'commission_min' => $settings['commission_min']->value ?? 1000,
-            'owner_payout_delay' => $settings['owner_payout_delay']->value ?? 48,
+            'commission_rate' => $settings->get('commission_rate')?->value ?? 10,
+            'commission_min' => $settings->get('commission_min')?->value ?? 1000,
+            'owner_payout_delay' => $settings->get('owner_payout_delay')?->value ?? 48,
         ];
 
         $this->paymentData = [
-            'min_booking_amount' => $settings['min_booking_amount']->value ?? 5000,
-            'max_booking_amount' => $settings['max_booking_amount']->value ?? 10000000,
-            'payment_methods' => json_decode($settings['payment_methods']->value ?? '[]', true),
+            'min_booking_amount' => $settings->get('min_booking_amount')?->value ?? 5000,
+            'max_booking_amount' => $settings->get('max_booking_amount')?->value ?? 10000000,
+            'payment_methods' => json_decode($settings->get('payment_methods')?->value ?? '[]', true),
         ];
 
         $this->bookingData = [
-            'min_booking_days' => $settings['min_booking_days']->value ?? 1,
-            'max_booking_days' => $settings['max_booking_days']->value ?? 365,
-            'advance_booking_days' => $settings['advance_booking_days']->value ?? 180,
+            'min_booking_days' => $settings->get('min_booking_days')?->value ?? 1,
+            'max_booking_days' => $settings->get('max_booking_days')?->value ?? 365,
+            'advance_booking_days' => $settings->get('advance_booking_days')?->value ?? 180,
         ];
 
         $this->generalData = [
-            'platform_name' => $settings['platform_name']->value ?? 'REZI',
-            'platform_email' => $settings['platform_email']->value ?? '',
-            'platform_phone' => $settings['platform_phone']->value ?? '',
-            'maintenance_mode' => (bool) ($settings['maintenance_mode']->value ?? false),
+            'platform_name' => $settings->get('platform_name')?->value ?? 'REZI',
+            'platform_email' => $settings->get('platform_email')?->value ?? '',
+            'platform_phone' => $settings->get('platform_phone')?->value ?? '',
+            'maintenance_mode' => (bool) ($settings->get('maintenance_mode')?->value ?? false),
         ];
     }
 

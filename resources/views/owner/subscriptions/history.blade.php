@@ -5,9 +5,9 @@
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     {{-- Header --}}
-    <div class="mb-8 flex items-center justify-between">
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900">Historique des paiements</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Historique des paiements</h1>
             <p class="mt-2 text-gray-600">Consultez tous vos paiements d'abonnement</p>
         </div>
         <a href="{{ route('owner.subscriptions.index') }}" class="btn-secondary">
@@ -21,6 +21,7 @@
     {{-- Payments Table --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         @if($payments->count() > 0)
+            <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
@@ -81,6 +82,7 @@
                     @endforeach
                 </tbody>
             </table>
+            </div>
 
             {{-- Pagination --}}
             <div class="px-6 py-4 border-t border-gray-200">

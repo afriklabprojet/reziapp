@@ -31,7 +31,7 @@ class LeaseContractController extends Controller
         $owner = $request->user();
 
         $contracts = LeaseContract::forOwner($owner->id)
-            ->with(['tenant:id,name,email,phone', 'residence:id,title,commune'])
+            ->with(['tenant:id,name,email,phone', 'residence:id,name,commune'])
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->status))
             ->when($request->filled('search'), fn ($q) => $q->whereHas('tenant', fn ($sq) =>
                 $sq->where('name', 'like', "%{$request->search}%")
@@ -51,10 +51,10 @@ class LeaseContractController extends Controller
     public function create(Request $request): View
     {
         $owner     = $request->user();
-        $residences = Residence::where('user_id', $owner->id)
+        $residences = Residence::where('owner_id', $owner->id)
             ->where('status', 'active')
-            ->select('id', 'title', 'commune')
-            ->orderBy('title')
+            ->select('id', 'name', 'commune')
+            ->orderBy('name')
             ->get();
 
         $bookingId = $request->query('booking_id');
@@ -63,7 +63,26 @@ class LeaseContractController extends Controller
             ->where('bookings.id', $bookingId)
             ->firstOrFail() : null;
 
-        return view('owner.lease-contracts.create', compact('residences', 'booking'));
+        // Récupérer les locataires (utilisateurs ayant réservé chez ce propriétaire + locataires existants via contrats)
+        $tenantIds = collect();
+
+        // Locataires via réservations
+        $tenantIds = $tenantIds->merge(
+            \Illuminate\Support\Facades\DB::table('bookings')
+                ->whereIn('residence_id', $owner->residences()->pluck('id'))
+                ->pluck('user_id')
+        );
+
+        // Locataires via contrats existants
+        $tenantIds = $tenantIds->merge(
+            LeaseContract::where('owner_id', $owner->id)->pluck('tenant_id')
+        );
+
+        $tenants = User::whereIn('id', $tenantIds->unique()->filter())
+            ->orderBy('name')
+            ->get();
+
+        return view('owner.lease-contracts.create', compact('residences', 'booking', 'tenants'));
     }
 
     public function store(StoreLeaseContractRequest $request): RedirectResponse
@@ -87,7 +106,8 @@ class LeaseContractController extends Controller
         $leaseContract->load([
             'tenant:id,name,email,phone',
             'owner:id,name,email,phone',
-            'residence:id,title,commune,address',
+            'residence:id,name,commune,address,surface_area,bedrooms',
+            'residence.photos',
             'booking',
             'rentReceipts' => fn ($q) => $q->orderByDesc('period_start')->limit(12),
         ]);
@@ -122,7 +142,7 @@ class LeaseContractController extends Controller
 
     public function sendToTenant(LeaseContract $leaseContract): RedirectResponse
     {
-        $this->authorize('update', $leaseContract);
+        $this->authorize('send', $leaseContract);
 
         try {
             $this->contractService->sendToTenant($leaseContract);
@@ -162,13 +182,19 @@ class LeaseContractController extends Controller
         $this->authorize('terminate', $leaseContract);
 
         $request->validate([
-            'termination_reason' => ['required', 'string', 'min:20', 'max:2000'],
+            'termination_reason' => ['required', 'string', 'in:mutual_agreement,tenant_request,owner_request,non_payment,breach_contract,end_of_term,other'],
+            'termination_notes'  => ['nullable', 'string', 'max:2000'],
         ]);
+
+        $reason = $request->termination_reason;
+        if ($request->filled('termination_notes')) {
+            $reason .= ' — ' . $request->termination_notes;
+        }
 
         $this->contractService->terminate(
             contract: $leaseContract,
             initiator: $request->user(),
-            reason: $request->termination_reason,
+            reason: $reason,
         );
 
         return redirect()

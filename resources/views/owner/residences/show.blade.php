@@ -197,7 +197,34 @@
                             {{ $residence->quartier }}, {{ $residence->commune }}
                         </p>
                     </div>
-                    <div id="map" class="h-64 bg-gray-200 rounded-lg" x-data="ownerResidenceMap(@js(['lat' => $residence->latitude, 'lng' => $residence->longitude, 'title' => $residence->name]))"></div>
+                    @if($residence->latitude && $residence->longitude)
+                        <div id="residence-map" class="h-64 rounded-lg overflow-hidden"></div>
+                        <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet">
+                        <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
+                        <style>.mapboxgl-ctrl-logo,.mapboxgl-ctrl-attrib{display:none!important;}</style>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                if (!window.mapboxgl) return;
+                                mapboxgl.accessToken = @js(config('services.mapbox.access_token'));
+                                var map = new mapboxgl.Map({
+                                    container: 'residence-map',
+                                    style: 'mapbox://styles/mapbox/streets-v12',
+                                    center: [{{ $residence->longitude }}, {{ $residence->latitude }}],
+                                    zoom: 15,
+                                    interactive: true
+                                });
+                                map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+                                new mapboxgl.Marker({ color: '#3B82F6' })
+                                    .setLngLat([{{ $residence->longitude }}, {{ $residence->latitude }}])
+                                    .setPopup(new mapboxgl.Popup().setHTML('<strong>{{ addslashes($residence->name) }}</strong><br>{{ addslashes($residence->address) }}'))
+                                    .addTo(map);
+                            });
+                        </script>
+                    @else
+                        <div class="h-64 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <p class="text-gray-500">Coordonnées GPS non renseignées</p>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Demandes de contact récentes -->
@@ -276,9 +303,9 @@
 
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
-                            <span class="text-gray-600">Par mois</span>
+                            <span class="text-gray-600">Par jour</span>
                             <span class="font-bold text-blue-600">
-                                {{ number_format($residence->price_per_month, 0, ',', ' ') }} FCFA
+                                {{ number_format($residence->price, 0, ',', ' ') }} FCFA
                             </span>
                         </div>
 

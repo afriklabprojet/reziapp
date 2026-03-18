@@ -38,6 +38,7 @@ class LeaseContract extends Model
         'lease_type',
         'monthly_rent',
         'deposit_amount',
+        'charges_amount',
         'currency',
         'payment_day',
         'special_clauses',
@@ -63,6 +64,7 @@ class LeaseContract extends Model
         'pdf_generated_at'    => 'datetime',
         'monthly_rent'        => 'decimal:2',
         'deposit_amount'      => 'decimal:2',
+        'charges_amount'      => 'decimal:2',
         'included_services'   => 'array',
         'payment_day'         => 'integer',
     ];

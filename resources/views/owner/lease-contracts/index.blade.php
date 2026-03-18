@@ -1,4 +1,4 @@
-@extends('layouts.owner')
+@extends('layouts.owner', ['sidebarActive' => 'lease-contracts'])
 
 @section('title', 'Contrats de bail')
 
@@ -38,7 +38,7 @@
             <div class="text-xs text-gray-500 mt-1">Résiliés</div>
         </div>
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 text-center">
-            <div class="text-2xl font-bold text-blue-600">{{ number_format($stats['total_monthly_revenue'] ?? 0, 0, ',', ' ') }}</div>
+            <div class="text-2xl font-bold text-blue-600">{{ number_format($stats['monthly_rent_total'] ?? 0, 0, ',', ' ') }}</div>
             <div class="text-xs text-gray-500 mt-1">FCFA/mois (actifs)</div>
         </div>
     </div>
@@ -95,9 +95,10 @@
                             <div class="font-medium text-gray-900">{{ $contract->tenant->name }}</div>
                             <div class="text-xs text-gray-400">{{ $contract->tenant->email }}</div>
                         </td>
-                        <td class="px-5 py-4 text-sm text-gray-700 max-w-36 truncate">{{ $contract->residence->title }}</td>
+                        <td class="px-5 py-4 text-sm text-gray-700 max-w-36 truncate">{{ $contract->residence->name }}</td>
                         <td class="px-5 py-4 text-sm font-semibold text-gray-900">
                             {{ number_format($contract->monthly_rent, 0, ',', ' ') }} FCFA
+                            <span class="block text-[10px] font-normal text-gray-400">{{ $contract->lease_type === 'short_term' ? '/nuit' : '/mois' }}</span>
                         </td>
                         <td class="px-5 py-4 text-xs text-gray-500">
                             {{ $contract->start_date->format('d/m/Y') }}

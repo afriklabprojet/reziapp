@@ -30,9 +30,10 @@ class CleaningTask extends Model
 
     protected $fillable = [
         'residence_id', 'owner_id', 'assigned_to', 'booking_id',
-        'scheduled_date', 'scheduled_time', 'status', 'checklist',
+        'scheduled_date', 'scheduled_time', 'estimated_duration', 'status',
+        'priority', 'checklist', 'special_instructions',
         'before_photos', 'after_photos', 'cost', 'notes',
-        'completed_at', 'verified_at',
+        'completed_at', 'verified_at', 'started_at',
     ];
 
     protected $casts = [

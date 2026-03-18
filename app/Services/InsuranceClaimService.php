@@ -13,7 +13,7 @@ class InsuranceClaimService
     public function getClaims(User $user, array $filters = []): LengthAwarePaginator
     {
         $query = InsuranceClaim::where('user_id', $user->id)
-            ->with('bookingInsurance');
+            ->with('bookingInsurance.booking.residence');
 
         if (!empty($filters['status'])) {
             $query->where('status', $filters['status']);

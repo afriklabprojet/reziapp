@@ -3,27 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\Events\UserTyping;
+use App\Http\Requests\Chat\EditMessageRequest;
+use App\Http\Requests\Chat\SendAttachmentRequest;
+use App\Http\Requests\Chat\SendMessageRequest;
 use App\Models\AutoReply;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\MessageReaction;
 use App\Models\MessageTemplate;
 use App\Models\Notification;
 use App\Models\Residence;
 use App\Models\SharedDocument;
 use App\Services\ChatService;
+use App\Services\LinkPreviewService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ChatController extends Controller
 {
     protected ChatService $chatService;
+    protected LinkPreviewService $linkPreviewService;
 
-    public function __construct(ChatService $chatService)
+    public function __construct(ChatService $chatService, LinkPreviewService $linkPreviewService)
     {
         $this->chatService = $chatService;
+        $this->linkPreviewService = $linkPreviewService;
     }
 
     /**
@@ -39,10 +47,8 @@ class ChatController extends Controller
 
         // Résidences disponibles pour démarrer une nouvelle conversation
         if ($user->isOwner()) {
-            // Les propriétaires voient leurs propres résidences
             $residences = $user->residences()->approved()->get(['id', 'name', 'commune']);
         } else {
-            // Les clients/admins voient toutes les résidences actives
             $residences = Residence::approved()->with('owner:id,name')->get(['id', 'name', 'commune', 'owner_id']);
         }
 
@@ -50,25 +56,36 @@ class ChatController extends Controller
     }
 
     /**
-     * Afficher une conversation
+     * Afficher une conversation avec pagination (50 derniers messages)
      */
     public function show(Request $request, Conversation $conversation): View
     {
-        $user = $request->user();
+        $this->authorize('view', $conversation);
 
-        // Vérifier l'accès
-        if ($conversation->user_id !== $user->id && $conversation->owner_id !== $user->id) {
-            abort(403);
-        }
+        $user = $request->user();
 
         // Charger les relations
         $conversation->load(['residence', 'user', 'owner', 'sharedDocuments']);
+
+        // Charger les 50 derniers messages (au lieu de tout charger)
         $messages = $conversation->messages()
-            ->with(['sender', 'template'])
-            ->get();
+            ->with(['sender', 'template', 'reactions'])
+            ->orderBy('id', 'desc')
+            ->limit(50)
+            ->get()
+            ->reverse()
+            ->values();
+
+        $hasMoreMessages = $conversation->messages()->count() > 50;
 
         // Marquer les messages comme lus
         $this->chatService->markAsRead($conversation, $user);
+
+        // Marquer les messages non-envoyés comme "délivrés"
+        $conversation->messages()
+            ->whereNull('delivered_at')
+            ->where('sender_id', '!=', $user->id)
+            ->update(['delivered_at' => now()]);
 
         // Obtenir les templates disponibles
         $templates = $this->chatService->getTemplatesForUser($user);
@@ -90,40 +107,51 @@ class ChatController extends Controller
         // Autres conversations pour la sidebar
         $conversations = $this->chatService->getUserConversations($user);
 
+        // "Dernière connexion" de l'autre participant
+        $other = $conversation->getOtherParticipant($user);
+        $otherLastSeen = $user->id === $conversation->user_id
+            ? $conversation->owner_last_seen_at
+            : $conversation->user_last_seen_at;
+
         return view('chat.show', compact(
             'conversation',
             'messages',
+            'hasMoreMessages',
             'templates',
             'quickReplies',
             'conversations',
+            'otherLastSeen',
         ));
     }
 
     /**
-     * Envoyer un message
+     * Envoyer un message (avec Form Request + reply_to + link preview)
      */
-    public function sendMessage(Request $request, Conversation $conversation): JsonResponse
+    public function sendMessage(SendMessageRequest $request, Conversation $conversation): JsonResponse
     {
+        $this->authorize('sendMessage', $conversation);
+
         $user = $request->user();
-
-        // Vérifier l'accès
-        if ($conversation->user_id !== $user->id && $conversation->owner_id !== $user->id) {
-            return response()->json(['error' => 'Accès non autorisé'], 403);
-        }
-
-        $validated = $request->validate([
-            'content' => 'required|string|max:5000',
-            'template_id' => 'nullable|exists:message_templates,id',
-        ]);
+        $validated = $request->validated();
 
         $message = $this->chatService->sendMessage(
             $conversation,
             $user,
             $validated['content'],
             $validated['template_id'] ?? null,
+            $validated['reply_to_id'] ?? null,
         );
 
-        $message->load(['sender']);
+        // Link preview (async-ish: on le fait après l'envoi)
+        $url = $this->linkPreviewService->extractFirstUrl($validated['content']);
+        if ($url) {
+            $preview = $this->linkPreviewService->extract($url);
+            if ($preview) {
+                $message->update(['link_preview' => $preview]);
+            }
+        }
+
+        $message->load(['sender', 'reactions']);
 
         return response()->json([
             'success' => true,
@@ -133,20 +161,14 @@ class ChatController extends Controller
     }
 
     /**
-     * Envoyer une pièce jointe
+     * Envoyer une pièce jointe (avec Form Request)
      */
-    public function sendAttachment(Request $request, Conversation $conversation): JsonResponse
+    public function sendAttachment(SendAttachmentRequest $request, Conversation $conversation): JsonResponse
     {
+        $this->authorize('sendMessage', $conversation);
+
         $user = $request->user();
-
-        if ($conversation->user_id !== $user->id && $conversation->owner_id !== $user->id) {
-            return response()->json(['error' => 'Accès non autorisé'], 403);
-        }
-
-        $validated = $request->validate([
-            'file' => 'required|file|max:10240', // 10MB max
-            'caption' => 'nullable|string|max:500',
-        ]);
+        $validated = $request->validated();
 
         $message = $this->chatService->sendAttachment(
             $conversation,
@@ -165,25 +187,11 @@ class ChatController extends Controller
     }
 
     /**
-     * Modifier un message
+     * Modifier un message (auth + 15min dans EditMessageRequest)
      */
-    public function editMessage(Request $request, Message $message): JsonResponse
+    public function editMessage(EditMessageRequest $request, Message $message): JsonResponse
     {
-        $user = $request->user();
-
-        if ($message->sender_id !== $user->id) {
-            return response()->json(['error' => 'Accès non autorisé'], 403);
-        }
-
-        // On ne peut modifier que dans les 15 minutes
-        if ($message->created_at->diffInMinutes(now()) > 15) {
-            return response()->json(['error' => 'Délai de modification dépassé'], 422);
-        }
-
-        $validated = $request->validate([
-            'content' => 'required|string|max:5000',
-        ]);
-
+        $validated = $request->validated();
         $message = $this->chatService->editMessage($message, $validated['content']);
 
         return response()->json([
@@ -209,15 +217,19 @@ class ChatController extends Controller
     }
 
     /**
-     * Marquer les messages comme lus
+     * Marquer les messages comme lus + delivered
      */
     public function markAsRead(Request $request, Conversation $conversation): JsonResponse
     {
+        $this->authorize('view', $conversation);
+
         $user = $request->user();
 
-        if ($conversation->user_id !== $user->id && $conversation->owner_id !== $user->id) {
-            return response()->json(['error' => 'Accès non autorisé'], 403);
-        }
+        // Marquer delivered_at en même temps
+        $conversation->messages()
+            ->whereNull('delivered_at')
+            ->where('sender_id', '!=', $user->id)
+            ->update(['delivered_at' => now()]);
 
         $count = $this->chatService->markAsRead($conversation, $user);
 
@@ -232,12 +244,7 @@ class ChatController extends Controller
      */
     public function archive(Request $request, Conversation $conversation): JsonResponse
     {
-        $user = $request->user();
-
-        if ($conversation->user_id !== $user->id && $conversation->owner_id !== $user->id) {
-            return response()->json(['error' => 'Accès non autorisé'], 403);
-        }
-
+        $this->authorize('archive', $conversation);
         $conversation->archive();
 
         return response()->json(['success' => true]);
@@ -248,12 +255,7 @@ class ChatController extends Controller
      */
     public function unarchive(Request $request, Conversation $conversation): JsonResponse
     {
-        $user = $request->user();
-
-        if ($conversation->user_id !== $user->id && $conversation->owner_id !== $user->id) {
-            return response()->json(['error' => 'Accès non autorisé'], 403);
-        }
-
+        $this->authorize('archive', $conversation);
         $conversation->unarchive();
 
         return response()->json(['success' => true]);
@@ -264,12 +266,7 @@ class ChatController extends Controller
      */
     public function pin(Request $request, Conversation $conversation): JsonResponse
     {
-        $user = $request->user();
-
-        if ($conversation->user_id !== $user->id && $conversation->owner_id !== $user->id) {
-            return response()->json(['error' => 'Accès non autorisé'], 403);
-        }
-
+        $this->authorize('pin', $conversation);
         $conversation->pin();
 
         return response()->json(['success' => true]);
@@ -280,12 +277,7 @@ class ChatController extends Controller
      */
     public function unpin(Request $request, Conversation $conversation): JsonResponse
     {
-        $user = $request->user();
-
-        if ($conversation->user_id !== $user->id && $conversation->owner_id !== $user->id) {
-            return response()->json(['error' => 'Accès non autorisé'], 403);
-        }
-
+        $this->authorize('pin', $conversation);
         $conversation->unpin();
 
         return response()->json(['success' => true]);
@@ -296,11 +288,7 @@ class ChatController extends Controller
      */
     public function mute(Request $request, Conversation $conversation): JsonResponse
     {
-        $user = $request->user();
-
-        if ($conversation->user_id !== $user->id && $conversation->owner_id !== $user->id) {
-            return response()->json(['error' => 'Accès non autorisé'], 403);
-        }
+        $this->authorize('mute', $conversation);
 
         $validated = $request->validate([
             'until' => 'nullable|date|after:now',
@@ -317,12 +305,7 @@ class ChatController extends Controller
      */
     public function unmute(Request $request, Conversation $conversation): JsonResponse
     {
-        $user = $request->user();
-
-        if ($conversation->user_id !== $user->id && $conversation->owner_id !== $user->id) {
-            return response()->json(['error' => 'Accès non autorisé'], 403);
-        }
-
+        $this->authorize('mute', $conversation);
         $conversation->unmute();
 
         return response()->json(['success' => true]);
@@ -367,12 +350,9 @@ class ChatController extends Controller
      */
     public function useTemplate(Request $request, Conversation $conversation, MessageTemplate $template): JsonResponse
     {
+        $this->authorize('sendMessage', $conversation);
+
         $user = $request->user();
-
-        if ($conversation->user_id !== $user->id && $conversation->owner_id !== $user->id) {
-            return response()->json(['error' => 'Accès non autorisé'], 403);
-        }
-
         $variables = $request->get('variables', []);
 
         $message = $this->chatService->useTemplate(
@@ -396,11 +376,9 @@ class ChatController extends Controller
      */
     public function shareDocument(Request $request, Conversation $conversation): JsonResponse
     {
-        $user = $request->user();
+        $this->authorize('sendMessage', $conversation);
 
-        if ($conversation->user_id !== $user->id && $conversation->owner_id !== $user->id) {
-            return response()->json(['error' => 'Accès non autorisé'], 403);
-        }
+        $user = $request->user();
 
         $validated = $request->validate([
             'document_id' => 'required|exists:shared_documents,id',
@@ -408,13 +386,11 @@ class ChatController extends Controller
 
         $document = SharedDocument::findOrFail($validated['document_id']);
 
-        // Vérifier que l'utilisateur possède ce document
         if ($document->user_id !== $user->id) {
             return response()->json(['error' => 'Accès non autorisé'], 403);
         }
 
         $message = $this->chatService->sendSharedDocument($conversation, $user, $document);
-
         $message->load('sender');
 
         return response()->json([
@@ -425,15 +401,13 @@ class ChatController extends Controller
     }
 
     /**
-     * Obtenir les nouveaux messages (polling fallback)
+     * Obtenir les nouveaux messages (polling fallback) + marquer delivered
      */
     public function getNewMessages(Request $request, Conversation $conversation): JsonResponse
     {
-        $user = $request->user();
+        $this->authorize('view', $conversation);
 
-        if ($conversation->user_id !== $user->id && $conversation->owner_id !== $user->id) {
-            return response()->json(['error' => 'Accès non autorisé'], 403);
-        }
+        $user = $request->user();
 
         $validated = $request->validate([
             'after' => 'required|integer',
@@ -444,6 +418,15 @@ class ChatController extends Controller
             ->with(['sender'])
             ->get();
 
+        // Marquer les nouveaux messages comme délivrés
+        if ($messages->isNotEmpty()) {
+            $conversation->messages()
+                ->whereIn('id', $messages->pluck('id'))
+                ->whereNull('delivered_at')
+                ->where('sender_id', '!=', $user->id)
+                ->update(['delivered_at' => now()]);
+        }
+
         return response()->json([
             'success' => true,
             'messages' => $messages,
@@ -452,16 +435,13 @@ class ChatController extends Controller
     }
 
     /**
-     * Charger les messages avec pagination (scroll infini)
+     * Charger les messages avec pagination (scroll infini vers le haut)
      */
     public function loadMessages(Request $request, Conversation $conversation): JsonResponse
     {
+        $this->authorize('view', $conversation);
+
         $user = $request->user();
-
-        if ($conversation->user_id !== $user->id && $conversation->owner_id !== $user->id) {
-            return response()->json(['error' => 'Non autorisé'], 403);
-        }
-
         $beforeId = $request->query('before');
         $limit = 50;
 
@@ -479,7 +459,7 @@ class ChatController extends Controller
 
         $hasMore = $messages->count() > $limit;
         if ($hasMore) {
-            $messages = $messages->slice(1);
+            $messages = $messages->slice(1)->values();
         }
 
         return response()->json([
@@ -487,10 +467,18 @@ class ChatController extends Controller
                 return [
                     'id' => $m->id,
                     'content' => $m->content,
+                    'sender_id' => $m->sender_id,
                     'is_own' => $m->sender_id === $user->id,
-                    'created_at' => $m->created_at->toISOString(),
-                    'status' => $m->read_at ? 'read' : ($m->delivered_at ? 'delivered' : 'sent'),
+                    'type' => $m->type,
                     'attachments' => $m->attachments,
+                    'metadata' => $m->metadata,
+                    'is_auto_reply' => $m->is_auto_reply,
+                    'created_at' => $m->created_at->toISOString(),
+                    'read_at' => $m->read_at?->toISOString(),
+                    'delivered_at' => $m->delivered_at?->toISOString(),
+                    'status' => $m->read_at ? 'read' : ($m->delivered_at ? 'delivered' : 'sent'),
+                    'sender_name' => $m->sender?->name,
+                    'sender_avatar' => $m->sender?->getAvatarUrl(),
                 ];
             }),
             'has_more' => $hasMore,
@@ -510,12 +498,10 @@ class ChatController extends Controller
         $user = $request->user();
         $residence = Residence::findOrFail($request->residence_id);
 
-        // Empêcher le propriétaire de discuter avec lui-même
         if ($residence->owner_id === $user->id && !$request->has('user_id')) {
             return back()->with('error', 'Vous ne pouvez pas vous envoyer un message.');
         }
 
-        // Déterminer les rôles
         if ($residence->owner_id === $user->id && $request->has('user_id')) {
             $searchUserId = $request->user_id;
             $ownerId = $user->id;
@@ -524,7 +510,6 @@ class ChatController extends Controller
             $ownerId = $residence->owner_id;
         }
 
-        // Chercher ou créer la conversation
         $conversation = Conversation::firstOrCreate(
             [
                 'residence_id' => $residence->id,
@@ -536,11 +521,9 @@ class ChatController extends Controller
             ],
         );
 
-        // Si un message initial est fourni
         if ($request->filled('message')) {
             $this->chatService->sendMessage($conversation, $user, $request->message);
 
-            // Notifier l'autre participant
             $otherParticipant = $conversation->getOtherParticipant($user);
             Notification::send(
                 $otherParticipant,
@@ -560,12 +543,9 @@ class ChatController extends Controller
      */
     public function typing(Request $request, Conversation $conversation): JsonResponse
     {
+        $this->authorize('view', $conversation);
+
         $user = $request->user();
-
-        if ($conversation->user_id !== $user->id && $conversation->owner_id !== $user->id) {
-            return response()->json(['error' => 'Accès non autorisé'], 403);
-        }
-
         broadcast(new UserTyping($conversation->id, $user))->toOthers();
 
         return response()->json(['success' => true]);
@@ -576,18 +556,11 @@ class ChatController extends Controller
      */
     public function block(Request $request, Conversation $conversation): JsonResponse|RedirectResponse
     {
+        $this->authorize('block', $conversation);
+
         $user = $request->user();
-
-        if ($conversation->user_id !== $user->id && $conversation->owner_id !== $user->id) {
-            if ($request->wantsJson()) {
-                return response()->json(['error' => 'Accès non autorisé'], 403);
-            }
-            abort(403);
-        }
-
         $conversation->block();
 
-        // Notifier l'autre utilisateur
         $otherParticipant = $conversation->getOtherParticipant($user);
         Notification::send(
             $otherParticipant,
@@ -613,11 +586,7 @@ class ChatController extends Controller
      */
     public function destroy(Request $request, Conversation $conversation): RedirectResponse
     {
-        $user = $request->user();
-
-        if ($conversation->user_id !== $user->id && $conversation->owner_id !== $user->id) {
-            abort(403);
-        }
+        $this->authorize('delete', $conversation);
 
         $conversation->delete();
 
@@ -633,12 +602,8 @@ class ChatController extends Controller
         $user = $request->user();
         $conversation = $message->conversation;
 
-        // Vérifier l'accès à la conversation
-        if ($conversation->user_id !== $user->id && $conversation->owner_id !== $user->id) {
-            abort(403);
-        }
+        $this->authorize('view', $conversation);
 
-        // Vérifier que le message a des pièces jointes
         $attachments = $message->attachments;
         if (!$attachments || !isset($attachments[$index])) {
             abort(404, 'Fichier non trouvé');
@@ -651,8 +616,284 @@ class ChatController extends Controller
             return back()->with('error', 'Fichier introuvable');
         }
 
-        $filename = $attachment['name'] ?? 'fichier';
+        return response()->download($path, $attachment['name'] ?? 'fichier');
+    }
 
-        return response()->download($path, $filename);
+    // =========================================================================
+    // MESSENGER-LIKE FEATURES
+    // =========================================================================
+
+    /**
+     * Ajouter / retirer une réaction emoji sur un message
+     */
+    public function toggleReaction(Request $request, Message $message): JsonResponse
+    {
+        $user = $request->user();
+        $conversation = $message->conversation;
+        $this->authorize('view', $conversation);
+
+        $validated = $request->validate([
+            'emoji' => 'required|string|max:10',
+        ]);
+
+        $emoji = $validated['emoji'];
+
+        if (!in_array($emoji, MessageReaction::ALLOWED_EMOJIS)) {
+            return response()->json(['error' => 'Emoji non autorisé'], 422);
+        }
+
+        // Toggle: si déjà réagi avec le même emoji, on supprime
+        $existing = MessageReaction::where('message_id', $message->id)
+            ->where('user_id', $user->id)
+            ->where('emoji', $emoji)
+            ->first();
+
+        if ($existing) {
+            $existing->delete();
+            $action = 'removed';
+        } else {
+            MessageReaction::create([
+                'message_id' => $message->id,
+                'user_id' => $user->id,
+                'emoji' => $emoji,
+            ]);
+            $action = 'added';
+        }
+
+        $reactions = $message->fresh()->getGroupedReactions();
+
+        return response()->json([
+            'success' => true,
+            'action' => $action,
+            'reactions' => $reactions,
+        ]);
+    }
+
+    /**
+     * Changer le thème couleur d'une conversation
+     */
+    public function changeTheme(Request $request, Conversation $conversation): JsonResponse
+    {
+        $this->authorize('view', $conversation);
+
+        $validated = $request->validate([
+            'color' => 'required|string|in:' . implode(',', array_keys(Conversation::THEME_COLORS)),
+        ]);
+
+        $conversation->update(['theme_color' => $validated['color']]);
+
+        return response()->json([
+            'success' => true,
+            'theme' => Conversation::THEME_COLORS[$validated['color']],
+        ]);
+    }
+
+    /**
+     * Envoyer un message vocal (audio blob)
+     */
+    public function sendVoice(Request $request, Conversation $conversation): JsonResponse
+    {
+        $this->authorize('sendMessage', $conversation);
+
+        $request->validate([
+            'audio' => 'required|file|mimes:webm,ogg,mp3,m4a,wav|max:5120', // 5Mo max
+        ]);
+
+        $user = $request->user();
+        $file = $request->file('audio');
+        $duration = $request->input('duration', 0); // durée en secondes
+
+        $path = $file->store('voice_messages/' . $conversation->id, 'private');
+
+        $message = $conversation->messages()->create([
+            'sender_id' => $user->id,
+            'content' => '', // Pas de texte
+            'type' => Message::TYPE_VOICE,
+            'attachments' => [[
+                'path' => $path,
+                'name' => 'Voice message',
+                'mime' => $file->getMimeType(),
+                'size' => $file->getSize(),
+                'duration' => (int) $duration,
+            ]],
+            'metadata' => ['duration' => (int) $duration],
+        ]);
+
+        $conversation->update(['last_message_at' => now()]);
+
+        // Incrémenter unread counter
+        if ($user->id === $conversation->user_id) {
+            $conversation->update(['unread_owner_count' => \DB::raw('unread_owner_count + 1')]);
+        } else {
+            $conversation->update(['unread_user_count' => \DB::raw('unread_user_count + 1')]);
+        }
+
+        $message->load('sender');
+        broadcast(new \App\Events\MessageSent($message))->toOthers();
+
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'html' => view('chat.partials.message', compact('message'))->render(),
+        ]);
+    }
+
+    /**
+     * Envoyer un GIF (via URL Tenor/Giphy)
+     */
+    public function sendGif(Request $request, Conversation $conversation): JsonResponse
+    {
+        $this->authorize('sendMessage', $conversation);
+
+        $validated = $request->validate([
+            'gif_url' => 'required|url|max:500',
+            'preview_url' => 'nullable|url|max:500',
+            'width' => 'nullable|integer',
+            'height' => 'nullable|integer',
+        ]);
+
+        $user = $request->user();
+
+        $message = $conversation->messages()->create([
+            'sender_id' => $user->id,
+            'content' => '',
+            'type' => Message::TYPE_GIF,
+            'metadata' => [
+                'gif_url' => $validated['gif_url'],
+                'preview_url' => $validated['preview_url'] ?? $validated['gif_url'],
+                'width' => $validated['width'] ?? null,
+                'height' => $validated['height'] ?? null,
+            ],
+        ]);
+
+        $conversation->update(['last_message_at' => now()]);
+
+        if ($user->id === $conversation->user_id) {
+            $conversation->update(['unread_owner_count' => \DB::raw('unread_owner_count + 1')]);
+        } else {
+            $conversation->update(['unread_user_count' => \DB::raw('unread_user_count + 1')]);
+        }
+
+        $message->load('sender');
+        broadcast(new \App\Events\MessageSent($message))->toOthers();
+
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'html' => view('chat.partials.message', compact('message'))->render(),
+        ]);
+    }
+
+    /**
+     * Rechercher les GIFs via Tenor API v2
+     */
+    public function searchGifs(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'q' => 'required|string|min:1|max:50',
+        ]);
+
+        $apiKey = config('services.tenor.key', 'AIzaSyDqhF8PfGFfJaGp_UZLzlNOMQ3Vszjf3bQ'); // Clé publique Tenor
+        $limit = 20;
+
+        try {
+            $response = Http::timeout(5)->get('https://tenor.googleapis.com/v2/search', [
+                'q' => $validated['q'],
+                'key' => $apiKey,
+                'client_key' => 'rezi_app',
+                'limit' => $limit,
+                'media_filter' => 'gif,tinygif',
+                'locale' => 'fr_FR',
+            ]);
+
+            if ($response->successful()) {
+                $results = collect($response->json('results', []))->map(function ($gif) {
+                    return [
+                        'id' => $gif['id'],
+                        'url' => $gif['media_formats']['gif']['url'] ?? '',
+                        'preview' => $gif['media_formats']['tinygif']['url'] ?? ($gif['media_formats']['gif']['url'] ?? ''),
+                        'width' => $gif['media_formats']['gif']['dims'][0] ?? 200,
+                        'height' => $gif['media_formats']['gif']['dims'][1] ?? 200,
+                    ];
+                });
+
+                return response()->json(['success' => true, 'gifs' => $results]);
+            }
+        } catch (\Exception $e) {
+            // fallback silencieux
+        }
+
+        return response()->json(['success' => false, 'gifs' => []]);
+    }
+
+    /**
+     * Rechercher dans les messages d'une conversation spécifique
+     */
+    public function searchInConversation(Request $request, Conversation $conversation): JsonResponse
+    {
+        $this->authorize('view', $conversation);
+
+        $validated = $request->validate([
+            'q' => 'required|string|min:2|max:100',
+        ]);
+
+        $search = str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $validated['q']);
+
+        $messages = $conversation->messages()
+            ->where('content', 'like', "%{$search}%")
+            ->where('type', 'text')
+            ->orderBy('created_at', 'desc')
+            ->limit(30)
+            ->get(['id', 'content', 'sender_id', 'created_at'])
+            ->map(fn ($m) => [
+                'id' => $m->id,
+                'content' => $m->content,
+                'is_own' => $m->sender_id === $request->user()->id,
+                'date' => $m->created_at->diffForHumans(),
+            ]);
+
+        return response()->json(['success' => true, 'results' => $messages]);
+    }
+
+    /**
+     * Extraire un aperçu de lien (endpoint AJAX)
+     */
+    public function linkPreview(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'url' => 'required|url|max:500',
+        ]);
+
+        $preview = $this->linkPreviewService->extract($validated['url']);
+
+        return response()->json([
+            'success' => $preview !== null,
+            'preview' => $preview,
+        ]);
+    }
+
+    /**
+     * Stream audio vocal
+     */
+    public function streamVoice(Request $request, Message $message): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        $user = $request->user();
+        $conversation = $message->conversation;
+        $this->authorize('view', $conversation);
+
+        if ($message->type !== Message::TYPE_VOICE || empty($message->attachments)) {
+            abort(404);
+        }
+
+        $attachment = $message->attachments[0];
+        $path = Storage::disk('private')->path($attachment['path']);
+
+        if (!file_exists($path)) {
+            abort(404);
+        }
+
+        return response()->file($path, [
+            'Content-Type' => $attachment['mime'] ?? 'audio/webm',
+        ]);
     }
 }

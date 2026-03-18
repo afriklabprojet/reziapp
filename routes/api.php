@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BookingApiController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\GeoSearchController;
 use App\Http\Controllers\Api\LocationController;
+use App\Http\Controllers\Api\PaymentApiController;
 use App\Http\Controllers\Api\ResidenceController;
 use App\Http\Controllers\Webhook\JekoWebhookController;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +27,9 @@ use Illuminate\Support\Facades\Route;
 Route::post('/webhooks/jeko', [JekoWebhookController::class, 'handle'])
     ->name('webhooks.jeko');
 
+// Alias pour URL webhook configurée dans Jeko dashboard
+Route::post('/webhooks', [JekoWebhookController::class, 'handle']);
+
 // WhatsApp Business API Webhook
 Route::prefix('webhooks/whatsapp')->group(function () {
     Route::get('/', [\App\Http\Controllers\Api\WhatsAppWebhookController::class, 'verify'])
@@ -34,6 +39,22 @@ Route::prefix('webhooks/whatsapp')->group(function () {
 });
 
 Route::prefix('v1')->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | Health Check (monitoring / uptime)
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/health', function () {
+        $health = \Illuminate\Support\Facades\Cache::get('system:health', []);
+        $allOk = empty($health) || collect($health)->every(fn ($c) => $c['status'] === 'ok');
+        return response()->json([
+            'success' => true,
+            'status' => $allOk ? 'healthy' : 'degraded',
+            'components' => $health,
+            'timestamp' => now()->toIso8601String(),
+        ], $allOk ? 200 : 503);
+    })->name('api.health');
 
     /*
     |--------------------------------------------------------------------------
@@ -129,6 +150,26 @@ Route::prefix('v1')->group(function () {
             Route::get('/zones/{zone}/stats', [GeoSearchController::class, 'zoneStats'])
                 ->name('zones.stats');
         });
+
+        /*
+        |----------------------------------------------------------------------
+        | Maps API — POI, Directions, Isochrone, Street View, Geocoding
+        |----------------------------------------------------------------------
+        */
+        Route::prefix('maps')->name('api.maps.')->group(function () {
+            Route::get('/residences/{residence}/nearby', [\App\Http\Controllers\Api\MapsController::class, 'nearbyPlaces'])
+                ->name('nearby');
+            Route::get('/residences/{residence}/directions', [\App\Http\Controllers\Api\MapsController::class, 'directions'])
+                ->name('directions');
+            Route::get('/residences/{residence}/isochrone', [\App\Http\Controllers\Api\MapsController::class, 'isochrone'])
+                ->name('isochrone');
+            Route::get('/residences/{residence}/streetview', [\App\Http\Controllers\Api\MapsController::class, 'streetView'])
+                ->name('streetview');
+            Route::post('/reverse-geocode', [\App\Http\Controllers\Api\MapsController::class, 'reverseGeocode'])
+                ->name('reverse-geocode');
+            Route::post('/validate-address', [\App\Http\Controllers\Api\MapsController::class, 'validateAddress'])
+                ->name('validate-address');
+        });
     });
 
     /*
@@ -171,6 +212,10 @@ Route::prefix('v1')->group(function () {
         Route::post('/residences/{residence}/view', [ResidenceController::class, 'recordView'])
             ->name('api.residences.view');
 
+        // Calculate price before booking
+        Route::post('/residences/{residence}/price', [BookingApiController::class, 'calculatePrice'])
+            ->name('api.residences.price');
+
         // Contact propriétaire (rate limited)
         Route::post('/residences/{residence}/contact', [ContactController::class, 'store'])
             ->middleware('throttle:contact')
@@ -179,6 +224,74 @@ Route::prefix('v1')->group(function () {
         // Mes contacts
         Route::get('/contacts', [ContactController::class, 'index'])
             ->name('api.contacts.index');
+
+        /*
+        |----------------------------------------------------------------------
+        | Bookings (mobile flow: create → pay → confirm)
+        |----------------------------------------------------------------------
+        */
+        Route::prefix('bookings')->name('api.bookings.')->group(function () {
+            Route::get('/', [BookingApiController::class, 'index'])->name('index');
+            Route::post('/', [BookingApiController::class, 'store'])
+                ->middleware('throttle:booking')
+                ->name('store');
+            Route::get('/{booking}', [BookingApiController::class, 'show'])->name('show');
+            Route::post('/{booking}/cancel', [BookingApiController::class, 'cancel'])->name('cancel');
+        });
+
+        /*
+        |----------------------------------------------------------------------
+        | Payments (mobile flow: initiate → OTP → status poll)
+        |----------------------------------------------------------------------
+        */
+        Route::prefix('payments')->name('api.payments.')->group(function () {
+            Route::get('/', [PaymentApiController::class, 'history'])->name('history');
+            Route::post('/initiate/{booking}', [PaymentApiController::class, 'initiate'])
+                ->middleware('throttle:payment')
+                ->name('initiate');
+            Route::post('/verify-otp/{payment}', [PaymentApiController::class, 'verifyOtp'])
+                ->middleware('throttle:otp')
+                ->name('verify-otp');
+            Route::get('/{payment}/status', [PaymentApiController::class, 'status'])->name('status');
+            Route::get('/operators', [PaymentApiController::class, 'operators'])->name('operators');
+            Route::get('/methods', [PaymentApiController::class, 'methods'])->name('methods');
+            Route::post('/methods', [PaymentApiController::class, 'storeMethod'])->name('methods.store');
+            Route::delete('/methods/{method}', [PaymentApiController::class, 'deleteMethod'])->name('methods.delete');
+        });
+
+        /*
+        |----------------------------------------------------------------------
+        | Onboarding — checklist for new users (mobile first-run)
+        |----------------------------------------------------------------------
+        */
+        Route::get('/onboarding', function (\Illuminate\Http\Request $request) {
+            $user = $request->user();
+            $hasBooking = \App\Models\Booking::where('user_id', $user->id)->exists();
+            $hasPayment = \App\Models\Payment::where('user_id', $user->id)->where('status', 'completed')->exists();
+            $hasProfile = ! empty($user->phone) && ! empty($user->name);
+            $hasVerifiedEmail = ! is_null($user->email_verified_at);
+
+            $steps = [
+                ['key' => 'profile', 'label' => 'Compléter votre profil', 'done' => $hasProfile],
+                ['key' => 'email_verified', 'label' => 'Vérifier votre email', 'done' => $hasVerifiedEmail],
+                ['key' => 'first_search', 'label' => 'Rechercher une résidence', 'done' => true], // always true if they reach this
+                ['key' => 'first_booking', 'label' => 'Faire votre première réservation', 'done' => $hasBooking],
+                ['key' => 'first_payment', 'label' => 'Effectuer un paiement', 'done' => $hasPayment],
+            ];
+
+            $completedCount = collect($steps)->where('done', true)->count();
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'steps' => $steps,
+                    'progress' => round(($completedCount / count($steps)) * 100),
+                    'completed' => $completedCount,
+                    'total' => count($steps),
+                    'all_done' => $completedCount === count($steps),
+                ],
+            ]);
+        })->name('api.onboarding');
     });
 
     /*
@@ -305,7 +418,6 @@ Route::prefix('v1')->group(function () {
     */
 
     Route::middleware(['auth:sanctum', 'throttle:api'])
-        ->prefix('v1')
         ->name('api.v1.')
         ->group(function () {
             // Support tickets

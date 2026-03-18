@@ -13,6 +13,8 @@ use App\Services\GeolocationService;
 use App\Services\ResidenceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class ResidenceController extends Controller
 {
@@ -27,10 +29,16 @@ class ResidenceController extends Controller
      */
     public function index(Request $request): ResidenceCollection
     {
-        $residences = Residence::approved()
-            ->with(['owner', 'photos', 'amenities'])
-            ->latest()
-            ->paginate($request->get('per_page', 20));
+        $perPage = min(50, max(1, (int) $request->get('per_page', 20)));
+        $page = max(1, (int) $request->get('page', 1));
+        $cacheKey = "api:residences:list:page_{$page}:per_{$perPage}";
+
+        $residences = Cache::remember($cacheKey, 300, function () use ($perPage) {
+            return Residence::approved()
+                ->with(['owner:id,name,profile_photo', 'photos', 'amenities'])
+                ->latest()
+                ->paginate($perPage);
+        });
 
         return new ResidenceCollection($residences);
     }
@@ -73,14 +81,28 @@ class ResidenceController extends Controller
                 $request->user(),
             );
 
+            Log::info('Résidence créée via API', [
+                'residence_id' => $residence->id,
+                'owner_id' => $request->user()->id,
+            ]);
+
+            // Invalider le cache des listes
+            Cache::forget('api:residences:list:page_1:per_20');
+
             return response()->json([
+                'success' => true,
                 'message' => 'Résidence créée avec succès. En attente d\'approbation.',
                 'data' => new ResidenceResource($residence->load(['owner', 'photos', 'amenities'])),
             ], 201);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Erreur lors de la création de la résidence.',
+            Log::error('Erreur création résidence API', [
+                'owner_id' => $request->user()->id,
                 'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la création de la résidence.',
             ], 500);
         }
     }
@@ -90,7 +112,7 @@ class ResidenceController extends Controller
      */
     public function show(Residence $residence): ResidenceResource
     {
-        $residence->load(['owner', 'photos', 'amenities']);
+        $residence->load(['owner:id,name,profile_photo,created_at', 'photos', 'amenities']);
 
         return new ResidenceResource($residence);
     }
@@ -103,14 +125,25 @@ class ResidenceController extends Controller
         try {
             $updated = $this->residenceService->update($residence, $request->validated());
 
+            Log::info('Résidence mise à jour via API', [
+                'residence_id' => $residence->id,
+                'owner_id' => $request->user()->id,
+            ]);
+
             return response()->json([
+                'success' => true,
                 'message' => 'Résidence mise à jour avec succès.',
                 'data' => new ResidenceResource($updated->load(['owner', 'photos', 'amenities'])),
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Erreur lors de la mise à jour de la résidence.',
+            Log::error('Erreur mise à jour résidence API', [
+                'residence_id' => $residence->id,
                 'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la mise à jour de la résidence.',
             ], 500);
         }
     }
@@ -121,15 +154,24 @@ class ResidenceController extends Controller
     public function destroy(Residence $residence): JsonResponse
     {
         try {
+            $residenceId = $residence->id;
             $this->residenceService->delete($residence);
 
+            Log::info('Résidence supprimée via API', ['residence_id' => $residenceId]);
+
             return response()->json([
+                'success' => true,
                 'message' => 'Résidence supprimée avec succès.',
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Erreur lors de la suppression de la résidence.',
+            Log::error('Erreur suppression résidence API', [
+                'residence_id' => $residence->id,
                 'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la suppression de la résidence.',
             ], 500);
         }
     }
@@ -163,10 +205,12 @@ class ResidenceController extends Controller
      */
     public function ownerResidences(Request $request): ResidenceCollection
     {
+        $perPage = min(50, max(1, (int) $request->get('per_page', 20)));
+
         $residences = Residence::where('owner_id', $request->user()->id)
             ->with(['photos', 'amenities'])
             ->latest()
-            ->paginate($request->get('per_page', 20));
+            ->paginate($perPage);
 
         return new ResidenceCollection($residences);
     }
@@ -176,13 +220,16 @@ class ResidenceController extends Controller
      */
     public function communes(): JsonResponse
     {
-        $communes = Residence::approved()
-            ->distinct()
-            ->pluck('commune')
-            ->sort()
-            ->values();
+        $communes = Cache::remember('api:communes', 3600, function () {
+            return Residence::approved()
+                ->distinct()
+                ->pluck('commune')
+                ->sort()
+                ->values();
+        });
 
         return response()->json([
+            'success' => true,
             'data' => $communes,
         ]);
     }
@@ -192,15 +239,19 @@ class ResidenceController extends Controller
      */
     public function quartiers(string $commune): JsonResponse
     {
-        $quartiers = Residence::approved()
-            ->where('commune', $commune)
-            ->distinct()
-            ->pluck('quartier')
-            ->filter()
-            ->sort()
-            ->values();
+        $safeCom = substr($commune, 0, 100);
+        $quartiers = Cache::remember('api:quartiers:' . md5($safeCom), 3600, function () use ($safeCom) {
+            return Residence::approved()
+                ->where('commune', $safeCom)
+                ->distinct()
+                ->pluck('quartier')
+                ->filter()
+                ->sort()
+                ->values();
+        });
 
         return response()->json([
+            'success' => true,
             'data' => $quartiers,
         ]);
     }
@@ -210,11 +261,14 @@ class ResidenceController extends Controller
      */
     public function amenities(): JsonResponse
     {
-        $amenities = \App\Models\Amenity::orderBy('name')
-            ->select(['id', 'name', 'icon', 'category'])
-            ->get();
+        $amenities = Cache::remember('api:amenities', 3600, function () {
+            return \App\Models\Amenity::orderBy('name')
+                ->select(['id', 'name', 'icon', 'category'])
+                ->get();
+        });
 
         return response()->json([
+            'success' => true,
             'data' => $amenities,
         ]);
     }
@@ -224,11 +278,14 @@ class ResidenceController extends Controller
      */
     public function cancellationPolicies(): JsonResponse
     {
-        $policies = \App\Models\CancellationPolicy::orderBy('name')
-            ->select(['id', 'name', 'description', 'refund_percentage'])
-            ->get();
+        $policies = Cache::remember('api:cancellation_policies', 3600, function () {
+            return \App\Models\CancellationPolicy::orderBy('name')
+                ->select(['id', 'name', 'description', 'refund_percentage'])
+                ->get();
+        });
 
         return response()->json([
+            'success' => true,
             'data' => $policies,
         ]);
     }
@@ -263,17 +320,22 @@ class ResidenceController extends Controller
      */
     public function ownerStatistics(Request $request): JsonResponse
     {
-        $user = $request->user();
-        $residences = Residence::where('owner_id', $user->id);
+        $userId = $request->user()->id;
+
+        // Single query with conditional aggregation (pas de N+1)
+        $stats = Residence::where('owner_id', $userId)
+            ->selectRaw("
+                COUNT(*) as total_residences,
+                SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_residences,
+                SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_residences,
+                COALESCE(SUM(views_count), 0) as total_views,
+                COALESCE(SUM(contacts_count), 0) as total_contacts
+            ")
+            ->first();
 
         return response()->json([
-            'data' => [
-                'total_residences' => $residences->count(),
-                'active_residences' => (clone $residences)->where('status', 'active')->count(),
-                'pending_residences' => (clone $residences)->where('status', 'pending')->count(),
-                'total_views' => (clone $residences)->sum('views_count'),
-                'total_contacts' => (clone $residences)->sum('contacts_count'),
-            ],
+            'success' => true,
+            'data' => $stats,
         ]);
     }
 
@@ -282,15 +344,28 @@ class ResidenceController extends Controller
      */
     public function adminStatistics(): JsonResponse
     {
+        $stats = Cache::remember('api:admin:stats', 300, function () {
+            $residenceStats = Residence::selectRaw("
+                COUNT(*) as total_residences,
+                SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_residences,
+                SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_residences,
+                SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected_residences
+            ")->first();
+
+            $userStats = \App\Models\User::selectRaw("
+                COUNT(*) as total_users,
+                SUM(CASE WHEN role = 'owner' THEN 1 ELSE 0 END) as total_owners
+            ")->first();
+
+            return array_merge(
+                $residenceStats->toArray(),
+                $userStats->toArray(),
+            );
+        });
+
         return response()->json([
-            'data' => [
-                'total_residences' => Residence::count(),
-                'active_residences' => Residence::where('status', 'active')->count(),
-                'pending_residences' => Residence::where('status', 'pending')->count(),
-                'rejected_residences' => Residence::where('status', 'rejected')->count(),
-                'total_users' => \App\Models\User::count(),
-                'total_owners' => \App\Models\User::where('role', 'owner')->count(),
-            ],
+            'success' => true,
+            'data' => $stats,
         ]);
     }
 
@@ -299,10 +374,12 @@ class ResidenceController extends Controller
      */
     public function pendingResidences(Request $request): ResidenceCollection
     {
+        $perPage = min(50, max(1, (int) $request->get('per_page', 20)));
+
         $residences = Residence::where('status', 'pending')
-            ->with(['owner', 'photos'])
+            ->with(['owner:id,name,email', 'photos'])
             ->latest()
-            ->paginate($request->get('per_page', 20));
+            ->paginate($perPage);
 
         return new ResidenceCollection($residences);
     }
@@ -310,11 +387,21 @@ class ResidenceController extends Controller
     /**
      * Approuver une résidence (admin).
      */
-    public function approve(Residence $residence): JsonResponse
+    public function approve(Request $request, Residence $residence): JsonResponse
     {
         $residence->update(['status' => 'active']);
 
+        Log::info('Résidence approuvée', [
+            'admin_id' => $request->user()->id,
+            'residence_id' => $residence->id,
+        ]);
+
+        // Invalider les caches
+        Cache::forget('api:admin:stats');
+        Cache::forget('api:residences:list:page_1:per_20');
+
         return response()->json([
+            'success' => true,
             'message' => 'Résidence approuvée.',
             'data' => new ResidenceResource($residence),
         ]);
@@ -334,7 +421,16 @@ class ResidenceController extends Controller
             'rejection_reason' => $request->input('reason'),
         ]);
 
+        Log::info('Résidence rejetée', [
+            'admin_id' => $request->user()->id,
+            'residence_id' => $residence->id,
+            'reason' => $request->input('reason'),
+        ]);
+
+        Cache::forget('api:admin:stats');
+
         return response()->json([
+            'success' => true,
             'message' => 'Résidence rejetée.',
             'data' => new ResidenceResource($residence),
         ]);

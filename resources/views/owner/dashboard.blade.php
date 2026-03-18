@@ -755,8 +755,8 @@
                                                             </span>
                                                         @endif
                                                         <span
-                                                            class="font-semibold text-gray-700">{{ number_format($residence->price_per_month, 0, ',', ' ') }}
-                                                            F/mois</span>
+                                                            class="font-semibold text-gray-700">{{ number_format($residence->price, 0, ',', ' ') }}
+                                                            F/jour</span>
                                                     </div>
                                                     <div class="mt-2 flex items-center gap-2" x-show="hover"
                                                         x-transition.opacity>
@@ -828,7 +828,7 @@
                                                 @if ($residence->photos->isNotEmpty())
                                                     <img loading="lazy"
                                                         src="{{ storage_url($residence->photos->first()?->path) }}"
-                                                        alt="" class="w-full h-full object-cover">
+                                                        alt="{{ $residence->name }}" class="w-full h-full object-cover">
                                                 @endif
                                             </div>
                                             <div class="flex-1 min-w-0">
@@ -1058,7 +1058,7 @@
                     <div class="space-y-6">
                         {{-- Revenus & Solde (style Airbnb Earnings) --}}
                         <div
-                            class="bg-linear-to-br from-gray-900 to-gray-800 rounded-2xl p-5 text-white overflow-hidden relative">
+                            class="bg-linear-to-br from-gray-900 to-gray-800 rounded-2xl p-4 sm:p-5 text-white overflow-hidden relative">
                             <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-10 -mt-10"></div>
                             <h3 class="font-bold text-sm mb-4 flex items-center gap-2">
                                 <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
@@ -1326,7 +1326,7 @@
                         </div>
 
                         {{-- Actions rapides --}}
-                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5">
                             <h3 class="text-sm font-bold text-gray-900 mb-3">Actions rapides</h3>
                             <div class="grid grid-cols-2 gap-2.5">
                                 <a href="{{ route('owner.residences.create') }}"
@@ -1380,7 +1380,7 @@
                         </div>
 
                         {{-- Conseils contextuels --}}
-                        <div class="bg-linear-to-br from-gray-900 to-gray-800 rounded-2xl p-5 text-white">
+                        <div class="bg-linear-to-br from-gray-900 to-gray-800 rounded-2xl p-4 sm:p-5 text-white">
                             <h3 class="font-bold text-sm mb-3 flex items-center gap-2">
                                 <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
                                     <path

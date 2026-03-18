@@ -116,6 +116,16 @@ export function bookingForm(config) {
             this.$watch('checkIn', () => this.onDatesChange());
             this.$watch('checkOut', () => this.onDatesChange());
 
+            // Listen for calendar date selection
+            window.addEventListener('calendar-dates-selected', (e) => {
+                if (e.detail?.checkIn !== undefined) {
+                    this.checkIn = e.detail.checkIn;
+                }
+                if (e.detail?.checkOut !== undefined) {
+                    this.checkOut = e.detail.checkOut;
+                }
+            });
+
             // Close guest picker on outside click
             document.addEventListener('click', (e) => {
                 if (!this.$refs.guestPicker?.contains(e.target) && !this.$refs.guestTrigger?.contains(e.target)) {
@@ -238,10 +248,6 @@ export function bookingForm(config) {
         },
 
         async checkAvailability() {
-            if (!this.isAuthenticated) {
-                this.available = true;
-                return;
-            }
             this.checking = true;
             this.error = '';
             try {

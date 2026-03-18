@@ -3,9 +3,42 @@
 @section('title', $residence->title . ' - REZI')
 @section('description', Str::limit(strip_tags($residence->description ?? ''), 160))
 
+{{-- SEO: utilise uniquement @section title/description consommés par le layout --}}
+{{-- Les meta OG/JSON-LD spécifiques sont poussés via @push sans dupliquer <x-seo-meta> --}}
 @push('meta')
-    <x-seo-meta :title="$residence->title" :description="Str::limit(strip_tags($residence->description ?? ''), 160)" :image="$residence->photos->first()?->url" type="place" :residence="$residence"
-        keywords="résidence meublée, {{ $residence->commune }}, {{ $residence->quartier }}, location, {{ $residence->city ?? '' }}" />
+    {{-- Open Graph spécifique à la résidence (le layout gère déjà title/description/canonical) --}}
+    <meta property="og:type" content="place" />
+    <meta property="og:image" content="{{ $residence->photos->first()?->url }}" />
+    <meta property="og:image:alt" content="{{ $residence->title }}" />
+    <meta name="keywords" content="résidence meublée, {{ $residence->commune }}, {{ $residence->quartier }}, location, {{ $residence->city ?? '' }}" />
+
+    {{-- JSON-LD Structured Data --}}
+    <script type="application/ld+json">
+    {!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'LodgingBusiness',
+        'name' => $residence->title,
+        'description' => Str::limit(strip_tags($residence->description ?? ''), 300),
+        'image' => $residence->photos->first()?->url,
+        'address' => [
+            '@type' => 'PostalAddress',
+            'addressLocality' => $residence->commune,
+            'addressRegion' => $residence->city ?? 'Abidjan',
+            'addressCountry' => 'CI',
+        ],
+        'geo' => $residence->latitude ? [
+            '@type' => 'GeoCoordinates',
+            'latitude' => $residence->latitude,
+            'longitude' => $residence->longitude,
+        ] : null,
+        'priceRange' => number_format($residence->price_per_day ?? 0) . ' FCFA/jour',
+        'aggregateRating' => $residence->reviews_count > 0 ? [
+            '@type' => 'AggregateRating',
+            'ratingValue' => $residence->average_rating,
+            'reviewCount' => $residence->reviews_count,
+        ] : null,
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    </script>
 @endpush
 
 @push('styles')
@@ -137,18 +170,18 @@
         $sidePhotos = $photos->skip(1)->take(4);
         $totalPhotos = $photos->count();
 
-        // Résolution du prix : day > week > month (afficher le premier disponible)
+        // Résolution du prix : toujours le tarif journalier
         if (($residence->price_per_day ?? 0) > 0) {
             $displayPrice = $residence->price_per_day;
-            $priceLabel = '/ nuit';
+            $priceLabel = '/ jour';
             $pricePerNight = $residence->price_per_day;
         } elseif (($residence->price_per_month ?? 0) > 0) {
-            $displayPrice = $residence->price_per_month;
-            $priceLabel = '/ mois';
+            $displayPrice = round($residence->price_per_month / 30);
+            $priceLabel = '/ jour';
             $pricePerNight = round($residence->price_per_month / 30);
         } elseif (($residence->price_per_week ?? 0) > 0) {
-            $displayPrice = $residence->price_per_week;
-            $priceLabel = '/ semaine';
+            $displayPrice = round($residence->price_per_week / 7);
+            $priceLabel = '/ jour';
             $pricePerNight = round($residence->price_per_week / 7);
         } else {
             $displayPrice = 0;
@@ -744,7 +777,158 @@
                                 </div>
                             @endif
                         </div>
+
+                        {{-- Itinéraire interactif --}}
+                        @if ($residence->latitude && $residence->longitude)
+                            <div x-data="directionsWidget()" class="mt-4">
+                                <button @click="getDirections()" :disabled="loading"
+                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition disabled:opacity-50">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                                    </svg>
+                                    <span x-text="loading ? 'Calcul en cours...' : 'Comment s\'y rendre'"></span>
+                                </button>
+                                {{-- Mode selector --}}
+                                <div x-show="result" x-cloak class="mt-3 flex gap-2">
+                                    <template x-for="m in modes">
+                                        <button @click="mode = m.value; getDirections()"
+                                            :class="mode === m.value ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                            class="px-3 py-1.5 rounded-full text-xs font-medium transition">
+                                            <span x-text="m.icon + ' ' + m.label"></span>
+                                        </button>
+                                    </template>
+                                </div>
+                                {{-- Result --}}
+                                <div x-show="result" x-cloak class="mt-3 bg-gray-50 rounded-xl p-4">
+                                    <div class="flex items-center gap-4">
+                                        <div class="text-center">
+                                            <p class="text-2xl font-bold text-gray-900" x-text="result?.duration?.text || '—'"></p>
+                                            <p class="text-xs text-gray-500" x-text="result?.distance?.text || ''"></p>
+                                        </div>
+                                        <div class="flex-1 text-sm text-gray-600">
+                                            <p>Depuis : <span x-text="result?.start_address || 'Votre position'" class="font-medium"></span></p>
+                                            <p>Vers : <span x-text="result?.end_address || ''" class="font-medium"></span></p>
+                                        </div>
+                                    </div>
+                                    {{-- Steps --}}
+                                    <div x-show="showSteps" x-cloak class="mt-3 space-y-1 border-t border-gray-200 pt-3">
+                                        <template x-for="step in result?.steps || []" :key="step.instruction">
+                                            <div class="flex items-start gap-2 text-xs text-gray-600">
+                                                <span class="text-gray-400 mt-0.5">→</span>
+                                                <span x-text="step.instruction + ' (' + step.distance + ')'"></span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <button @click="showSteps = !showSteps" class="mt-2 text-xs text-blue-600 hover:underline"
+                                        x-text="showSteps ? 'Masquer les étapes' : 'Voir les étapes détaillées'"></button>
+                                </div>
+                                <p x-show="error" x-cloak x-text="error" class="mt-2 text-sm text-red-600"></p>
+                            </div>
+                        @endif
                     </div>
+
+                    {{-- Points d'intérêt à proximité --}}
+                    @if ($residence->latitude && $residence->longitude)
+                        <div id="proximite" class="py-8 border-b border-gray-200" x-data="nearbyPOI()">
+                            <h2 class="text-[22px] font-semibold text-gray-900 mb-2">À proximité</h2>
+                            <p class="text-gray-500 text-sm mb-5">Ce qui se trouve autour de ce logement</p>
+
+                            {{-- Loading --}}
+                            <div x-show="loading" class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                <template x-for="i in 6">
+                                    <div class="bg-gray-100 animate-pulse rounded-xl h-24"></div>
+                                </template>
+                            </div>
+
+                            {{-- POI Grid --}}
+                            <div x-show="!loading && groups.length > 0" x-cloak class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                <template x-for="group in groups" :key="group.type">
+                                    <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition cursor-pointer"
+                                         @click="expanded === group.type ? expanded = null : expanded = group.type">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <span class="text-xl" x-text="group.icon"></span>
+                                            <span class="font-medium text-sm text-gray-900" x-text="group.label"></span>
+                                            <span class="ml-auto text-xs text-gray-400 bg-gray-200 px-1.5 py-0.5 rounded-full" x-text="group.count"></span>
+                                        </div>
+                                        {{-- Premier résultat --}}
+                                        <p class="text-xs text-gray-500 truncate" x-text="group.places[0]?.name + ' · ' + group.places[0]?.distance"></p>
+
+                                        {{-- Expanded details --}}
+                                        <div x-show="expanded === group.type" x-cloak class="mt-2 space-y-1.5 border-t border-gray-200 pt-2">
+                                            <template x-for="place in group.places" :key="place.name">
+                                                <div class="flex items-center justify-between text-xs">
+                                                    <span class="text-gray-700 truncate flex-1" x-text="place.name"></span>
+                                                    <span class="text-gray-400 ml-2 whitespace-nowrap" x-text="place.walking_time"></span>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+
+                            {{-- Empty state --}}
+                            <div x-show="!loading && groups.length === 0" x-cloak class="text-center py-6 text-gray-400 text-sm">
+                                Aucun point d'intérêt trouvé à proximité
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- Street View --}}
+                    @if ($residence->latitude && $residence->longitude)
+                        <div id="streetview" class="py-8 border-b border-gray-200" x-data="streetViewWidget()">
+                            <template x-if="available">
+                                <div>
+                                    <h2 class="text-[22px] font-semibold text-gray-900 mb-2">Vue du quartier</h2>
+                                    <p class="text-gray-500 text-sm mb-5">Explorez les environs en Street View</p>
+                                    <div class="rounded-xl overflow-hidden shadow-sm">
+                                        <img :src="imageUrl" alt="Street View" class="w-full h-64 md:h-80 object-cover" loading="lazy">
+                                    </div>
+                                    {{-- Panorama 4 directions --}}
+                                    <div x-show="panorama.length > 0" class="grid grid-cols-4 gap-2 mt-2">
+                                        <template x-for="(view, idx) in panorama" :key="idx">
+                                            <img :src="view.url" :alt="'Vue ' + view.heading + '°'"
+                                                class="rounded-lg h-20 w-full object-cover cursor-pointer hover:opacity-80 transition"
+                                                @click="imageUrl = view.url" loading="lazy">
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    @endif
+
+                    {{-- Zones accessibles (Isochrone) --}}
+                    @if ($residence->latitude && $residence->longitude)
+                        <div id="isochrone" class="py-8 border-b border-gray-200" x-data="isochroneWidget()">
+                            <h2 class="text-[22px] font-semibold text-gray-900 mb-2">Zones accessibles</h2>
+                            <p class="text-gray-500 text-sm mb-4">Tout ce qui est accessible à pied depuis ce logement</p>
+
+                            {{-- Profile toggles --}}
+                            <div class="flex gap-2 mb-4">
+                                <template x-for="p in profiles">
+                                    <button @click="profile = p.value; fetchIsochrone()"
+                                        :class="profile === p.value ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                        class="px-3 py-1.5 rounded-full text-xs font-medium transition">
+                                        <span x-text="p.icon + ' ' + p.label"></span>
+                                    </button>
+                                </template>
+                            </div>
+
+                            {{-- Legend --}}
+                            <div x-show="data" x-cloak class="flex gap-4 mb-3 text-xs text-gray-600">
+                                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-green-300/60"></span> 5 min</span>
+                                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-yellow-300/60"></span> 10 min</span>
+                                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-red-300/60"></span> 15 min</span>
+                            </div>
+
+                            {{-- Map container for isochrone overlay --}}
+                            <div x-show="data" x-cloak>
+                                <div x-ref="isochroneMap" class="w-full h-72 rounded-xl bg-gray-100"></div>
+                            </div>
+
+                            <div x-show="loading" class="h-72 bg-gray-100 animate-pulse rounded-xl"></div>
+                            <p x-show="error" x-cloak x-text="error" class="text-sm text-red-600 mt-2"></p>
+                        </div>
+                    @endif
 
                     {{-- Host Profile --}}
                     <div id="hote" class="py-8 border-b border-gray-200">
@@ -845,7 +1029,15 @@
                                     <li>Départ : avant {{ $residence->check_out_time ?? '12h00' }}</li>
                                     <li>{{ $residence->max_guests ?? 4 }} voyageurs maximum</li>
                                     @if ($residence->house_rules)
-                                        @foreach (array_slice($residence->house_rules, 0, 3) as $rule)
+                                        @php
+                                            $rules = $residence->house_rules;
+                                            if (is_string($rules)) {
+                                                $rules = array_filter(array_map('trim', explode("\n", $rules)));
+                                            } elseif (!is_array($rules)) {
+                                                $rules = [];
+                                            }
+                                        @endphp
+                                        @foreach (array_slice($rules, 0, 3) as $rule)
                                             <li>{{ $rule }}</li>
                                         @endforeach
                                     @endif
@@ -900,21 +1092,14 @@
                         </div>
 
                         {{-- Autres tarifs disponibles --}}
-                        @if (($residence->price_per_day ?? 0) > 0 && ($residence->price_per_month ?? 0) > 0)
+                        @if (($residence->price_per_day ?? 0) > 0)
                             <div class="flex flex-wrap gap-2 mb-3">
-                                @if (($residence->price_per_day ?? 0) > 0)
                                     <span class="text-xs text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">
-                                        {{ number_format($residence->price_per_day, 0, ',', ' ') }} / nuit
+                                        {{ number_format($residence->price_per_day, 0, ',', ' ') }} / jour
                                     </span>
-                                @endif
                                 @if (($residence->price_per_week ?? 0) > 0)
                                     <span class="text-xs text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">
                                         {{ number_format($residence->price_per_week, 0, ',', ' ') }} / sem.
-                                    </span>
-                                @endif
-                                @if (($residence->price_per_month ?? 0) > 0)
-                                    <span class="text-xs text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">
-                                        {{ number_format($residence->price_per_month, 0, ',', ' ') }} / mois
                                     </span>
                                 @endif
                             </div>
@@ -1417,6 +1602,212 @@
                     window.initResidenceMap(config);
                 }
             });
+        </script>
+
+        {{-- Maps Alpine.js widgets --}}
+        <script>
+            const RESIDENCE_ID = {{ $residence->id }};
+            const API_BASE = '/api/v1/maps';
+
+            /**
+             * Widget : Points d'intérêt à proximité
+             */
+            function nearbyPOI() {
+                return {
+                    groups: [],
+                    loading: true,
+                    expanded: null,
+                    async init() {
+                        try {
+                            const res = await fetch(`${API_BASE}/residences/${RESIDENCE_ID}/nearby`);
+                            const json = await res.json();
+                            if (json.success) this.groups = json.data;
+                        } catch (e) {
+                            console.error('POI error:', e);
+                        } finally {
+                            this.loading = false;
+                        }
+                    }
+                };
+            }
+
+            /**
+             * Widget : Itinéraire (directions)
+             */
+            function directionsWidget() {
+                return {
+                    mode: 'driving',
+                    modes: [
+                        { value: 'driving', icon: '🚗', label: 'Voiture' },
+                        { value: 'walking', icon: '🚶', label: 'À pied' },
+                        { value: 'transit', icon: '🚌', label: 'Transport' },
+                    ],
+                    result: null,
+                    loading: false,
+                    error: null,
+                    showSteps: false,
+                    async getDirections() {
+                        this.loading = true;
+                        this.error = null;
+                        try {
+                            const pos = await this.getUserPosition();
+                            const res = await fetch(`${API_BASE}/residences/${RESIDENCE_ID}/directions?lat=${pos.lat}&lng=${pos.lng}&mode=${this.mode}`);
+                            const json = await res.json();
+                            if (json.success) {
+                                this.result = json.data;
+                            } else {
+                                this.error = json.message || 'Itinéraire non disponible';
+                            }
+                        } catch (e) {
+                            this.error = 'Activez la géolocalisation pour calculer l\'itinéraire';
+                        } finally {
+                            this.loading = false;
+                        }
+                    },
+                    getUserPosition() {
+                        return new Promise((resolve, reject) => {
+                            if (!navigator.geolocation) return reject('Géolocalisation non supportée');
+                            navigator.geolocation.getCurrentPosition(
+                                p => resolve({ lat: p.coords.latitude, lng: p.coords.longitude }),
+                                () => reject('Position refusée'),
+                                { timeout: 10000, maximumAge: 300000 }
+                            );
+                        });
+                    }
+                };
+            }
+
+            /**
+             * Widget : Street View
+             */
+            function streetViewWidget() {
+                return {
+                    available: false,
+                    imageUrl: null,
+                    panorama: [],
+                    async init() {
+                        try {
+                            const res = await fetch(`${API_BASE}/residences/${RESIDENCE_ID}/streetview`);
+                            const json = await res.json();
+                            if (json.available) {
+                                this.available = true;
+                                this.imageUrl = json.image_url;
+                                this.panorama = json.panorama || [];
+                            }
+                        } catch (e) {
+                            console.error('Street View error:', e);
+                        }
+                    }
+                };
+            }
+
+            /**
+             * Widget : Isochrone (zones accessibles)
+             */
+            function isochroneWidget() {
+                return {
+                    profile: 'walking',
+                    profiles: [
+                        { value: 'walking', icon: '🚶', label: 'À pied' },
+                        { value: 'cycling', icon: '🚴', label: 'Vélo' },
+                        { value: 'driving', icon: '🚗', label: 'Voiture' },
+                    ],
+                    data: null,
+                    loading: false,
+                    error: null,
+                    map: null,
+                    async init() {
+                        await this.fetchIsochrone();
+                    },
+                    async fetchIsochrone() {
+                        this.loading = true;
+                        this.error = null;
+                        try {
+                            const res = await fetch(`${API_BASE}/residences/${RESIDENCE_ID}/isochrone?profile=${this.profile}&minutes[]=5&minutes[]=10&minutes[]=15`);
+                            const json = await res.json();
+                            if (json.success) {
+                                this.data = json.data;
+                                this.$nextTick(() => this.renderMap(json.data));
+                            } else {
+                                this.error = json.message;
+                            }
+                        } catch (e) {
+                            this.error = 'Zones accessibles non disponibles';
+                        } finally {
+                            this.loading = false;
+                        }
+                    },
+                    renderMap(geojson) {
+                        const container = this.$refs.isochroneMap;
+                        if (!container || !window.mapboxgl) return;
+
+                        const token = '{{ config('services.mapbox.access_token') }}';
+                        if (!token) return;
+
+                        mapboxgl.accessToken = token;
+
+                        if (this.map) { this.map.remove(); }
+
+                        this.map = new mapboxgl.Map({
+                            container: container,
+                            style: 'mapbox://styles/mapbox/light-v11',
+                            center: [{{ $residence->longitude }}, {{ $residence->latitude }}],
+                            zoom: 13,
+                            attributionControl: false,
+                        });
+
+                        const colors = ['#ef4444', '#eab308', '#22c55e']; // 15min, 10min, 5min (reverse order for layering)
+
+                        this.map.on('load', () => {
+                            // Add marker for residence
+                            new mapboxgl.Marker({ color: '#E61E4D' })
+                                .setLngLat([{{ $residence->longitude }}, {{ $residence->latitude }}])
+                                .addTo(this.map);
+
+                            if (geojson && geojson.features) {
+                                // Reverse so largest (15min) is drawn first
+                                const features = [...geojson.features].reverse();
+                                features.forEach((feature, idx) => {
+                                    const id = `iso-${idx}`;
+                                    this.map.addSource(id, { type: 'geojson', data: feature });
+                                    this.map.addLayer({
+                                        id: id,
+                                        type: 'fill',
+                                        source: id,
+                                        paint: {
+                                            'fill-color': colors[idx] || '#888',
+                                            'fill-opacity': 0.2,
+                                        }
+                                    });
+                                    this.map.addLayer({
+                                        id: id + '-line',
+                                        type: 'line',
+                                        source: id,
+                                        paint: {
+                                            'line-color': colors[idx] || '#888',
+                                            'line-width': 1.5,
+                                            'line-opacity': 0.6,
+                                        }
+                                    });
+                                });
+
+                                // Fit bounds
+                                const bounds = new mapboxgl.LngLatBounds();
+                                features.forEach(f => {
+                                    if (f.geometry && f.geometry.coordinates) {
+                                        f.geometry.coordinates.flat(2).forEach(c => {
+                                            if (Array.isArray(c) && c.length === 2) bounds.extend(c);
+                                        });
+                                    }
+                                });
+                                if (!bounds.isEmpty()) {
+                                    this.map.fitBounds(bounds, { padding: 30 });
+                                }
+                            }
+                        });
+                    }
+                };
+            }
         </script>
     @endif
 @endpush

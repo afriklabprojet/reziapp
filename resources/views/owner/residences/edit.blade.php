@@ -36,12 +36,10 @@
                 ...residenceEditForm(@js(['latitude' => old('latitude', $residence->latitude), 'longitude' => old('longitude', $residence->longitude)])),
                 typeLocation: '{{ old('type_location', $residence->type_location ?? 'residence_meublee') }}',
                 get pricePeriod() {
-                    const map = { apartment: 'month', residence_meublee: 'day', hotel: 'night' };
-                    return map[this.typeLocation] || 'day';
+                    return 'day';
                 },
                 get priceLabel() {
-                    const labels = { month: 'Prix par mois (FCFA)', day: 'Prix par jour (FCFA)', night: 'Prix par nuit (FCFA)' };
-                    return labels[this.pricePeriod] || 'Prix (FCFA)';
+                    return 'Prix par jour (FCFA)';
                 }
             }">
             @csrf
@@ -254,33 +252,17 @@
                             <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                             </svg>
-                            <span x-show="typeLocation === 'apartment'">Facturation <strong>mensuelle</strong> — prix par mois requis.</span>
-                            <span x-show="typeLocation === 'residence_meublee'">Facturation <strong>journalière</strong> — prix par jour requis.</span>
-                            <span x-show="typeLocation === 'hotel'">Facturation <strong>par nuit</strong> — prix par nuit requis.</span>
+                            <span>Facturation <strong>journalière</strong> — prix par jour requis.</span>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {{-- Prix mensuel (visible si apartment) --}}
-                            <div x-show="pricePeriod === 'month'">
-                                <label for="price_per_month" class="block text-sm font-medium text-gray-700 mb-1">
-                                    <span x-text="priceLabel"></span> *
-                                </label>
-                                <input type="number" id="price_per_month" name="price_per_month"
-                                    min="10000" step="1000" :required="pricePeriod === 'month'"
-                                    class="input-field @error('price_per_month') border-red-500 @enderror"
-                                    value="{{ old('price_per_month', $residence->price_per_month) }}">
-                                @error('price_per_month')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            {{-- Prix journalier/nuit (visible si residence_meublee ou hotel) --}}
-                            <div x-show="pricePeriod !== 'month'">
+                            {{-- Prix journalier --}}
+                            <div>
                                 <label for="price_per_day" class="block text-sm font-medium text-gray-700 mb-1">
-                                    <span x-text="priceLabel"></span> *
+                                    Prix par jour (FCFA) *
                                 </label>
                                 <input type="number" id="price_per_day" name="price_per_day"
-                                    min="1000" step="500" :required="pricePeriod !== 'month'"
+                                    min="1000" step="500" required
                                     class="input-field @error('price_per_day') border-red-500 @enderror"
                                     value="{{ old('price_per_day', $residence->price_per_day) }}">
                                 @error('price_per_day')
@@ -299,6 +281,190 @@
                                 @error('price_per_week')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Caractéristiques -->
+                    <div class="card">
+                        <h2 class="text-xl font-semibold text-gray-900 mb-4">Caractéristiques</h2>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                                <label for="bedrooms" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Chambres
+                                </label>
+                                <input type="number" id="bedrooms" name="bedrooms" min="0" max="20"
+                                    class="input-field @error('bedrooms') border-red-500 @enderror"
+                                    value="{{ old('bedrooms', $residence->bedrooms) }}">
+                                @error('bedrooms')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="bathrooms" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Salles de bain
+                                </label>
+                                <input type="number" id="bathrooms" name="bathrooms" min="1" max="10"
+                                    class="input-field @error('bathrooms') border-red-500 @enderror"
+                                    value="{{ old('bathrooms', $residence->bathrooms) }}">
+                                @error('bathrooms')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="max_guests" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Capacité (pers.)
+                                </label>
+                                <input type="number" id="max_guests" name="max_guests" min="1" max="50"
+                                    class="input-field @error('max_guests') border-red-500 @enderror"
+                                    value="{{ old('max_guests', $residence->max_guests) }}">
+                                @error('max_guests')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="surface_area" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Surface (m²)
+                                </label>
+                                <input type="number" id="surface_area" name="surface_area" min="5" max="10000"
+                                    class="input-field @error('surface_area') border-red-500 @enderror"
+                                    value="{{ old('surface_area', $residence->surface_area) }}">
+                                @error('surface_area')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                            <div>
+                                <label for="floor" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Étage
+                                </label>
+                                <input type="number" id="floor" name="floor" min="-5" max="100"
+                                    class="input-field @error('floor') border-red-500 @enderror"
+                                    value="{{ old('floor', $residence->floor) }}">
+                                @error('floor')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="flex items-end pb-1">
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="has_elevator" value="1"
+                                        {{ old('has_elevator', $residence->has_elevator) ? 'checked' : '' }}
+                                        class="form-checkbox h-5 w-5 text-blue-600">
+                                    <span class="ml-2 text-sm text-gray-700">Ascenseur</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Horaires et séjour -->
+                    <div class="card">
+                        <h2 class="text-xl font-semibold text-gray-900 mb-4">Horaires & séjour</h2>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                                <label for="check_in_time" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Heure d'arrivée
+                                </label>
+                                <input type="time" id="check_in_time" name="check_in_time"
+                                    class="input-field @error('check_in_time') border-red-500 @enderror"
+                                    value="{{ old('check_in_time', $residence->check_in_time ? \Carbon\Carbon::parse($residence->check_in_time)->format('H:i') : '') }}">
+                                @error('check_in_time')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="check_out_time" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Heure de départ
+                                </label>
+                                <input type="time" id="check_out_time" name="check_out_time"
+                                    class="input-field @error('check_out_time') border-red-500 @enderror"
+                                    value="{{ old('check_out_time', $residence->check_out_time ? \Carbon\Carbon::parse($residence->check_out_time)->format('H:i') : '') }}">
+                                @error('check_out_time')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="min_nights" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Séjour min. (nuits)
+                                </label>
+                                <input type="number" id="min_nights" name="min_nights" min="1" max="365"
+                                    class="input-field @error('min_nights') border-red-500 @enderror"
+                                    value="{{ old('min_nights', $residence->min_nights) }}">
+                                @error('min_nights')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="max_nights" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Séjour max. (nuits)
+                                </label>
+                                <input type="number" id="max_nights" name="max_nights" min="1" max="365"
+                                    class="input-field @error('max_nights') border-red-500 @enderror"
+                                    value="{{ old('max_nights', $residence->max_nights) }}">
+                                @error('max_nights')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <label class="flex items-center">
+                                <input type="checkbox" name="instant_book" value="1"
+                                    {{ old('instant_book', $residence->instant_book) ? 'checked' : '' }}
+                                    class="form-checkbox h-5 w-5 text-blue-600">
+                                <span class="ml-2 text-sm text-gray-700">Réservation instantanée (sans validation manuelle)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Règles de la maison -->
+                    <div class="card">
+                        <h2 class="text-xl font-semibold text-gray-900 mb-4">Règles de la maison</h2>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label for="house_rules" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Règlement intérieur
+                                </label>
+                                <textarea id="house_rules" name="house_rules" rows="3"
+                                    class="input-field @error('house_rules') border-red-500 @enderror"
+                                    placeholder="Ex: Pas de bruit après 22h, pas de visiteurs non déclarés...">{{ old('house_rules', $residence->house_rules) }}</textarea>
+                                @error('house_rules')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                    <input type="checkbox" name="pets_allowed" value="1"
+                                        {{ old('pets_allowed', $residence->pets_allowed) ? 'checked' : '' }}
+                                        class="form-checkbox h-5 w-5 text-blue-600">
+                                    <span class="ml-2 text-sm text-gray-700">🐾 Animaux autorisés</span>
+                                </label>
+
+                                <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                    <input type="checkbox" name="smoking_allowed" value="1"
+                                        {{ old('smoking_allowed', $residence->smoking_allowed) ? 'checked' : '' }}
+                                        class="form-checkbox h-5 w-5 text-blue-600">
+                                    <span class="ml-2 text-sm text-gray-700">🚬 Fumeurs autorisés</span>
+                                </label>
+
+                                <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                    <input type="checkbox" name="parties_allowed" value="1"
+                                        {{ old('parties_allowed', $residence->parties_allowed) ? 'checked' : '' }}
+                                        class="form-checkbox h-5 w-5 text-blue-600">
+                                    <span class="ml-2 text-sm text-gray-700">🎉 Fêtes autorisées</span>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -464,7 +630,7 @@
                     <div class="card">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Statut de validation</h3>
 
-                        @if ($residence->status === 'active')
+                        @if (in_array($residence->status, ['active', 'approved']))
                             <div class="flex items-center text-green-600">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -472,6 +638,13 @@
                                 </svg>
                                 Résidence approuvée
                             </div>
+                            <p class="text-sm text-green-600 mt-2">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                                Vos modifications seront appliquées immédiatement, sans nouvelle approbation.
+                            </p>
                         @elseif($residence->status === 'pending')
                             <div class="flex items-center text-yellow-600">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

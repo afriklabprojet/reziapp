@@ -57,7 +57,7 @@ class TenantReviewService
         }
 
         return [
-            'score'      => round($reviews->avg('overall'), 1),
+            'score'      => round($reviews->avg('overall_rating'), 1),
             'count'      => $reviews->count(),
             'dimensions' => $dimensions,
             'would_rent_again_pct' => $reviews->count() > 0

@@ -29,7 +29,7 @@
 
     {{-- Header --}}
     <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Abonnements</h1>
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Abonnements</h1>
         <p class="mt-2 text-gray-600">Choisissez le plan qui correspond à vos besoins</p>
     </div>
 
@@ -95,7 +95,7 @@
                 {{-- Pricing --}}
                 <div class="p-6 border-b border-gray-100">
                     <div class="flex items-baseline">
-                        <span class="text-4xl font-bold text-gray-900">
+                        <span class="text-3xl sm:text-4xl font-bold text-gray-900">
                             {{ number_format($plan->monthly_price, 0, ',', ' ') }}
                         </span>
                         <span class="ml-1 text-gray-500">FCFA/mois</span>

@@ -21,7 +21,7 @@
             'id' => $residence->id,
             'title' => $residence->title ?? $residence->name,
             'commune' => $residence->commune,
-            'price' => $residence->price_per_month ?? $residence->price_per_day,
+            'price' => $residence->price ?? $residence->price_per_day,
             'type' => $residence->type,
         ];
     }
@@ -62,13 +62,13 @@
     @if($pageType === 'residence' && $residence)
     gtag('event', 'view_item', {
         currency: 'XOF',
-        value: {{ $residence->price_per_month ?? $residence->price_per_day ?? 0 }},
+        value: {{ $residence->price ?? $residence->price_per_day ?? 0 }},
         items: [{
             item_id: '{{ $residence->id }}',
             item_name: '{{ addslashes($residence->title ?? $residence->name) }}',
             item_category: '{{ $residence->type }}',
             item_category2: '{{ $residence->commune }}',
-            price: {{ $residence->price_per_month ?? $residence->price_per_day ?? 0 }},
+            price: {{ $residence->price ?? $residence->price_per_day ?? 0 }},
         }]
     });
     @endif
@@ -114,7 +114,7 @@
         content_type: 'product',
         content_name: '{{ addslashes($residence->title ?? $residence->name) }}',
         content_category: '{{ $residence->commune }}',
-        value: {{ $residence->price_per_month ?? $residence->price_per_day ?? 0 }},
+        value: {{ $residence->price ?? $residence->price_per_day ?? 0 }},
         currency: 'XOF'
     });
     @endif
@@ -127,8 +127,9 @@
     @endif
 </script>
 <noscript>
-    <img loading="lazy" height="1" width="1" style="display:none" 
-         src="https://www.facebook.com/tr?id={{ config('services.facebook.pixel_id') }}&ev=PageView&noscript=1"/ alt="">
+    <img loading="lazy" height="1" width="1" style="display:none"
+         src="https://www.facebook.com/tr?id={{ config('services.facebook.pixel_id') }}&ev=PageView&noscript=1"
+         alt="">
 </noscript>
 @endif
 

@@ -3,17 +3,20 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Models\Booking;
-use App\Models\Conversation;
 use App\Models\Residence;
 use App\Models\ResidenceView;
 use App\Models\SearchHistory;
+use App\Services\ClientDashboardService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ClientController extends Controller
 {
+    public function __construct(
+        private readonly ClientDashboardService $dashboardService,
+    ) {}
+
     /**
      * Dashboard principal du client
      */
@@ -26,77 +29,9 @@ class ClientController extends Controller
             return redirect()->route('owner.dashboard');
         }
 
-        // Réservations à venir (priorité #1 pour un locataire)
-        $upcomingBookings = $user->bookings()
-            ->upcoming()
-            ->with(['residence.photos'])
-            ->orderBy('check_in')
-            ->take(3)
-            ->get();
+        $data = $this->dashboardService->getDashboardData($user);
 
-        // Réservation en cours
-        $ongoingBooking = $user->bookings()
-            ->ongoing()
-            ->with(['residence.photos'])
-            ->first();
-
-        // Statistiques générales
-        $stats = [
-            'bookings_upcoming' => $upcomingBookings->count(),
-            'favorites_count' => $user->favorites()->count(),
-            'messages_unread' => $user->unreadMessagesCount(),
-            'views_count' => $user->residenceViews()->count(),
-            'reviews_count' => $user->reviews()->count(),
-            'notifications_unread' => $user->unreadNotifications()->count(),
-        ];
-
-        // Résidences récemment visitées
-        $recentViews = ResidenceView::where('user_id', $user->id)
-            ->with(['residence.photos'])
-            ->select('residence_id', DB::raw('MAX(created_at) as last_viewed'))
-            ->groupBy('residence_id')
-            ->orderBy('last_viewed', 'desc')
-            ->take(6)
-            ->get();
-
-        // Conversations récentes
-        $recentConversations = Conversation::where('user_id', $user->id)
-            ->with(['residence', 'owner', 'messages' => fn ($q) => $q->latest()->take(1)])
-            ->orderBy('last_message_at', 'desc')
-            ->take(3)
-            ->get();
-
-        // Recherches récentes
-        $recentSearches = $user->searchHistories()
-            ->latest()
-            ->take(5)
-            ->get();
-
-        // Recommandations personnalisées
-        $recommendations = $this->getRecommendations($user, 6);
-
-        // Contacts en attente de réponse
-        $pendingContacts = $user->sentContacts()
-            ->where('status', 'pending')
-            ->with(['residence', 'owner'])
-            ->latest()
-            ->take(3)
-            ->get();
-
-        // Nouvelles résidences dans les communes favorites
-        $newInFavoriteAreas = $this->getNewInFavoriteAreas($user, 4);
-
-        return view('client.dashboard', compact(
-            'stats',
-            'upcomingBookings',
-            'ongoingBooking',
-            'recentViews',
-            'recentConversations',
-            'recentSearches',
-            'recommendations',
-            'pendingContacts',
-            'newInFavoriteAreas',
-        ));
+        return view('client.dashboard', $data);
     }
 
     /**
@@ -233,11 +168,14 @@ class ClientController extends Controller
     {
         $user = Auth::user();
 
-        // Alertes de prix (simulées pour l'instant)
-        $priceAlerts = $this->getPriceAlerts($user);
+        // Alertes de prix réelles (via PriceAlert model)
+        $priceAlerts = $this->dashboardService->getPriceAlerts($user);
 
         // Nouvelles résidences dans les zones favorites
-        $newListings = $this->getNewInFavoriteAreas($user, 10);
+        $newListings = $this->dashboardService->getNewInFavoriteAreas($user, 10);
+
+        // Recherches sauvegardées avec alertes
+        $savedSearches = $user->savedSearches()->withAlerts()->latest()->get();
 
         // Alertes de disponibilité
         $availabilityAlerts = $user->favorites()
@@ -245,7 +183,7 @@ class ClientController extends Controller
             ->with('residence.photos')
             ->get();
 
-        return view('client.alerts', compact('priceAlerts', 'newListings', 'availabilityAlerts'));
+        return view('client.alerts', compact('priceAlerts', 'newListings', 'savedSearches', 'availabilityAlerts'));
     }
 
     /**
@@ -358,115 +296,153 @@ class ClientController extends Controller
     }
 
     /**
-     * Obtenir des recommandations personnalisées
+     * Page contrats / baux du locataire
      */
-    private function getRecommendations($user, int $limit = 6)
+    public function contracts()
     {
-        // Récupérer les communes et types favoris
-        $favoriteCommunes = $user->favorites()
-            ->join('residences', 'favorites.residence_id', '=', 'residences.id')
-            ->pluck('residences.commune')
-            ->unique()
-            ->toArray();
+        $user = Auth::user();
 
-        $favoriteTypes = $user->favorites()
-            ->join('residences', 'favorites.residence_id', '=', 'residences.id')
-            ->pluck('residences.type')
-            ->unique()
-            ->toArray();
+        $contracts = $user->leaseContracts()
+            ->with(['residence.photos', 'owner'])
+            ->orderByDesc('created_at')
+            ->paginate(15);
 
-        // Récupérer les communes recherchées récemment
-        $searchedCommunes = $user->searchHistories()
-            ->whereNotNull('commune')
-            ->latest()
-            ->take(5)
-            ->pluck('commune')
-            ->toArray();
+        $contractStats = [
+            'total'      => $user->leaseContracts()->count(),
+            'active'     => $user->leaseContracts()->where('status', 'active')->count(),
+            'pending'    => $user->leaseContracts()->whereIn('status', ['pending_tenant', 'pending_owner', 'draft'])->count(),
+            'terminated' => $user->leaseContracts()->whereIn('status', ['terminated', 'expired'])->count(),
+        ];
 
-        $allCommunes = array_unique(array_merge($favoriteCommunes, $searchedCommunes));
-
-        // IDs des résidences déjà vues, en favoris, ou appartenant à l'utilisateur
-        $excludeIds = $user->favorites()->pluck('residence_id')
-            ->merge($user->residenceViews()->pluck('residence_id'))
-            ->unique()
-            ->toArray();
-
-        // Chercher des résidences similaires (exclure les propres résidences du propriétaire)
-        return Residence::query()
-            ->where('status', 'active')
-            ->where('is_available', true)
-            ->where('owner_id', '!=', $user->id)
-            ->whereNotIn('id', $excludeIds)
-            ->where(function ($query) use ($allCommunes, $favoriteTypes) {
-                $query->when(!empty($allCommunes), fn ($q) => $q->whereIn('commune', $allCommunes))
-                      ->when(!empty($favoriteTypes), fn ($q) => $q->orWhereIn('type', $favoriteTypes));
-            })
-            ->with(['photos'])
-            ->inRandomOrder()
-            ->take($limit)
-            ->get();
+        return view('client.contracts', compact('contracts', 'contractStats'));
     }
 
     /**
-     * Obtenir les alertes de prix pour les résidences favorites
+     * Détail d'un contrat (côté locataire)
      */
-    private function getPriceAlerts($user)
+    public function showContract(\App\Models\LeaseContract $leaseContract)
     {
-        // Récupérer les favoris avec les résidences qui ont eu des changements de prix
-        // Pour l'instant, on simule en vérifiant les résidences mises à jour récemment
-        return $user->favorites()
-            ->with(['residence' => function ($query) {
-                $query->where('updated_at', '>=', now()->subDays(7))
-                    ->with('photos');
-            }])
-            ->whereHas('residence', function ($query) {
-                $query->where('updated_at', '>=', now()->subDays(7));
-            })
-            ->get()
-            ->map(function ($favorite) {
-                return (object) [
-                    'id' => $favorite->id,
-                    'residence' => $favorite->residence,
-                    'old_price' => $favorite->residence->price * 1.1, // Simulé: ancien prix 10% plus élevé
-                    'new_price' => $favorite->residence->price,
-                    'change_percentage' => -10, // Simulé: baisse de 10%
-                    'changed_at' => $favorite->residence->updated_at,
-                ];
-            });
-    }
+        $user = Auth::user();
 
-    /**
-     * Obtenir les nouvelles résidences dans les zones favorites
-     */
-    private function getNewInFavoriteAreas($user, int $limit = 4)
-    {
-        $favoriteCommunes = $user->favorites()
-            ->join('residences', 'favorites.residence_id', '=', 'residences.id')
-            ->pluck('residences.commune')
-            ->unique()
-            ->toArray();
-
-        if (empty($favoriteCommunes)) {
-            // Fallback: nouvelles résidences en général
-            return Residence::where('status', 'active')
-                ->where('is_available', true)
-                ->where('owner_id', '!=', $user->id)
-                ->where('created_at', '>=', now()->subDays(7))
-                ->with(['photos', 'amenities'])
-                ->latest()
-                ->take($limit)
-                ->get();
+        if ((int) $leaseContract->tenant_id !== (int) $user->id) {
+            abort(403);
         }
 
-        return Residence::whereIn('commune', $favoriteCommunes)
-            ->where('status', 'active')
-            ->where('is_available', true)
-            ->where('owner_id', '!=', $user->id)
-            ->where('created_at', '>=', now()->subDays(14))
-            ->with(['photos', 'amenities'])
-            ->latest()
-            ->take($limit)
-            ->get();
+        $leaseContract->load([
+            'owner:id,name,email,phone',
+            'tenant:id,name,email,phone',
+            'residence:id,name,commune,address,surface_area,bedrooms',
+            'residence.photos',
+            'booking',
+        ]);
+
+        return view('client.contract-show', [
+            'contract' => $leaseContract,
+        ]);
+    }
+
+    /**
+     * Signer un contrat (côté locataire)
+     */
+    public function signContract(\App\Models\LeaseContract $leaseContract)
+    {
+        $user = Auth::user();
+
+        if ((int) $leaseContract->tenant_id !== (int) $user->id) {
+            abort(403);
+        }
+
+        if ($leaseContract->status !== 'pending_tenant') {
+            return back()->with('error', 'Ce contrat ne peut pas être signé actuellement.');
+        }
+
+        try {
+            $service = app(\App\Services\LeaseContractService::class);
+            $service->sign($leaseContract, $user, request()->ip());
+
+            return back()->with('success', 'Contrat signé avec succès !');
+        } catch (\RuntimeException $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+    /**
+     * Télécharger le PDF d'un contrat (côté locataire)
+     */
+    public function downloadContract(\App\Models\LeaseContract $leaseContract)
+    {
+        $user = Auth::user();
+
+        if ((int) $leaseContract->tenant_id !== (int) $user->id) {
+            abort(403);
+        }
+
+        $service = app(\App\Services\LeaseContractService::class);
+        $pdfContent = $service->downloadPdf($leaseContract);
+        $filename = "contrat-{$leaseContract->reference}.pdf";
+
+        return response($pdfContent, 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ]);
+    }
+
+    /**
+     * Sauvegarder une recherche comme alerte
+     */
+    public function saveSearchAsAlert(SearchHistory $search)
+    {
+        $user = Auth::user();
+
+        if ($search->user_id !== $user->id) {
+            abort(403);
+        }
+
+        // Vérifier si une alerte similaire existe déjà
+        $existing = $user->savedSearches()
+            ->where('location', $search->commune)
+            ->where('min_price', $search->min_price)
+            ->where('max_price', $search->max_price)
+            ->first();
+
+        if ($existing) {
+            return back()->with('info', 'Une alerte similaire existe déjà.');
+        }
+
+        $user->savedSearches()->create([
+            'name'            => $search->commune
+                ? "Alerte {$search->commune}"
+                : 'Alerte recherche',
+            'filters'         => array_filter([
+                'type'      => $search->type,
+                'bedrooms'  => $search->bedrooms,
+                'amenities' => $search->amenities,
+            ]),
+            'location'        => $search->commune,
+            'latitude'        => $search->latitude,
+            'longitude'       => $search->longitude,
+            'min_price'       => $search->min_price,
+            'max_price'       => $search->max_price,
+            'has_alerts'      => true,
+            'alert_frequency' => 'daily',
+            'last_searched_at' => now(),
+        ]);
+
+        return back()->with('success', 'Alerte créée ! Vous serez notifié des nouveaux résultats.');
+    }
+
+    /**
+     * Supprimer une alerte sauvegardée
+     */
+    public function deleteAlert(\App\Models\SavedSearch $savedSearch)
+    {
+        if ($savedSearch->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $savedSearch->delete();
+
+        return back()->with('success', 'Alerte supprimée.');
     }
 
     /**

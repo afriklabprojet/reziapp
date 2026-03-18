@@ -32,7 +32,9 @@ class LeaseContractReadyNotification extends Notification implements ShouldQueue
         $residence    = $this->contract->residence;
         $isTenant     = $this->recipientRole === 'tenant';
         $otherParty   = $isTenant ? $this->contract->owner : $this->contract->tenant;
-        $signUrl      = route('owner.lease-contracts.show', $this->contract);
+        $signUrl      = $isTenant
+            ? route('client.contracts.show', $this->contract)
+            : route('owner.lease-contracts.show', $this->contract);
 
         $subject = $isTenant
             ? "📄 Contrat de bail à signer — {$residence->title}"

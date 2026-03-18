@@ -16,7 +16,7 @@
             <span class="text-sm font-semibold {{ $progress >= 100 ? 'text-green-600' : 'text-gray-600' }}">{{ $progress }}%</span>
         </div>
         <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
-            <div class="h-full bg-gradient-to-r {{ $progress >= 100 ? 'from-green-500 to-emerald-500' : 'from-blue-500 to-indigo-500' }} rounded-full transition-all duration-500" style="width: {{ min(100, $progress) }}%"></div>
+            <div class="h-full bg-linear-to-r {{ $progress >= 100 ? 'from-green-500 to-emerald-500' : 'from-blue-500 to-indigo-500' }} rounded-full transition-all duration-500" style="width: {{ min(100, $progress) }}%"></div>
         </div>
     </div>
 
@@ -51,7 +51,7 @@
     </div>
 
     {{-- Tips --}}
-    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6">
+    <div class="bg-linear-to-br from-blue-50 to-indigo-50 rounded-2xl p-6">
         <h2 class="text-lg font-bold text-gray-900 mb-4">💡 Conseils pour réussir</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="flex items-start gap-3">

@@ -52,6 +52,7 @@ export default function bookingCreateForm(config) {
         children: config.childrenInit || 0,
         infants: config.infantsInit || 0,
         message: '',
+        paymentMethod: 'wave',
 
         // ─── Price ───
         price: config.pricePreview || null,
@@ -117,6 +118,7 @@ export default function bookingCreateForm(config) {
             if (this.nightsCount > this.maxNights) return false;
             if (!this.price) return false;
             if (this.loading) return false;
+            if (!this.paymentMethod) return false;
             return true;
         },
 

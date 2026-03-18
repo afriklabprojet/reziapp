@@ -23,7 +23,7 @@ class StoreIcalFeedRequest extends FormRequest
             'name'         => ['required', 'string', 'max:255'],
             'import_url'   => ['required', 'url', 'max:1000'],
             'auto_sync'    => ['boolean'],
-            'sync_interval_hours' => ['nullable', 'integer', 'min:1', 'max:168'],
+            'sync_interval_minutes' => ['nullable', 'integer', 'min:15', 'max:10080'],
         ];
     }
 

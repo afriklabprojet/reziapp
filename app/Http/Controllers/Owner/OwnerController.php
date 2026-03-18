@@ -14,6 +14,7 @@ use App\Models\Payout;
 use App\Models\Review;
 use App\Models\Statistic;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 /**
@@ -27,64 +28,84 @@ class OwnerController extends Controller
     public function dashboard(Request $request): View
     {
         $user = $request->user();
+        $cacheKey = "owner_dashboard:{$user->id}";
+        $cacheTtl = 300; // 5 minutes
 
-        // Mes résidences (les 5 dernières)
+        // Mes résidences (les 5 dernières) — toujours frais
         $residences = $user->residences()
             ->with(['photos', 'amenities'])
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
 
-        // Statistiques globales
-        $stats = $this->calculateStats($user);
+        // ── Données lourdes cachées 5 min ──
+        $cached = Cache::remember($cacheKey, $cacheTtl, function () use ($user) {
+            $residenceIds = $user->residences()->pluck('id');
 
-        // Contacts récents
+            $stats = $this->calculateStats($user);
+            $revenueData = $this->calculateRevenue($residenceIds);
+            $viewsTrend = $this->calculateViewsTrend($user, $residenceIds);
+            $bookingsData = $this->getBookingsData($residenceIds);
+            $earningsData = $this->getEarningsData($user, $residenceIds);
+            $reviewsData = $this->getReviewsData($residenceIds);
+            $responseMetrics = $this->getResponseMetrics($user);
+            $hostScore = $this->calculateHostScore($user, $stats, $reviewsData, $responseMetrics);
+
+            // Stats journalières sur 30 jours
+            $dailyStats = Statistic::whereIn('residence_id', $residenceIds)
+                ->where('stat_date', '>=', now()->subDays(30))
+                ->selectRaw('stat_date, SUM(views) as views, SUM(contacts) as contacts')
+                ->groupBy('stat_date')
+                ->orderBy('stat_date')
+                ->get()
+                ->keyBy(fn ($item) => $item->stat_date->format('Y-m-d'));
+
+            $chartData = collect();
+            for ($i = 29; $i >= 0; $i--) {
+                $date = now()->subDays($i)->format('Y-m-d');
+                $dayData = $dailyStats->get($date);
+                $chartData->push([
+                    'date' => $date,
+                    'label' => now()->subDays($i)->format('d/m'),
+                    'views' => $dayData ? (int) $dayData->views : 0,
+                    'contacts' => $dayData ? (int) $dayData->contacts : 0,
+                ]);
+            }
+
+            // Distribution des étoiles
+            $starDistribution = $reviewsData['total'] > 0
+                ? Review::whereIn('residence_id', $residenceIds)
+                    ->where('status', 'approved')
+                    ->selectRaw('rating, COUNT(*) as count')
+                    ->groupBy('rating')
+                    ->orderBy('rating', 'desc')
+                    ->pluck('count', 'rating')
+                    ->toArray()
+                : [];
+
+            return compact(
+                'stats', 'revenueData', 'viewsTrend', 'bookingsData',
+                'earningsData', 'reviewsData', 'responseMetrics', 'hostScore',
+                'chartData', 'starDistribution', 'residenceIds',
+            );
+        });
+
+        // Extraire les données cachées
+        extract($cached);
+
+        // ── Données temps-réel (non cachées) ──
         $recentContacts = Contact::where('owner_id', $user->id)
             ->with(['user:id,name,email,phone', 'residence:id,name'])
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
 
-        // Taux de conversion global
         $conversionRate = $stats['total_views'] > 0
             ? round(($stats['total_contacts'] / $stats['total_views']) * 100, 1)
             : 0;
 
-        // Tendance des vues (réutilise les IDs déjà chargés)
-        $residenceIds = $user->residences()->pluck('id');
-        $viewsTrend = $this->calculateViewsTrend($user, $residenceIds);
-
-        // ===== NOUVELLES DONNÉES DASHBOARD =====
-
-        // Revenus (bookings confirmés/complétés)
-        $revenueData = $this->calculateRevenue($residenceIds);
-
-        // Statistiques journalières sur 30 jours (pour le graphique)
-        $dailyStats = Statistic::whereIn('residence_id', $residenceIds)
-            ->where('stat_date', '>=', now()->subDays(30))
-            ->selectRaw('stat_date, SUM(views) as views, SUM(contacts) as contacts')
-            ->groupBy('stat_date')
-            ->orderBy('stat_date')
-            ->get()
-            ->keyBy(fn ($item) => $item->stat_date->format('Y-m-d'));
-
-        // Remplir les jours manquants pour un graphique continu
-        $chartData = collect();
-        for ($i = 29; $i >= 0; $i--) {
-            $date = now()->subDays($i)->format('Y-m-d');
-            $dayData = $dailyStats->get($date);
-            $chartData->push([
-                'date' => $date,
-                'label' => now()->subDays($i)->format('d/m'),
-                'views' => $dayData ? (int) $dayData->views : 0,
-                'contacts' => $dayData ? (int) $dayData->contacts : 0,
-            ]);
-        }
-
-        // Tâches du jour (style Airbnb "Aujourd'hui")
         $todayTasks = $this->getTodayTasks($user, $stats, $residences);
 
-        // Salutation contextuelle
         $hour = (int) now()->format('H');
         $greeting = match (true) {
             $hour < 12 => 'Bonjour',
@@ -92,35 +113,15 @@ class OwnerController extends Controller
             default => 'Bonsoir',
         };
 
-        // ===== NOUVELLES DONNÉES STYLE AIRBNB =====
-
-        // 1. Réservations (widget central Airbnb)
-        $bookingsData = $this->getBookingsData($residenceIds);
-
-        // 2. Revenus & Solde (breakdown financier)
-        $earningsData = $this->getEarningsData($user, $residenceIds);
-
-        // 3. Avis & Réputation
-        $reviewsData = $this->getReviewsData($residenceIds);
-
-        // 4. Métriques de réponse (taux + temps moyen)
-        $responseMetrics = $this->getResponseMetrics($user);
-
-        // 5. Score Hôte (gamification style Superhost)
-        $hostScore = $this->calculateHostScore($user, $stats, $reviewsData, $responseMetrics);
-
-        // 6. Messages non lus
         $unreadMessages = Conversation::where(function ($q) use ($user) {
             $q->where('owner_id', $user->id);
         })->sum('unread_owner_count');
 
-        // 7. Vérification d'identité (évite les queries dans les blade templates)
         $identityVerification = IdentityVerification::where('user_id', $user->id)
             ->latest()
             ->first();
         $verificationStatus = $identityVerification?->status;
 
-        // 8. Messages récents (preview widget style Airbnb Inbox)
         $recentMessages = Conversation::where('owner_id', $user->id)
             ->whereHas('messages')
             ->with(['user:id,name,profile_photo,avatar', 'residence:id,name', 'messages' => fn ($q) => $q->latest()->limit(1)])
@@ -128,7 +129,6 @@ class OwnerController extends Controller
             ->take(3)
             ->get();
 
-        // 9. Mini-calendrier : prochains événements (7j)
         $calendarEvents = Booking::whereIn('residence_id', $residenceIds)
             ->where(function ($q) {
                 $q->whereBetween('check_in', [now()->toDateString(), now()->addDays(7)->toDateString()])
@@ -139,17 +139,6 @@ class OwnerController extends Controller
             ->orderBy('check_in')
             ->take(5)
             ->get();
-
-        // 10. Distribution des étoiles (pour graphique bar)
-        $starDistribution = $reviewsData['total'] > 0
-            ? Review::whereIn('residence_id', $residenceIds)
-                ->where('status', 'approved')
-                ->selectRaw('rating, COUNT(*) as count')
-                ->groupBy('rating')
-                ->orderBy('rating', 'desc')
-                ->pluck('count', 'rating')
-                ->toArray()
-            : [];
 
         return view('owner.dashboard', compact(
             'residences',
@@ -487,15 +476,28 @@ class OwnerController extends Controller
         $totalReviews = $reviews->count();
         $averageRating = $totalReviews > 0 ? round($reviews->avg('rating'), 2) : 0;
 
-        // Notes détaillées
-        $detailedRatings = $totalReviews > 0 ? [
-            'cleanliness' => round(Review::whereIn('residence_id', $residenceIds)->where('status', 'approved')->avg('cleanliness_rating') ?? 0, 1),
-            'location' => round(Review::whereIn('residence_id', $residenceIds)->where('status', 'approved')->avg('location_rating') ?? 0, 1),
-            'value' => round(Review::whereIn('residence_id', $residenceIds)->where('status', 'approved')->avg('value_rating') ?? 0, 1),
-            'communication' => round(Review::whereIn('residence_id', $residenceIds)->where('status', 'approved')->avg('communication_rating') ?? 0, 1),
-            'accuracy' => round(Review::whereIn('residence_id', $residenceIds)->where('status', 'approved')->avg('accuracy_rating') ?? 0, 1),
-            'checkin' => round(Review::whereIn('residence_id', $residenceIds)->where('status', 'approved')->avg('checkin_rating') ?? 0, 1),
-        ] : [];
+        // Notes détaillées (1 seule requête au lieu de 6)
+        $detailedRatings = $totalReviews > 0 ? (function () use ($residenceIds) {
+            $avg = Review::whereIn('residence_id', $residenceIds)
+                ->where('status', 'approved')
+                ->selectRaw('
+                    AVG(cleanliness_rating) as avg_cleanliness,
+                    AVG(location_rating) as avg_location,
+                    AVG(value_rating) as avg_value,
+                    AVG(communication_rating) as avg_communication,
+                    AVG(accuracy_rating) as avg_accuracy,
+                    AVG(checkin_rating) as avg_checkin
+                ')
+                ->first();
+            return [
+                'cleanliness' => round((float) ($avg->avg_cleanliness ?? 0), 1),
+                'location' => round((float) ($avg->avg_location ?? 0), 1),
+                'value' => round((float) ($avg->avg_value ?? 0), 1),
+                'communication' => round((float) ($avg->avg_communication ?? 0), 1),
+                'accuracy' => round((float) ($avg->avg_accuracy ?? 0), 1),
+                'checkin' => round((float) ($avg->avg_checkin ?? 0), 1),
+            ];
+        })() : [];
 
         // Avis récents (3 derniers)
         $recentReviews = Review::whereIn('residence_id', $residenceIds)

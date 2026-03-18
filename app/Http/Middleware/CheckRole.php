@@ -27,10 +27,10 @@ class CheckRole
         // Vérifier si l'utilisateur est authentifié
         if (!$request->user()) {
             // Log tentative d'accès non authentifié
-            Log::warning('Tentative d\'accès non authentifié', [
+            Log::channel('security')->warning('Tentative d\'accès non authentifié', [
                 'ip' => $request->ip(),
                 'url' => $request->fullUrl(),
-                'user_agent' => $request->userAgent(),
+                'user_agent' => substr((string) $request->userAgent(), 0, 200),
             ]);
 
             if ($request->expectsJson()) {
@@ -47,7 +47,7 @@ class CheckRole
         // Vérifier si l'utilisateur a l'un des rôles requis
         if (!empty($roles) && !in_array($request->user()->role, $roles, true)) {
             // Log tentative d'accès non autorisé
-            Log::warning('Tentative d\'accès non autorisé', [
+            Log::channel('security')->warning('Tentative d\'accès non autorisé', [
                 'user_id' => $request->user()->id,
                 'user_role' => $request->user()->role,
                 'required_roles' => $roles,

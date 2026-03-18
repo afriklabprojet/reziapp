@@ -6,6 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    {{-- Dark mode: apply immediately to prevent flash of wrong theme --}}
+    <script>
+        (function() {
+            var t = localStorage.getItem('theme');
+            if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
+
     {{-- SEO Meta (pages enfants peuvent pousser via @push('meta')) --}}
     <x-seo-meta :title="View::yieldContent('title', config('app.name', 'REZI'))" :description="View::yieldContent(
         'description',

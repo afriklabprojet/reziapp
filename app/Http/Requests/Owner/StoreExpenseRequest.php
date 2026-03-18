@@ -20,12 +20,12 @@ class StoreExpenseRequest extends FormRequest
         return [
             'residence_id'  => ['required', 'integer', 'exists:residences,id'],
             'category'      => ['required', Rule::in(array_keys(Expense::CATEGORIES))],
-            'description'   => ['required', 'string', 'max:500'],
+            'label'         => ['required', 'string', 'max:500'],
             'amount'        => ['required', 'numeric', 'min:0'],
             'expense_date'  => ['required', 'date'],
             'receipt_path'  => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
             'is_recurring'  => ['boolean'],
-            'frequency'     => ['required_if:is_recurring,true', 'nullable', Rule::in(['monthly', 'quarterly', 'yearly'])],
+            'recurring_frequency' => ['required_if:is_recurring,true', 'nullable', Rule::in(['monthly', 'quarterly', 'yearly'])],
             'notes'         => ['nullable', 'string', 'max:1000'],
         ];
     }
@@ -35,7 +35,7 @@ class StoreExpenseRequest extends FormRequest
         return [
             'residence_id.required' => 'Sélectionnez une résidence.',
             'category.required'     => 'La catégorie est obligatoire.',
-            'description.required'  => 'La description est obligatoire.',
+            'label.required'        => 'Le libellé est obligatoire.',
             'amount.required'       => 'Le montant est obligatoire.',
             'amount.min'            => 'Le montant ne peut pas être négatif.',
             'expense_date.required' => 'La date de la dépense est obligatoire.',

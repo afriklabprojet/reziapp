@@ -8,6 +8,7 @@ use App\Models\Residence;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class StatisticsPage extends Page
@@ -26,14 +27,14 @@ class StatisticsPage extends Page
 
     public function getViewData(): array
     {
-        return [
+        return Cache::remember('admin.statistics_page', 300, fn () => [
             'globalStats' => $this->getGlobalStats(),
             'residencesByCommune' => $this->getResidencesByCommune(),
             'registrationsByDay' => $this->getRegistrationsByDay(),
             'topResidences' => $this->getTopResidences(),
             'bookingsByStatus' => $this->getBookingsByStatus(),
             'revenueByMonth' => $this->getRevenueByMonth(),
-        ];
+        ]);
     }
 
     protected function getGlobalStats(): array
@@ -68,15 +69,27 @@ class StatisticsPage extends Page
 
     protected function getRegistrationsByDay()
     {
+        $startDate = Carbon::now()->subDays(29)->startOfDay();
+
+        $users = User::where('role', '!=', 'admin')
+            ->where('created_at', '>=', $startDate)
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->groupByRaw('DATE(created_at)')
+            ->pluck('count', 'date');
+
+        $owners = User::where('role', 'owner')
+            ->where('created_at', '>=', $startDate)
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->groupByRaw('DATE(created_at)')
+            ->pluck('count', 'date');
+
         $data = [];
         for ($i = 29; $i >= 0; $i--) {
-            $date = Carbon::now()->subDays($i);
+            $date = Carbon::now()->subDays($i)->format('Y-m-d');
             $data[] = [
-                'date' => $date->format('d/m'),
-                'users' => User::where('role', '!=', 'admin')
-                    ->whereDate('created_at', $date)->count(),
-                'owners' => User::where('role', 'owner')
-                    ->whereDate('created_at', $date)->count(),
+                'date' => Carbon::parse($date)->format('d/m'),
+                'users' => $users[$date] ?? 0,
+                'owners' => $owners[$date] ?? 0,
             ];
         }
 
@@ -102,18 +115,27 @@ class StatisticsPage extends Page
 
     protected function getRevenueByMonth()
     {
+        $startDate = Carbon::now()->subMonths(5)->startOfMonth();
+
+        $revenues = Payment::where('status', 'completed')
+            ->where('created_at', '>=', $startDate)
+            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, SUM(amount) as total")
+            ->groupBy('month')
+            ->pluck('total', 'month');
+
+        $bookings = Booking::where('created_at', '>=', $startDate)
+            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count")
+            ->groupBy('month')
+            ->pluck('count', 'month');
+
         $data = [];
         for ($i = 5; $i >= 0; $i--) {
             $month = Carbon::now()->subMonths($i);
+            $key = $month->format('Y-m');
             $data[] = [
                 'month' => $month->translatedFormat('M Y'),
-                'revenue' => Payment::where('status', 'completed')
-                    ->whereYear('created_at', $month->year)
-                    ->whereMonth('created_at', $month->month)
-                    ->sum('amount'),
-                'bookings' => Booking::whereYear('created_at', $month->year)
-                    ->whereMonth('created_at', $month->month)
-                    ->count(),
+                'revenue' => $revenues[$key] ?? 0,
+                'bookings' => $bookings[$key] ?? 0,
             ];
         }
 

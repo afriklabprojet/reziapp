@@ -31,10 +31,11 @@ class StoreBookingRequestRequest extends FormRequest
             'adults' => 'required|integer|min:1',
             'children' => 'nullable|integer|min:0',
             'infants' => 'nullable|integer|min:0',
-            'message' => 'required|string|max:1000',
+            'message' => 'nullable|string|max:1000',
             'special_requests' => 'nullable|array',
             'promo_code' => 'nullable|string',
             'coupon_code' => 'nullable|string',
+            'payment_method' => 'required|string|in:wave,orange,mtn,moov,djamo',
         ];
     }
 

@@ -96,6 +96,7 @@ class StoreResidenceRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'min:50', 'max:5000'],
             'type' => ['required', 'string', 'in:studio,apartment,house,villa,duplex,other'],
+            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'rental_type' => ['nullable', 'string', 'in:standard,short_term,colocation,corporate,seasonal'],
             'type_location' => ['required', 'string', 'in:apartment,residence_meublee,hotel'],
             'price_period' => ['required', 'string', 'in:day,night,month'],

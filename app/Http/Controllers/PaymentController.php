@@ -10,6 +10,7 @@ use App\Services\JekoService;
 use App\Services\PaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -70,11 +71,43 @@ class PaymentController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Non autorisé',
+                'error_code' => 'FORBIDDEN',
             ], 403);
         }
 
+        // Guard: booking must be in payable state
+        if (! in_array($booking->status, ['pending_payment', 'pending'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cette réservation ne peut pas être payée.',
+                'error_code' => 'INVALID_STATE',
+            ], 400);
+        }
+
+        // Guard: prevent paying already paid bookings
+        if ($booking->isPaid()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cette réservation est déjà payée.',
+                'error_code' => 'ALREADY_PAID',
+            ], 409);
+        }
+
+        // Guard: amount sanity check
+        if ($booking->total_amount <= 0) {
+            Log::channel('critical')->error('Payment initiate: Invalid booking amount', [
+                'booking_id' => $booking->id,
+                'amount' => $booking->total_amount,
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Montant de réservation invalide.',
+                'error_code' => 'INVALID_AMOUNT',
+            ], 400);
+        }
+
         try {
-            // Créer le paiement
+            // Créer le paiement (idempotent — returns existing if pending)
             $payment = $this->paymentService->createBookingPayment($booking, Auth::user(), [
                 'provider' => 'jeko',
             ]);
@@ -95,6 +128,13 @@ class PaymentController extends Controller
                     ]);
                 }
 
+                Log::channel('payments')->info('Payment initiation successful', [
+                    'payment_id' => $payment->id,
+                    'booking_id' => $booking->id,
+                    'user_id' => Auth::id(),
+                    'amount' => $payment->total_amount,
+                ]);
+
                 return response()->json([
                     'success' => true,
                     'message' => $result['message'],
@@ -112,6 +152,12 @@ class PaymentController extends Controller
             ], 400);
         } catch (\Exception $e) {
             report($e);
+
+            Log::channel('critical')->error('Payment initiation exception', [
+                'booking_id' => $booking->id,
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+            ]);
 
             return response()->json([
                 'success' => false,
@@ -135,13 +181,38 @@ class PaymentController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Non autorisé',
+                'error_code' => 'FORBIDDEN',
             ], 403);
+        }
+
+        // Guard: payment must be in verifiable state
+        if (! in_array($payment->status, [Payment::STATUS_PROCESSING, Payment::STATUS_PENDING])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ce paiement ne peut plus être vérifié.',
+                'error_code' => 'INVALID_STATE',
+            ], 400);
+        }
+
+        // Guard: check expiry
+        if ($payment->expires_at && $payment->expires_at->isPast()) {
+            $payment->markAsFailed('Paiement expiré — délai de vérification dépassé');
+            return response()->json([
+                'success' => false,
+                'message' => 'Le délai de vérification est expiré. Veuillez relancer le paiement.',
+                'error_code' => 'PAYMENT_EXPIRED',
+            ], 410);
         }
 
         try {
             $result = $this->paymentService->verifyOtp($payment, $request->otp);
 
             if ($result['success']) {
+                Log::channel('payments')->info('OTP verification successful', [
+                    'payment_id' => $payment->id,
+                    'user_id' => Auth::id(),
+                ]);
+
                 return response()->json([
                     'success' => true,
                     'message' => $result['message'],
@@ -232,12 +303,31 @@ class PaymentController extends Controller
     }
 
     /**
-     * Webhook Jeko
+     * Webhook Jeko (DEPRECATED — utiliser /api/webhooks/jeko avec signature HMAC)
+     * Conservé pour rétrocompatibilité, mais sécurisé avec vérification de signature.
      */
     public function webhook(Request $request)
     {
-        $payload = $request->all();
+        // Vérifier la signature HMAC pour éviter les webhooks forgés
+        $rawBody = $request->getContent();
+        $signature = $request->header('Jeko-Signature', '');
+        $webhookSecret = config('services.jeko.webhook_secret');
 
+        if ($webhookSecret) {
+            $expectedSignature = hash_hmac('sha256', $rawBody, $webhookSecret);
+            if (!hash_equals($expectedSignature, $signature)) {
+                \Illuminate\Support\Facades\Log::warning('Legacy webhook: Invalid signature', [
+                    'ip' => $request->ip(),
+                ]);
+                return response()->json(['error' => 'Invalid signature'], 401);
+            }
+        } else {
+            // Pas de secret configuré — bloquer par sécurité
+            \Illuminate\Support\Facades\Log::warning('Legacy webhook: No secret configured, rejecting');
+            return response()->json(['error' => 'Webhook not configured'], 403);
+        }
+
+        $payload = $request->all();
         $result = $this->jekoService->handleWebhook($payload);
 
         return response()->json($result, $result['success'] ? 200 : 400);

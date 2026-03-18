@@ -41,13 +41,13 @@ class UnifiedCalendarController extends Controller
                 $q->whereBetween('check_in', [$start, $end])
                   ->orWhereBetween('check_out', [$start, $end]);
             })
-            ->with('residence')
+            ->with(['residence', 'user'])
             ->get();
 
         foreach ($bookings as $booking) {
             $events[] = [
                 'id'    => 'booking-' . $booking->id,
-                'title' => $booking->residence?->name . ' — ' . ($booking->guest_name ?? 'Réservation'),
+                'title' => $booking->residence?->name . ' — ' . ($booking->user?->name ?? 'Réservation'),
                 'start' => $booking->check_in,
                 'end'   => $booking->check_out,
                 'color' => '#4F46E5', // Indigo

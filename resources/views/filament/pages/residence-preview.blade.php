@@ -77,7 +77,7 @@
                 @endif
                 @if($residence->price_per_month)
                 <div class="flex justify-between">
-                    <span class="text-gray-500">Prix/mois</span>
+                    <span class="text-gray-500">Prix/mois (réf.)</span>
                     <span class="font-medium">{{ number_format($residence->price_per_month) }} FCFA</span>
                 </div>
                 @endif

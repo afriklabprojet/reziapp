@@ -14,7 +14,7 @@
                     </svg>
                     Retour à mes résidences
                 </a>
-                <h1 class="text-3xl font-bold text-gray-900">Ajouter une résidence</h1>
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Ajouter une résidence</h1>
                 <p class="text-gray-600 mt-2">Remplissez les informations de votre résidence meublée</p>
             </div>
 
@@ -34,23 +34,100 @@
                     description: '{{ old('description', '') }}',
                     houseRules: '{{ old('house_rules', '') }}',
                     typeLocation: '{{ old('type_location', 'residence_meublee') }}',
+                    aiLoading: false,
+                    aiTitleLoading: false,
+                    aiImproveLoading: false,
+                    aiError: '',
                     get pricePeriod() {
-                        const map = { apartment: 'month', residence_meublee: 'day', hotel: 'night' };
-                        return map[this.typeLocation] || 'day';
+                        return 'day';
                     },
                     get priceLabel() {
-                        const labels = { month: 'Prix par mois (FCFA)', day: 'Prix par jour (FCFA)', night: 'Prix par nuit (FCFA)' };
-                        return labels[this.pricePeriod] || 'Prix (FCFA)';
+                        return 'Prix par jour (FCFA)';
                     },
                     get pricePlaceholder() {
-                        return this.pricePeriod === 'month' ? '150000' : '15000';
+                        return '15000';
                     },
                     get priceMin() {
-                        return this.pricePeriod === 'month' ? '10000' : '1000';
+                        return '1000';
                     },
                     get priceFieldName() {
-                        return this.pricePeriod === 'month' ? 'price_per_month' : 'price_per_day';
-                    }
+                        return 'price_per_day';
+                    },
+                    getFormContext() {
+                        const form = this.$root;
+                        const fd = new FormData(form);
+                        return {
+                            type: fd.get('type') || '',
+                            type_location: fd.get('type_location') || '',
+                            commune: fd.get('commune_id') ? (form.querySelector('[name=commune_id] option:checked')?.textContent?.trim() || '') : '',
+                            bedrooms: fd.get('bedrooms') || '',
+                            bathrooms: fd.get('bathrooms') || '',
+                            surface_area: fd.get('surface_area') || '',
+                            max_guests: fd.get('max_guests') || '',
+                            price: fd.get('price_per_day') || fd.get('price_per_month') || '',
+                        };
+                    },
+                    async generateDescription() {
+                        this.aiError = '';
+                        const ctx = this.getFormContext();
+                        if (!ctx.type) { this.aiError = 'Veuillez d\'abord sélectionner le type de résidence.'; return; }
+                        this.aiLoading = true;
+                        try {
+                            const res = await fetch('{{ route('owner.ai.generate-description') }}', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                                body: JSON.stringify(ctx),
+                            });
+                            const data = await res.json();
+                            if (data.description) {
+                                this.description = data.description;
+                            } else {
+                                this.aiError = data.error || 'Erreur lors de la génération.';
+                            }
+                        } catch (e) { this.aiError = 'Erreur de connexion.'; }
+                        this.aiLoading = false;
+                    },
+                    async generateTitle() {
+                        this.aiError = '';
+                        const ctx = this.getFormContext();
+                        if (!ctx.type) { this.aiError = 'Veuillez d\'abord sélectionner le type de résidence.'; return; }
+                        this.aiTitleLoading = true;
+                        try {
+                            const res = await fetch('{{ route('owner.ai.generate-title') }}', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                                body: JSON.stringify(ctx),
+                            });
+                            const data = await res.json();
+                            if (data.title) {
+                                document.getElementById('name').value = data.title;
+                            } else {
+                                this.aiError = data.error || 'Erreur lors de la génération.';
+                            }
+                        } catch (e) { this.aiError = 'Erreur de connexion.'; }
+                        this.aiTitleLoading = false;
+                    },
+                    async improveDescription() {
+                        if (this.description.length < 10) { this.aiError = 'Écrivez au moins quelques mots avant d\'améliorer.'; return; }
+                        this.aiImproveLoading = true;
+                        this.aiError = '';
+                        try {
+                            const ctx = this.getFormContext();
+                            ctx.description = this.description;
+                            const res = await fetch('{{ route('owner.ai.improve-description') }}', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                                body: JSON.stringify(ctx),
+                            });
+                            const data = await res.json();
+                            if (data.description) {
+                                this.description = data.description;
+                            } else {
+                                this.aiError = data.error || 'Erreur lors de l\'amélioration.';
+                            }
+                        } catch (e) { this.aiError = 'Erreur de connexion.'; }
+                        this.aiImproveLoading = false;
+                    },
                 }" class="space-y-6">
                 @csrf
 
@@ -59,14 +136,32 @@
                     <div class="flex items-center mb-6">
                         <span class="flex items-center justify-center w-8 h-8 bg-orange-100 text-orange-500 rounded-full text-sm font-bold mr-3">1</span>
                         <h2 class="text-xl font-semibold text-gray-900">Informations générales</h2>
+                        <span class="ml-auto inline-flex items-center gap-1 px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full text-[10px] font-bold uppercase tracking-wide">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            IA disponible
+                        </span>
+                    </div>
+
+                    {{-- Erreur IA --}}
+                    <div x-show="aiError" x-cloak x-transition class="col-span-full bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-3 py-2 md:col-span-2">
+                        <span x-text="aiError"></span>
+                        <button type="button" @click="aiError=''" class="ml-2 text-red-400 hover:text-red-600">&times;</button>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {{-- Nom --}}
                         <div class="md:col-span-2">
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                                Nom de la résidence <span class="text-red-500">*</span>
-                            </label>
+                            <div class="flex items-center justify-between mb-2">
+                                <label for="name" class="block text-sm font-medium text-gray-700">
+                                    Nom de la résidence <span class="text-red-500">*</span>
+                                </label>
+                                <button type="button" @click="generateTitle()" :disabled="aiTitleLoading"
+                                    class="inline-flex items-center gap-1 px-2.5 py-1 bg-violet-50 text-violet-700 rounded-lg text-xs font-medium hover:bg-violet-100 transition disabled:opacity-50">
+                                    <svg x-show="!aiTitleLoading" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                    <svg x-show="aiTitleLoading" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                                    <span x-text="aiTitleLoading ? 'Génération...' : 'Titre par IA'"></span>
+                                </button>
+                            </div>
                             <input type="text" id="name" name="name" value="{{ old('name') }}"
                                 placeholder="Ex: Belle Villa à Cocody" required
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
@@ -117,10 +212,26 @@
 
                         {{-- Description --}}
                         <div class="md:col-span-2">
-                            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
-                                Description <span class="text-red-500">*</span>
-                                <span class="text-gray-400">(min. 50 caractères)</span>
-                            </label>
+                            <div class="flex items-center justify-between mb-2">
+                                <label for="description" class="block text-sm font-medium text-gray-700">
+                                    Description <span class="text-red-500">*</span>
+                                    <span class="text-gray-400">(min. 50 caractères)</span>
+                                </label>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" @click="generateDescription()" :disabled="aiLoading"
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 bg-violet-50 text-violet-700 rounded-lg text-xs font-medium hover:bg-violet-100 transition disabled:opacity-50">
+                                        <svg x-show="!aiLoading" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                        <svg x-show="aiLoading" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                                        <span x-text="aiLoading ? 'Génération...' : 'Générer par IA'"></span>
+                                    </button>
+                                    <button type="button" @click="improveDescription()" :disabled="aiImproveLoading || description.length < 10"
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-xs font-medium hover:bg-amber-100 transition disabled:opacity-50">
+                                        <svg x-show="!aiImproveLoading" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+                                        <svg x-show="aiImproveLoading" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                                        <span x-text="aiImproveLoading ? 'Amélioration...' : 'Améliorer'"></span>
+                                    </button>
+                                </div>
+                            </div>
                             <textarea id="description" name="description" rows="4"
                                 placeholder="Décrivez votre résidence en détail : ambiance, voisinage, points forts..."
                                 required minlength="50" x-model="description"
@@ -256,30 +367,18 @@
                         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                         </svg>
-                        <span x-show="typeLocation === 'apartment'">Appartement : facturation <strong>mensuelle</strong>. Le prix par mois est requis.</span>
-                        <span x-show="typeLocation === 'residence_meublee'">Résidence meublée : facturation <strong>journalière</strong>. Le prix par jour est requis.</span>
-                        <span x-show="typeLocation === 'hotel'">Hôtel : facturation <strong>par nuit</strong>. Le prix par nuit est requis.</span>
+                        <span>Toutes les locations sont facturées <strong>à la journée</strong>. Le prix par jour est requis.</span>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {{-- Prix principal (dynamique) --}}
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                <span x-text="priceLabel"></span> <span class="text-red-500">*</span>
+                                Prix par jour (FCFA) <span class="text-red-500">*</span>
                             </label>
-                            {{-- Champ prix mensuel (visible si apartment) --}}
-                            <div x-show="pricePeriod === 'month'">
-                                <input type="number" name="price_per_month" :value="pricePeriod === 'month' ? '{{ old('price_per_month') }}' : ''"
-                                    placeholder="150000" min="10000" :required="pricePeriod === 'month'"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-                                @error('price_per_month')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            {{-- Champ prix journalier/nuit (visible si residence_meublee ou hotel) --}}
-                            <div x-show="pricePeriod !== 'month'">
-                                <input type="number" name="price_per_day" :value="pricePeriod !== 'month' ? '{{ old('price_per_day') }}' : ''"
-                                    placeholder="15000" min="1000" :required="pricePeriod !== 'month'"
+                            <div>
+                                <input type="number" name="price_per_day" value="{{ old('price_per_day') }}"
+                                    placeholder="15000" min="1000" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
                                 @error('price_per_day')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -464,6 +563,7 @@
                                             d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
                                     <span x-text="mapLatitude && mapLongitude ? `Lat: ${mapLatitude.toFixed(6)}, Lng: ${mapLongitude.toFixed(6)}` : 'Sélectionnez une adresse ou cliquez sur la carte'"></span>
+                                    <span id="address-validation-badge" class="ml-2" style="display: none;"></span>
                                 </div>
                             </div>
 

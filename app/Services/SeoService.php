@@ -53,7 +53,7 @@ class SeoService
         
         if ($residence->price_per_night) {
             $price = number_format($residence->price_per_night, 0, ',', ' ');
-            $title .= " - {$price} FCFA/nuit";
+            $title .= " - {$price} FCFA/jour";
         }
         
         $title .= " | REZI";
@@ -92,7 +92,7 @@ class SeoService
         $featuresText = $features ? ' - ' . implode(', ', $features) : '';
         
         $price = $residence->price_per_night 
-            ? number_format($residence->price_per_night, 0, ',', ' ') . ' FCFA/nuit' 
+            ? number_format($residence->price_per_night, 0, ',', ' ') . ' FCFA/jour' 
             : '';
         
         $description = "Louez ce {$type} meublé à {$location}{$featuresText}. {$price}. Réservation en ligne sécurisée sur REZI.";

@@ -43,13 +43,18 @@ class PhotoPolicy
      */
     public function view(?User $user, Photo $photo): bool
     {
+        // Si la résidence est supprimée, seul le propriétaire peut voir
+        if (!$photo->residence) {
+            return false;
+        }
+
         // Si la résidence est active, la photo est visible
         if (in_array($photo->residence->status, ['active', 'approved'])) {
             return true;
         }
 
         // Le propriétaire peut voir ses photos
-        if ($user && $photo->residence->owner_id === $user->id) {
+        if ($user && (int) $photo->residence->owner_id === (int) $user->id) {
             return true;
         }
 
@@ -71,7 +76,7 @@ class PhotoPolicy
     public function update(User $user, Photo $photo): bool
     {
         // Le propriétaire de la résidence peut modifier
-        return $photo->residence->owner_id === $user->id;
+        return (int) ($photo->residence?->owner_id ?? 0) === (int) $user->id;
     }
 
     /**
@@ -80,7 +85,7 @@ class PhotoPolicy
     public function delete(User $user, Photo $photo): bool
     {
         // Le propriétaire de la résidence peut supprimer
-        return $photo->residence->owner_id === $user->id;
+        return (int) ($photo->residence?->owner_id ?? 0) === (int) $user->id;
     }
 
     /**
@@ -88,7 +93,7 @@ class PhotoPolicy
      */
     public function setAsPrimary(User $user, Photo $photo): bool
     {
-        return $photo->residence->owner_id === $user->id;
+        return (int) ($photo->residence?->owner_id ?? 0) === (int) $user->id;
     }
 
     /**
@@ -96,6 +101,6 @@ class PhotoPolicy
      */
     public function reorder(User $user, Photo $photo): bool
     {
-        return $photo->residence->owner_id === $user->id;
+        return (int) ($photo->residence?->owner_id ?? 0) === (int) $user->id;
     }
 }

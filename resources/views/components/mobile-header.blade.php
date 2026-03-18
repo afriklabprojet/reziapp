@@ -68,6 +68,9 @@
 
             {{ $slot ?? '' }}
 
+            {{-- Theme toggle (mobile) --}}
+            <x-theme-toggle class="p-2 rounded-full hover:bg-gray-100/80 active:bg-gray-200 active:scale-95 transition-all duration-200 min-w-11 min-h-11 flex items-center justify-center" />
+
             {{-- Bouton hamburger --}}
             <button @click="menuOpen = !menuOpen"
                 class="p-2.5 rounded-full hover:bg-gray-100/80 active:bg-gray-200 active:scale-95 transition-all duration-200 min-w-11 min-h-11 flex items-center justify-center"

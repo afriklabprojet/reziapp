@@ -68,8 +68,7 @@ class DisputeController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'booking_id' => 'required_without:cancellation_id|exists:bookings,id',
-            'cancellation_id' => 'nullable|exists:cancellations,id',
+            'booking_id' => 'required|exists:bookings,id',
             'type' => 'required|string|in:'.implode(',', array_keys(Dispute::getTypes())),
             'reason' => 'required|string|max:255',
             'detailed_description' => 'required|string|max:5000',
@@ -109,7 +108,6 @@ class DisputeController extends Controller
                 $validated['reason'],
                 $validated['detailed_description'],
                 $validated['booking_id'] ?? null,
-                $validated['cancellation_id'] ?? null,
                 $evidence,
             );
 
@@ -131,7 +129,7 @@ class DisputeController extends Controller
         $user = auth()->user();
 
         // Check authorization
-        if ($dispute->initiator_id !== $user->id && !$user->isAdmin()) {
+        if ($dispute->opened_by !== $user->id && !$user->isAdmin()) {
             // Check if user is the other party in the booking
             if (!$dispute->booking ||
                 ($dispute->booking->user_id !== $user->id && $dispute->booking->residence->owner_id !== $user->id)) {
@@ -139,7 +137,7 @@ class DisputeController extends Controller
             }
         }
 
-        $dispute->load(['booking.residence', 'cancellation', 'initiator', 'assignedAdmin', 'supportTickets']);
+        $dispute->load(['booking.residence', 'opener', 'assignedAdmin', 'supportTickets']);
 
         return view('disputes.show', compact('dispute'));
     }
@@ -152,7 +150,7 @@ class DisputeController extends Controller
         $user = auth()->user();
 
         // Check authorization
-        if ($dispute->initiator_id !== $user->id &&
+        if ($dispute->opened_by !== $user->id &&
             (!$dispute->booking || ($dispute->booking->user_id !== $user->id && $dispute->booking->residence->owner_id !== $user->id))) {
             abort(403);
         }
@@ -212,7 +210,7 @@ class DisputeController extends Controller
         $user = auth()->user();
 
         // Authorization check
-        if ($dispute->initiator_id !== $user->id && !$user->isAdmin()) {
+        if ($dispute->opened_by !== $user->id && !$user->isAdmin()) {
             return response()->json(['error' => 'Non autorisé'], 403);
         }
 

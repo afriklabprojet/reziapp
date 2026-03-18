@@ -59,7 +59,7 @@
 
                     <div class="space-y-4">
                         <div>
-                            <label for="price_per_night" class="block text-sm font-medium text-gray-700 mb-1">Prix par nuit
+                            <label for="price_per_night" class="block text-sm font-medium text-gray-700 mb-1">Prix par jour
                                 <span class="text-red-500">*</span></label>
                             <div class="relative">
                                 <input type="number" id="price_per_night" name="price_per_night"
@@ -86,7 +86,7 @@
 
                         <div>
                             <label for="price_per_month" class="block text-sm font-medium text-gray-700 mb-1">Prix par
-                                mois</label>
+                                jour</label>
                             <div class="relative">
                                 <input type="number" id="price_per_month" name="price_per_month"
                                     value="{{ old('price_per_month', $season->price_per_month) }}"

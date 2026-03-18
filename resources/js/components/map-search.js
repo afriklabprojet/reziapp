@@ -108,6 +108,7 @@ export default function mapSearch(config) {
                         id: r.id,
                         title: r.title,
                         price: r.price,
+                        price_label: r.price_label || '/jour',
                         thumbnail: r.thumbnail,
                         commune: r.location?.commune || r.commune || '',
                         quartier: r.location?.quartier || r.quartier || '',
@@ -243,6 +244,7 @@ export default function mapSearch(config) {
 
         createMarkerHTML(residence) {
             const price = this.formatPriceShort(residence.price);
+            const priceLabel = residence.price_label || '/jour';
             const isAvailable = residence.is_available !== undefined ? residence.is_available : true;
             const bgColor = isAvailable ? 'bg-emerald-600' : 'bg-gray-400';
             const borderColor = isAvailable ? 'border-t-emerald-600' : 'border-t-gray-400';
@@ -252,7 +254,7 @@ export default function mapSearch(config) {
             return `
                 <div class="relative">
                     <div class="${bgColor} text-white px-2 py-1 rounded-lg text-xs font-bold shadow-lg whitespace-nowrap flex items-center gap-0.5">
-                        ${statusDot}${price}
+                        ${statusDot}${price}<span class="font-normal text-white/80">${priceLabel}</span>
                     </div>
                     <div class="absolute left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent ${borderColor}"></div>
                 </div>

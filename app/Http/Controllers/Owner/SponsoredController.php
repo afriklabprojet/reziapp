@@ -69,25 +69,44 @@ class SponsoredController extends Controller
             'target_communes' => 'nullable|array',
         ]);
 
+        // Vérifier la limite d'abonnement
+        $user = Auth::user();
+        $plan = $user->currentPlan();
+        $maxSponsored = $plan ? ($plan->max_sponsored_per_month ?? 0) : 0;
+
+        if ($maxSponsored === 0) {
+            return back()->with('error', 'Votre abonnement ne permet pas de créer des mises en avant. Passez à un plan supérieur.')
+                ->withInput();
+        }
+
+        $currentMonthCount = SponsoredListing::where('user_id', $user->id)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->whereNotIn('status', ['cancelled'])
+            ->count();
+
+        if ($currentMonthCount >= $maxSponsored) {
+            return back()->with('error', "Vous avez atteint votre limite de {$maxSponsored} mises en avant par mois. Passez à un plan supérieur pour en créer davantage.")
+                ->withInput();
+        }
+
         // Vérifier que la résidence appartient au propriétaire
         $residence = Residence::where('id', $validated['residence_id'])
             ->where('owner_id', Auth::id())
             ->firstOrFail();
 
-        // Calculer les dates
-        $startsAt = now();
-        $endsAt = now()->addDays((int) $validated['duration']);
-
         // Récupérer les infos du package
         $packages = $this->getPackages();
         $package = $packages[$validated['type']] ?? $packages['highlighted'];
 
+        // Ne PAS définir starts_at/ends_at maintenant — sera défini après paiement
         $sponsoredListing = SponsoredListing::create([
             'residence_id' => $validated['residence_id'],
             'user_id' => Auth::id(),
             'type' => $validated['type'],
-            'starts_at' => $startsAt,
-            'ends_at' => $endsAt,
+            'starts_at' => null,
+            'ends_at' => null,
+            'duration_days' => (int) $validated['duration'],
             'daily_budget' => $validated['daily_budget'] ?? null,
             'total_budget' => $validated['total_budget'] ?? $package['price'] * ($validated['duration'] / 7),
             'amount_spent' => 0,
@@ -220,11 +239,14 @@ class SponsoredController extends Controller
 
     private function getPackages(): array
     {
+        $costPerClick = config('rezi.sponsored.cost_per_click', 50);
+        $costPerView = config('rezi.sponsored.cost_per_view', 5);
+
         return [
             'featured_home' => [
                 'name' => 'Page d\'accueil',
                 'description' => 'Votre résidence apparaît en vedette sur la page d\'accueil',
-                'price' => 25000, // par semaine
+                'price' => config('rezi.sponsored.featured_home_price_weekly', 25000),
                 'billing_type' => 'flat_rate',
                 'cost_per_unit' => 0,
                 'features' => [
@@ -236,9 +258,9 @@ class SponsoredController extends Controller
             'top_search' => [
                 'name' => 'Top Recherche',
                 'description' => 'Apparaissez en tête des résultats de recherche',
-                'price' => 15000, // par semaine
+                'price' => config('rezi.sponsored.top_search_price_weekly', 15000),
                 'billing_type' => 'per_click',
-                'cost_per_unit' => 50,
+                'cost_per_unit' => $costPerClick,
                 'features' => [
                     'Top 3 des résultats',
                     'Badge "Sponsorisé"',
@@ -248,7 +270,7 @@ class SponsoredController extends Controller
             'highlighted' => [
                 'name' => 'Mis en avant',
                 'description' => 'Design différencié dans les listes',
-                'price' => 7500, // par semaine
+                'price' => config('rezi.sponsored.highlighted_price_weekly', 7500),
                 'billing_type' => 'flat_rate',
                 'cost_per_unit' => 0,
                 'features' => [
@@ -260,7 +282,7 @@ class SponsoredController extends Controller
             'premium_listing' => [
                 'name' => 'Premium',
                 'description' => 'Le pack complet pour un maximum de visibilité',
-                'price' => 35000, // par semaine
+                'price' => config('rezi.sponsored.premium_price_weekly', 35000),
                 'billing_type' => 'flat_rate',
                 'cost_per_unit' => 0,
                 'features' => [

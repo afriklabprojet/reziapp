@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto px-4 py-8">
-    <div class="mb-8 flex items-center justify-between">
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
             <a href="{{ route('invoices.index') }}" class="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-2">
                 <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
@@ -12,8 +12,8 @@
             </a>
             <h1 class="text-2xl font-bold text-gray-900">Facture {{ $invoice->invoice_number }}</h1>
         </div>
-        <div class="flex items-center space-x-3">
-            <a href="{{ route('invoices.download', $invoice) }}" class="btn-primary text-sm">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <a href="{{ route('invoices.download', $invoice) }}" class="btn-primary text-sm text-center">
                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                 Télécharger PDF
             </a>
@@ -30,8 +30,8 @@
     <!-- Invoice Card -->
     <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
         <!-- Header -->
-        <div class="bg-gray-50 border-b p-6">
-            <div class="flex justify-between items-start">
+        <div class="bg-gray-50 border-b p-4 sm:p-6">
+            <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
                 <div>
                     <h2 class="text-xl font-bold text-gray-900">REZI</h2>
                     <p class="text-sm text-gray-500 mt-1">Plateforme de résidences meublées</p>
@@ -65,6 +65,7 @@
             </div>
 
             <!-- Line Items -->
+            <div class="overflow-x-auto -mx-4 sm:-mx-0">
             <table class="w-full mb-6">
                 <thead>
                     <tr class="border-b border-gray-200">
@@ -92,6 +93,7 @@
                     </tr>
                 </tfoot>
             </table>
+            </div>
         </div>
     </div>
 </div>

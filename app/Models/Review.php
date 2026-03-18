@@ -14,6 +14,7 @@ class Review extends Model
     protected $fillable = [
         'residence_id',
         'user_id',
+        'booking_id',
         'rating',
         'cleanliness_rating',
         'location_rating',
@@ -22,30 +23,38 @@ class Review extends Model
         'accuracy_rating',
         'checkin_rating',
         'comment',
+        'pros',
+        'cons',
+        'would_recommend',
         'owner_response',
         'owner_response_at',
         'owner_review_for_guest',
         'is_verified',
         'status',
-        'stay_start_date',
-        'stay_end_date',
+        'stay_date_start',
+        'stay_date_end',
         'photos',
         'helpful_count',
         'is_featured',
         'sentiment_score',
         'sentiment_label',
         'needs_moderation',
+        'moderation_notes',
+        'moderated_by',
+        'moderated_at',
     ];
 
     protected $casts = [
         'owner_response_at' => 'datetime',
         'is_verified' => 'boolean',
-        'stay_start_date' => 'date',
-        'stay_end_date' => 'date',
+        'would_recommend' => 'boolean',
+        'stay_date_start' => 'date',
+        'stay_date_end' => 'date',
         'photos' => 'array',
         'is_featured' => 'boolean',
         'needs_moderation' => 'boolean',
         'sentiment_score' => 'float',
+        'moderated_at' => 'datetime',
     ];
 
     protected $attributes = [
@@ -76,6 +85,14 @@ class Review extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * La réservation associée
+     */
+    public function booking(): BelongsTo
+    {
+        return $this->belongsTo(Booking::class);
     }
 
     /**
@@ -159,11 +176,11 @@ class Review extends Model
      */
     public function getStayDurationAttribute(): ?int
     {
-        if (!$this->stay_start_date || !$this->stay_end_date) {
+        if (!$this->stay_date_start || !$this->stay_date_end) {
             return null;
         }
 
-        return $this->stay_start_date->diffInDays($this->stay_end_date);
+        return $this->stay_date_start->diffInDays($this->stay_date_end);
     }
 
     /**
@@ -171,12 +188,12 @@ class Review extends Model
      */
     public function getStayPeriodFormattedAttribute(): ?string
     {
-        if (!$this->stay_start_date || !$this->stay_end_date) {
+        if (!$this->stay_date_start || !$this->stay_date_end) {
             return null;
         }
 
-        return $this->stay_start_date->translatedFormat('d M').' - '.
-               $this->stay_end_date->translatedFormat('d M Y');
+        return $this->stay_date_start->translatedFormat('d M').' - '.
+               $this->stay_date_end->translatedFormat('d M Y');
     }
 
     /**

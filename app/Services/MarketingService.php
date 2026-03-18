@@ -643,10 +643,10 @@ class MarketingService
     /**
      * Enregistrer un clic
      */
-    public function recordSponsoredClick(SponsoredListing $sponsored): void
+    public function recordSponsoredClick(SponsoredListing $sponsored, ?string $ip = null, ?int $userId = null): void
     {
         if ($sponsored->canRun()) {
-            $sponsored->recordClick();
+            $sponsored->recordClick($ip ?? request()->ip(), $userId ?? auth()->id());
         }
     }
 

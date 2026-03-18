@@ -11,26 +11,26 @@ class TenantReview extends Model
 {
     protected $fillable = [
         'owner_id', 'tenant_id', 'booking_id', 'residence_id',
-        'cleanliness', 'respect_rules', 'communication', 'payment',
-        'overall', 'comment', 'would_rent_again', 'is_public',
+        'cleanliness_rating', 'respect_rules_rating', 'communication_rating', 'payment_rating',
+        'overall_rating', 'comment', 'would_rent_again', 'is_public',
     ];
 
     protected $casts = [
-        'cleanliness'     => 'integer',
-        'respect_rules'   => 'integer',
-        'communication'   => 'integer',
-        'payment'         => 'integer',
-        'overall'         => 'integer',
+        'cleanliness_rating'     => 'integer',
+        'respect_rules_rating'   => 'integer',
+        'communication_rating'   => 'integer',
+        'payment_rating'         => 'integer',
+        'overall_rating'         => 'integer',
         'would_rent_again' => 'boolean',
         'is_public'       => 'boolean',
     ];
 
     const RATING_DIMENSIONS = [
-        'cleanliness'   => 'Propreté',
-        'respect_rules' => 'Respect des règles',
-        'communication' => 'Communication',
-        'payment'       => 'Ponctualité paiement',
-        'overall'       => 'Note globale',
+        'cleanliness_rating'   => 'Propreté',
+        'respect_rules_rating' => 'Respect des règles',
+        'communication_rating' => 'Communication',
+        'payment_rating'       => 'Ponctualité paiement',
+        'overall_rating'       => 'Note globale',
     ];
 
     // ===== RELATIONS =====
@@ -59,8 +59,8 @@ class TenantReview extends Model
 
     public function getAverageRatingAttribute(): float
     {
-        return round(($this->cleanliness + $this->respect_rules +
-            $this->communication + $this->payment + $this->overall) / 5, 1);
+        return round(($this->cleanliness_rating + $this->respect_rules_rating +
+            $this->communication_rating + $this->payment_rating + $this->overall_rating) / 5, 1);
     }
 
     public function getRatingStarsAttribute(): string
@@ -92,6 +92,6 @@ class TenantReview extends Model
 
     public function scopePositive($query)
     {
-        return $query->where('overall', '>=', 4);
+        return $query->where('overall_rating', '>=', 4);
     }
 }

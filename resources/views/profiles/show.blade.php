@@ -126,14 +126,94 @@
                                         Profil public
                                     </a>
                                 @else
-                                    <a href="{{ route('chat.start', $user) }}"
-                                        class="inline-flex items-center gap-2 px-6 py-3 bg-white text-orange-600 hover:bg-orange-50 rounded-xl font-semibold shadow-lg shadow-orange-900/20 transition-all hover:scale-105">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                        </svg>
-                                        Contacter {{ $user->first_name ?? $user->name }}
-                                    </a>
+                                    @if (isset($residences) && $residences->count() > 0)
+                                        {{-- Owner with residences: show contact form --}}
+                                        <div x-data="{ showContactModal: false, selectedResidence: {{ $residences->count() === 1 ? $residences->first()->id : 'null' }} }" class="inline-block">
+                                            @if ($residences->count() === 1)
+                                                {{-- Single residence: direct POST form --}}
+                                                <form action="{{ route('chat.start') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="residence_id" value="{{ $residences->first()->id }}">
+                                                    <button type="submit"
+                                                        class="inline-flex items-center gap-2 px-6 py-3 bg-white text-orange-600 hover:bg-orange-50 rounded-xl font-semibold shadow-lg shadow-orange-900/20 transition-all hover:scale-105">
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                                        </svg>
+                                                        Contacter {{ $user->first_name ?? $user->name }}
+                                                    </button>
+                                                </form>
+                                            @else
+                                                {{-- Multiple residences: show picker modal --}}
+                                                <button @click="showContactModal = true"
+                                                    class="inline-flex items-center gap-2 px-6 py-3 bg-white text-orange-600 hover:bg-orange-50 rounded-xl font-semibold shadow-lg shadow-orange-900/20 transition-all hover:scale-105">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                                    </svg>
+                                                    Contacter {{ $user->first_name ?? $user->name }}
+                                                </button>
+
+                                                {{-- Residence picker modal --}}
+                                                <div x-show="showContactModal" x-cloak
+                                                    class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                                                    @keydown.escape.window="showContactModal = false">
+                                                    <div class="fixed inset-0 bg-black/50" @click="showContactModal = false"></div>
+                                                    <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden"
+                                                        x-transition:enter="transition ease-out duration-200"
+                                                        x-transition:enter-start="opacity-0 scale-95"
+                                                        x-transition:enter-end="opacity-100 scale-100">
+                                                        <div class="px-5 py-4 border-b border-gray-100">
+                                                            <h3 class="text-base font-bold text-gray-900">Choisir une résidence</h3>
+                                                            <p class="text-sm text-gray-500 mt-1">À propos de quelle résidence souhaitez-vous contacter {{ $user->first_name ?? $user->name }} ?</p>
+                                                        </div>
+                                                        <form action="{{ route('chat.start') }}" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="residence_id" :value="selectedResidence">
+                                                            <div class="px-5 py-3 max-h-64 overflow-y-auto divide-y divide-gray-50">
+                                                                @foreach ($residences as $residence)
+                                                                    <label class="flex items-center gap-3 px-3 py-3 cursor-pointer rounded-lg transition-colors"
+                                                                        :class="selectedResidence == {{ $residence->id }} ? 'bg-orange-50' : 'hover:bg-gray-50'">
+                                                                        <input type="radio" name="residence_radio" value="{{ $residence->id }}"
+                                                                            @click="selectedResidence = {{ $residence->id }}"
+                                                                            :checked="selectedResidence == {{ $residence->id }}"
+                                                                            class="text-orange-500 focus:ring-orange-500/30 border-gray-300">
+                                                                        <div class="flex-1 min-w-0">
+                                                                            <p class="text-sm font-medium text-gray-800 truncate">{{ $residence->name ?? $residence->title }}</p>
+                                                                            @if ($residence->commune)
+                                                                                <p class="text-xs text-gray-400">{{ $residence->commune }}</p>
+                                                                            @endif
+                                                                        </div>
+                                                                    </label>
+                                                                @endforeach
+                                                            </div>
+                                                            <div class="flex items-center justify-end gap-2 px-5 py-4 border-t border-gray-100 bg-gray-50/50">
+                                                                <button type="button" @click="showContactModal = false"
+                                                                    class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl transition-colors">
+                                                                    Annuler
+                                                                </button>
+                                                                <button type="submit" :disabled="!selectedResidence"
+                                                                    class="px-5 py-2 text-sm font-semibold rounded-xl transition-all"
+                                                                    :class="selectedResidence ? 'bg-orange-500 text-white hover:bg-orange-600 shadow-sm' : 'bg-gray-200 text-gray-400 cursor-not-allowed'">
+                                                                    Contacter
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @else
+                                        {{-- Non-owner user: redirect to chat index --}}
+                                        <a href="{{ route('chat.index') }}"
+                                            class="inline-flex items-center gap-2 px-6 py-3 bg-white text-orange-600 hover:bg-orange-50 rounded-xl font-semibold shadow-lg shadow-orange-900/20 transition-all hover:scale-105">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                            </svg>
+                                            Contacter {{ $user->first_name ?? $user->name }}
+                                        </a>
+                                    @endif
                                     <button
                                         onclick="navigator.share ? navigator.share({title: '{{ $user->name }} sur REZI', url: window.location.href}) : navigator.clipboard.writeText(window.location.href).then(() => alert('Lien copié!'))"
                                         class="inline-flex items-center gap-2 px-4 py-3 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 rounded-xl font-medium transition-all">
@@ -577,7 +657,7 @@
                                                         class="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg">
                                                         <span
                                                             class="font-bold text-gray-900">{{ number_format($residence->price, 0, ',', ' ') }}</span>
-                                                        <span class="text-gray-500 text-sm">FCFA/nuit</span>
+                                                        <span class="text-gray-500 text-sm">FCFA/jour</span>
                                                     </div>
                                                 @endif
                                             </div>

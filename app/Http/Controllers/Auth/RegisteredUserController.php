@@ -34,7 +34,6 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['sometimes', 'string', 'in:user,owner'],
             'ref' => ['nullable', 'string', 'max:20'],
         ]);
 
@@ -52,9 +51,11 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role ?? 'user',
             'referred_by' => $referrerId,
         ]);
+        // SECURITE : role toujours 'user' à l'inscription web
+        $user->role = 'user';
+        $user->save();
 
         // Créer le parrainage si code valide
         if ($referralCode) {

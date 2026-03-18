@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\LongStayDiscount;
+use App\Models\PlatformSetting;
 use App\Models\PromoCode;
 use App\Services\CouponService;
 use App\Models\Residence;
@@ -93,17 +94,17 @@ class PricingService
         // Sous-total après réductions
         $subtotalAfterDiscount = $subtotal - $totalDiscount;
 
-        // Frais de service REZI (sur le sous-total après réductions)
-        $serviceFee = round($subtotalAfterDiscount * config('rezi.pricing.service_fee_rate'), 0);
+        // Pas de frais de service côté locataire — la commission est prélevée sur le propriétaire
+        $serviceFee = 0;
 
-        // Base pour taxes (sous-total + ménage + service)
-        $taxableAmount = $subtotalAfterDiscount + $cleaningFee + $serviceFee;
+        // Base pour taxes (sous-total + ménage)
+        $taxableAmount = $subtotalAfterDiscount + $cleaningFee;
 
         // Taxes
         $taxes = round($taxableAmount * config('rezi.pricing.tax_rate'), 0);
 
-        // Total final
-        $totalAmount = $subtotalAfterDiscount + $cleaningFee + $serviceFee + $taxes;
+        // Total final (locataire ne paie pas de commission)
+        $totalAmount = $subtotalAfterDiscount + $cleaningFee + $taxes;
 
         // Construire le détail complet
         return [
@@ -147,7 +148,6 @@ class PricingService
             'summary' => [
                 ['label' => $avgPricePerNight.' FCFA x '.$nights.' nuits', 'amount' => $subtotal],
                 ['label' => 'Frais de ménage', 'amount' => $cleaningFee],
-                ['label' => 'Frais de service', 'amount' => $serviceFee],
             ],
 
             // Validité du calcul
@@ -300,8 +300,8 @@ class PricingService
         // Le propriétaire reçoit: sous-total - réductions + ménage
         $ownerSubtotal = $priceBreakdown['subtotal'] - $priceBreakdown['total_discount'] + $priceBreakdown['cleaning_fee'];
 
-        // Commission REZI sur le sous-total
-        $commissionRate = config('rezi.pricing.owner_commission_rate');
+        // Commission REZI sur le sous-total (depuis les paramètres admin)
+        $commissionRate = PlatformSetting::getCommissionRate() / 100;
         $reziCommission = round($ownerSubtotal * $commissionRate, 0);
 
         $ownerEarnings = $ownerSubtotal - $reziCommission;
@@ -328,11 +328,6 @@ class PricingService
     public function getFeeSummary(): array
     {
         return [
-            'service_fee' => [
-                'rate' => config('rezi.pricing.service_fee_rate') * 100,
-                'label' => 'Frais de service REZI',
-                'description' => 'Couvre le support client 24/7, la garantie de réservation et les services de paiement sécurisé.',
-            ],
             'taxes' => [
                 'rate' => config('rezi.pricing.tax_rate') * 100,
                 'label' => 'Taxes',

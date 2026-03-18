@@ -28,7 +28,7 @@ class SponsoredListingPolicy
 
     public function view(User $user, SponsoredListing $sponsoredListing): bool
     {
-        return $sponsoredListing->user_id === $user->id;
+        return (int) $sponsoredListing->user_id === (int) $user->id;
     }
 
     public function create(User $user): bool
@@ -38,27 +38,27 @@ class SponsoredListingPolicy
 
     public function update(User $user, SponsoredListing $sponsoredListing): bool
     {
-        return $sponsoredListing->user_id === $user->id;
+        return (int) $sponsoredListing->user_id === (int) $user->id;
     }
 
     public function delete(User $user, SponsoredListing $sponsoredListing): bool
     {
-        return $sponsoredListing->user_id === $user->id;
+        return (int) $sponsoredListing->user_id === (int) $user->id;
     }
 
     public function pause(User $user, SponsoredListing $sponsoredListing): bool
     {
-        return $sponsoredListing->user_id === $user->id && $sponsoredListing->isActive();
+        return (int) $sponsoredListing->user_id === (int) $user->id && $sponsoredListing->isActive();
     }
 
     public function resume(User $user, SponsoredListing $sponsoredListing): bool
     {
-        return $sponsoredListing->user_id === $user->id && $sponsoredListing->status === 'paused';
+        return (int) $sponsoredListing->user_id === (int) $user->id && $sponsoredListing->status === 'paused';
     }
 
     public function cancel(User $user, SponsoredListing $sponsoredListing): bool
     {
-        return $sponsoredListing->user_id === $user->id
+        return (int) $sponsoredListing->user_id === (int) $user->id
             && in_array($sponsoredListing->status, ['active', 'paused', 'pending']);
     }
 }

@@ -49,11 +49,14 @@ class JekoCallbackController extends Controller
             $statusResult = $this->jekoService->getPaymentStatus($sponsored->jeko_payment_id);
 
             if ($statusResult['success'] && ($statusResult['status'] === 'success' || $statusResult['status'] === 'completed')) {
+                $duration = $sponsored->duration_days ?? 7;
                 $sponsored->update([
                     'is_paid' => true,
                     'status' => 'active',
                     'payment_status' => 'success',
                     'paid_at' => now(),
+                    'starts_at' => now(),
+                    'ends_at' => now()->addDays($duration),
                 ]);
 
                 return redirect()->route('owner.marketing.sponsored.show', $sponsored)
@@ -121,11 +124,14 @@ class JekoCallbackController extends Controller
             $result = $this->jekoService->getPaymentStatus($sponsored->jeko_payment_id);
 
             if ($result['success'] && in_array($result['status'], ['success', 'completed'])) {
+                $duration = $sponsored->duration_days ?? 7;
                 $sponsored->update([
                     'is_paid' => true,
                     'status' => 'active',
                     'payment_status' => 'success',
                     'paid_at' => now(),
+                    'starts_at' => $sponsored->starts_at ?? now(),
+                    'ends_at' => $sponsored->ends_at ?? now()->addDays($duration),
                 ]);
 
                 return response()->json([

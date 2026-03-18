@@ -208,10 +208,12 @@
                                 </div>
                             @endif
 
+                            @if ($booking->service_fee > 0)
                             <div class="flex justify-between text-sm">
                                 <span>Frais de service</span>
                                 <span>{{ number_format($booking->service_fee, 0, ',', ' ') }} FCFA</span>
                             </div>
+                            @endif
 
                             @if ($booking->long_stay_discount > 0)
                                 <div class="flex justify-between text-sm text-green-600">

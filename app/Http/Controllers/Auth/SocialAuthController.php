@@ -54,8 +54,9 @@ class SocialAuthController extends Controller
                 'provider' => $provider,
                 'provider_id' => $socialUser->getId(),
                 'avatar' => $socialUser->getAvatar(),
-                'role' => 'user',
             ]);
+            $user->role = 'user';
+            $user->save();
 
             // Mark email as verified (OAuth emails are pre-verified by provider)
             $user->markEmailAsVerified();

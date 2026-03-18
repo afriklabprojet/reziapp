@@ -62,6 +62,13 @@ class ResidenceController extends Controller
             });
         }
 
+        // Filtre par type de location (residence_meublee, appartement, hotel)
+        // Supporte query string OU route defaults (URLs propres)
+        $typeLocation = $request->type_location ?? $request->route('type_location');
+        if ($typeLocation) {
+            $query->where('type_location', $typeLocation);
+        }
+
         // Filtres avancés
         if ($request->filled('type')) {
             $query->where('type', $request->type);
@@ -89,7 +96,19 @@ class ResidenceController extends Controller
             }
         }
 
-        // Tri
+        // Récupérer les IDs sponsorisés AVANT la requête pour le tri
+        $sponsoredIds = [];
+        $sponsoredQuery = SponsoredListing::topSearch()->pluck('residence_id')->unique();
+        if ($sponsoredQuery->isNotEmpty()) {
+            $sponsoredIds = $sponsoredQuery->toArray();
+        }
+
+        // Tri — sponsorisés toujours en tête sur la 1ère page
+        if (!empty($sponsoredIds)) {
+            $ids = implode(',', array_map('intval', $sponsoredIds));
+            $query->orderByRaw("FIELD(residences.id, {$ids}) DESC");
+        }
+
         switch ($request->get('sort', 'recent')) {
             case 'price_asc':
                 $query->orderBy('price_per_month', 'asc');
@@ -106,17 +125,13 @@ class ResidenceController extends Controller
 
         $residences = $query->paginate(config('rezi.pagination.residences'));
 
-        // Résidences sponsorisées (top_search / premium) — affichées en tête sur la 1ère page
-        $sponsoredIds = [];
-        if ($residences->currentPage() === 1) {
-            $sponsoredQuery = SponsoredListing::topSearch()->pluck('residence_id')->unique();
-            if ($sponsoredQuery->isNotEmpty()) {
-                $sponsoredIds = $sponsoredQuery->toArray();
-                // Enregistrer les impressions
-                SponsoredListing::topSearch()
-                    ->whereIn('residence_id', $sponsoredIds)
-                    ->each(fn ($sl) => $sl->recordImpression());
-            }
+        // Enregistrer les impressions sponsorisées (1ère page uniquement)
+        if ($residences->currentPage() === 1 && !empty($sponsoredIds)) {
+            $ip = $request->ip();
+            $userId = auth()->id();
+            SponsoredListing::topSearch()
+                ->whereIn('residence_id', $sponsoredIds)
+                ->each(fn ($sl) => $sl->recordImpression($ip, $userId));
         }
 
         // AJAX "Load more" → return only the card partials
@@ -277,6 +292,16 @@ class ResidenceController extends Controller
             $query->availableNow();
         }
 
+        // Récupérer les IDs sponsorisés AVANT la requête pour le tri
+        $sponsoredIds = [];
+        $sponsoredSearchQuery = SponsoredListing::topSearch()->pluck('residence_id')->unique();
+        if ($sponsoredSearchQuery->isNotEmpty()) {
+            $sponsoredIds = $sponsoredSearchQuery->toArray();
+            // Sponsorisés en tête
+            $ids = implode(',', array_map('intval', $sponsoredIds));
+            $query->orderByRaw("FIELD(residences.id, {$ids}) DESC");
+        }
+
         // Tri
         $sort = $validated['sort'] ?? 'newest';
         switch ($sort) {
@@ -297,17 +322,13 @@ class ResidenceController extends Controller
 
         $residences = $query->paginate(config('rezi.pagination.residences'))->withQueryString();
 
-        // Résidences sponsorisées pour la recherche (top_search / premium)
-        $sponsoredIds = [];
-        if ($residences->currentPage() === 1) {
-            $sponsoredQuery = SponsoredListing::topSearch()->pluck('residence_id')->unique();
-            if ($sponsoredQuery->isNotEmpty()) {
-                $sponsoredIds = $sponsoredQuery->toArray();
-                // Enregistrer les impressions
-                SponsoredListing::topSearch()
-                    ->whereIn('residence_id', $sponsoredIds)
-                    ->each(fn ($sl) => $sl->recordImpression());
-            }
+        // Enregistrer les impressions sponsorisées (1ère page uniquement)
+        if ($residences->currentPage() === 1 && !empty($sponsoredIds)) {
+            $ip = $request->ip();
+            $userId = auth()->id();
+            SponsoredListing::topSearch()
+                ->whereIn('residence_id', $sponsoredIds)
+                ->each(fn ($sl) => $sl->recordImpression($ip, $userId));
         }
 
         // Données pour les filtres — filtrées par localisation active
@@ -372,9 +393,18 @@ class ResidenceController extends Controller
 
         $residences = Residence::approved()
             ->with('primaryPhoto')
-            ->select(['id', 'name', 'latitude', 'longitude', 'price_per_month', 'commune', 'quartier', 'type', 'is_available', 'country_code', 'city'])
+            ->select([
+                'id', 'name', 'latitude', 'longitude',
+                'price_per_day', 'price_per_month',
+                'commune', 'quartier', 'type', 'type_location',
+                'is_available', 'country_code', 'city',
+                'bedrooms', 'bathrooms', 'max_guests',
+                'average_rating', 'reviews_count',
+                'instant_book', 'is_verified',
+            ])
             ->when($location['country_code'] ?? null, fn ($q, $cc) => $q->where('country_code', $cc))
             ->when($location['city'] ?? null, fn ($q, $city) => $q->where('city', $city))
+            ->limit(500) // Safety cap pour éviter surcharge mémoire
             ->get();
 
         $mapFilterKey = 'filter_communes_' . strtolower(($location['country_code'] ?? 'all') . '_' . ($location['city'] ?? 'all'));
@@ -388,13 +418,21 @@ class ResidenceController extends Controller
                 ->values()
         );
 
-        // Cache les bornes de prix (évite 2 queries à chaque chargement carte)
-        [$priceMin, $priceMax] = \Illuminate\Support\Facades\Cache::remember('map_price_bounds', config('rezi.cache_ttl'), fn () => [
-            Residence::approved()->min('price_per_month') ?: 0,
-            Residence::approved()->max('price_per_month') ?: 1000000,
+        // Cache les bornes de prix journalier
+        $locationKey = strtolower(($location['country_code'] ?? 'all') . '_' . ($location['city'] ?? 'all'));
+        [$priceMin, $priceMax] = \Illuminate\Support\Facades\Cache::remember("map_price_bounds_{$locationKey}", config('rezi.cache_ttl'), fn () => [
+            (int) (Residence::approved()
+                ->when($location['country_code'] ?? null, fn ($q, $cc) => $q->where('country_code', $cc))
+                ->min('price_per_day')) ?: 0,
+            (int) (Residence::approved()
+                ->when($location['country_code'] ?? null, fn ($q, $cc) => $q->where('country_code', $cc))
+                ->max('price_per_day')) ?: 500000,
         ]);
 
-        return view('residences.map', compact('residences', 'communes', 'priceMin', 'priceMax'));
+        // Types de logement disponibles
+        $types = $residences->pluck('type')->unique()->filter()->sort()->values();
+
+        return view('residences.map', compact('residences', 'communes', 'priceMin', 'priceMax', 'types'));
     }
 
     /**
@@ -417,7 +455,7 @@ class ResidenceController extends Controller
             $isSponsored = true;
             $activeSponsoredListing = $residence->activeSponsoredListing();
             if ($activeSponsoredListing) {
-                $activeSponsoredListing->recordClick();
+                $activeSponsoredListing->recordClick(request()->ip(), auth()->id());
             }
         }
 
@@ -478,28 +516,34 @@ class ResidenceController extends Controller
             $canReview = $hasCompletedBooking && !$hasAlreadyReviewed;
         }
 
-        // Dates bloquées pour les 6 prochains mois (blocked dates + bookings confirmées)
-        $blockedDates = \App\Models\BlockedDate::getBlockedDatesArray(
-            $residence->id,
-            now()->toDateString(),
-            now()->addMonths(6)->toDateString()
+        // Dates bloquées pour les 6 prochains mois — cachées 15 min
+        $unavailableDates = \Illuminate\Support\Facades\Cache::remember(
+            "residence:{$residence->id}:unavailable_dates",
+            900, // 15 minutes
+            function () use ($residence) {
+                $blockedDates = \App\Models\BlockedDate::getBlockedDatesArray(
+                    $residence->id,
+                    now()->toDateString(),
+                    now()->addMonths(6)->toDateString()
+                );
+                $bookedDates = \App\Models\Booking::where('residence_id', $residence->id)
+                    ->whereIn('status', ['confirmed', 'pending', 'paid'])
+                    ->where('check_out', '>=', now())
+                    ->get()
+                    ->flatMap(function ($booking) {
+                        $dates = [];
+                        $current = \Carbon\Carbon::parse($booking->check_in);
+                        $end = \Carbon\Carbon::parse($booking->check_out);
+                        while ($current < $end) {
+                            $dates[] = $current->format('Y-m-d');
+                            $current->addDay();
+                        }
+                        return $dates;
+                    })
+                    ->toArray();
+                return array_values(array_unique(array_merge($blockedDates, $bookedDates)));
+            }
         );
-        $bookedDates = \App\Models\Booking::where('residence_id', $residence->id)
-            ->whereIn('status', ['confirmed', 'pending', 'paid'])
-            ->where('check_out', '>=', now())
-            ->get()
-            ->flatMap(function ($booking) {
-                $dates = [];
-                $current = \Carbon\Carbon::parse($booking->check_in);
-                $end = \Carbon\Carbon::parse($booking->check_out);
-                while ($current < $end) {
-                    $dates[] = $current->format('Y-m-d');
-                    $current->addDay();
-                }
-                return $dates;
-            })
-            ->toArray();
-        $unavailableDates = array_values(array_unique(array_merge($blockedDates, $bookedDates)));
 
         return view('residences.show', compact(
             'residence',

@@ -13,6 +13,7 @@ class Booking extends Model
 
     protected $fillable = [
         'uuid',
+        'idempotency_key',
         'user_id',
         'residence_id',
         'cancellation_policy_id',
@@ -52,6 +53,12 @@ class Booking extends Model
         'cancellation_reason',
         'guest_message',
         'owner_notes',
+        'host_notes',
+        'internal_notes',
+        'total_discount',
+        'security_deposit',
+        'deposit_status',
+        'special_requests',
         'confirmed_at',
         'completed_at',
         'owner_response_deadline',

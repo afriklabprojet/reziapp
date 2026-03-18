@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\PlatformSetting;
 use App\Models\Residence;
 use App\Models\ResidenceView;
 use Carbon\Carbon;
@@ -86,7 +87,7 @@ class CompareController extends Controller
             ->groupBy('residence_id')
             ->pluck(null, 'residence_id');
 
-        $commissionRate = config('rezi.pricing.owner_commission_rate', 0.03);
+        $commissionRate = PlatformSetting::getCommissionRate() / 100;
 
         return $residences->map(function ($residence) use ($revenues, $commissionRate) {
             $rev = $revenues[$residence->id] ?? null;
@@ -133,7 +134,7 @@ class CompareController extends Controller
             ->get()
             ->keyBy('residence_id');
 
-        $commissionRate = config('rezi.pricing.owner_commission_rate', 0.03);
+        $commissionRate = PlatformSetting::getCommissionRate() / 100;
         $totalDays = $startDate->diffInDays($endDate);
 
         return $residences->map(function ($residence) use ($viewsByResidence, $bookingsByResidence, $commissionRate, $totalDays) {

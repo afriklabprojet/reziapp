@@ -33,7 +33,7 @@ class RentReceiptController extends Controller
         $month = $request->filled('month') ? (int) $request->month : null;
 
         $receipts = RentReceipt::forOwner($owner->id)
-            ->with(['tenant:id,name,email', 'residence:id,title,commune'])
+            ->with(['tenant:id,name,email', 'residence:id,name,commune'])
             ->forPeriod($year, $month)
             ->orderByDesc('period_start')
             ->paginate(20)
@@ -50,9 +50,9 @@ class RentReceiptController extends Controller
     public function create(Request $request): View
     {
         $owner      = $request->user();
-        $residences = Residence::where('user_id', $owner->id)
+        $residences = Residence::where('owner_id', $owner->id)
             ->where('status', 'active')
-            ->select('id', 'title', 'commune')
+            ->select('id', 'name', 'commune')
             ->get();
 
         return view('owner.rent-receipts.create', compact('residences'));
@@ -85,7 +85,7 @@ class RentReceiptController extends Controller
         $rentReceipt->load([
             'tenant:id,name,email,phone',
             'owner:id,name,email,phone',
-            'residence:id,title,commune,address',
+            'residence:id,name,commune,address',
         ]);
 
         return view('owner.rent-receipts.show', compact('rentReceipt'));

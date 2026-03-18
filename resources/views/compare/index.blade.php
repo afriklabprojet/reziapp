@@ -54,6 +54,7 @@
             @else
                 <!-- Table de comparaison -->
                 <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                    <p class="sm:hidden text-xs text-gray-400 px-4 pt-3 mb-0">← Faites défiler pour comparer →</p>
                     <div class="overflow-x-auto">
                         <table class="w-full min-w-200">
                             <!-- Header avec images -->
@@ -108,7 +109,7 @@
                             <tbody class="divide-y divide-gray-100">
                                 <!-- Prix -->
                                 <tr>
-                                    <td class="p-4 font-medium text-gray-700 bg-gray-50 sticky left-0">Prix / nuit</td>
+                                    <td class="p-4 font-medium text-gray-700 bg-gray-50 sticky left-0">Prix / jour</td>
                                     @foreach ($residences as $residence)
                                         <td class="p-4 text-center">
                                             <span class="text-lg font-bold text-orange-600">

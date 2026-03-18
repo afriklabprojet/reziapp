@@ -415,8 +415,8 @@
 
                                 {{-- Prix --}}
                                 <p class="text-lg font-extrabold text-gray-900 mb-2">
-                                    {{ number_format($residence->price_per_month, 0, ',', ' ') }}
-                                    <span class="text-xs font-medium text-gray-400">FCFA/mois</span>
+                                    {{ number_format($residence->price, 0, ',', ' ') }}
+                                    <span class="text-xs font-medium text-gray-400">FCFA/jour</span>
                                 </p>
 
                                 {{-- Score qualité --}}

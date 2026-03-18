@@ -12,7 +12,7 @@ class CampaignPolicy
      */
     public function view(User $user, Campaign $campaign): bool
     {
-        return $user->id === $campaign->user_id || $user->isAdmin();
+        return (int) $user->id === (int) $campaign->user_id || $user->isAdmin();
     }
 
     /**
@@ -20,7 +20,7 @@ class CampaignPolicy
      */
     public function update(User $user, Campaign $campaign): bool
     {
-        return $user->id === $campaign->user_id || $user->isAdmin();
+        return (int) $user->id === (int) $campaign->user_id || $user->isAdmin();
     }
 
     /**
@@ -28,6 +28,6 @@ class CampaignPolicy
      */
     public function delete(User $user, Campaign $campaign): bool
     {
-        return $user->id === $campaign->user_id || $user->isAdmin();
+        return (int) $user->id === (int) $campaign->user_id || $user->isAdmin();
     }
 }

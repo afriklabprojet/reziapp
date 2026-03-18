@@ -24,8 +24,8 @@
 
             <!-- Filtres -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
-                <form method="GET" class="flex flex-wrap gap-4">
-                    <div class="flex-1 min-w-36">
+                <form method="GET" class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                    <div>
                         <label class="block text-xs font-medium text-gray-700 mb-1">Statut</label>
                         <select name="status"
                             class="w-full rounded-lg border-gray-300 text-sm focus:ring-orange-500 focus:border-orange-500">
@@ -39,7 +39,7 @@
                             </option>
                         </select>
                     </div>
-                    <div class="flex-1 min-w-36">
+                    <div>
                         <label class="block text-xs font-medium text-gray-700 mb-1">Type</label>
                         <select name="type"
                             class="w-full rounded-lg border-gray-300 text-sm focus:ring-orange-500 focus:border-orange-500">
@@ -51,17 +51,17 @@
                             </option>
                         </select>
                     </div>
-                    <div class="flex-1 min-w-30">
+                    <div>
                         <label class="block text-xs font-medium text-gray-700 mb-1">Du</label>
                         <input type="date" name="from" value="{{ request('from') }}"
                             class="w-full rounded-lg border-gray-300 text-sm focus:ring-orange-500 focus:border-orange-500">
                     </div>
-                    <div class="flex-1 min-w-30">
+                    <div>
                         <label class="block text-xs font-medium text-gray-700 mb-1">Au</label>
                         <input type="date" name="to" value="{{ request('to') }}"
                             class="w-full rounded-lg border-gray-300 text-sm focus:ring-orange-500 focus:border-orange-500">
                     </div>
-                    <div class="flex items-end">
+                    <div class="col-span-2 sm:col-span-1 flex items-end">
                         <button type="submit"
                             class="px-4 py-2 bg-orange-600 text-white rounded-lg text-sm font-medium hover:bg-orange-700">
                             Filtrer

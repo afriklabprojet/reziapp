@@ -38,18 +38,24 @@ class ResidenceController extends Controller
         $user = $request->user();
         $query = $user->residences()->with(['photos', 'amenities']);
 
+        // Filtre par type de location
+        $query->when($request->type, fn ($q, $type) => $q->where('type_location', $type));
+
         // Filtre par statut
         $query->when($request->status, fn ($q, $status) => $q->where('status', $status));
 
         // Filtre par disponibilité
         $query->when($request->filled('available'), fn ($q) => $q->where('is_available', $request->boolean('available')));
 
-        // Recherche par nom/commune
-        $query->when($request->search, fn ($q, $search) => $q->where(function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%")
-                ->orWhere('commune', 'like', "%{$search}%")
-                ->orWhere('quartier', 'like', "%{$search}%");
-        }));
+        // Recherche par nom/commune (wildcards LIKE échappés)
+        $query->when($request->search, function ($q, $search) {
+            $safe = str_replace(['%', '_'], ['\%', '\_'], $search);
+            $q->where(function ($q) use ($safe) {
+                $q->where('name', 'like', "%{$safe}%")
+                    ->orWhere('commune', 'like', "%{$safe}%")
+                    ->orWhere('quartier', 'like', "%{$safe}%");
+            });
+        });
 
         // Tri
         $sortField = match ($request->sort) {
@@ -64,16 +70,23 @@ class ResidenceController extends Controller
 
         $residences = $query->paginate(12)->withQueryString();
 
-        // Compteurs globaux
+        // Compteurs (filtrés par type si spécifié)
+        $baseQuery = $user->residences();
+        if ($request->type) {
+            $baseQuery = $baseQuery->where('type_location', $request->type);
+        }
         $counts = [
-            'total' => $user->residences()->count(),
-            'active' => $user->residences()->where('status', 'active')->count(),
-            'pending' => $user->residences()->where('status', 'pending')->count(),
-            'rejected' => $user->residences()->whereIn('status', ['rejected', 'needs_changes'])->count(),
-            'available' => $user->residences()->where('is_available', true)->count(),
+            'total' => (clone $baseQuery)->count(),
+            'active' => (clone $baseQuery)->where('status', 'active')->count(),
+            'pending' => (clone $baseQuery)->where('status', 'pending')->count(),
+            'rejected' => (clone $baseQuery)->whereIn('status', ['rejected', 'needs_changes'])->count(),
+            'available' => (clone $baseQuery)->where('is_available', true)->count(),
         ];
 
-        return view('owner.residences.index', compact('residences', 'counts'));
+        // Type actuel pour la vue
+        $currentType = $request->type;
+
+        return view('owner.residences.index', compact('residences', 'counts', 'currentType'));
     }
 
     /**
@@ -105,8 +118,16 @@ class ResidenceController extends Controller
 
         // Upload des photos si présentes
         if ($request->hasFile('photos')) {
+            $firstPhoto = null;
             foreach ($request->file('photos') as $index => $photo) {
-                $this->photoService->upload($residence, $photo, $index === 0);
+                $uploadedPhoto = $this->photoService->upload($residence, $photo, $index);
+                if ($index === 0) {
+                    $firstPhoto = $uploadedPhoto;
+                }
+            }
+            // Définir la première photo comme primaire
+            if ($firstPhoto) {
+                $this->photoService->setPrimary($firstPhoto);
             }
         }
 
@@ -143,7 +164,17 @@ class ResidenceController extends Controller
     {
         Gate::authorize('update', $residence);
 
-        $this->residenceService->update($residence, $request->validated());
+        $data = $request->validated();
+
+        // Les checkboxes non cochées n'envoient rien — forcer à false/0
+        $booleanFields = ['is_available', 'has_elevator', 'instant_book', 'pets_allowed', 'smoking_allowed', 'parties_allowed', 'is_accessible', 'deposit_negotiable'];
+        foreach ($booleanFields as $field) {
+            if (!isset($data[$field])) {
+                $data[$field] = false;
+            }
+        }
+
+        $this->residenceService->update($residence, $data);
 
         // Mettre à jour les équipements
         if ($request->has('amenities')) {

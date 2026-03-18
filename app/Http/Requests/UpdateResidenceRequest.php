@@ -25,7 +25,7 @@ class UpdateResidenceRequest extends FormRequest
 
         // L'utilisateur doit être le propriétaire de la résidence ou admin
         return $this->user() && (
-            $this->user()->id === $residence->owner_id ||
+            (int) $this->user()->id === (int) $residence->owner_id ||
             $this->user()->role === 'admin'
         );
     }

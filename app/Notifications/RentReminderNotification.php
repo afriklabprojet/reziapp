@@ -6,10 +6,11 @@ namespace App\Notifications;
 
 use App\Models\RentReminder;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class RentReminderNotification extends Notification
+class RentReminderNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

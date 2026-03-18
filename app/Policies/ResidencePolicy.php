@@ -50,7 +50,7 @@ class ResidencePolicy
         }
 
         // Propriétaire peut voir ses propres résidences
-        if ($user && $residence->owner_id === $user->id) {
+        if ($user && (int) $residence->owner_id === (int) $user->id) {
             return true;
         }
 
@@ -87,7 +87,7 @@ class ResidencePolicy
     public function update(User $user, Residence $residence): bool
     {
         // Le propriétaire peut modifier sa résidence
-        return $residence->owner_id === $user->id;
+        return (int) $residence->owner_id === (int) $user->id;
     }
 
     /**
@@ -96,7 +96,7 @@ class ResidencePolicy
     public function delete(User $user, Residence $residence): bool
     {
         // Le propriétaire peut supprimer sa résidence
-        return $residence->owner_id === $user->id;
+        return (int) $residence->owner_id === (int) $user->id;
     }
 
     /**
@@ -104,7 +104,7 @@ class ResidencePolicy
      */
     public function restore(User $user, Residence $residence): bool
     {
-        return $residence->owner_id === $user->id;
+        return (int) $residence->owner_id === (int) $user->id;
     }
 
     /**
@@ -121,7 +121,7 @@ class ResidencePolicy
      */
     public function uploadPhotos(User $user, Residence $residence): bool
     {
-        return $residence->owner_id === $user->id;
+        return (int) $residence->owner_id === (int) $user->id;
     }
 
     /**
@@ -129,7 +129,7 @@ class ResidencePolicy
      */
     public function manageAmenities(User $user, Residence $residence): bool
     {
-        return $residence->owner_id === $user->id;
+        return (int) $residence->owner_id === (int) $user->id;
     }
 
     /**
@@ -146,6 +146,6 @@ class ResidencePolicy
      */
     public function viewStatistics(User $user, Residence $residence): bool
     {
-        return $residence->owner_id === $user->id;
+        return (int) $residence->owner_id === (int) $user->id;
     }
 }

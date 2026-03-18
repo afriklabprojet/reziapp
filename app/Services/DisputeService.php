@@ -29,7 +29,6 @@ class DisputeService
         string $reason,
         ?string $detailedDescription = null,
         ?int $bookingId = null,
-        ?int $cancellationId = null,
         ?array $evidence = null,
     ): Dispute {
         // Validate that booking or cancellation exists
@@ -47,7 +46,6 @@ class DisputeService
 
         // Check for existing open dispute
         $existingDispute = Dispute::where('booking_id', $bookingId)
-            ->when($cancellationId, fn ($q) => $q->where('cancellation_id', $cancellationId))
             ->unresolved()
             ->first();
 
@@ -55,18 +53,24 @@ class DisputeService
             throw new \Exception('Un litige est déjà ouvert pour cette réservation.');
         }
 
+        // Determine the against_user_id
+        $againstUserId = null;
+        if (isset($booking)) {
+            $againstUserId = ($initiatedBy === 'host') ? $booking->user_id : $booking->residence->owner_id;
+        }
+
         // Determine priority based on type
         $priority = $this->determinePriority($type, $booking ?? null);
 
         $dispute = Dispute::create([
+            'reference' => 'DSP-' . strtoupper(\Illuminate\Support\Str::random(8)),
             'booking_id' => $bookingId,
-            'cancellation_id' => $cancellationId,
-            'initiated_by' => $initiatedBy,
-            'initiator_id' => $initiatorId,
-            'type' => $type,
-            'reason' => $reason,
-            'detailed_description' => $detailedDescription,
-            'evidence' => $evidence,
+            'opened_by' => $initiatorId,
+            'against_user_id' => $againstUserId,
+            'category' => $type,
+            'title' => $reason,
+            'description' => $detailedDescription,
+            'evidence_files' => $evidence,
             'status' => 'open',
             'priority' => $priority,
             'response_deadline' => now()->addHours(48),
@@ -113,10 +117,10 @@ class DisputeService
     protected function createAssociatedTicket(Dispute $dispute): SupportTicket
     {
         return SupportTicket::create([
-            'user_id' => $dispute->initiator_id,
+            'user_id' => $dispute->opened_by,
             'booking_id' => $dispute->booking_id,
             'dispute_id' => $dispute->id,
-            'category' => $this->mapDisputeTypeToCategory($dispute->type),
+            'category' => $this->mapDisputeTypeToCategory($dispute->category),
             'subject' => 'Litige: '.$dispute->type_label,
             'priority' => $dispute->priority,
             'status' => 'open',
@@ -197,7 +201,7 @@ class DisputeService
         // Notifier l'autre partie du litige
         $booking = $dispute->booking;
         if ($booking) {
-            $initiatorId = $dispute->initiator_id;
+            $initiatorId = $dispute->opened_by;
             $guestId = $booking->user_id;
             $ownerId = $booking->residence?->owner_id;
 
@@ -308,7 +312,7 @@ class DisputeService
      */
     public function getUserDisputes(int $userId): \Illuminate\Database\Eloquent\Collection
     {
-        return Dispute::where('initiator_id', $userId)
+        return Dispute::where('opened_by', $userId)
             ->with(['booking.residence', 'cancellation'])
             ->orderByDesc('created_at')
             ->get();

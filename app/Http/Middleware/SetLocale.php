@@ -57,8 +57,8 @@ class SetLocale
         }
 
         // 4. Check authenticated user preference
-        if ($request->user() && isset($request->user()->locale) && $this->isSupported($request->user()->locale)) {
-            return $request->user()->locale;
+        if ($request->user() && $request->user()->preferred_language && $this->isSupported($request->user()->preferred_language)) {
+            return $request->user()->preferred_language;
         }
 
         // 5. Check browser Accept-Language header

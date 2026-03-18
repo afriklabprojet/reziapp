@@ -129,7 +129,7 @@
                                                         </h3>
                                                         <p class="text-orange-600 font-bold">
                                                             {{ number_format($residence->price_per_night, 0, ',', ' ') }}
-                                                            FCFA/nuit
+                                                            FCFA/jour
                                                         </p>
                                                     </a>
                                                 </div>

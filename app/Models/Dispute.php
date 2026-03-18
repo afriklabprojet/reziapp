@@ -10,29 +10,41 @@ class Dispute extends Model
     use HasFactory;
 
     protected $fillable = [
+        'reference',
         'booking_id',
-        'cancellation_id',
-        'initiated_by',
-        'initiator_id',
-        'type',
-        'reason',
-        'detailed_description',
-        'evidence',
-        'status',
+        'opened_by',
+        'against_user_id',
+        'category',
         'priority',
-        'assigned_to',
-        'resolution',
-        'resolution_notes',
+        'title',
+        'description',
+        'evidence_files',
+        'claimed_amount',
+        'claim_justification',
+        'status',
+        'response',
+        'response_evidence',
+        'responded_at',
+        'resolution_type',
+        'resolution_details',
+        'resolution_amount',
         'resolved_at',
-        'escalated_at',
+        'assigned_to',
+        'assigned_at',
         'response_deadline',
+        'resolution_deadline',
     ];
 
     protected $casts = [
-        'evidence' => 'array',
+        'evidence_files' => 'array',
+        'response_evidence' => 'array',
+        'responded_at' => 'datetime',
         'resolved_at' => 'datetime',
-        'escalated_at' => 'datetime',
+        'assigned_at' => 'datetime',
         'response_deadline' => 'datetime',
+        'resolution_deadline' => 'datetime',
+        'claimed_amount' => 'decimal:2',
+        'resolution_amount' => 'decimal:2',
     ];
 
     // ===== RELATIONSHIPS =====
@@ -47,18 +59,35 @@ class Dispute extends Model
 
     /**
      * Cancellation this dispute is about (if any)
+     * Linked through shared booking_id (disputes table has no cancellation_id column)
      */
     public function cancellation()
     {
-        return $this->belongsTo(Cancellation::class);
+        return $this->hasOne(Cancellation::class, 'booking_id', 'booking_id');
     }
 
     /**
-     * User who initiated the dispute
+     * User who opened the dispute
+     */
+    public function opener()
+    {
+        return $this->belongsTo(User::class, 'opened_by');
+    }
+
+    /**
+     * Alias for backwards compatibility
      */
     public function initiator()
     {
-        return $this->belongsTo(User::class, 'initiator_id');
+        return $this->belongsTo(User::class, 'opened_by');
+    }
+
+    /**
+     * User the dispute is against
+     */
+    public function againstUser()
+    {
+        return $this->belongsTo(User::class, 'against_user_id');
     }
 
     /**
@@ -175,7 +204,7 @@ class Dispute extends Model
      */
     public function getTypeLabelAttribute(): string
     {
-        return match($this->type) {
+        return match($this->category) {
             'cancellation' => 'Annulation',
             'property_issue' => 'Problème logement',
             'payment' => 'Paiement',
@@ -183,7 +212,7 @@ class Dispute extends Model
             'guest_behavior' => 'Comportement voyageur',
             'refund' => 'Remboursement',
             'other' => 'Autre',
-            default => $this->type,
+            default => $this->category ?? '',
         };
     }
 
@@ -252,11 +281,11 @@ class Dispute extends Model
      */
     public function getResolutionLabelAttribute(): ?string
     {
-        if (!$this->resolution) {
+        if (!$this->resolution_type) {
             return null;
         }
 
-        return match($this->resolution) {
+        return match($this->resolution_type) {
             'favor_guest' => 'En faveur du voyageur',
             'favor_host' => 'En faveur de l\'hôte',
             'partial_refund' => 'Remboursement partiel',
@@ -317,8 +346,7 @@ class Dispute extends Model
         $this->update([
             'status' => 'escalated',
             'priority' => 'high',
-            'escalated_at' => now(),
-            'resolution_notes' => $this->resolution_notes."\n[Escaladé] ".($reason ?? ''),
+            'resolution_details' => ($this->resolution_details ? $this->resolution_details."\n" : '').'[Escaladé] '.($reason ?? ''),
         ]);
 
         return $this;
@@ -340,12 +368,13 @@ class Dispute extends Model
     /**
      * Resolve dispute
      */
-    public function resolve(string $resolution, string $notes): self
+    public function resolve(string $resolutionType, string $details, ?float $amount = null): self
     {
         $this->update([
             'status' => 'resolved',
-            'resolution' => $resolution,
-            'resolution_notes' => $notes,
+            'resolution_type' => $resolutionType,
+            'resolution_details' => $details,
+            'resolution_amount' => $amount,
             'resolved_at' => now(),
         ]);
 
@@ -355,11 +384,11 @@ class Dispute extends Model
     /**
      * Close dispute
      */
-    public function close(?string $notes = null): self
+    public function close(?string $details = null): self
     {
         $this->update([
             'status' => 'closed',
-            'resolution_notes' => $notes ?? $this->resolution_notes,
+            'resolution_details' => $details ?? $this->resolution_details,
             'resolved_at' => $this->resolved_at ?? now(),
         ]);
 
@@ -371,12 +400,12 @@ class Dispute extends Model
      */
     public function addEvidence(array $newEvidence): self
     {
-        $evidence = $this->evidence ?? [];
+        $evidence = $this->evidence_files ?? [];
         $evidence[] = array_merge($newEvidence, [
             'added_at' => now()->toISOString(),
         ]);
 
-        $this->update(['evidence' => $evidence]);
+        $this->update(['evidence_files' => $evidence]);
 
         return $this;
     }

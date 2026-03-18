@@ -9,6 +9,7 @@ use App\Http\Requests\Owner\StorePropertyInspectionRequest;
 use App\Models\InspectionItem;
 use App\Models\PropertyInspection;
 use App\Models\Residence;
+use App\Models\User;
 use App\Services\PropertyInspectionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -32,7 +33,7 @@ class PropertyInspectionController extends Controller
         $owner = $request->user();
 
         $inspections = PropertyInspection::forOwner($owner->id)
-            ->with(['tenant:id,name,email', 'residence:id,title,commune'])
+            ->with(['tenant:id,name,email', 'residence:id,name,commune'])
             ->when($request->filled('type'), fn ($q) => $q->where('type', $request->type))
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->status))
             ->latest('inspection_date')
@@ -47,15 +48,23 @@ class PropertyInspectionController extends Controller
     public function create(Request $request): View
     {
         $owner      = $request->user();
-        $residences = Residence::where('user_id', $owner->id)
+        $residences = Residence::where('owner_id', $owner->id)
             ->where('status', 'active')
-            ->select('id', 'title', 'commune', 'bedrooms')
+            ->select('id', 'name', 'commune', 'bedrooms')
             ->get();
+
+        // Récupérer les locataires ayant un contrat avec ce propriétaire
+        $tenants = User::whereIn('id', function ($query) use ($owner) {
+            $query->select('tenant_id')
+                ->from('lease_contracts')
+                ->where('owner_id', $owner->id)
+                ->whereNotNull('tenant_id');
+        })->select('id', 'name')->get();
 
         $defaultRooms    = InspectionItem::defaultRooms();
         $defaultElements = InspectionItem::defaultElements();
 
-        return view('owner.property-inspections.create', compact('residences', 'defaultRooms', 'defaultElements'));
+        return view('owner.property-inspections.create', compact('residences', 'tenants', 'defaultRooms', 'defaultElements'));
     }
 
     public function store(StorePropertyInspectionRequest $request): RedirectResponse
@@ -79,7 +88,7 @@ class PropertyInspectionController extends Controller
         $propertyInspection->load([
             'tenant:id,name,email,phone',
             'owner:id,name,email',
-            'residence:id,title,commune,address',
+            'residence:id,name,commune,address',
             'items',
         ]);
 
@@ -183,7 +192,7 @@ class PropertyInspectionController extends Controller
 
     public function compare(Residence $residence): View
     {
-        abort_unless($residence->user_id === auth()->id(), 403);
+        abort_unless($residence->owner_id === auth()->id(), 403);
 
         $checkIn  = PropertyInspection::forOwner(auth()->id())
             ->where('residence_id', $residence->id)

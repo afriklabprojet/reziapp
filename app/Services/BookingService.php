@@ -5,15 +5,18 @@ namespace App\Services;
 use App\Models\BlockedDate;
 use App\Models\Booking;
 use App\Models\BookingRequest;
+use App\Models\CancellationPolicy;
 use App\Models\Coupon;
 use App\Models\PromoCode;
 use App\Models\Residence;
 use App\Models\User;
 use App\Notifications\BookingConfirmation;
 use App\Notifications\NewBookingRequest;
+use App\Services\CacheInvalidationService;
 use App\Services\CouponService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class BookingService
@@ -130,21 +133,76 @@ class BookingService
         User $user,
         array $data,
     ): Booking {
-        $checkIn = Carbon::parse($data['check_in']);
-        $checkOut = Carbon::parse($data['check_out']);
-
-        // Vérifier la disponibilité
-        $availability = $this->checkAvailability($residence->id, $checkIn, $checkOut);
-        if (!$availability['available']) {
-            throw new \Exception($availability['message']);
-        }
-
         // Vérifier que la résidence accepte les réservations instantanées
         if (!$residence->instant_book) {
             throw new \Exception('Cette résidence n\'accepte pas les réservations instantanées.');
         }
 
-        // Calculer le prix
+        $data['booking_type'] = 'instant';
+
+        return $this->createBooking($residence, $user, $data);
+    }
+
+    /**
+     * Créer une réservation (unifié — instant ou demande).
+     * Le paiement se fait pendant la réservation via Jeko redirect.
+     * Le statut final (confirmed vs pending) est déterminé après paiement
+     * selon $residence->instant_book.
+     *
+     * IDEMPOTENT: Uses idempotency_key to prevent duplicate bookings on rapid resubmit.
+     */
+    public function createBooking(
+        Residence $residence,
+        User $user,
+        array $data,
+    ): Booking {
+        // ─── Edge case validation ───
+        if (empty($data['check_in']) || empty($data['check_out'])) {
+            throw new \InvalidArgumentException('Les dates de réservation sont obligatoires.');
+        }
+
+        $checkIn = Carbon::parse($data['check_in']);
+        $checkOut = Carbon::parse($data['check_out']);
+
+        // Vérifier la cohérence des dates
+        if ($checkOut->lte($checkIn)) {
+            throw new \InvalidArgumentException('La date de départ doit être après la date d\'arrivée.');
+        }
+
+        if ($checkIn->lt(Carbon::today())) {
+            throw new \InvalidArgumentException('La date d\'arrivée ne peut pas être dans le passé.');
+        }
+
+        // Limiter la durée (365 jours max)
+        if ($checkIn->diffInDays($checkOut) > 365) {
+            throw new \InvalidArgumentException('La durée maximale de réservation est de 365 jours.');
+        }
+
+        // Empêcher le propriétaire de réserver sa propre résidence
+        if ($residence->owner_id === $user->id) {
+            throw new \InvalidArgumentException('Vous ne pouvez pas réserver votre propre résidence.');
+        }
+
+        // Vérifier que la résidence est disponible
+        if (!$residence->is_available || $residence->status !== 'approved') {
+            throw new \Exception('Cette résidence n\'est pas disponible à la réservation.');
+        }
+
+        // ─── Idempotency: detect duplicate submissions ───
+        $idempotencyKey = 'bk_' . $residence->id . '_' . $user->id . '_' . $checkIn->format('Ymd') . '_' . $checkOut->format('Ymd');
+        $existing = Booking::where('idempotency_key', $idempotencyKey)
+            ->whereIn('status', ['pending_payment', 'pending', 'confirmed'])
+            ->first();
+
+        if ($existing) {
+            Log::info('createBooking: Returning existing booking (idempotent)', [
+                'booking_id' => $existing->id,
+                'idempotency_key' => $idempotencyKey,
+            ]);
+            return $existing;
+        }
+
+        // Calculer le prix AVANT la transaction (lecture seule, pas besoin de lock)
         $priceBreakdown = $this->pricingService->calculatePrice(
             $residence,
             $checkIn,
@@ -155,14 +213,47 @@ class BookingService
             $data['coupon_code'] ?? null,
         );
 
-        return DB::transaction(function () use ($residence, $user, $data, $priceBreakdown, $checkIn, $checkOut) {
+        // Déterminer le type de réservation
+        $bookingType = $data['booking_type'] ?? ($residence->instant_book ? 'instant' : 'request');
+
+        return DB::transaction(function () use ($residence, $user, $data, $priceBreakdown, $checkIn, $checkOut, $bookingType, $idempotencyKey) {
+            // SECURITE : Vérification de disponibilité DANS la transaction avec lock pessimiste
+            // Empêche les double bookings par requêtes concurrentes (race condition)
+            $hasConflict = Booking::where('residence_id', $residence->id)
+                ->whereIn('status', ['pending', 'confirmed', 'pending_payment'])
+                ->where(function ($query) use ($checkIn, $checkOut) {
+                    $query->whereBetween('check_in', [$checkIn, $checkOut->copy()->subDay()])
+                        ->orWhereBetween('check_out', [$checkIn->copy()->addDay(), $checkOut])
+                        ->orWhere(function ($q) use ($checkIn, $checkOut) {
+                            $q->where('check_in', '<=', $checkIn)
+                                ->where('check_out', '>=', $checkOut);
+                        });
+                })
+                ->lockForUpdate()
+                ->exists();
+
+            if ($hasConflict) {
+                throw new \Exception('Cette résidence est déjà réservée pour ces dates.');
+            }
+
+            // Vérifier les dates bloquées
+            $hasBlockedDates = BlockedDate::hasBlockedDatesInRange($residence->id, $checkIn, $checkOut);
+            if ($hasBlockedDates) {
+                throw new \Exception('Certaines dates sont indisponibles.');
+            }
+            // Résoudre la politique d'annulation (fallback sur la politique par défaut)
+            $cancellationPolicyId = $residence->cancellation_policy_id
+                ?? CancellationPolicy::where('is_default', true)->value('id')
+                ?? CancellationPolicy::first()?->id;
+
             // Créer la réservation
             $booking = Booking::create([
                 'uuid' => Str::uuid(),
+                'idempotency_key' => $idempotencyKey,
                 'reference' => $this->generateBookingReference(),
                 'residence_id' => $residence->id,
                 'user_id' => $user->id,
-                'cancellation_policy_id' => $residence->cancellation_policy_id,
+                'cancellation_policy_id' => $cancellationPolicyId,
                 'promo_code_id' => $priceBreakdown['promo_code']['id'] ?? null,
 
                 'check_in' => $checkIn,
@@ -175,7 +266,7 @@ class BookingService
                 'children' => $data['children'] ?? 0,
                 'infants' => $data['infants'] ?? 0,
 
-                'booking_type' => 'instant',
+                'booking_type' => $bookingType,
 
                 'price_per_night' => $priceBreakdown['avg_price_per_night'],
                 'subtotal' => $priceBreakdown['subtotal'],
@@ -193,9 +284,8 @@ class BookingService
                 'price_breakdown' => $priceBreakdown,
 
                 'guest_message' => $data['message'] ?? null,
-                'status' => 'pending',
+                'status' => 'pending_payment',
                 'payment_status' => 'pending',
-                'owner_response_deadline' => now()->addHours(24),
             ]);
 
             // Enregistrer l'utilisation du code promo
@@ -215,8 +305,19 @@ class BookingService
             // Bloquer les dates
             $this->blockDatesForBooking($booking);
 
-            // Notifier le propriétaire
-            // $residence->owner->notify(new NewBookingRequest($booking));
+            Log::info('Réservation créée', [
+                'booking_id' => $booking->id,
+                'reference' => $booking->reference,
+                'residence_id' => $residence->id,
+                'user_id' => $user->id,
+                'check_in' => $checkIn->toDateString(),
+                'check_out' => $checkOut->toDateString(),
+                'total' => $booking->total_amount,
+                'type' => $bookingType,
+            ]);
+
+            // Invalidate relevant caches
+            CacheInvalidationService::invalidateBooking($residence->id, $user->id);
 
             return $booking;
         });
@@ -232,6 +333,19 @@ class BookingService
     ): BookingRequest {
         $checkIn = Carbon::parse($data['check_in']);
         $checkOut = Carbon::parse($data['check_out']);
+
+        // Edge case validation
+        if ($checkOut->lte($checkIn)) {
+            throw new \InvalidArgumentException('La date de départ doit être après la date d\'arrivée.');
+        }
+
+        if ($checkIn->lt(Carbon::today())) {
+            throw new \InvalidArgumentException('La date d\'arrivée ne peut pas être dans le passé.');
+        }
+
+        if ($residence->owner_id === $user->id) {
+            throw new \InvalidArgumentException('Vous ne pouvez pas demander votre propre résidence.');
+        }
 
         // Vérifier la disponibilité
         $availability = $this->checkAvailability($residence->id, $checkIn, $checkOut);
@@ -446,9 +560,13 @@ class BookingService
         string $reason,
         string $cancelledBy = 'user',
     ): array {
-        if (!in_array($booking->status, ['pending', 'confirmed'])) {
+        if (!in_array($booking->status, ['pending', 'pending_payment', 'confirmed'])) {
             throw new \Exception('Cette réservation ne peut pas être annulée.');
         }
+
+        // Guard: prevent empty reason
+        $reason = trim($reason) ?: 'Aucune raison spécifiée';
+        $reason = substr($reason, 0, 500); // Limit length
 
         // Calculer le remboursement (via le service d'annulation)
         $refundAmount = $this->calculateRefundAmount($booking, $cancelledBy);
@@ -462,6 +580,18 @@ class BookingService
 
         // Débloquer les dates
         $this->unblockDatesForBooking($booking);
+
+        Log::info('Booking cancelled', [
+            'booking_id' => $booking->id,
+            'cancelled_by' => $cancelledBy,
+            'refund_amount' => $refundAmount,
+        ]);
+
+        // Invalidate caches (availability re-opens, stats change)
+        CacheInvalidationService::invalidateBooking(
+            $booking->residence_id,
+            $booking->user_id
+        );
 
         return [
             'booking' => $booking,

@@ -45,7 +45,7 @@ class ContactPolicy
     public function view(User $user, Contact $contact): bool
     {
         // Le propriétaire ou l'expéditeur peut voir le contact
-        return $contact->owner_id === $user->id || $contact->user_id === $user->id;
+        return (int) $contact->owner_id === (int) $user->id || (int) $contact->user_id === (int) $user->id;
     }
 
     /**
@@ -63,7 +63,7 @@ class ContactPolicy
     public function update(User $user, Contact $contact): bool
     {
         // Seul le propriétaire peut mettre à jour le statut
-        return $contact->owner_id === $user->id;
+        return (int) $contact->owner_id === (int) $user->id;
     }
 
     /**
@@ -72,7 +72,7 @@ class ContactPolicy
     public function delete(User $user, Contact $contact): bool
     {
         // L'expéditeur ou le propriétaire peut supprimer
-        return $contact->user_id === $user->id || $contact->owner_id === $user->id;
+        return (int) $contact->user_id === (int) $user->id || (int) $contact->owner_id === (int) $user->id;
     }
 
     /**
@@ -81,7 +81,7 @@ class ContactPolicy
     public function respond(User $user, Contact $contact): bool
     {
         // Seul le propriétaire peut répondre
-        return $contact->owner_id === $user->id;
+        return (int) $contact->owner_id === (int) $user->id;
     }
 
     /**
@@ -89,6 +89,6 @@ class ContactPolicy
      */
     public function markAsViewed(User $user, Contact $contact): bool
     {
-        return $contact->owner_id === $user->id;
+        return (int) $contact->owner_id === (int) $user->id;
     }
 }

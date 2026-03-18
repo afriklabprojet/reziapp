@@ -1,4 +1,4 @@
-@extends('layouts.owner')
+@extends('layouts.owner', ['sidebarActive' => 'lease-contracts'])
 
 @section('title', 'Résilier le contrat ' . $contract->reference)
 

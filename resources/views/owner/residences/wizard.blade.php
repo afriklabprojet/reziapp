@@ -8,6 +8,11 @@
     'storeUrl' => route('owner.residences.store'),
     'indexUrl' => route('owner.residences.index'),
     'csrfToken' => csrf_token(),
+    'aiUrls' => [
+        'generateDescription' => route('owner.ai.generate-description'),
+        'generateTitle' => route('owner.ai.generate-title'),
+        'improveDescription' => route('owner.ai.improve-description'),
+    ],
 ]))" x-init="init()" class="min-h-screen bg-gray-50">
         <!-- Header avec progression -->
         <div class="bg-white border-b border-gray-200 sticky top-0 z-40">
@@ -91,13 +96,33 @@
             <div x-show="currentStep === 1" x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 translate-x-4">
                 <div class="text-center mb-8">
-                    <h1 class="text-3xl font-bold text-gray-900">Décrivez votre bien</h1>
+                    <div class="flex items-center justify-center gap-3">
+                        <h1 class="text-3xl font-bold text-gray-900">Décrivez votre bien</h1>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full text-[10px] font-bold uppercase tracking-wide">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            IA
+                        </span>
+                    </div>
                     <p class="mt-2 text-gray-600">Ces informations aideront les voyageurs à trouver votre annonce</p>
                 </div>
 
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-6 max-w-2xl mx-auto">
+                    {{-- Erreur IA --}}
+                    <div x-show="aiError" x-cloak x-transition class="bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-3 py-2">
+                        <span x-text="aiError"></span>
+                        <button type="button" @click="aiError=''" class="ml-2 text-red-400 hover:text-red-600">&times;</button>
+                    </div>
+
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Titre de l'annonce *</label>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-medium text-gray-700">Titre de l'annonce *</label>
+                            <button type="button" @click="aiGenerateTitle()" :disabled="aiTitleLoading"
+                                class="inline-flex items-center gap-1 px-2.5 py-1 bg-violet-50 text-violet-700 rounded-lg text-xs font-medium hover:bg-violet-100 transition disabled:opacity-50">
+                                <svg x-show="!aiTitleLoading" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                <svg x-show="aiTitleLoading" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                                <span x-text="aiTitleLoading ? 'Génération...' : 'Titre par IA'"></span>
+                            </button>
+                        </div>
                         <input type="text" x-model="formData.name" maxlength="100"
                             placeholder="Ex: Superbe appartement avec vue sur la lagune"
                             class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
@@ -105,7 +130,23 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-medium text-gray-700">Description *</label>
+                            <div class="flex items-center gap-2">
+                                <button type="button" @click="aiGenerateDescription()" :disabled="aiLoading"
+                                    class="inline-flex items-center gap-1 px-2.5 py-1 bg-violet-50 text-violet-700 rounded-lg text-xs font-medium hover:bg-violet-100 transition disabled:opacity-50">
+                                    <svg x-show="!aiLoading" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                    <svg x-show="aiLoading" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                                    <span x-text="aiLoading ? 'Génération...' : 'Générer par IA'"></span>
+                                </button>
+                                <button type="button" @click="aiImproveDescription()" :disabled="aiImproveLoading || formData.description.length < 10"
+                                    class="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-xs font-medium hover:bg-amber-100 transition disabled:opacity-50">
+                                    <svg x-show="!aiImproveLoading" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+                                    <svg x-show="aiImproveLoading" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                                    <span x-text="aiImproveLoading ? 'Amélioration...' : 'Améliorer'"></span>
+                                </button>
+                            </div>
+                        </div>
                         <textarea x-model="formData.description" rows="5" maxlength="2000"
                             placeholder="Décrivez votre logement, ses atouts, l'ambiance du quartier..."
                             class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500"></textarea>
@@ -324,7 +365,7 @@
 
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-6 max-w-2xl mx-auto">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Prix par nuit *</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Prix par jour *</label>
                         <div class="relative">
                             <input type="number" x-model="formData.price_per_day" min="5000" step="500"
                                 placeholder="25000"
@@ -350,7 +391,7 @@
                             </p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Prix par mois <span
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Prix par jour <span
                                     class="text-gray-400">(optionnel)</span></label>
                             <div class="relative">
                                 <input type="number" x-model="formData.price_per_month" min="0" step="5000"
@@ -431,7 +472,7 @@
                                 <span class="font-medium"><span x-text="formData.photos.length"></span> photos</span>
                             </div>
                             <div class="flex justify-between py-2">
-                                <span class="text-gray-500">Prix par nuit</span>
+                                <span class="text-gray-500">Prix par jour</span>
                                 <span class="font-bold text-orange-500"
                                     x-text="formatPrice(formData.price_per_day) + ' FCFA'"></span>
                             </div>

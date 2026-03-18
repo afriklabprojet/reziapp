@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 
 class SponsoredListing extends Model
 {
@@ -17,6 +18,7 @@ class SponsoredListing extends Model
         'type',
         'starts_at',
         'ends_at',
+        'duration_days',
         'position',
         'daily_budget',
         'total_budget',
@@ -207,8 +209,15 @@ class SponsoredListing extends Model
     }
 
     // Actions
-    public function recordImpression(): void
+    public function recordImpression(?string $ip = null, ?int $userId = null): void
     {
+        // Anti-fraud: dedup by IP+user — max 1 impression per hour per visitor
+        $dedupKey = "sponsored:{$this->id}:imp:" . ($ip ?? 'unknown') . ':' . ($userId ?? 'anon');
+        if (Cache::has($dedupKey)) {
+            return; // Already counted this hour
+        }
+        Cache::put($dedupKey, true, now()->addHour());
+
         $this->increment('impressions');
 
         // Track daily stats
@@ -222,8 +231,15 @@ class SponsoredListing extends Model
         }
     }
 
-    public function recordClick(): void
+    public function recordClick(?string $ip = null, ?int $userId = null): void
     {
+        // Anti-fraud: dedup by IP+user — max 1 click per hour per visitor
+        $dedupKey = "sponsored:{$this->id}:click:" . ($ip ?? 'unknown') . ':' . ($userId ?? 'anon');
+        if (Cache::has($dedupKey)) {
+            return; // Already counted this hour
+        }
+        Cache::put($dedupKey, true, now()->addHour());
+
         $this->increment('clicks');
 
         // Track daily stats
@@ -237,8 +253,15 @@ class SponsoredListing extends Model
         }
     }
 
-    public function recordContact(): void
+    public function recordContact(?string $ip = null, ?int $userId = null): void
     {
+        // Anti-fraud: dedup by IP+user — max 1 contact per day per visitor
+        $dedupKey = "sponsored:{$this->id}:contact:" . ($ip ?? 'unknown') . ':' . ($userId ?? 'anon');
+        if (Cache::has($dedupKey)) {
+            return;
+        }
+        Cache::put($dedupKey, true, now()->addDay());
+
         $this->increment('contacts_generated');
 
         // Track daily stats

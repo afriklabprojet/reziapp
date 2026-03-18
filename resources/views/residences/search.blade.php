@@ -344,7 +344,8 @@
                         fn($r) => [
                             'id' => $r->id,
                             'title' => $r->name,
-                            'price' => $r->price_per_month,
+                            'price' => $r->price,
+                            'price_label' => '/jour',
                             'thumbnail' => $r->photos->isNotEmpty()
                                 ? storage_url(
                                     $r->photos->where('is_primary', true)->first()?->path ?? $r->photos->first()?->path,
@@ -449,7 +450,7 @@
                                     </div>
                                     <div class="flex items-center justify-between mt-2">
                                         <span class="text-blue-600 font-bold text-sm">
-                                            {{ number_format($residence->price_per_month, 0, ',', ' ') }} FCFA
+                                            {{ number_format($residence->price, 0, ',', ' ') }} FCFA
                                         </span>
                                         <span class="text-xs text-gray-400">
                                             {{ ucfirst($residence->type) }}

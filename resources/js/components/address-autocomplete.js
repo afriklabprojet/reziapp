@@ -72,12 +72,14 @@ export default function addressAutocomplete() {
             this.marker.addListener('dragend', () => {
                 const pos = this.marker.getPosition();
                 this._updateLatLng(pos.lat(), pos.lng());
+                this._reverseGeocode(pos.lat(), pos.lng());
             });
 
             // Clic sur la carte
             this.map.addListener('click', (e) => {
                 this._updateLatLng(e.latLng.lat(), e.latLng.lng());
                 this.marker.setPosition(e.latLng);
+                this._reverseGeocode(e.latLng.lat(), e.latLng.lng());
             });
         },
 
@@ -180,6 +182,105 @@ export default function addressAutocomplete() {
                 if (quartierInput && !quartierInput.value) {
                     quartierInput.value = quartier;
                 }
+            }
+        },
+
+        /**
+         * Reverse geocoding : coordonnées → adresse.
+         * Appelé quand l'utilisateur déplace le marqueur ou clique sur la carte.
+         */
+        async _reverseGeocode(lat, lng) {
+            try {
+                const res = await fetch('/api/v1/maps/reverse-geocode', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                    },
+                    body: JSON.stringify({ lat, lng }),
+                });
+                const json = await res.json();
+
+                if (json.success && json.data) {
+                    const data = json.data;
+
+                    // Mettre à jour l'adresse
+                    const addressInput = this.$refs.addressInput;
+                    if (addressInput && data.address) {
+                        addressInput.value = data.address;
+                    }
+
+                    // Remplir commune
+                    if (data.commune) {
+                        const communeSelect = document.getElementById('commune');
+                        if (communeSelect) {
+                            const options = Array.from(communeSelect.options);
+                            const match = options.find(o =>
+                                o.text.toLowerCase().includes(data.commune.toLowerCase()) ||
+                                data.commune.toLowerCase().includes(o.text.toLowerCase())
+                            );
+                            if (match) {
+                                communeSelect.value = match.value;
+                                communeSelect.dispatchEvent(new Event('change'));
+                            }
+                        }
+                    }
+
+                    // Remplir quartier
+                    if (data.quartier) {
+                        const quartierInput = document.getElementById('quartier');
+                        if (quartierInput) {
+                            quartierInput.value = data.quartier;
+                            quartierInput.dispatchEvent(new Event('input'));
+                        }
+                    }
+
+                    // Valider l'adresse
+                    this._showAddressValidation(lat, lng);
+                }
+            } catch (e) {
+                console.warn('Reverse geocode failed:', e);
+            }
+        },
+
+        /**
+         * Valider que les coordonnées correspondent à une vraie adresse.
+         * Affiche un indicateur visuel de confiance.
+         */
+        async _showAddressValidation(lat, lng) {
+            try {
+                const citySelect = document.getElementById('city');
+                const city = citySelect ? citySelect.value : null;
+
+                const res = await fetch('/api/v1/maps/validate-address', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                    },
+                    body: JSON.stringify({ lat, lng, city }),
+                });
+                const json = await res.json();
+
+                if (json.success && json.data) {
+                    const v = json.data;
+                    const badge = document.getElementById('address-validation-badge');
+                    if (badge) {
+                        if (v.valid && v.confidence >= 70) {
+                            badge.className = 'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700';
+                            badge.innerHTML = '✅ Adresse vérifiée (' + v.confidence + '%)';
+                        } else if (v.valid) {
+                            badge.className = 'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700';
+                            badge.innerHTML = '⚠️ Adresse approximative (' + v.confidence + '%)';
+                        } else {
+                            badge.className = 'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700';
+                            badge.innerHTML = '❌ ' + (v.issues[0] || 'Position invalide');
+                        }
+                        badge.style.display = 'inline-flex';
+                    }
+                }
+            } catch (e) {
+                // Silently fail
             }
         },
     };

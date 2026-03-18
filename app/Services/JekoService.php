@@ -49,6 +49,29 @@ class JekoService
      */
     public function initiateMobileMoneyPayment(Payment $payment, string $phoneNumber, string $operator): array
     {
+        // Guard: validate payment amount
+        if ($payment->total_amount <= 0) {
+            Log::channel('payments')->error('initiateMobileMoneyPayment: Invalid amount', [
+                'payment_id' => $payment->id,
+                'amount' => $payment->total_amount,
+            ]);
+            return [
+                'success' => false,
+                'message' => 'Montant invalide.',
+                'error_code' => 'INVALID_AMOUNT',
+            ];
+        }
+
+        // Guard: validate API configuration
+        if (! $this->apiKey || ! $this->storeId) {
+            Log::channel('critical')->error('initiateMobileMoneyPayment: API not configured');
+            return [
+                'success' => false,
+                'message' => 'Service de paiement non configuré.',
+                'error_code' => 'NOT_CONFIGURED',
+            ];
+        }
+
         $callbackBaseUrl = config('services.jeko.callback_base_url') ?: config('app.url');
 
         $payload = [
@@ -74,6 +97,8 @@ class JekoService
         try {
             $response = Http::withHeaders($this->getHeaders())
                 ->timeout(30)
+                ->connectTimeout(10)
+                ->retry(2, 1000, throw: false)
                 ->post("{$this->baseUrl}/payments/mobile-money", $payload);
 
             $data = $response->json();
@@ -109,8 +134,20 @@ class JekoService
                 'error_code' => $data['error_code'] ?? 'INIT_FAILED',
             ];
 
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            Log::channel('critical')->error('Jeko API Connection Error', [
+                'payment_id' => $payment->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            // Don't mark as failed on connection error — it's retryable
+            return [
+                'success' => false,
+                'message' => 'Service temporairement indisponible. Veuillez réessayer.',
+                'error_code' => 'CONNECTION_ERROR',
+            ];
         } catch (\Exception $e) {
-            Log::error('Jeko API Error', [
+            Log::channel('critical')->error('Jeko API Error', [
                 'payment_id' => $payment->id,
                 'error' => $e->getMessage(),
             ]);
@@ -141,6 +178,7 @@ class JekoService
         try {
             $response = Http::withHeaders($this->getHeaders())
                 ->timeout(30)
+                ->connectTimeout(10)
                 ->post("{$this->baseUrl}/payments/verify-otp", $payload);
 
             $data = $response->json();
@@ -177,7 +215,7 @@ class JekoService
             ];
 
         } catch (\Exception $e) {
-            Log::error('Jeko OTP Verification Error', [
+            Log::channel('critical')->error('Jeko OTP Verification Error', [
                 'payment_id' => $payment->id,
                 'error' => $e->getMessage(),
             ]);
@@ -198,6 +236,7 @@ class JekoService
         try {
             $response = Http::withHeaders($this->getHeaders())
                 ->timeout(15)
+                ->connectTimeout(5)
                 ->get("{$this->baseUrl}/payments/{$payment->provider_reference}/status");
 
             $data = $response->json();
@@ -238,7 +277,7 @@ class JekoService
             ];
 
         } catch (\Exception $e) {
-            Log::error('Jeko Status Check Error', [
+            Log::channel('payments')->error('Jeko Status Check Error', [
                 'payment_id' => $payment->id,
                 'error' => $e->getMessage(),
             ]);

@@ -250,7 +250,7 @@
                                     <div class="w-20 h-16 rounded-xl overflow-hidden bg-gray-100 shrink-0">
                                         <img loading="lazy"
                                             src="{{ storage_url($booking->residence->photos->first()->path) }}"
-                                            alt="" class="w-full h-full object-cover">
+                                            alt="{{ $booking->residence->title ?? 'Résidence' }}" class="w-full h-full object-cover">
                                     </div>
                                 @else
                                     <div

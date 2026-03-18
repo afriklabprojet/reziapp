@@ -106,7 +106,7 @@ class SubscriptionPayment extends Model
                 $newPlan = SubscriptionPlan::find($pendingPlanId);
                 if ($newPlan) {
                     $subscription->update([
-                        'plan_id' => $newPlan->id,
+                        'subscription_plan_id' => $newPlan->id,
                         'metadata' => array_diff_key($subscription->metadata ?? [], ['pending_plan_change' => null]),
                     ]);
                 }

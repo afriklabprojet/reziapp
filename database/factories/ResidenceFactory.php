@@ -39,7 +39,7 @@ class ResidenceFactory extends Factory
         ]).' '.$commune;
 
         return [
-            'owner_id' => User::factory()->create(['role' => 'owner']),
+            'owner_id' => User::factory()->state(['role' => 'owner']),
             'name' => $name,
             'description' => $this->faker->paragraphs(3, true),
             'address' => $this->faker->streetAddress(),

@@ -6,6 +6,7 @@ use App\Models\Payment;
 use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Cache;
 
 class PaymentStatsWidget extends BaseWidget
 {
@@ -16,6 +17,11 @@ class PaymentStatsWidget extends BaseWidget
     protected int | string | array $columnSpan = 'full';
 
     protected function getStats(): array
+    {
+        return Cache::remember('admin.payment_stats', 300, fn () => $this->computeStats());
+    }
+
+    protected function computeStats(): array
     {
         $now = Carbon::now();
         $startOfMonth = $now->copy()->startOfMonth();
@@ -64,12 +70,17 @@ class PaymentStatsWidget extends BaseWidget
             ->sum('amount');
 
         // Données pour le graphique des 7 derniers jours
+        $startChart = $now->copy()->subDays(6)->startOfDay();
+        $dailyRevenues = Payment::where('status', 'completed')
+            ->where('created_at', '>=', $startChart)
+            ->selectRaw('DATE(created_at) as date, SUM(amount) as total')
+            ->groupByRaw('DATE(created_at)')
+            ->pluck('total', 'date');
+
         $chartData = [];
         for ($i = 6; $i >= 0; $i--) {
             $date = $now->copy()->subDays($i)->format('Y-m-d');
-            $chartData[] = Payment::where('status', 'completed')
-                ->whereDate('created_at', $date)
-                ->sum('amount') / 1000; // En milliers
+            $chartData[] = ($dailyRevenues[$date] ?? 0) / 1000;
         }
 
         // Frais de service moyens (commission plateforme)

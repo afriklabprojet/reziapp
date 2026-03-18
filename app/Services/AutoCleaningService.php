@@ -45,7 +45,7 @@ class AutoCleaningService
             'booking_id'     => $booking->id,
             'scheduled_date' => $scheduledDate->format('Y-m-d'),
             'scheduled_time' => '10:00',
-            'notes'          => "Ménage avant arrivée — Réservation #{$booking->reference} ({$booking->user->name ?? 'Voyageur'})",
+            'notes'          => "Ménage avant arrivée — Réservation #{$booking->reference} (" . ($booking->user->name ?? 'Voyageur') . ")",
         ]);
     }
 

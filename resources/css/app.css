@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Class-based dark mode toggle (manual + respects prefers-color-scheme fallback) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ===== REZI Theme — Tailwind v4 CSS config ===== */
 @theme {
     --font-sans: 'Figtree', ui-sans-serif, system-ui, sans-serif;
@@ -311,4 +314,274 @@
     .card-lift:hover {
         transform: none;
     }
+}
+
+/* ====================================================================
+   DARK MODE — Global semantic color overrides
+   Unlayered CSS → takes precedence over all Tailwind @layer utilities
+   ==================================================================== */
+
+html.dark {
+    color-scheme: dark;
+}
+
+/* ─── Background inversions ─── */
+html.dark .bg-white {
+    background-color: #1f2937;
+}
+
+html.dark .bg-white\/90 {
+    background-color: rgba(31, 41, 55, 0.9);
+}
+
+html.dark .bg-white\/95 {
+    background-color: rgba(31, 41, 55, 0.95);
+}
+
+html.dark .bg-white\/98 {
+    background-color: rgba(31, 41, 55, 0.98);
+}
+
+html.dark .bg-gray-50 {
+    background-color: #0f172a;
+}
+
+html.dark .bg-gray-100 {
+    background-color: #111827;
+}
+
+html.dark .bg-gray-200 {
+    background-color: #1f2937;
+}
+
+/* ─── Text color inversions ─── */
+html.dark .text-gray-900 {
+    color: #f3f4f6;
+}
+
+html.dark .text-gray-800 {
+    color: #e5e7eb;
+}
+
+html.dark .text-gray-700 {
+    color: #d1d5db;
+}
+
+html.dark .text-gray-600 {
+    color: #9ca3af;
+}
+
+html.dark .text-gray-500 {
+    color: #9ca3af;
+}
+
+html.dark .text-gray-400 {
+    color: #6b7280;
+}
+
+html.dark .placeholder-gray-400::placeholder {
+    color: #6b7280;
+}
+
+/* ─── Border color inversions ─── */
+html.dark .border-gray-100 {
+    border-color: #374151;
+}
+
+html.dark .border-gray-200 {
+    border-color: #374151;
+}
+
+html.dark .border-gray-200\/80 {
+    border-color: rgba(55, 65, 81, 0.8);
+}
+
+html.dark .border-gray-300 {
+    border-color: #4b5563;
+}
+
+html.dark .ring-gray-200 {
+    --tw-ring-color: #374151;
+}
+
+html.dark .divide-gray-200 > :not(:last-child) {
+    border-color: #374151;
+}
+
+/* ─── Hover state inversions ─── */
+html.dark .hover\:bg-gray-50:hover {
+    background-color: #374151;
+}
+
+html.dark .hover\:bg-gray-100:hover {
+    background-color: #374151;
+}
+
+html.dark .hover\:bg-gray-200:hover {
+    background-color: #4b5563;
+}
+
+html.dark .hover\:text-gray-900:hover {
+    color: #f3f4f6;
+}
+
+html.dark .hover\:text-gray-800:hover {
+    color: #e5e7eb;
+}
+
+html.dark .hover\:border-gray-300:hover {
+    border-color: #4b5563;
+}
+
+html.dark .focus\:bg-gray-50:focus {
+    background-color: #374151;
+}
+
+/* ─── Shadow adjustments ─── */
+html.dark .shadow-sm {
+    --tw-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+html.dark .shadow-md {
+    --tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+}
+
+html.dark .shadow-lg {
+    --tw-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+}
+
+html.dark .shadow-xl {
+    --tw-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+}
+
+html.dark .shadow-gray-200\/50 {
+    --tw-shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+/* ─── Form elements ─── */
+html.dark input:not([type="range"]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+html.dark select,
+html.dark textarea {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #e5e7eb;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+    color: #6b7280;
+}
+
+/* ─── Component dark overrides ─── */
+html.dark .card {
+    background-color: #1f2937;
+    border-color: #374151;
+}
+
+html.dark .input-field {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #e5e7eb;
+}
+
+/* Badge dark variants */
+html.dark .badge-success {
+    background-color: rgba(34, 197, 94, 0.15);
+    color: #86efac;
+}
+
+html.dark .badge-warning {
+    background-color: rgba(234, 179, 8, 0.15);
+    color: #fde047;
+}
+
+html.dark .badge-danger {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
+}
+
+html.dark .badge-primary {
+    background-color: rgba(249, 115, 22, 0.15);
+    color: #fdba74;
+}
+
+/* Light-colored backgrounds (soft tints) */
+html.dark .bg-orange-50 {
+    background-color: rgba(249, 115, 22, 0.1);
+}
+
+html.dark .bg-green-50 {
+    background-color: rgba(34, 197, 94, 0.1);
+}
+
+html.dark .bg-blue-50 {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+html.dark .bg-red-50 {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+html.dark .bg-yellow-50 {
+    background-color: rgba(234, 179, 8, 0.1);
+}
+
+html.dark .bg-emerald-50 {
+    background-color: rgba(16, 185, 129, 0.1);
+}
+
+html.dark .bg-indigo-50 {
+    background-color: rgba(99, 102, 241, 0.1);
+}
+
+html.dark .bg-purple-50 {
+    background-color: rgba(168, 85, 247, 0.1);
+}
+
+/* ─── Prevent footer inversion (already dark-themed) ─── */
+html.dark footer.bg-gray-900 .text-gray-400 {
+    color: #9ca3af;
+}
+
+html.dark footer.bg-gray-900 .bg-white {
+    background-color: #ffffff;
+}
+
+/* ─── Scrollbar dark mode ─── */
+html.dark {
+    scrollbar-color: #4b5563 #1f2937;
+}
+
+html.dark ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+html.dark ::-webkit-scrollbar-track {
+    background: #1f2937;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+    background: #4b5563;
+    border-radius: 4px;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+}
+
+/* ─── Dark mode transition (smooth theme switch) ─── */
+html.dark *,
+html:not(.dark) * {
+    transition-property: background-color, border-color, color;
+    transition-duration: 200ms;
+    transition-timing-function: ease-in-out;
+}
+
+/* Opt out animations/transforms from the transition */
+html.dark .transition-all,
+html.dark .transition-transform,
+html.dark .transition-opacity,
+html.dark [class*="animate-"] {
+    transition-property: all;
 }

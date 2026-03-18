@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Booking;
 use App\Models\BookingRequest;
 use App\Models\Residence;
 use Illuminate\Bus\Queueable;
@@ -13,15 +14,20 @@ class BookingRequestReceived extends Notification implements ShouldQueue
 {
     use Queueable;
 
+    protected Booking|BookingRequest $bookingRequest;
+    protected Residence $residence;
+
     public function __construct(
-        protected BookingRequest $bookingRequest,
-        protected Residence $residence,
+        Booking|BookingRequest $bookingRequest,
+        Residence $residence,
     ) {
+        $this->bookingRequest = $bookingRequest;
+        $this->residence = $residence;
     }
 
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -29,20 +35,27 @@ class BookingRequestReceived extends Notification implements ShouldQueue
         $guestName = $this->bookingRequest->user?->name ?? 'Un client';
         $checkIn = $this->bookingRequest->check_in->format('d/m/Y');
         $checkOut = $this->bookingRequest->check_out->format('d/m/Y');
+        $guests = $this->bookingRequest->guests;
+        $message = $this->bookingRequest instanceof Booking
+            ? $this->bookingRequest->guest_message
+            : $this->bookingRequest->message;
+
+        $isPaid = $this->bookingRequest instanceof Booking && $this->bookingRequest->payment_status === 'paid';
 
         return (new MailMessage())
-            ->subject("📋 Demande de réservation — {$this->residence->name}")
+            ->subject("📋 Demande de réservation" . ($isPaid ? ' (payée)' : '') . " — {$this->residence->name}")
             ->greeting("Bonjour {$notifiable->name},")
             ->line("**{$guestName}** souhaite réserver votre résidence **{$this->residence->name}**.")
+            ->when($isPaid, fn ($mail) => $mail->line('✅ **Le client a déjà payé.**'))
             ->line("**Dates demandées :**")
             ->line("• Arrivée : {$checkIn}")
             ->line("• Départ : {$checkOut}")
-            ->line("• Voyageurs : {$this->bookingRequest->guests}")
-            ->when($this->bookingRequest->message, function ($mail) {
-                return $mail->line("**Message :** \"{$this->bookingRequest->message}\"");
+            ->line("• Voyageurs : {$guests}")
+            ->when($message, function ($mail) use ($message) {
+                return $mail->line("**Message :** \"{$message}\"");
             })
             ->action('Répondre à la demande', route('owner.bookings.requests'))
-            ->line('Vous avez 24h pour accepter ou refuser cette demande.')
+            ->line('Vous avez 48h pour accepter ou refuser cette demande.')
             ->salutation('L\'équipe REZI');
     }
 

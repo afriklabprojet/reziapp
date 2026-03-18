@@ -1,6 +1,6 @@
 // REZI Service Worker v2.0 - West Africa Optimized
 // Enhanced for: Offline mode, Lite mode, Low bandwidth optimization
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v5';
 const CACHE_NAME = `rezi-cache-${CACHE_VERSION}`;
 const IMAGES_CACHE = `rezi-images-${CACHE_VERSION}`;
 const API_CACHE = `rezi-api-${CACHE_VERSION}`;
@@ -15,15 +15,14 @@ const CONFIG = {
 };
 
 // Assets critiques à mettre en cache immédiatement
+// Note: CSS/JS sont gérés par Vite avec des hashes dynamiques, pas de précache pour eux
 const PRECACHE_ASSETS = [
     '/',
     '/offline.html',
     '/manifest.json',
     '/images/icons/icon-192x192.png',
     '/images/icons/icon-512x512.png',
-    '/images/logo.svg',
-    '/css/app.css',
-    '/js/app.js'
+    '/images/logo-rezi.png'
 ];
 
 // Pages importantes à pré-cacher
@@ -381,37 +380,59 @@ async function fetchAndCache(request, cacheName) {
 
 // Gestion des requêtes de pages
 async function handlePageRequest(request) {
-    try {
-        // Network first avec timeout
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
-        const networkResponse = await fetch(request, { signal: controller.signal });
-        clearTimeout(timeoutId);
-        
-        if (networkResponse.ok) {
-            const cache = await caches.open(CACHE_NAME);
-            cache.put(request, networkResponse.clone()).catch(() => {});
-        }
-        
-        return networkResponse;
-    } catch (error) {
-        // Réseau indisponible ou timeout - essayer le cache
-        const cachedResponse = await caches.match(request);
-        
-        if (cachedResponse) {
-            return cachedResponse;
-        }
-        
-        // Pour les pages de navigation, afficher la page offline
-        if (request.mode === 'navigate') {
-            const offlineResponse = await caches.match(OFFLINE_URL);
-            if (offlineResponse) {
-                return offlineResponse;
+    // Timeout adapté aux réseaux mobiles d'Afrique de l'Ouest
+    const TIMEOUT_MS = 15000; // 15 secondes
+    const MAX_RETRIES = 1;
+
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+            const networkResponse = await fetch(request, { signal: controller.signal });
+            clearTimeout(timeoutId);
+
+            if (networkResponse.ok) {
+                const cache = await caches.open(CACHE_NAME);
+                cache.put(request, networkResponse.clone()).catch(() => {});
             }
+
+            // Retourner la réponse réseau même si ce n'est pas ok (ex: 404, 500)
+            // pour que l'utilisateur voie l'erreur serveur plutôt que la page offline
+            return networkResponse;
+        } catch (error) {
+            // Si c'est un abort (timeout) et qu'on a encore des tentatives, réessayer
+            if (error.name === 'AbortError' && attempt < MAX_RETRIES) {
+                console.log('[ServiceWorker] Timeout, tentative', attempt + 2);
+                continue;
+            }
+
+            // Toutes les tentatives échouées — essayer le cache
+            const cachedResponse = await caches.match(request);
+            if (cachedResponse) {
+                return cachedResponse;
+            }
+
+            // Essayer aussi le cache sans query string
+            const url = new URL(request.url);
+            if (url.search) {
+                const baseUrl = url.origin + url.pathname;
+                const baseCached = await caches.match(baseUrl);
+                if (baseCached) {
+                    return baseCached;
+                }
+            }
+
+            // Dernier recours — page offline
+            if (request.mode === 'navigate') {
+                const offlineResponse = await caches.match(OFFLINE_URL);
+                if (offlineResponse) {
+                    return offlineResponse;
+                }
+            }
+
+            throw error;
         }
-        
-        throw error;
     }
 }
 

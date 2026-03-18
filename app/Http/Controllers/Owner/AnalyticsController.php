@@ -127,7 +127,7 @@ class AnalyticsController extends Controller
 
         // Normaliser by_residence en tableau simple
         $viewsStats['by_residence'] = $viewsStats['by_residence']->map(fn ($v) => [
-            'name' => $v->residence?->title ?? $v->residence?->name ?? 'N/A',
+            'name' => $v->residence?->name ?? 'N/A',
             'views' => $v->count,
         ])->toArray();
 

@@ -21,9 +21,9 @@ class StoreGuidebookRequest extends FormRequest
             'welcome_message' => ['nullable', 'string', 'max:2000'],
             'wifi_name'     => ['nullable', 'string', 'max:100'],
             'wifi_password' => ['nullable', 'string', 'max:100'],
-            'house_rules'   => ['nullable', 'string', 'max:5000'],
+            'house_rules_details' => ['nullable', 'string', 'max:5000'],
             'parking_info'  => ['nullable', 'string', 'max:1000'],
-            'emergency_contacts' => ['nullable', 'array'],
+            'emergency_info' => ['nullable', 'string', 'max:2000'],
             'transport_info' => ['nullable', 'string', 'max:2000'],
         ];
     }

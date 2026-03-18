@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Owner;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Owner\StoreSecurityDepositRequest;
 use App\Models\SecurityDeposit;
+use App\Models\User;
 use App\Services\SecurityDepositService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ class SecurityDepositController extends Controller
         $owner = $request->user();
 
         $deposits = SecurityDeposit::forOwner($owner->id)
-            ->with(['tenant:id,name,email,phone', 'residence:id,title,commune'])
+            ->with(['tenant:id,name,email,phone', 'residence:id,name,commune'])
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->status))
             ->latest()
             ->paginate(15)
@@ -46,10 +47,18 @@ class SecurityDepositController extends Controller
         $owner      = $request->user();
         $residences = $owner->residences()
             ->where('status', 'active')
-            ->select('id', 'title', 'commune')
+            ->select('id', 'name', 'commune')
             ->get();
 
-        return view('owner.security-deposits.create', compact('residences'));
+        // Récupérer les locataires ayant un contrat avec ce propriétaire
+        $tenants = User::whereIn('id', function ($query) use ($owner) {
+            $query->select('tenant_id')
+                ->from('lease_contracts')
+                ->where('owner_id', $owner->id)
+                ->whereNotNull('tenant_id');
+        })->select('id', 'name')->get();
+
+        return view('owner.security-deposits.create', compact('residences', 'tenants'));
     }
 
     public function store(StoreSecurityDepositRequest $request): RedirectResponse
@@ -73,7 +82,7 @@ class SecurityDepositController extends Controller
         $securityDeposit->load([
             'tenant:id,name,email,phone',
             'owner:id,name,email',
-            'residence:id,title,commune,address',
+            'residence:id,name,commune,address',
             'leaseContract',
         ]);
 

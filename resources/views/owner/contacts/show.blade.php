@@ -138,7 +138,7 @@
                                         <div class="w-14 h-14 rounded-xl overflow-hidden bg-gray-200 shrink-0">
                                             <img loading="lazy"
                                                 src="{{ storage_url($contact->residence->photos->first()->path) }}"
-                                                alt="" class="w-full h-full object-cover">
+                                                alt="{{ $contact->residence->title ?? 'Résidence' }}" class="w-full h-full object-cover">
                                         </div>
                                     @else
                                         <div

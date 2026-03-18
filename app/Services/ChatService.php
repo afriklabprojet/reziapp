@@ -73,19 +73,38 @@ class ChatService
         User $sender,
         string $content,
         ?int $templateId = null,
+        ?int $replyToId = null,
     ): Message {
         // Sauvegarder le message en transaction (DB uniquement)
-        $message = DB::transaction(function () use ($conversation, $sender, $content, $templateId) {
+        $message = DB::transaction(function () use ($conversation, $sender, $content, $templateId, $replyToId) {
+            // Préparer les metadata avec reply_to si présent
+            $metadata = [];
+            if ($replyToId) {
+                $replyMessage = Message::find($replyToId);
+                if ($replyMessage) {
+                    $metadata['reply_to_id'] = $replyToId;
+                    $metadata['reply_to_content'] = Str::limit($replyMessage->content, 100);
+                    $metadata['reply_to_sender'] = $replyMessage->sender?->name;
+                }
+            }
+
             $message = Message::create([
                 'conversation_id' => $conversation->id,
                 'sender_id' => $sender->id,
                 'content' => $content,
                 'type' => Message::TYPE_TEXT,
                 'template_id' => $templateId,
+                'metadata' => !empty($metadata) ? $metadata : null,
             ]);
 
-            // Mettre à jour le timestamp de la conversation
-            $conversation->update(['last_message_at' => now()]);
+            // Mettre à jour le timestamp + compteur non-lu
+            $updateData = ['last_message_at' => now()];
+            if ($sender->id === $conversation->user_id) {
+                $updateData['unread_owner_count'] = DB::raw('unread_owner_count + 1');
+            } else {
+                $updateData['unread_user_count'] = DB::raw('unread_user_count + 1');
+            }
+            $conversation->update($updateData);
 
             // Si un template est utilisé, incrémenter son compteur
             if ($templateId) {
@@ -151,7 +170,14 @@ class ChatService
                 'attachments' => [$attachment],
             ]);
 
-            $conversation->update(['last_message_at' => now()]);
+            // Mettre à jour le timestamp + compteur non-lu
+            $updateData = ['last_message_at' => now()];
+            if ($sender->id === $conversation->user_id) {
+                $updateData['unread_owner_count'] = DB::raw('unread_owner_count + 1');
+            } else {
+                $updateData['unread_user_count'] = DB::raw('unread_user_count + 1');
+            }
+            $conversation->update($updateData);
 
             return $message;
         });
@@ -197,7 +223,14 @@ class ChatService
                 ],
             ]);
 
-            $conversation->update(['last_message_at' => now()]);
+            // Mettre à jour le timestamp + compteur non-lu
+            $updateData = ['last_message_at' => now()];
+            if ($sender->id === $conversation->user_id) {
+                $updateData['unread_owner_count'] = DB::raw('unread_owner_count + 1');
+            } else {
+                $updateData['unread_user_count'] = DB::raw('unread_user_count + 1');
+            }
+            $conversation->update($updateData);
 
             return $message;
         });
@@ -244,6 +277,12 @@ class ChatService
         $message->edit($newContent);
         $message->refresh();
 
+        try {
+            $this->broadcastMessageEdited($message);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Message edit broadcast failed', ['error' => $e->getMessage()]);
+        }
+
         return $message;
     }
 
@@ -276,6 +315,13 @@ class ChatService
             ->update(['read_at' => now()]);
 
         if ($count > 0) {
+            // Remettre à zéro le compteur non-lu pour cet utilisateur
+            if ($user->id === $conversation->user_id) {
+                $conversation->update(['unread_user_count' => 0, 'user_last_seen_at' => now()]);
+            } else {
+                $conversation->update(['unread_owner_count' => 0, 'owner_last_seen_at' => now()]);
+            }
+
             $this->broadcastMessagesRead($conversation, $user);
         }
 
@@ -287,10 +333,13 @@ class ChatService
      */
     public function searchMessages(User $user, string $query): Collection
     {
+        // Échapper les caractères spéciaux du LIKE pour éviter l'injection
+        $escapedQuery = str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $query);
+
         return Message::whereHas('conversation', function ($q) use ($user) {
             $q->forUser($user);
         })
-        ->where('content', 'like', "%{$query}%")
+        ->where('content', 'like', "%{$escapedQuery}%")
         ->with(['conversation.residence', 'sender'])
         ->orderByDesc('created_at')
         ->limit(50)
@@ -479,7 +528,7 @@ class ChatService
      */
     protected function broadcastMessageEdited(Message $message): void
     {
-        // event(new MessageEdited($message));
+        event(new \App\Events\MessageEdited($message));
     }
 
     /**
@@ -487,7 +536,7 @@ class ChatService
      */
     protected function broadcastMessageDeleted(Message $message): void
     {
-        // event(new MessageDeleted($message));
+        event(new \App\Events\MessageDeleted($message));
     }
 
     /**

@@ -14,6 +14,13 @@ class RentReminder extends Model
     const STATUS_PAID     = 'paid';
     const STATUS_OVERDUE  = 'overdue';
 
+    const STATUSES = [
+        self::STATUS_PENDING => 'En attente',
+        self::STATUS_SENT    => 'Envoyé',
+        self::STATUS_PAID    => 'Payé',
+        self::STATUS_OVERDUE => 'En retard',
+    ];
+
     const LEVEL_NONE      = 'none';
     const LEVEL_J5        = 'j5';
     const LEVEL_J3        = 'j3';

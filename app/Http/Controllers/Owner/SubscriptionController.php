@@ -43,7 +43,7 @@ class SubscriptionController extends Controller
 
         // Vérifier si l'utilisateur a déjà un abonnement actif
         $currentSubscription = $user->activeSubscription();
-        if ($currentSubscription && $currentSubscription->plan_id === $plan->id) {
+        if ($currentSubscription && $currentSubscription->subscription_plan_id === $plan->id) {
             return back()->with('error', 'Vous êtes déjà abonné à ce plan.');
         }
 
@@ -56,9 +56,10 @@ class SubscriptionController extends Controller
         // Créer l'abonnement (en attente de paiement)
         $subscription = Subscription::create([
             'user_id' => $user->id,
-            'plan_id' => $plan->id,
+            'subscription_plan_id' => $plan->id,
             'status' => 'pending',
-            'billing_period' => $billingPeriod,
+            'billing_cycle' => $billingPeriod,
+            'amount' => $amount,
             'current_period_start' => now(),
             'current_period_end' => $billingPeriod === 'yearly' 
                 ? now()->addYear() 
@@ -113,7 +114,7 @@ class SubscriptionController extends Controller
                 ->with('error', 'Vous n\'avez pas d\'abonnement actif.');
         }
 
-        if ($currentSubscription->plan_id === $plan->id) {
+        if ($currentSubscription->subscription_plan_id === $plan->id) {
             return back()->with('error', 'Vous êtes déjà abonné à ce plan.');
         }
 

@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Models\Payment;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class PaymentChartWidget extends ChartWidget
@@ -31,6 +32,12 @@ class PaymentChartWidget extends ChartWidget
 
     protected function getData(): array
     {
+        $cacheKey = 'admin.payment_chart.' . $this->filter;
+        return Cache::remember($cacheKey, 300, fn () => $this->computeData());
+    }
+
+    protected function computeData(): array
+    {
         $days = (int) $this->filter;
         $startDate = Carbon::now()->subDays($days);
 
@@ -40,22 +47,27 @@ class PaymentChartWidget extends ChartWidget
         $labels = [];
 
         if ($days <= 30) {
-            // Données par jour
+            // Données par jour — 1 seule requête groupée
+            $payments = Payment::select(
+                DB::raw('DATE(created_at) as date'),
+                DB::raw("SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) as completed"),
+                DB::raw("SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) as pending"),
+                DB::raw("SUM(CASE WHEN status = 'refunded' THEN amount ELSE 0 END) as refunded"),
+            )
+            ->where('created_at', '>=', $startDate)
+            ->groupBy('date')
+            ->get()
+            ->keyBy('date');
+
             for ($i = $days; $i >= 0; $i--) {
                 $date = Carbon::now()->subDays($i);
+                $key = $date->format('Y-m-d');
                 $labels[] = $date->format('d/m');
 
-                $completedData[] = Payment::where('status', 'completed')
-                    ->whereDate('created_at', $date)
-                    ->sum('amount') / 1000;
-
-                $pendingData[] = Payment::where('status', 'pending')
-                    ->whereDate('created_at', $date)
-                    ->sum('amount') / 1000;
-
-                $refundedData[] = Payment::where('status', 'refunded')
-                    ->whereDate('created_at', $date)
-                    ->sum('amount') / 1000;
+                $row = $payments[$key] ?? null;
+                $completedData[] = $row ? $row->completed / 1000 : 0;
+                $pendingData[] = $row ? $row->pending / 1000 : 0;
+                $refundedData[] = $row ? $row->refunded / 1000 : 0;
             }
         } else {
             // Données par semaine/mois

@@ -9,6 +9,8 @@ use App\Filament\Widgets\PaymentStatsWidget;
 use App\Filament\Widgets\PendingApprovalsWidget;
 use App\Filament\Widgets\RecentBookingsWidget;
 use App\Filament\Widgets\RecentPaymentsWidget;
+use App\Filament\Widgets\ResidencesByLocationChart;
+use App\Filament\Widgets\RevenueChart;
 use App\Filament\Widgets\RevenueChartWidget;
 use App\Filament\Widgets\StatsOverview;
 use Filament\Pages\Dashboard as BaseDashboard;
@@ -35,6 +37,8 @@ class Dashboard extends BaseDashboard
             RecentPaymentsWidget::class,
             BookingsChartWidget::class,
             RevenueChartWidget::class,
+            ResidencesByLocationChart::class,
+            RevenueChart::class,
         ];
     }
 

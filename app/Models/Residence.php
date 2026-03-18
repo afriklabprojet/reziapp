@@ -38,11 +38,12 @@ class Residence extends Model
 
     /**
      * Mapping type_location → price_period attendu.
+     * Toutes les locations sont facturées à la journée.
      */
     public const TYPE_LOCATION_PRICE_MAP = [
-        self::TYPE_LOC_APARTMENT => self::PRICE_PERIOD_MONTH,
+        self::TYPE_LOC_APARTMENT => self::PRICE_PERIOD_DAY,
         self::TYPE_LOC_RESIDENCE => self::PRICE_PERIOD_DAY,
-        self::TYPE_LOC_HOTEL     => self::PRICE_PERIOD_NIGHT,
+        self::TYPE_LOC_HOTEL     => self::PRICE_PERIOD_DAY,
     ];
 
     protected $fillable = [
@@ -105,9 +106,22 @@ class Residence extends Model
         'change_message',
         'moderated_by',
         'moderated_at',
+        // Suspension
+        'is_suspended',
+        'suspension_reason',
+        'suspended_at',
+        'resume_at',
+        'suspension_note',
+        // Performance
+        'views_count',
+        'contacts_count',
+        'performance_score',
+        'listing_score',
+        'listing_quality_score',
     ];
 
     protected $casts = [
+        'owner_id' => 'integer',
         'latitude' => 'float',
         'longitude' => 'float',
         'price_per_day' => 'decimal:2',
@@ -143,7 +157,11 @@ class Residence extends Model
         // Moderation fields
         'moderated_at' => 'datetime',
         'moderated_by' => 'integer',
-        'approval_score' => 'integer',
+        'changes_requested' => 'array',
+        // Suspension
+        'is_suspended' => 'boolean',
+        'suspended_at' => 'datetime',
+        'resume_at' => 'datetime',
     ];
 
     // ===== ACCESSORS (compatibilité avec les vues) =====
@@ -158,20 +176,13 @@ class Residence extends Model
     }
 
     /**
-     * Alias: $residence->price_per_night → tarif nuitée dérivé
-     * Déduit le prix par nuit à partir du tarif disponible :
-     * 1. price_per_day (tarif nuit direct)
-     * 2. price_per_week / 7 (dérivé du tarif semaine)
-     * 3. price_per_month / 30 (dérivé du tarif mois)
+     * Alias: $residence->price_per_night → tarif journalier
+     * Retourne le prix par jour, avec fallback depuis le tarif mensuel.
      */
     public function getPricePerNightAttribute(): ?string
     {
         if ($this->price_per_day && $this->price_per_day > 0) {
             return $this->price_per_day;
-        }
-
-        if ($this->price_per_week && $this->price_per_week > 0) {
-            return (string) round($this->price_per_week / 7);
         }
 
         if ($this->price_per_month && $this->price_per_month > 0) {
@@ -182,51 +193,36 @@ class Residence extends Model
     }
 
     /**
-     * Alias: $residence->price → meilleur prix d'affichage
-     * Retourne le prix principal pour les cartes et listes.
-     * Priorité : price_per_month → price_per_week → price_per_day
+     * $residence->price → prix d'affichage (toujours le tarif journalier)
+     * Toutes les locations sont à la journée.
      */
     public function getPriceAttribute(): float
     {
-        if ($this->price_per_month && $this->price_per_month > 0) {
-            return (float) $this->price_per_month;
-        }
-
-        if ($this->price_per_week && $this->price_per_week > 0) {
-            return (float) $this->price_per_week;
-        }
-
-        if ($this->price_per_day && $this->price_per_day > 0) {
+        if (($this->price_per_day ?? 0) > 0) {
             return (float) $this->price_per_day;
+        }
+
+        if (($this->price_per_month ?? 0) > 0) {
+            return (float) round($this->price_per_month / 30);
         }
 
         return 0;
     }
 
     /**
-     * Label de période pour le prix d'affichage (mois, semaine, nuit)
-     * Utilise price_period si défini, sinon fallback sur la logique existante.
+     * Label de période pour le prix d'affichage → toujours "jour"
      */
     public function getPriceLabelAttribute(): string
     {
-        if ($this->price_period) {
-            return match ($this->price_period) {
-                self::PRICE_PERIOD_MONTH => 'mois',
-                self::PRICE_PERIOD_NIGHT => 'nuit',
-                self::PRICE_PERIOD_DAY   => 'jour',
-                default                  => 'mois',
-            };
-        }
+        return 'jour';
+    }
 
-        if ($this->price_per_month && $this->price_per_month > 0) {
-            return 'mois';
-        }
-
-        if ($this->price_per_week && $this->price_per_week > 0) {
-            return 'semaine';
-        }
-
-        return 'nuit';
+    /**
+     * Prix d'affichage — toujours le tarif journalier.
+     */
+    public function getDisplayPriceAttribute(): float
+    {
+        return $this->price;
     }
 
     /**

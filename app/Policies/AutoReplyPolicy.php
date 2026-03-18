@@ -28,7 +28,7 @@ class AutoReplyPolicy
 
     public function view(User $user, AutoReply $autoReply): bool
     {
-        return $autoReply->user_id === $user->id;
+        return (int) $autoReply->user_id === (int) $user->id;
     }
 
     public function create(User $user): bool
@@ -38,16 +38,16 @@ class AutoReplyPolicy
 
     public function update(User $user, AutoReply $autoReply): bool
     {
-        return $autoReply->user_id === $user->id;
+        return (int) $autoReply->user_id === (int) $user->id;
     }
 
     public function delete(User $user, AutoReply $autoReply): bool
     {
-        return $autoReply->user_id === $user->id;
+        return (int) $autoReply->user_id === (int) $user->id;
     }
 
     public function toggle(User $user, AutoReply $autoReply): bool
     {
-        return $autoReply->user_id === $user->id;
+        return (int) $autoReply->user_id === (int) $user->id;
     }
 }

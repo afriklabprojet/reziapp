@@ -25,7 +25,7 @@ class ListingScoreController extends Controller
      */
     public function compute(Request $request, Residence $residence): JsonResponse
     {
-        abort_unless($residence->user_id === $request->user()->id, 403);
+        abort_unless($residence->owner_id === $request->user()->id, 403);
 
         $result = $this->scoreService->compute($residence);
 
@@ -44,7 +44,7 @@ class ListingScoreController extends Controller
      */
     public function show(Residence $residence): View
     {
-        abort_unless($residence->user_id === auth()->id(), 403);
+        abort_unless($residence->owner_id === auth()->id(), 403);
 
         $residence->load(['photos', 'amenities', 'reviews']);
 

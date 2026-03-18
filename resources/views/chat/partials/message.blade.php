@@ -2,6 +2,22 @@
     $isOwn = $message->sender_id === auth()->id();
     $isSystem = $message->isSystem();
     $isAutoReply = $message->isAutoReply();
+    $themeColor = $conversation->theme_color ?? 'orange';
+    $themeBg = match($themeColor) {
+        'blue' => 'bg-blue-500', 'green' => 'bg-emerald-500', 'purple' => 'bg-purple-500',
+        'pink' => 'bg-pink-500', 'red' => 'bg-red-500', 'yellow' => 'bg-amber-500', 'teal' => 'bg-teal-500',
+        default => 'bg-orange-500',
+    };
+    $themeReplyBg = match($themeColor) {
+        'blue' => 'bg-blue-600/30', 'green' => 'bg-emerald-600/30', 'purple' => 'bg-purple-600/30',
+        'pink' => 'bg-pink-600/30', 'red' => 'bg-red-600/30', 'yellow' => 'bg-amber-600/30', 'teal' => 'bg-teal-600/30',
+        default => 'bg-orange-600/30',
+    };
+    $themeRing = match($themeColor) {
+        'blue' => 'ring-blue-200', 'green' => 'ring-emerald-200', 'purple' => 'ring-purple-200',
+        'pink' => 'ring-pink-200', 'red' => 'ring-red-200', 'yellow' => 'ring-amber-200', 'teal' => 'ring-teal-200',
+        default => 'ring-orange-200',
+    };
 @endphp
 
 @if ($isSystem)
@@ -12,7 +28,8 @@
         </div>
     </div>
 @else
-    <div class="flex {{ $isOwn ? 'justify-end' : 'justify-start' }} group" id="message-{{ $message->id }}">
+    <div class="flex {{ $isOwn ? 'justify-end' : 'justify-start' }} group msg-row" id="msg-{{ $message->id }}"
+        @if ($isOwn) @contextmenu.prevent="showContextMenu($event, {{ $message->id }}, true, {{ Js::from(Str::limit($message->content ?? '', 200)) }})" @endif>
         <div class="flex items-end gap-2 max-w-[85%] sm:max-w-[75%] lg:max-w-[65%]">
             {{-- Avatar (other user — left side) --}}
             @if (!$isOwn)
@@ -45,14 +62,14 @@
                 {{-- Bubble --}}
                 <div
                     class="{{ $isOwn
-                        ? 'bg-orange-500 text-white rounded-2xl rounded-br-md'
+                        ? $themeBg . ' text-white rounded-2xl rounded-br-md'
                         : 'bg-white border border-gray-100 text-gray-900 rounded-2xl rounded-bl-md shadow-sm' }}">
 
                     {{-- Reply context --}}
                     @if (!empty($message->metadata['reply_to_content']))
                         <div
                             class="mx-2.5 mt-2.5 mb-0 px-2.5 py-1.5 rounded-lg border-l-2
-                            {{ $isOwn ? 'bg-orange-600/30 border-white/50' : 'bg-gray-50 border-orange-400' }}">
+                            {{ $isOwn ? $themeReplyBg . ' border-white/50' : 'bg-gray-50 border-orange-400' }}">
                             <p class="text-[11px] {{ $isOwn ? 'text-white/70' : 'text-gray-500' }} truncate">
                                 {{ Str::limit($message->metadata['reply_to_content'], 80) }}
                             </p>
@@ -112,18 +129,87 @@
                     @if (!empty($message->content))
                         <div
                             class="px-3.5 py-2 {{ $message->type !== 'text' && !empty($message->attachments) ? 'pt-1.5' : '' }}">
-                            <p class="text-[14.5px] leading-relaxed whitespace-pre-wrap wrap-break-word">
-                                {{ $message->content }}</p>
+                            <p class="msg-text text-[14.5px] leading-relaxed whitespace-pre-wrap wrap-break-word">{{ $message->content }}</p>
+                            @if ($message->isEdited())
+                                <span class="edited-badge text-[10px] {{ $isOwn ? 'text-white/60' : 'text-gray-400' }} ml-1">(modifié)</span>
+                            @endif
                         </div>
+                    @endif
+
+                    {{-- GIF message --}}
+                    @if ($message->type === 'gif' && !empty($message->metadata['gif_url']))
+                        <div class="p-1.5">
+                            <img src="{{ $message->metadata['gif_url'] }}" alt="GIF"
+                                class="rounded-xl max-h-64 w-auto" loading="lazy"
+                                style="max-width: {{ min($message->metadata['width'] ?? 250, 300) }}px">
+                            <span class="text-[9px] {{ $isOwn ? 'text-white/40' : 'text-gray-300' }} px-1">GIF</span>
+                        </div>
+                    @endif
+
+                    {{-- Voice message --}}
+                    @if ($message->type === 'voice' && !empty($message->attachments))
+                        @php $voiceAttach = $message->attachments[0]; @endphp
+                        <div class="px-3 py-2.5 flex items-center gap-3 min-w-[200px]">
+                            <button onclick="this.closest('.voice-player').querySelector('audio').paused ? this.closest('.voice-player').querySelector('audio').play() : this.closest('.voice-player').querySelector('audio').pause()"
+                                class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 {{ $isOwn ? 'bg-white/20 hover:bg-white/30' : 'bg-orange-100 hover:bg-orange-200' }} transition-colors">
+                                <svg class="w-4 h-4 {{ $isOwn ? 'text-white' : 'text-orange-600' }}" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </button>
+                            <div class="flex-1 voice-player">
+                                <div class="flex items-center gap-2">
+                                    <div class="flex-1 h-1 bg-white/20 rounded-full overflow-hidden">
+                                        <div class="h-full {{ $isOwn ? 'bg-white/60' : 'bg-orange-400' }} rounded-full" style="width: 0%"></div>
+                                    </div>
+                                    <span class="text-[11px] {{ $isOwn ? 'text-white/70' : 'text-gray-500' }} shrink-0 tabular-nums">
+                                        {{ gmdate('i:s', $voiceAttach['duration'] ?? 0) }}
+                                    </span>
+                                </div>
+                                <audio preload="none" src="{{ route('messages.voice-stream', $message) }}"></audio>
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- Link preview --}}
+                    @if (!empty($message->link_preview))
+                        @php $lp = $message->link_preview; @endphp
+                        <a href="{{ $lp['url'] }}" target="_blank" rel="noopener"
+                            class="block mx-2 mb-2 rounded-xl overflow-hidden border {{ $isOwn ? 'border-white/20' : 'border-gray-200' }} hover:opacity-90 transition-opacity">
+                            @if (!empty($lp['image']))
+                                <img src="{{ $lp['image'] }}" alt="" class="w-full h-32 object-cover" loading="lazy">
+                            @endif
+                            <div class="px-3 py-2 {{ $isOwn ? 'bg-white/10' : 'bg-gray-50' }}">
+                                <p class="text-xs font-bold {{ $isOwn ? 'text-white' : 'text-gray-900' }} truncate">{{ $lp['title'] }}</p>
+                                @if (!empty($lp['description']))
+                                    <p class="text-[10px] {{ $isOwn ? 'text-white/70' : 'text-gray-500' }} line-clamp-2 mt-0.5">{{ $lp['description'] }}</p>
+                                @endif
+                                <p class="text-[9px] {{ $isOwn ? 'text-white/50' : 'text-gray-400' }} mt-1 uppercase">{{ $lp['domain'] ?? '' }}</p>
+                            </div>
+                        </a>
                     @endif
                 </div>
 
+                {{-- Reactions display --}}
+                @if ($message->reactions && $message->reactions->count() > 0)
+                    <div class="flex flex-wrap gap-1 px-1 -mt-1 {{ $isOwn ? 'justify-end' : '' }}">
+                        @foreach ($message->getGroupedReactions() as $reaction)
+                            <button @click="toggleReaction({{ $message->id }}, '{{ $reaction['emoji'] }}')"
+                                class="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-xs rounded-full border transition-all hover:scale-105
+                                {{ in_array(auth()->id(), $reaction['users']) ? 'bg-orange-50 border-orange-300 text-orange-700' : 'bg-white border-gray-200 text-gray-600' }}">
+                                <span>{{ $reaction['emoji'] }}</span>
+                                @if ($reaction['count'] > 1)
+                                    <span class="text-[10px] font-medium">{{ $reaction['count'] }}</span>
+                                @endif
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
+
                 {{-- Meta (time + read) --}}
-                <div class="flex items-center gap-1.5 px-1 {{ $isOwn ? 'justify-end' : '' }}">
+                <div class="msg-meta flex items-center gap-1.5 px-1 {{ $isOwn ? 'justify-end' : '' }}">
                     <span class="text-[10px] text-gray-400">
                         {{ $message->created_at->format('H:i') }}
                     </span>
                     @if ($isOwn)
+                        <span class="msg-status-icon" data-own="true">
                         @if ($message->read_at)
                             <svg class="w-3.5 h-3.5 text-blue-500" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2.5">
@@ -142,19 +228,31 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                             </svg>
                         @endif
+                        </span>
                     @endif
                 </div>
 
-                {{-- Reply action (hover) --}}
-                <button @click="setReplyTo({{ $message->id }}, @js(Str::limit($message->content, 60)))"
-                    class="hidden group-hover:flex items-center gap-1 px-2 py-0.5 text-[10px] text-gray-400 hover:text-orange-500 rounded-full hover:bg-orange-50 transition-all {{ $isOwn ? 'ml-auto' : '' }}"
-                    title="Répondre">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
-                    </svg>
-                    Répondre
-                </button>
+                {{-- Hover actions: react + reply --}}
+                <div class="hidden group-hover:flex items-center gap-1 {{ $isOwn ? 'justify-end' : '' }}">
+                    {{-- Quick reactions --}}
+                    <div class="flex items-center gap-0.5 bg-white border border-gray-100 rounded-full px-1 py-0.5 shadow-sm">
+                        @foreach (['👍', '❤️', '😂', '😮', '😢', '😡'] as $emoji)
+                            <button @click="toggleReaction({{ $message->id }}, '{{ $emoji }}')"
+                                class="w-6 h-6 flex items-center justify-center text-sm rounded-full hover:bg-gray-100 hover:scale-125 transition-all"
+                                title="{{ $emoji }}">{{ $emoji }}</button>
+                        @endforeach
+                    </div>
+                    {{-- Reply --}}
+                    <button @click="setReplyTo({{ $message->id }}, @js(Str::limit($message->content, 60)))"
+                        class="flex items-center gap-1 px-2 py-0.5 text-[10px] text-gray-400 hover:text-orange-500 rounded-full hover:bg-orange-50 transition-all"
+                        title="Répondre">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+                        </svg>
+                        Répondre
+                    </button>
+                </div>
             </div>
 
             {{-- Avatar (own user — right side) --}}

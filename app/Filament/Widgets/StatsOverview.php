@@ -10,6 +10,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Cache;
 
 class StatsOverview extends BaseWidget
 {
@@ -18,6 +19,11 @@ class StatsOverview extends BaseWidget
     protected static ?string $pollingInterval = '30s';
 
     protected function getStats(): array
+    {
+        return Cache::remember('admin.stats_overview', 300, fn () => $this->computeStats());
+    }
+
+    protected function computeStats(): array
     {
         $now = Carbon::now();
         $startOfMonth = $now->copy()->startOfMonth();
@@ -113,10 +119,17 @@ class StatsOverview extends BaseWidget
 
     protected function getWeeklyData(string $model, string $dateColumn): array
     {
+        $startDate = Carbon::now()->subDays(6)->startOfDay();
+
+        $counts = $model::where($dateColumn, '>=', $startDate)
+            ->selectRaw('DATE('.$dateColumn.') as date, COUNT(*) as count')
+            ->groupByRaw('DATE('.$dateColumn.')')
+            ->pluck('count', 'date');
+
         $data = [];
         for ($i = 6; $i >= 0; $i--) {
-            $date = Carbon::now()->subDays($i);
-            $data[] = $model::whereDate($dateColumn, $date)->count();
+            $date = Carbon::now()->subDays($i)->format('Y-m-d');
+            $data[] = $counts[$date] ?? 0;
         }
 
         return $data;
@@ -124,12 +137,18 @@ class StatsOverview extends BaseWidget
 
     protected function getWeeklyRevenueData(): array
     {
+        $startDate = Carbon::now()->subDays(6)->startOfDay();
+
+        $revenues = Payment::where('status', 'completed')
+            ->where('created_at', '>=', $startDate)
+            ->selectRaw('DATE(created_at) as date, SUM(amount) as total')
+            ->groupByRaw('DATE(created_at)')
+            ->pluck('total', 'date');
+
         $data = [];
         for ($i = 6; $i >= 0; $i--) {
-            $date = Carbon::now()->subDays($i);
-            $data[] = Payment::where('status', 'completed')
-                ->whereDate('created_at', $date)
-                ->sum('amount') / 1000; // En milliers pour le graphique
+            $date = Carbon::now()->subDays($i)->format('Y-m-d');
+            $data[] = ($revenues[$date] ?? 0) / 1000;
         }
 
         return $data;

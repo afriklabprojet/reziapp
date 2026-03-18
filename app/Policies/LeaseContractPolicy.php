@@ -16,8 +16,8 @@ class LeaseContractPolicy
 
     public function view(User $user, LeaseContract $contract): bool
     {
-        return $user->id === $contract->owner_id
-            || $user->id === $contract->tenant_id
+        return (int) $user->id === (int) $contract->owner_id
+            || (int) $user->id === (int) $contract->tenant_id
             || $user->isAdmin();
     }
 
@@ -28,17 +28,23 @@ class LeaseContractPolicy
 
     public function update(User $user, LeaseContract $contract): bool
     {
-        return $user->id === $contract->owner_id
+        return (int) $user->id === (int) $contract->owner_id
             && $contract->status === LeaseContract::STATUS_DRAFT;
+    }
+
+    public function send(User $user, LeaseContract $contract): bool
+    {
+        return (int) $user->id === (int) $contract->owner_id
+            && in_array($contract->status, [LeaseContract::STATUS_DRAFT, LeaseContract::STATUS_PENDING_TENANT]);
     }
 
     public function sign(User $user, LeaseContract $contract): bool
     {
-        if ($user->id === $contract->owner_id) {
+        if ((int) $user->id === (int) $contract->owner_id) {
             return $contract->canBeSignedByOwner();
         }
 
-        if ($user->id === $contract->tenant_id) {
+        if ((int) $user->id === (int) $contract->tenant_id) {
             return $contract->canBeSignedByTenant();
         }
 
@@ -47,20 +53,20 @@ class LeaseContractPolicy
 
     public function delete(User $user, LeaseContract $contract): bool
     {
-        return $user->id === $contract->owner_id
+        return (int) $user->id === (int) $contract->owner_id
             && $contract->status === LeaseContract::STATUS_DRAFT;
     }
 
     public function download(User $user, LeaseContract $contract): bool
     {
-        return $user->id === $contract->owner_id
-            || $user->id === $contract->tenant_id
+        return (int) $user->id === (int) $contract->owner_id
+            || (int) $user->id === (int) $contract->tenant_id
             || $user->isAdmin();
     }
 
     public function terminate(User $user, LeaseContract $contract): bool
     {
-        return $user->id === $contract->owner_id
+        return (int) $user->id === (int) $contract->owner_id
             && $contract->status === LeaseContract::STATUS_ACTIVE;
     }
 }

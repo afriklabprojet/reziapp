@@ -38,29 +38,49 @@ class CancellationResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required(),
-                        Forms\Components\Select::make('cancelled_by')
+                        Forms\Components\Select::make('initiated_by')
                             ->label('Annulé par')
-                            ->relationship('cancelledBy', 'name')
-                            ->searchable()
-                            ->preload()
+                            ->options([
+                                'user' => 'Voyageur',
+                                'owner' => 'Propriétaire',
+                                'admin' => 'Administration',
+                                'system' => 'Système',
+                            ])
                             ->required(),
-                        Forms\Components\Select::make('reason')
+                        Forms\Components\Select::make('initiated_by_user_id')
+                            ->label('Utilisateur')
+                            ->relationship('cancelledByUser', 'name')
+                            ->searchable()
+                            ->preload(),
+                        Forms\Components\Select::make('reason_category')
                             ->label('Raison')
                             ->options([
                                 'change_of_plans' => 'Changement de plans',
-                                'found_better' => 'Meilleure option trouvée',
-                                'host_issue' => 'Problème avec l\'hôte',
+                                'found_alternative' => 'Trouvé une alternative',
                                 'emergency' => 'Urgence',
+                                'property_issue' => 'Problème avec le logement',
+                                'host_issue' => 'Problème avec l\'hôte',
+                                'double_booking' => 'Double réservation',
+                                'property_unavailable' => 'Logement indisponible',
+                                'guest_issue' => 'Problème avec le voyageur',
+                                'maintenance' => 'Maintenance',
+                                'force_majeure' => 'Force majeure',
+                                'policy_violation' => 'Violation des conditions',
+                                'fraud_suspected' => 'Fraude suspectée',
                                 'other' => 'Autre',
                             ])
                             ->required(),
+                        Forms\Components\Textarea::make('reason_details')
+                            ->label('Détails de la raison')
+                            ->rows(2)
+                            ->columnSpanFull(),
                         Forms\Components\Select::make('status')
                             ->label('Statut')
                             ->options([
                                 'pending' => 'En attente',
                                 'approved' => 'Approuvée',
+                                'processed' => 'Traitée',
                                 'rejected' => 'Rejetée',
-                                'refunded' => 'Remboursée',
                             ])
                             ->default('pending')
                             ->required(),
@@ -68,6 +88,10 @@ class CancellationResource extends Resource
 
                 Forms\Components\Section::make('Remboursement')
                     ->schema([
+                        Forms\Components\TextInput::make('original_amount')
+                            ->label('Montant original')
+                            ->numeric()
+                            ->prefix('FCFA'),
                         Forms\Components\TextInput::make('refund_amount')
                             ->label('Montant remboursé')
                             ->numeric()
@@ -76,8 +100,12 @@ class CancellationResource extends Resource
                             ->label('Pénalité')
                             ->numeric()
                             ->prefix('FCFA'),
-                        Forms\Components\Textarea::make('notes')
-                            ->label('Notes')
+                        Forms\Components\TextInput::make('refund_percent_applied')
+                            ->label('% remboursement appliqué')
+                            ->numeric()
+                            ->suffix('%'),
+                        Forms\Components\Textarea::make('admin_notes')
+                            ->label('Notes admin')
                             ->rows(3)
                             ->columnSpanFull(),
                     ])->columns(2),
@@ -91,19 +119,44 @@ class CancellationResource extends Resource
                 Tables\Columns\TextColumn::make('booking_id')
                     ->label('Résa #')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('cancelledBy.name')
+                Tables\Columns\TextColumn::make('initiated_by')
                     ->label('Annulé par')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('reason')
-                    ->label('Raison')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match($state) {
-                        'change_of_plans' => 'Changement',
-                        'found_better' => 'Meilleure option',
-                        'host_issue' => 'Problème hôte',
-                        'emergency' => 'Urgence',
-                        'other' => 'Autre',
+                        'user' => 'Voyageur',
+                        'owner' => 'Propriétaire',
+                        'admin' => 'Administration',
+                        'system' => 'Système',
                         default => $state,
+                    })
+                    ->color(fn (string $state): string => match($state) {
+                        'user' => 'info',
+                        'owner' => 'warning',
+                        'admin' => 'danger',
+                        'system' => 'gray',
+                        default => 'gray',
+                    }),
+                Tables\Columns\TextColumn::make('cancelledByUser.name')
+                    ->label('Utilisateur')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('reason_category')
+                    ->label('Raison')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): string => match($state) {
+                        'change_of_plans' => 'Changement',
+                        'found_alternative' => 'Alternative trouvée',
+                        'emergency' => 'Urgence',
+                        'property_issue' => 'Problème logement',
+                        'host_issue' => 'Problème hôte',
+                        'double_booking' => 'Double réservation',
+                        'property_unavailable' => 'Indisponible',
+                        'guest_issue' => 'Problème voyageur',
+                        'maintenance' => 'Maintenance',
+                        'force_majeure' => 'Force majeure',
+                        'policy_violation' => 'Violation',
+                        'fraud_suspected' => 'Fraude',
+                        'other' => 'Autre',
+                        default => $state ?? '',
                     }),
                 Tables\Columns\TextColumn::make('refund_amount')
                     ->label('Remboursé')
@@ -113,7 +166,7 @@ class CancellationResource extends Resource
                     ->badge()
                     ->color(fn (string $state): string => match($state) {
                         'approved' => 'success',
-                        'refunded' => 'info',
+                        'processed' => 'info',
                         'pending' => 'warning',
                         'rejected' => 'danger',
                         default => 'gray',
@@ -121,8 +174,8 @@ class CancellationResource extends Resource
                     ->formatStateUsing(fn (string $state): string => match($state) {
                         'pending' => 'En attente',
                         'approved' => 'Approuvée',
+                        'processed' => 'Traitée',
                         'rejected' => 'Rejetée',
-                        'refunded' => 'Remboursée',
                         default => $state,
                     }),
                 Tables\Columns\TextColumn::make('created_at')
@@ -137,8 +190,15 @@ class CancellationResource extends Resource
                     ->options([
                         'pending' => 'En attente',
                         'approved' => 'Approuvée',
+                        'processed' => 'Traitée',
                         'rejected' => 'Rejetée',
-                        'refunded' => 'Remboursée',
+                    ]),
+                Tables\Filters\SelectFilter::make('initiated_by')
+                    ->label('Annulé par')
+                    ->options([
+                        'user' => 'Voyageur',
+                        'owner' => 'Propriétaire',
+                        'admin' => 'Administration',
                     ]),
             ])
             ->actions([

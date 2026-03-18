@@ -23,6 +23,7 @@ class PortfolioController extends Controller
         $residences = $user->residences()
             ->with(['photos', 'bookings' => fn($q) => $q->where('status', 'completed')])
             ->withCount(['bookings', 'reviews'])
+            ->withAvg('reviews', 'rating')
             ->get();
 
         $portfolioData = [];
@@ -57,7 +58,7 @@ class PortfolioController extends Controller
                 'open_maintenance' => $openMaintenance,
                 'pending_cleaning' => $pendingCleaning,
                 'avg_rating'       => $residence->reviews_count > 0
-                    ? round($residence->reviews->avg('rating'), 1)
+                    ? round((float) $residence->reviews_avg_rating, 1)
                     : null,
             ];
         }

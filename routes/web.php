@@ -49,6 +49,11 @@ Route::post('/newsletter/subscribe', [App\Http\Controllers\NewsletterController:
 Route::get('/newsletter/unsubscribe/{token}', [App\Http\Controllers\NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
 Route::post('/newsletter/resubscribe', [App\Http\Controllers\NewsletterController::class, 'resubscribe'])->name('newsletter.resubscribe');
 
+// URLs propres pour les types de location (SEO-friendly)
+Route::get('/residences-meublees', [ResidenceController::class, 'index'])
+    ->defaults('type_location', 'residence_meublee')
+    ->name('residences.meublees');
+
 // Résidences publiques
 Route::prefix('residences')->name('residences.')->group(function () {
     Route::get('/', [ResidenceController::class, 'index'])->name('index');
@@ -216,6 +221,18 @@ Route::middleware(['auth', 'verified'])
 
         // Statistiques personnelles
         Route::get('/statistics', [ClientController::class, 'statistics'])->name('statistics');
+
+        // Contrats / Baux
+        Route::get('/contracts', [ClientController::class, 'contracts'])->name('contracts');
+        Route::get('/contracts/{leaseContract}', [ClientController::class, 'showContract'])->name('contracts.show');
+        Route::post('/contracts/{leaseContract}/sign', [ClientController::class, 'signContract'])->name('contracts.sign');
+        Route::get('/contracts/{leaseContract}/download', [ClientController::class, 'downloadContract'])->name('contracts.download');
+
+        // Sauvegarder une recherche comme alerte
+        Route::post('/search-history/{search}/save-alert', [ClientController::class, 'saveSearchAsAlert'])->name('search-history.save-alert');
+
+        // Supprimer une alerte sauvegardée
+        Route::delete('/alerts/{savedSearch}', [ClientController::class, 'deleteAlert'])->name('alerts.delete');
     });
 
 /*
@@ -253,7 +270,7 @@ Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
             Route::get('/{residence}/edit', [OwnerResidenceController::class, 'edit'])
                 ->middleware('ensure.owner:residence')
                 ->name('edit');
-            Route::put('/{residence}', [OwnerResidenceController::class, 'update'])
+            Route::match(['put', 'patch'], '/{residence}', [OwnerResidenceController::class, 'update'])
                 ->middleware('ensure.owner:residence')
                 ->name('update');
             Route::delete('/{residence}', [OwnerResidenceController::class, 'destroy'])
@@ -516,6 +533,19 @@ Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
         // ============================================
         Route::prefix('earnings')->name('earnings.')->group(function () {
             Route::get('/', [App\Http\Controllers\Owner\EarningsController::class, 'index'])->name('index');
+            Route::post('/setup-pin', [App\Http\Controllers\Owner\EarningsController::class, 'setupPin'])->name('setup-pin');
+            Route::post('/request-payout', [App\Http\Controllers\Owner\EarningsController::class, 'requestPayout'])->name('request-payout');
+        });
+
+        // ============================================
+        // Assistant IA
+        // ============================================
+        Route::prefix('ai')->name('ai.')->group(function () {
+            Route::post('/generate-description', [\App\Http\Controllers\Owner\AiAssistantController::class, 'generateDescription'])->name('generate-description');
+            Route::post('/generate-title', [\App\Http\Controllers\Owner\AiAssistantController::class, 'generateTitle'])->name('generate-title');
+            Route::post('/improve-description', [\App\Http\Controllers\Owner\AiAssistantController::class, 'improveDescription'])->name('improve-description');
+            Route::post('/generate-clauses', [\App\Http\Controllers\Owner\AiAssistantController::class, 'generateClauses'])->name('generate-clauses');
+            Route::post('/suggest-services', [\App\Http\Controllers\Owner\AiAssistantController::class, 'suggestServices'])->name('suggest-services');
         });
 
         // ============================================
@@ -697,6 +727,7 @@ Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
         // ============================================
         Route::prefix('sequences')->name('sequences.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Owner\MessageSequenceController::class, 'index'])->name('index');
+            Route::post('/create-defaults', [\App\Http\Controllers\Owner\MessageSequenceController::class, 'createDefaults'])->name('create-defaults');
             Route::get('/create', [\App\Http\Controllers\Owner\MessageSequenceController::class, 'create'])->name('create');
             Route::post('/', [\App\Http\Controllers\Owner\MessageSequenceController::class, 'store'])->name('store');
             Route::get('/{sequence}', [\App\Http\Controllers\Owner\MessageSequenceController::class, 'show'])->name('show');
@@ -704,6 +735,8 @@ Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
             Route::put('/{sequence}', [\App\Http\Controllers\Owner\MessageSequenceController::class, 'update'])->name('update');
             Route::patch('/{sequence}/toggle', [\App\Http\Controllers\Owner\MessageSequenceController::class, 'toggle'])->name('toggle');
             Route::delete('/{sequence}', [\App\Http\Controllers\Owner\MessageSequenceController::class, 'destroy'])->name('destroy');
+            Route::post('/{sequence}/steps', [\App\Http\Controllers\Owner\MessageSequenceController::class, 'addStep'])->name('add-step');
+            Route::delete('/{sequence}/steps/{step}', [\App\Http\Controllers\Owner\MessageSequenceController::class, 'removeStep'])->name('remove-step');
         });
 
         // ============================================
@@ -900,7 +933,7 @@ Route::prefix('profile')->group(function () {
 
 Route::middleware(['auth', 'verified'])->prefix('profile')->group(function () {
     Route::get('/public/edit', [PublicProfileController::class, 'edit'])->name('profile.public.edit');
-    Route::put('/public', [PublicProfileController::class, 'update'])->name('profile.public.update');
+    Route::match(['put', 'patch'], '/public', [PublicProfileController::class, 'update'])->name('profile.public.update');
     Route::post('/badges/refresh', [PublicProfileController::class, 'refreshBadges'])->name('profile.badges.refresh');
 });
 
@@ -974,11 +1007,11 @@ Route::middleware(['auth', 'verified'])
         // Charger les messages (pagination)
         Route::get('/{conversation}/messages', [App\Http\Controllers\ChatController::class, 'loadMessages'])->name('messages');
 
-        // Envoyer un message
-        Route::post('/{conversation}/send', [App\Http\Controllers\ChatController::class, 'sendMessage'])->name('send');
+        // Envoyer un message (rate limited: 60/min)
+        Route::post('/{conversation}/send', [App\Http\Controllers\ChatController::class, 'sendMessage'])->name('send')->middleware('throttle:60,1');
 
-        // Envoyer une pièce jointe
-        Route::post('/{conversation}/attachment', [App\Http\Controllers\ChatController::class, 'sendAttachment'])->name('attachment');
+        // Envoyer une pièce jointe (rate limited: 20/min)
+        Route::post('/{conversation}/attachment', [App\Http\Controllers\ChatController::class, 'sendAttachment'])->name('attachment')->middleware('throttle:20,1');
 
         // Obtenir nouveaux messages (polling)
         Route::get('/{conversation}/new', [App\Http\Controllers\ChatController::class, 'getNewMessages'])->name('new');
@@ -986,8 +1019,8 @@ Route::middleware(['auth', 'verified'])
         // Marquer comme lu
         Route::post('/{conversation}/read', [App\Http\Controllers\ChatController::class, 'markAsRead'])->name('read');
 
-        // Indicateur de frappe
-        Route::post('/{conversation}/typing', [App\Http\Controllers\ChatController::class, 'typing'])->name('typing');
+        // Indicateur de frappe (rate limited: 30/min)
+        Route::post('/{conversation}/typing', [App\Http\Controllers\ChatController::class, 'typing'])->name('typing')->middleware('throttle:30,1');
 
         // Actions sur la conversation
         Route::post('/{conversation}/archive', [App\Http\Controllers\ChatController::class, 'archive'])->name('archive');
@@ -998,6 +1031,18 @@ Route::middleware(['auth', 'verified'])
         Route::post('/{conversation}/unmute', [App\Http\Controllers\ChatController::class, 'unmute'])->name('unmute');
         Route::post('/{conversation}/block', [App\Http\Controllers\ChatController::class, 'block'])->name('block');
         Route::delete('/{conversation}', [App\Http\Controllers\ChatController::class, 'destroy'])->name('destroy');
+
+        // Thème de couleur
+        Route::post('/{conversation}/theme', [App\Http\Controllers\ChatController::class, 'changeTheme'])->name('theme');
+
+        // Recherche dans une conversation
+        Route::get('/{conversation}/search', [App\Http\Controllers\ChatController::class, 'searchInConversation'])->name('search-in');
+
+        // Message vocal
+        Route::post('/{conversation}/voice', [App\Http\Controllers\ChatController::class, 'sendVoice'])->name('voice')->middleware('throttle:20,1');
+
+        // Envoyer un GIF
+        Route::post('/{conversation}/gif', [App\Http\Controllers\ChatController::class, 'sendGif'])->name('gif')->middleware('throttle:30,1');
 
         // Utiliser un template
         Route::post('/{conversation}/template/{template}', [App\Http\Controllers\ChatController::class, 'useTemplate'])->name('template');
@@ -1016,7 +1061,15 @@ Route::middleware(['auth', 'verified'])
     ->group(function () {
         Route::put('/{message}', [App\Http\Controllers\ChatController::class, 'editMessage'])->name('edit');
         Route::delete('/{message}', [App\Http\Controllers\ChatController::class, 'deleteMessage'])->name('delete');
+        Route::post('/{message}/reaction', [App\Http\Controllers\ChatController::class, 'toggleReaction'])->name('reaction');
+        Route::get('/{message}/voice-stream', [App\Http\Controllers\ChatController::class, 'streamVoice'])->name('voice-stream');
     });
+
+// API utilitaires chat (GIF search, link preview)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/api/gifs/search', [App\Http\Controllers\ChatController::class, 'searchGifs'])->name('gifs.search')->middleware('throttle:30,1');
+    Route::post('/api/link-preview', [App\Http\Controllers\ChatController::class, 'linkPreview'])->name('link.preview')->middleware('throttle:20,1');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -1298,23 +1351,42 @@ Route::middleware(['auth', 'verified'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-// API de calcul de prix (AJAX)
-Route::middleware(['auth'])->group(function () {
+// API de calcul de prix (AJAX) - accessible aux invités avec throttle
+Route::middleware(['throttle:30,1'])->group(function () {
     Route::post('/residences/{residence}/calculate-price', [App\Http\Controllers\BookingController::class, 'calculatePrice'])
         ->name('residences.calculate-price');
     Route::post('/residences/{residence}/check-availability', [App\Http\Controllers\BookingController::class, 'checkAvailability'])
         ->name('residences.check-availability');
 });
 
-// Routes de réservation utilisateur
+// Routes de réservation pour invités (sans auth)
+Route::middleware(['throttle:10,1'])->prefix('bookings')->name('bookings.')->group(function () {
+    // Formulaire de réservation (accessible aux invités)
+    Route::get('/create/{residence}', [App\Http\Controllers\BookingController::class, 'create'])->name('create');
+    
+    // Soumission réservation invité
+    Route::post('/store/guest/{residence}', [App\Http\Controllers\BookingController::class, 'storeGuestRequest'])->name('store.guest');
+
+    // Page de confirmation après réservation (accessible invités + auth)
+    Route::get('/confirmation/{booking:uuid}', [App\Http\Controllers\BookingController::class, 'confirmation'])->name('confirmation');
+
+    // Callbacks paiement Jeko (pas d'auth - les invités arrivent ici après redirect)
+    Route::get('/payment/success', [App\Http\Controllers\Payment\BookingPaymentCallbackController::class, 'success'])->name('payment.success');
+    Route::get('/payment/error', [App\Http\Controllers\Payment\BookingPaymentCallbackController::class, 'error'])->name('payment.error');
+});
+
+// Route pour définir mot de passe invité
+Route::get('/guest/set-password', [App\Http\Controllers\Auth\GuestPasswordController::class, 'show'])->name('guest.set-password');
+Route::post('/guest/set-password', [App\Http\Controllers\Auth\GuestPasswordController::class, 'store'])->name('guest.set-password.store');
+
+// Routes de réservation utilisateur connecté
 Route::middleware(['auth', 'verified'])->group(function () {
     // === BOOKINGS CLIENT ===
     Route::prefix('bookings')->name('bookings.')->group(function () {
         // Liste des réservations
         Route::get('/', [App\Http\Controllers\BookingController::class, 'index'])->name('index');
 
-        // Création de réservation
-        Route::get('/create/{residence}', [App\Http\Controllers\BookingController::class, 'create'])->name('create');
+        // Soumission réservation (utilisateur connecté)
         Route::post('/store/instant/{residence}', [App\Http\Controllers\BookingController::class, 'storeInstant'])->name('store.instant');
         Route::post('/store/request/{residence}', [App\Http\Controllers\BookingController::class, 'storeRequest'])->name('store.request');
 

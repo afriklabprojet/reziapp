@@ -16,6 +16,7 @@ class Payment extends Model
 
     protected $fillable = [
         'uuid',
+        'idempotency_key',
         'user_id',
         'booking_id',
         'payment_provider_id',
@@ -40,6 +41,8 @@ class Payment extends Model
         'completed_at',
         'failed_at',
         'expires_at',
+        'retry_count',
+        'last_retry_at',
     ];
 
     protected $casts = [

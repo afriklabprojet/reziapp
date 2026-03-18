@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Observers;
 
 use App\Jobs\ComputeListingScore;
+use App\Jobs\FetchNearbyPlaces;
 use App\Models\Residence;
 use Illuminate\Support\Facades\Cache;
 
@@ -50,6 +51,41 @@ class ResidenceObserver
 
         // Calculer le score qualité en arrière-plan
         ComputeListingScore::dispatch($residence)->onQueue('default')->delay(now()->addSeconds(5));
+
+        // Récupérer automatiquement les POIs à proximité
+        if ($residence->latitude && $residence->longitude) {
+            FetchNearbyPlaces::dispatch($residence)->onQueue('default')->delay(now()->addSeconds(30));
+        }
+    }
+
+    /**
+     * Handle the Residence "updating" event.
+     * Empêche le retour au statut 'pending' pour les résidences déjà approuvées/actives.
+     * Une fois qu'une annonce est validée par l'admin, les modifications du propriétaire
+     * ne doivent PAS nécessiter une nouvelle approbation.
+     */
+    public function updating(Residence $residence): void
+    {
+        if ($residence->isDirty('status')) {
+            $originalStatus = $residence->getOriginal('status');
+            $newStatus = $residence->status;
+
+            // Si la résidence était déjà active/approved et qu'on essaie de la remettre en pending,
+            // on empêche ce changement (sauf si c'est l'admin via Filament)
+            if (in_array($originalStatus, ['active', 'approved']) && $newStatus === 'pending') {
+                // Vérifier si c'est un admin qui fait le changement via Filament
+                $isAdminAction = auth()->check() && auth()->user()->role === 'admin';
+
+                if (!$isAdminAction) {
+                    // Restaurer le statut actif — pas de re-approbation nécessaire
+                    $residence->status = $originalStatus;
+                    \Illuminate\Support\Facades\Log::info('Prevented status regression to pending for approved residence', [
+                        'residence_id' => $residence->id,
+                        'original_status' => $originalStatus,
+                    ]);
+                }
+            }
+        }
     }
 
     /**
@@ -62,6 +98,11 @@ class ResidenceObserver
         $scoreFields = ['title', 'description', 'address', 'commune', 'latitude', 'longitude', 'surface', 'bedrooms', 'type', 'price_per_night', 'price_per_month'];
         if ($residence->isDirty($scoreFields)) {
             ComputeListingScore::dispatch($residence)->onQueue('default')->delay(now()->addSeconds(10));
+        }
+
+        // Si les coordonnées changent, rafraîchir les POIs
+        if ($residence->isDirty(['latitude', 'longitude'])) {
+            FetchNearbyPlaces::dispatch($residence, force: true)->onQueue('default')->delay(now()->addSeconds(30));
         }
 
         $relevantFields = [

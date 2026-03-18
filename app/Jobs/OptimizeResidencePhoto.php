@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use App\Models\Photo;
+use App\Services\PhotoAnalysisService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -126,8 +127,93 @@ class OptimizeResidencePhoto implements ShouldQueue
             imagedestroy($image);
         }
 
-        // Marquer comme optimisé
-        $this->photo->update(['is_optimized' => true]);
+        // ── Analyse Google Cloud Vision (SafeSearch + Labels + Qualité + Hash) ──
+        $analysisData = ['is_optimized' => true];
+
+        try {
+            $analyzer = app(PhotoAnalysisService::class);
+
+            if ($analyzer->isAvailable()) {
+                // Lire l'image optimisée pour l'analyse
+                $optimizedContent = $disk->get($this->photo->path);
+
+                if ($optimizedContent) {
+                    $analysis = $analyzer->analyzeResidencePhoto($optimizedContent);
+
+                    $analysisData = array_merge($analysisData, [
+                        'tags'              => $analysis['tags'] ?: null,
+                        'room_type'         => $analysis['room_type'],
+                        'moderation_status' => $analysis['moderation']['status'],
+                        'moderation_reason' => $analysis['moderation']['reason'],
+                        'quality_score'     => $analysis['quality']['score'] ?? null,
+                        'quality_issues'    => !empty($analysis['quality']['issues']) ? $analysis['quality']['issues'] : null,
+                        'safe_search_data'  => !empty($analysis['safe_search']) ? $analysis['safe_search'] : null,
+                        'labels_data'       => !empty($analysis['labels']) ? $analysis['labels'] : null,
+                        'image_hash'        => $analysis['image_hash'],
+                        'is_property_photo' => $analysis['is_property_photo'],
+                    ]);
+
+                    // Chercher les doublons
+                    if ($analysis['image_hash']) {
+                        $duplicates = $analyzer->findDuplicates(
+                            $analysis['image_hash'],
+                            $this->photo->id,
+                            5  // threshold : distance Hamming max
+                        );
+
+                        if (!empty($duplicates)) {
+                            $dupInfo = collect($duplicates)->map(fn ($d) => "photo #{$d['photo_id']} (résidence #{$d['residence_id']}, distance {$d['distance']})")->implode(', ');
+
+                            Log::warning("PhotoAnalysis: Doublons potentiels détectés pour photo #{$this->photo->id}", [
+                                'duplicates' => $duplicates,
+                            ]);
+
+                            // Si doublon est d'une AUTRE résidence → signaler
+                            $crossResidenceDuplicates = array_filter($duplicates, fn ($d) => $d['residence_id'] !== $this->photo->residence_id);
+
+                            if (!empty($crossResidenceDuplicates)) {
+                                $analysisData['moderation_status'] = 'review';
+                                $analysisData['moderation_reason'] = 'Photo similaire détectée sur une autre annonce (' . $dupInfo . ')';
+                            }
+                        }
+                    }
+
+                    // Si contenu rejeté, désactiver la photo comme primaire
+                    if ($analysis['moderation']['status'] === 'rejected' && $this->photo->is_primary) {
+                        $this->photo->update(['is_primary' => false]);
+
+                        // Promouvoir une autre photo comme primaire
+                        $nextPhoto = Photo::where('residence_id', $this->photo->residence_id)
+                            ->where('id', '!=', $this->photo->id)
+                            ->whereIn('moderation_status', ['approved', 'pending', 'skipped'])
+                            ->orderBy('order')
+                            ->first();
+
+                        if ($nextPhoto) {
+                            $nextPhoto->update(['is_primary' => true]);
+                        }
+                    }
+
+                    Log::info("PhotoAnalysis: Photo #{$this->photo->id} analysée", [
+                        'room_type'  => $analysis['room_type'],
+                        'moderation' => $analysis['moderation']['status'],
+                        'quality'    => $analysis['quality']['score'] ?? 0,
+                        'tags'       => $analysis['tags'],
+                        'is_property' => $analysis['is_property_photo'],
+                    ]);
+                }
+            } else {
+                $analysisData['moderation_status'] = 'skipped';
+            }
+        } catch (\Exception $e) {
+            Log::error("PhotoAnalysis: Erreur analyse photo #{$this->photo->id}", [
+                'error' => $e->getMessage(),
+            ]);
+            $analysisData['moderation_status'] = 'skipped';
+        }
+
+        // Marquer comme optimisé + sauvegarder l'analyse
+        $this->photo->update($analysisData);
 
         Log::info("OptimizeResidencePhoto: optimisé — {$this->photo->path} ({$width}x{$height} → quality {$quality}, +WebP, +thumb)");
     }

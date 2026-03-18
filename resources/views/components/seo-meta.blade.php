@@ -38,7 +38,7 @@
                 'latitude' => $residence->latitude,
                 'longitude' => $residence->longitude,
             ],
-            'priceRange' => number_format($residence->price_per_month ?? ($residence->price_per_day ?? 0)) . ' FCFA',
+            'priceRange' => number_format($residence->price ?? ($residence->price_per_day ?? 0)) . ' FCFA',
             'amenityFeature' => ($residence->amenities ?? collect())
                 ->map(
                     fn($a) => [
@@ -113,7 +113,7 @@
     <meta property="place:location:latitude" content="{{ $residence->latitude }}">
     <meta property="place:location:longitude" content="{{ $residence->longitude }}">
     <meta property="product:price:amount"
-        content="{{ $residence->price_per_month ?? ($residence->price_per_day ?? 0) }}">
+        content="{{ $residence->price ?? ($residence->price_per_day ?? 0) }}">
     <meta property="product:price:currency" content="XOF">
 @endif
 

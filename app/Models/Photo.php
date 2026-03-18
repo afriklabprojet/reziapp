@@ -16,12 +16,61 @@ class Photo extends Model
         'order',
         'is_primary',
         'is_optimized',
+        'tags',
+        'room_type',
+        'moderation_status',
+        'moderation_reason',
+        'quality_score',
+        'quality_issues',
+        'safe_search_data',
+        'labels_data',
+        'image_hash',
+        'is_property_photo',
     ];
 
     protected $casts = [
-        'is_primary' => 'boolean',
-        'is_optimized' => 'boolean',
+        'is_primary'       => 'boolean',
+        'is_optimized'     => 'boolean',
+        'is_property_photo' => 'boolean',
+        'tags'             => 'array',
+        'quality_issues'   => 'array',
+        'safe_search_data' => 'array',
+        'labels_data'      => 'array',
     ];
+
+    // ── Scopes ──
+
+    public function scopeApproved($query)
+    {
+        return $query->whereIn('moderation_status', ['approved', 'pending', 'skipped']);
+    }
+
+    public function scopeRejected($query)
+    {
+        return $query->where('moderation_status', 'rejected');
+    }
+
+    public function scopeNeedsReview($query)
+    {
+        return $query->where('moderation_status', 'review');
+    }
+
+    public function scopeByRoom($query, string $roomType)
+    {
+        return $query->where('room_type', $roomType);
+    }
+
+    // ── Helpers ──
+
+    public function isModerated(): bool
+    {
+        return !in_array($this->moderation_status, ['pending', null]);
+    }
+
+    public function isSafe(): bool
+    {
+        return in_array($this->moderation_status, ['approved', 'skipped', 'pending', null]);
+    }
 
     /**
      * Residence that owns this photo

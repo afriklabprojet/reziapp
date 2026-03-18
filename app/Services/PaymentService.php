@@ -7,8 +7,14 @@ use App\Models\OwnerBalance;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
 use App\Models\PaymentProvider;
+use App\Models\PlatformSetting;
 use App\Models\User;
+use App\Jobs\VerifyPaymentStatus;
+use App\Services\BusinessEventService;
+use App\Services\CacheInvalidationService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class PaymentService
 {
@@ -22,10 +28,25 @@ class PaymentService
     }
 
     /**
-     * Créer un paiement pour une réservation
+     * Créer un paiement pour une réservation.
+     * IDEMPOTENT: Si un paiement pending/processing existe déjà pour ce booking, on le retourne.
      */
     public function createBookingPayment(Booking $booking, User $user, array $options = []): Payment
     {
+        // Idempotency: prevent duplicate payment creation for the same booking
+        $existing = Payment::where('booking_id', $booking->id)
+            ->where('user_id', $user->id)
+            ->whereIn('status', [Payment::STATUS_PENDING, Payment::STATUS_PROCESSING])
+            ->first();
+
+        if ($existing) {
+            Log::channel('payments')->info('createBookingPayment: Returning existing payment (idempotent)', [
+                'payment_id' => $existing->id,
+                'booking_id' => $booking->id,
+            ]);
+            return $existing;
+        }
+
         $provider = PaymentProvider::where('code', $options['provider'] ?? 'jeko')->first();
 
         $fees = $provider?->calculateFees($booking->total_amount) ?? [
@@ -33,7 +54,10 @@ class PaymentService
             'total_amount' => $booking->total_amount,
         ];
 
-        return Payment::create([
+        $idempotencyKey = 'bk_' . $booking->id . '_' . $user->id . '_' . Str::random(8);
+
+        $payment = Payment::create([
+            'idempotency_key' => $idempotencyKey,
             'user_id' => $user->id,
             'booking_id' => $booking->id,
             'payment_provider_id' => $provider?->id,
@@ -51,6 +75,15 @@ class PaymentService
                 'check_out' => $booking->check_out->toDateString(),
             ],
         ]);
+
+        Log::channel('payments')->info('Payment created', [
+            'payment_id' => $payment->id,
+            'booking_id' => $booking->id,
+            'amount' => $payment->total_amount,
+            'user_id' => $user->id,
+        ]);
+
+        return $payment;
     }
 
     /**
@@ -70,7 +103,21 @@ class PaymentService
             }
         }
 
-        return $this->jekoService->initiateMobileMoneyPayment($payment, $phoneNumber, $operator);
+        $result = $this->jekoService->initiateMobileMoneyPayment($payment, $phoneNumber, $operator);
+
+        // Schedule automatic status verification (retries with backoff)
+        if ($result['success']) {
+            VerifyPaymentStatus::dispatch($payment)
+                ->delay(now()->addMinutes(3))
+                ->onQueue('payments');
+
+            Log::channel('payments')->info('Payment initiated — verify job scheduled', [
+                'payment_id' => $payment->id,
+                'operator' => $operator,
+            ]);
+        }
+
+        return $result;
     }
 
     /**
@@ -89,51 +136,148 @@ class PaymentService
     }
 
     /**
-     * Traiter le succès d'un paiement
+     * Traiter le succès d'un paiement.
+     * IDEMPOTENT: safe to call multiple times (webhook can fire twice).
      */
     public function onPaymentSuccess(Payment $payment): void
     {
         DB::transaction(function () use ($payment) {
-            // Recharger le paiement
-            $payment->refresh();
+            // Recharger le paiement avec lock pour éviter le traitement concurrent
+            $payment = Payment::lockForUpdate()->find($payment->id);
+
+            if (! $payment) {
+                Log::channel('critical')->error('onPaymentSuccess: Payment not found', [
+                    'payment_id' => $payment?->id,
+                ]);
+                return;
+            }
+
+            // IDEMPOTENCY: Si la réservation est déjà confirmée, ne rien faire
+            if ($payment->booking && $payment->booking->status === 'confirmed') {
+                Log::channel('payments')->info('onPaymentSuccess: Booking already confirmed (idempotent skip)', [
+                    'payment_id' => $payment->id,
+                    'booking_id' => $payment->booking_id,
+                ]);
+                return;
+            }
 
             // Confirmer la réservation si applicable
             if ($payment->booking) {
                 $payment->booking->update([
                     'status' => 'confirmed',
+                    'payment_status' => 'paid',
                     'confirmed_at' => now(),
                 ]);
 
                 // Créditer le propriétaire (en attente)
                 $this->creditOwner($payment);
+
+                Log::channel('payments')->info('Payment success: Booking confirmed', [
+                    'payment_id' => $payment->id,
+                    'booking_id' => $payment->booking_id,
+                    'amount' => $payment->total_amount,
+                ]);
+
+                // Invalidate caches for booking, residence availability, user data
+                CacheInvalidationService::invalidateBooking(
+                    $payment->booking->residence_id,
+                    $payment->booking->user_id
+                );
+                CacheInvalidationService::invalidatePayment($payment->booking->user_id);
+
+                // Track business events
+                BusinessEventService::paymentCompleted(
+                    $payment->booking->user_id,
+                    $payment->id,
+                    (float) $payment->total_amount,
+                );
+                BusinessEventService::bookingConfirmed(
+                    $payment->booking->user_id,
+                    $payment->booking_id,
+                    (float) $payment->total_amount,
+                );
             }
 
-            // Générer la facture
-            $this->invoiceService->generateFromPayment($payment);
+            // Générer la facture (idempotent — InvoiceService checks for existing)
+            try {
+                $this->invoiceService->generateFromPayment($payment);
+            } catch (\Throwable $e) {
+                // Invoice failure should NOT block payment confirmation
+                Log::channel('critical')->error('onPaymentSuccess: Invoice generation failed', [
+                    'payment_id' => $payment->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
 
-            // Envoyer les notifications
-            $this->sendPaymentConfirmation($payment);
+            // Envoyer les notifications (fire-and-forget, never block)
+            try {
+                $this->sendPaymentConfirmation($payment);
+            } catch (\Throwable $e) {
+                Log::channel('critical')->error('onPaymentSuccess: Notification failed', [
+                    'payment_id' => $payment->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         });
     }
 
     /**
-     * Créditer le propriétaire
+     * Créditer le propriétaire (commission déduite).
+     * Safe to call multiple times — OwnerBalance handles idempotency.
      */
     protected function creditOwner(Payment $payment): void
     {
-        if (!$payment->booking?->residence?->owner_id) {
+        if (! $payment->booking?->residence?->owner_id) {
+            Log::channel('payments')->warning('creditOwner: Missing owner relationship', [
+                'payment_id' => $payment->id,
+                'booking_id' => $payment->booking_id,
+            ]);
             return;
         }
 
         $ownerId = $payment->booking->residence->owner_id;
-        $balance = OwnerBalance::getOrCreateForUser($ownerId);
 
-        // Calculer le montant propriétaire (moins commission REZI)
-        $commissionRate = config('rezi.pricing.owner_commission_rate', 0.03);
-        $ownerSubtotal = (float) $payment->booking->subtotal + (float) $payment->booking->cleaning_fee;
-        $ownerAmount = round($ownerSubtotal * (1 - $commissionRate), 0);
+        try {
+            $balance = OwnerBalance::getOrCreateForUser($ownerId);
 
-        $balance->addPendingEarnings($ownerAmount);
+            // Calculer le montant propriétaire (moins commission REZI depuis paramètres admin)
+            $commissionRate = PlatformSetting::getCommissionRate() / 100;
+            $ownerSubtotal = (float) $payment->booking->subtotal + (float) $payment->booking->cleaning_fee;
+            $ownerAmount = round($ownerSubtotal * (1 - $commissionRate), 0);
+
+            if ($ownerAmount <= 0) {
+                Log::channel('payments')->warning('creditOwner: Owner amount is zero or negative', [
+                    'payment_id' => $payment->id,
+                    'owner_id' => $ownerId,
+                    'amount' => $ownerAmount,
+                ]);
+                return;
+            }
+
+            $balance->addPendingEarnings($ownerAmount);
+
+            Log::channel('payments')->info('Owner credited', [
+                'owner_id' => $ownerId,
+                'amount' => $ownerAmount,
+                'payment_id' => $payment->id,
+            ]);
+
+            // Track revenue event
+            $commission = round($ownerSubtotal * $commissionRate, 0);
+            BusinessEventService::revenueEarned(
+                $ownerId,
+                (float) $payment->total_amount,
+                $payment->booking_id,
+                $commission,
+            );
+        } catch (\Throwable $e) {
+            // Owner credit failure should not stop payment processing
+            Log::channel('critical')->error('creditOwner: Failed', [
+                'payment_id' => $payment->id,
+                'owner_id' => $ownerId,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**

@@ -28,7 +28,7 @@ class CouponPolicy
 
     public function view(User $user, Coupon $coupon): bool
     {
-        return $coupon->user_id === $user->id;
+        return (int) $coupon->user_id === (int) $user->id;
     }
 
     public function create(User $user): bool
@@ -38,21 +38,21 @@ class CouponPolicy
 
     public function update(User $user, Coupon $coupon): bool
     {
-        return $coupon->user_id === $user->id;
+        return (int) $coupon->user_id === (int) $user->id;
     }
 
     public function delete(User $user, Coupon $coupon): bool
     {
-        return $coupon->user_id === $user->id;
+        return (int) $coupon->user_id === (int) $user->id;
     }
 
     public function toggle(User $user, Coupon $coupon): bool
     {
-        return $coupon->user_id === $user->id;
+        return (int) $coupon->user_id === (int) $user->id;
     }
 
     public function duplicate(User $user, Coupon $coupon): bool
     {
-        return $coupon->user_id === $user->id;
+        return (int) $coupon->user_id === (int) $user->id;
     }
 }

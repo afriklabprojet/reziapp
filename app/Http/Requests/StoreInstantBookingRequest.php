@@ -36,6 +36,7 @@ class StoreInstantBookingRequest extends FormRequest
             'message' => 'nullable|string|max:1000',
             'promo_code' => 'nullable|string',
             'coupon_code' => 'nullable|string',
+            'payment_method' => 'required|string|in:wave,orange,mtn,moov,djamo',
         ];
     }
 

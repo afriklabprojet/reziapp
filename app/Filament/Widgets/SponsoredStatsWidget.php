@@ -57,10 +57,16 @@ class SponsoredStatsWidget extends BaseWidget
         $totalContacts = SponsoredListing::sum('contacts_generated');
 
         // Sparkline 7 jours (nouvelles campagnes créées par jour)
+        $startChart = $now->copy()->subDays(6)->startOfDay();
+        $dailyCounts = SponsoredListing::where('created_at', '>=', $startChart)
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->groupByRaw('DATE(created_at)')
+            ->pluck('count', 'date');
+
         $chartData = [];
         for ($i = 6; $i >= 0; $i--) {
             $date = $now->copy()->subDays($i)->format('Y-m-d');
-            $chartData[] = SponsoredListing::whereDate('created_at', $date)->count();
+            $chartData[] = $dailyCounts[$date] ?? 0;
         }
 
         return [

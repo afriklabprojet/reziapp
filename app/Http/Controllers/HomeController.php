@@ -34,11 +34,12 @@ class HomeController extends Controller
                 'lng' => $longitude,
             ];
 
-            // Get residences within radius
+            // Get residences within radius (limité à 50 pour éviter des requêtes trop lourdes)
             $residences = Residence::approved()
                 ->available()
                 ->with(['photos', 'amenities', 'owner'])
                 ->withinRadius($latitude, $longitude, $radius)
+                ->limit(50)
                 ->get();
         } elseif ($request->has('commune') || $request->has('quartier')) {
             $searchPerformed = true;
@@ -76,18 +77,13 @@ class HomeController extends Controller
             $sponsored = collect();
             if (!empty($sponsoredIds)) {
                 $sponsored = Residence::listable()
-                    ->with(['photos', 'amenities', 'owner'])
+                    ->with(['photos', 'amenities', 'owner.badges'])
                     ->whereHas('photos')
                     ->whereIn('id', $sponsoredIds)
                     ->when($location['country_code'] ?? null, fn ($q, $cc) => $q->where('country_code', $cc))
                     ->when($location['city'] ?? null, fn ($q, $city) => $q->where('city', $city))
                     ->limit($limit)
                     ->get();
-
-                // Enregistrer les impressions pour les résidences sponsorisées affichées
-                SponsoredListing::featuredHome()
-                    ->whereIn('residence_id', $sponsored->pluck('id'))
-                    ->each(fn ($sl) => $sl->recordImpression());
             }
 
             // 2. Compléter avec des résidences non-sponsorisées si nécessaire
@@ -95,7 +91,7 @@ class HomeController extends Controller
             $organic = collect();
             if ($remaining > 0) {
                 $organic = Residence::listable()
-                    ->with(['photos', 'amenities', 'owner'])
+                    ->with(['photos', 'amenities', 'owner.badges'])
                     ->whereHas('photos')
                     ->whereNotIn('id', $sponsoredIds)
                     ->when($location['country_code'] ?? null, fn ($q, $cc) => $q->where('country_code', $cc))
@@ -109,12 +105,21 @@ class HomeController extends Controller
             return $sponsored->concat($organic);
         });
 
-        // Popular zones — filtrées par localisation utilisateur
+        // Enregistrer les impressions sponsorisées HORS du cache (à chaque page view)
+        $sponsoredResidenceIds = $featuredResidences->pluck('id')->toArray();
+        if (!empty($sponsoredResidenceIds)) {
+            SponsoredListing::featuredHome()
+                ->whereIn('residence_id', $sponsoredResidenceIds)
+                ->each(fn ($sl) => $sl->recordImpression());
+        }
+
+        // Popular zones — filtrées par localisation utilisateur (résidences meublées uniquement)
         $popularZones = Cache::remember("popular_zones_{$locationKey}", $cacheTtl, function () use ($location) {
             $zones = Residence::approved()
+                ->where('type_location', 'residence_meublee')
                 ->when($location['country_code'] ?? null, fn ($q, $cc) => $q->where('country_code', $cc))
                 ->when($location['city'] ?? null, fn ($q, $city) => $q->where('city', $city))
-                ->select('commune', 'city', DB::raw('COUNT(*) as count'), DB::raw('MIN(price_per_month) as min_price'))
+                ->select('commune', 'city', DB::raw('COUNT(*) as count'), DB::raw('MIN(price_per_day) as min_price'))
                 ->groupBy('commune', 'city')
                 ->orderBy('count', 'desc')
                 ->limit(config('rezi.pagination.home_featured'))
@@ -123,6 +128,7 @@ class HomeController extends Controller
             // Récupérer une photo par commune en 2 requêtes au lieu de 12 (fix N+1)
             $communeNames = $zones->pluck('commune');
             $communePhotos = Residence::approved()
+                ->where('type_location', 'residence_meublee')
                 ->whereIn('commune', $communeNames)
                 ->whereHas('photos')
                 ->with('photos:id,residence_id,path')

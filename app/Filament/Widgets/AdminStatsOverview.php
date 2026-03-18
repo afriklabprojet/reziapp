@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Models\User;
 use App\Models\Residence;
 use App\Models\Booking;
+use App\Models\Payment;
 use App\Services\IdentityVerificationService;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -23,13 +24,13 @@ class AdminStatsOverview extends BaseWidget
         // Résidences
         $totalResidences = Residence::count();
         $pendingResidences = Residence::where('status', 'pending')->count();
-        $approvedResidences = Residence::where('status', 'approved')->count();
+        $approvedResidences = Residence::where('status', 'active')->count();
 
         // Réservations
         $bookingsThisMonth = Booking::where('created_at', '>=', now()->startOfMonth())->count();
-        $revenueThisMonth = Booking::where('created_at', '>=', now()->startOfMonth())
+        $revenueThisMonth = Payment::where('created_at', '>=', now()->startOfMonth())
             ->where('status', 'completed')
-            ->sum('total_amount');
+            ->sum('amount');
 
         // Vérifications en attente
         $verificationService = new IdentityVerificationService();

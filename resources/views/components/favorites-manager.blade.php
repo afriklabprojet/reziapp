@@ -133,7 +133,7 @@
                                     <p class="text-sm text-gray-500 dark:text-gray-400 truncate" x-text="residence.location"></p>
                                     <div class="flex items-center gap-2 mt-1">
                                         <span class="text-primary-600 font-semibold" x-text="formatPrice(residence.price)"></span>
-                                        <span class="text-xs text-gray-400">/nuit</span>
+                                        <span class="text-xs text-gray-400">/jour</span>
                                     </div>
                                 </div>
 

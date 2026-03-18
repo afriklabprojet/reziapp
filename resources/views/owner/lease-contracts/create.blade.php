@@ -1,4 +1,4 @@
-@extends('layouts.owner')
+@extends('layouts.owner', ['sidebarActive' => 'lease-contracts'])
 
 @section('title', 'Nouveau contrat de bail')
 
@@ -38,24 +38,70 @@
                     <option value="">— Choisir une résidence —</option>
                     @foreach($residences as $residence)
                         <option value="{{ $residence->id }}" {{ old('residence_id') == $residence->id ? 'selected' : '' }}>
-                            {{ $residence->title }} ({{ $residence->commune }})
+                            {{ $residence->name }} ({{ $residence->commune }})
                         </option>
                     @endforeach
                 </select>
             </div>
 
-            <div>
+            <div x-data="{
+                    search: '',
+                    selectedId: '{{ old('tenant_id') }}',
+                    selectedName: '',
+                    open: false,
+                    tenants: @js($tenants->map(fn($t) => ['id' => $t->id, 'name' => $t->name, 'email' => $t->email])),
+                    get filtered() {
+                        if (!this.search) return this.tenants;
+                        const s = this.search.toLowerCase();
+                        return this.tenants.filter(t => t.name.toLowerCase().includes(s) || t.email.toLowerCase().includes(s));
+                    },
+                    select(t) {
+                        this.selectedId = t.id;
+                        this.selectedName = t.name + ' (' + t.email + ')';
+                        this.search = this.selectedName;
+                        this.open = false;
+                    },
+                    init() {
+                        if (this.selectedId) {
+                            const t = this.tenants.find(t => t.id == this.selectedId);
+                            if (t) this.select(t);
+                        }
+                    }
+                }">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Locataire *</label>
-                <select name="tenant_id" required
-                    class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm">
-                    <option value="">— Choisir un locataire —</option>
-                    @foreach($tenants as $tenant)
-                        <option value="{{ $tenant->id }}" {{ old('tenant_id') == $tenant->id ? 'selected' : '' }}>
-                            {{ $tenant->name }} ({{ $tenant->email }})
-                        </option>
-                    @endforeach
-                </select>
-                <p class="text-xs text-gray-400 mt-1">Sélectionnez parmi vos locataires passés ou actuels</p>
+                <input type="hidden" name="tenant_id" :value="selectedId" required>
+                <div class="relative">
+                    <input type="text" x-model="search"
+                        @focus="open = true"
+                        @click="open = true"
+                        @input="open = true; selectedId = ''"
+                        placeholder="Rechercher par nom ou email..."
+                        class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                        autocomplete="off">
+                    <div x-show="open && filtered.length > 0" x-transition
+                        @click.away="open = false"
+                        class="absolute z-20 mt-1 w-full bg-white rounded-lg shadow-lg border border-gray-100 max-h-48 overflow-y-auto">
+                        <template x-for="t in filtered" :key="t.id">
+                            <button type="button" @click="select(t)"
+                                class="w-full text-left px-3 py-2 hover:bg-emerald-50 transition text-sm flex items-center justify-between"
+                                :class="selectedId == t.id ? 'bg-emerald-50' : ''">
+                                <span>
+                                    <span class="font-medium text-gray-900" x-text="t.name"></span>
+                                    <span class="text-xs text-gray-400 ml-1" x-text="t.email"></span>
+                                </span>
+                                <svg x-show="selectedId == t.id" class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </button>
+                        </template>
+                    </div>
+                    <div x-show="open && search && filtered.length === 0" x-transition
+                        @click.away="open = false"
+                        class="absolute z-20 mt-1 w-full bg-white rounded-lg shadow-lg border border-gray-100 p-3 text-sm text-gray-400 text-center">
+                        Aucun locataire trouvé pour « <span x-text="search"></span> »
+                    </div>
+                </div>
+                <p class="text-xs text-gray-400 mt-1">Recherchez parmi vos locataires passés ou actuels</p>
             </div>
 
             @isset($bookings)
@@ -82,9 +128,9 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Type de bail *</label>
                 <select name="lease_type" required
                     class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm">
-                    <option value="monthly" {{ old('lease_type') === 'monthly' ? 'selected' : '' }}>Mensuel</option>
-                    <option value="annual" {{ old('lease_type') === 'annual' ? 'selected' : '' }}>Annuel</option>
-                    <option value="seasonal" {{ old('lease_type') === 'seasonal' ? 'selected' : '' }}>Saisonnier</option>
+                    <option value="short_term" {{ old('lease_type', 'short_term') === 'short_term' ? 'selected' : '' }}>Court terme — par nuit</option>
+                    <option value="monthly" {{ old('lease_type') === 'monthly' ? 'selected' : '' }}>Mensuel (mois par mois)</option>
+                    <option value="fixed_term" {{ old('lease_type') === 'fixed_term' ? 'selected' : '' }}>Durée déterminée (longue durée)</option>
                 </select>
             </div>
 
@@ -103,12 +149,17 @@
         </div>
 
         {{-- Conditions financières --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4"
+            x-data="{ leaseType: '{{ old('lease_type', 'short_term') }}' }"
+            x-init="$watch('leaseType', () => {}); document.querySelector('[name=lease_type]').addEventListener('change', e => leaseType = e.target.value)">
             <h2 class="font-semibold text-gray-800 border-b pb-2">Conditions financières</h2>
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Loyer mensuel (FCFA) *</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        <span x-show="leaseType === 'short_term'">Tarif par nuit (FCFA) *</span>
+                        <span x-show="leaseType !== 'short_term'">Loyer mensuel (FCFA) *</span>
+                    </label>
                     <input type="number" name="monthly_rent" value="{{ old('monthly_rent') }}" required min="0" step="500"
                         class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm">
                 </div>
@@ -118,11 +169,14 @@
                         class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Charges mensuelles (FCFA)</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        <span x-show="leaseType === 'short_term'">Frais de ménage (FCFA)</span>
+                        <span x-show="leaseType !== 'short_term'">Charges mensuelles (FCFA)</span>
+                    </label>
                     <input type="number" name="charges_amount" value="{{ old('charges_amount', 0) }}" min="0" step="500"
                         class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm">
                 </div>
-                <div>
+                <div x-show="leaseType !== 'short_term'">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Jour d'échéance du loyer</label>
                     <input type="number" name="payment_day" value="{{ old('payment_day', 5) }}" min="1" max="28"
                         class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm"
@@ -131,12 +185,136 @@
             </div>
         </div>
 
-        {{-- Clauses particulières --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4">
-            <h2 class="font-semibold text-gray-800 border-b pb-2">Clauses particulières (optionnel)</h2>
-            <textarea name="special_conditions" rows="4"
-                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm"
-                placeholder="Conditions spéciales, restrictions, règles particulières...">{{ old('special_conditions') }}</textarea>
+        {{-- Clauses et services avec IA --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4"
+            x-data="{
+                services: @js(old('included_services', [])),
+                newService: '',
+                clauses: @js(old('special_clauses', '')),
+                aiLoading: false,
+                aiServicesLoading: false,
+                aiError: '',
+                add() {
+                    if (this.newService.trim() && !this.services.includes(this.newService.trim())) {
+                        this.services.push(this.newService.trim());
+                        this.newService = '';
+                    }
+                },
+                remove(index) { this.services.splice(index, 1); },
+                async generateClauses() {
+                    this.aiLoading = true;
+                    this.aiError = '';
+                    try {
+                        const form = document.querySelector('form');
+                        const fd = new FormData(form);
+                        const res = await fetch('{{ route('owner.ai.generate-clauses') }}', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                            body: JSON.stringify({
+                                lease_type: fd.get('lease_type'),
+                                monthly_rent: fd.get('monthly_rent'),
+                                deposit_amount: fd.get('deposit_amount'),
+                                residence_name: form.querySelector('[name=residence_id] option:checked')?.textContent?.trim() || '',
+                                commune: '',
+                                included_services: this.services,
+                            }),
+                        });
+                        const data = await res.json();
+                        if (data.clauses) {
+                            this.clauses = data.clauses;
+                        } else {
+                            this.aiError = data.error || 'Erreur lors de la génération.';
+                        }
+                    } catch (e) { this.aiError = 'Erreur de connexion.'; }
+                    this.aiLoading = false;
+                },
+                async suggestServices() {
+                    this.aiServicesLoading = true;
+                    this.aiError = '';
+                    try {
+                        const form = document.querySelector('form');
+                        const fd = new FormData(form);
+                        const res = await fetch('{{ route('owner.ai.suggest-services') }}', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                            body: JSON.stringify({
+                                lease_type: fd.get('lease_type'),
+                                monthly_rent: fd.get('monthly_rent'),
+                                commune: '',
+                            }),
+                        });
+                        const data = await res.json();
+                        if (data.services) {
+                            data.services.forEach(s => {
+                                if (!this.services.includes(s)) this.services.push(s);
+                            });
+                        } else {
+                            this.aiError = data.error || 'Erreur lors de la suggestion.';
+                        }
+                    } catch (e) { this.aiError = 'Erreur de connexion.'; }
+                    this.aiServicesLoading = false;
+                },
+            }">
+            <div class="flex items-center justify-between border-b pb-2">
+                <h2 class="font-semibold text-gray-800">Clauses et services (optionnel)</h2>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full text-[10px] font-bold uppercase tracking-wide">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    IA disponible
+                </span>
+            </div>
+
+            {{-- Erreur IA --}}
+            <div x-show="aiError" x-cloak x-transition class="bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-3 py-2">
+                <span x-text="aiError"></span>
+            </div>
+
+            {{-- Services inclus --}}
+            <div>
+                <div class="flex items-center justify-between mb-1">
+                    <label class="block text-sm font-medium text-gray-700">Services inclus dans le loyer</label>
+                    <button type="button" @click="suggestServices()" :disabled="aiServicesLoading"
+                        class="inline-flex items-center gap-1 px-2.5 py-1 bg-violet-50 text-violet-700 rounded-lg text-xs font-medium hover:bg-violet-100 transition disabled:opacity-50">
+                        <svg x-show="!aiServicesLoading" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        <svg x-show="aiServicesLoading" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                        <span x-text="aiServicesLoading ? 'Suggestion...' : 'Suggérer par IA'"></span>
+                    </button>
+                </div>
+                <div class="flex gap-2 mb-2">
+                    <input type="text" x-model="newService" @keydown.enter.prevent="add()"
+                        placeholder="Ex: Électricité, Eau, Wifi, Gardiennage..."
+                        class="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm">
+                    <button type="button" @click="add()"
+                        class="px-3 py-2 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium hover:bg-emerald-200 transition">
+                        + Ajouter
+                    </button>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <template x-for="(service, i) in services" :key="i">
+                        <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-medium">
+                            <input type="hidden" name="included_services[]" :value="service">
+                            <span x-text="service"></span>
+                            <button type="button" @click="remove(i)" class="hover:text-red-500 transition">&times;</button>
+                        </span>
+                    </template>
+                </div>
+            </div>
+
+            {{-- Clauses spéciales --}}
+            <div>
+                <div class="flex items-center justify-between mb-1">
+                    <label class="block text-sm font-medium text-gray-700">Clauses particulières</label>
+                    <button type="button" @click="generateClauses()" :disabled="aiLoading"
+                        class="inline-flex items-center gap-1 px-2.5 py-1 bg-violet-50 text-violet-700 rounded-lg text-xs font-medium hover:bg-violet-100 transition disabled:opacity-50">
+                        <svg x-show="!aiLoading" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        <svg x-show="aiLoading" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                        <span x-text="aiLoading ? 'Génération...' : 'Générer par IA'"></span>
+                    </button>
+                </div>
+                <textarea name="special_clauses" rows="6" x-model="clauses"
+                    class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                    placeholder="Conditions spéciales, restrictions, règles particulières..."></textarea>
+                <p class="text-xs text-gray-400 mt-1">L'IA génère des clauses basées sur le type de bail, le loyer et les services — vous pouvez les modifier librement.</p>
+            </div>
         </div>
 
         {{-- Actions --}}

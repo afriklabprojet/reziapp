@@ -31,7 +31,7 @@ class SecurityDepositService
         $residence = $booking->residence;
 
         return SecurityDeposit::create(array_merge([
-            'owner_id'     => $residence->user_id,
+            'owner_id'     => $residence->owner_id,
             'tenant_id'    => $booking->user_id,
             'residence_id' => $booking->residence_id,
             'booking_id'   => $booking->id,

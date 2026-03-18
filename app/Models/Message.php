@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Message extends Model
@@ -23,6 +24,7 @@ class Message extends Model
         'template_id',
         'read_at',
         'delivered_at',
+        'link_preview',
     ];
 
     protected $casts = [
@@ -31,6 +33,7 @@ class Message extends Model
         'is_auto_reply' => 'boolean',
         'attachments' => 'array',
         'metadata' => 'array',
+        'link_preview' => 'array',
     ];
 
     /**
@@ -43,6 +46,8 @@ class Message extends Model
     public const TYPE_LOCATION = 'location';
     public const TYPE_SYSTEM = 'system';
     public const TYPE_AUTO_REPLY = 'auto_reply';
+    public const TYPE_VOICE = 'voice';
+    public const TYPE_GIF = 'gif';
 
     /**
      * La conversation parente
@@ -66,6 +71,30 @@ class Message extends Model
     public function template(): BelongsTo
     {
         return $this->belongsTo(MessageTemplate::class, 'template_id');
+    }
+
+    /**
+     * Les réactions sur ce message
+     */
+    public function reactions(): HasMany
+    {
+        return $this->hasMany(MessageReaction::class);
+    }
+
+    /**
+     * Obtenir les réactions groupées par emoji
+     */
+    public function getGroupedReactions(): array
+    {
+        return $this->reactions
+            ->groupBy('emoji')
+            ->map(fn ($group) => [
+                'emoji' => $group->first()->emoji,
+                'count' => $group->count(),
+                'users' => $group->pluck('user_id')->toArray(),
+            ])
+            ->values()
+            ->toArray();
     }
 
     /**

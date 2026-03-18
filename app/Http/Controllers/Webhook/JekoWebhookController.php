@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Webhook;
 
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
+use App\Models\Payout;
 use App\Models\SponsoredListing;
 use App\Models\Subscription;
 use App\Models\SubscriptionPayment;
 use App\Models\BookingInsurance;
+use App\Models\WebhookEvent;
 use App\Services\JekoPaymentService;
 use App\Services\PaymentService;
 use Illuminate\Http\Request;
@@ -26,6 +28,8 @@ class JekoWebhookController extends Controller
      *
      * Jeko sends a single event type: transaction.completed
      * Must respond HTTP 200 within 5 seconds.
+     *
+     * IDEMPOTENT: Uses WebhookEvent to prevent double processing.
      */
     public function handle(Request $request): Response
     {
@@ -34,7 +38,7 @@ class JekoWebhookController extends Controller
 
         // 1. Verify webhook signature
         if (! $this->jekoService->verifyWebhookSignature($rawBody, $signature)) {
-            Log::warning('Jeko webhook: Invalid signature', [
+            Log::channel('security')->warning('Jeko webhook: Invalid signature', [
                 'ip' => $request->ip(),
                 'signature' => substr($signature, 0, 20) . '...',
             ]);
@@ -46,17 +50,44 @@ class JekoWebhookController extends Controller
         $payload = $request->json()->all();
         $event = $payload['event'] ?? null;
         $data = $payload['data'] ?? [];
+        $eventId = $data['id'] ?? $data['transactionDetails']['reference'] ?? null;
 
-        Log::info('Jeko webhook received', [
+        // 3. Idempotency check — prevent double processing
+        if ($eventId && ! WebhookEvent::acquireLock('jeko', (string) $eventId, $event, $payload)) {
+            Log::channel('payments')->info('Jeko webhook: Duplicate event ignored', [
+                'event_id' => $eventId,
+                'event' => $event,
+            ]);
+            return response('OK', 200); // Return 200 so Jeko doesn't retry
+        }
+
+        Log::channel('payments')->info('Jeko webhook received', [
             'event' => $event,
-            'transaction_id' => $data['id'] ?? null,
+            'event_id' => $eventId,
             'status' => $data['status'] ?? null,
             'reference' => $data['transactionDetails']['reference'] ?? null,
+            'ip' => $request->ip(),
         ]);
 
-        // 3. Handle the event
-        if ($event === 'transaction.completed') {
-            $this->handleTransactionCompleted($data);
+        // 4. Handle the event
+        try {
+            if ($event === 'transaction.completed') {
+                $this->handleTransactionCompleted($data);
+            } elseif ($event === 'transfer.completed' || $event === 'transfer.failed') {
+                $this->handleTransferEvent($data, $event);
+            }
+        } catch (\Throwable $e) {
+            // Mark as failed for potential re-processing
+            if ($eventId) {
+                WebhookEvent::markFailed('jeko', (string) $eventId);
+            }
+
+            Log::channel('critical')->error('Jeko webhook: Processing error', [
+                'event' => $event,
+                'event_id' => $eventId,
+                'error' => $e->getMessage(),
+                'trace' => substr($e->getTraceAsString(), 0, 500),
+            ]);
         }
 
         // 4. Return 200 immediately (Jeko requires response within 5s)
@@ -308,6 +339,76 @@ class JekoWebhookController extends Controller
             }
         } else {
             $payment->markAsFailed('Paiement échoué via Jeko');
+        }
+    }
+
+    // =========================================================================
+    // TRANSFER (PAY-OUT) WEBHOOKS
+    // =========================================================================
+
+    /**
+     * Handle transfer completion / failure webhooks from Jeko.
+     *
+     * Jeko envoie un webhook quand un transfert change de statut :
+     *   - transfer.completed → le transfert est arrivé au bénéficiaire
+     *   - transfer.failed → le transfert a échoué
+     */
+    protected function handleTransferEvent(array $data, string $event): void
+    {
+        $transferId = $data['id'] ?? null;
+        $status = $data['status'] ?? null;
+
+        if (! $transferId) {
+            Log::warning('Jeko webhook: Missing transfer ID', ['event' => $event]);
+            return;
+        }
+
+        // Trouver le payout correspondant via provider_reference (= jeko transfer ID)
+        $payout = Payout::where('provider_reference', $transferId)->first();
+
+        if (! $payout) {
+            Log::warning('Jeko webhook: No payout found for transfer', [
+                'transfer_id' => $transferId,
+                'event' => $event,
+            ]);
+            return;
+        }
+
+        // Éviter le double traitement
+        if ($payout->isCompleted()) {
+            Log::info('Jeko webhook: Payout already completed', [
+                'payout_id' => $payout->id,
+                'transfer_id' => $transferId,
+            ]);
+            return;
+        }
+
+        if ($status === 'success' || $event === 'transfer.completed') {
+            $payout->markAsCompleted($transferId);
+
+            Log::info('Jeko webhook: Transfer completed → Payout marked as completed', [
+                'payout_id' => $payout->id,
+                'transfer_id' => $transferId,
+                'amount' => $payout->net_amount,
+                'owner_id' => $payout->user_id,
+            ]);
+        } else {
+            $reason = $data['failureReason'] ?? $data['message'] ?? 'Transfert échoué';
+            $payout->markAsFailed($reason);
+
+            // Rembourser le solde du propriétaire
+            $balance = \App\Models\OwnerBalance::where('user_id', $payout->user_id)->first();
+            if ($balance) {
+                $balance->increment('available_balance', $payout->gross_amount);
+                $balance->decrement('total_withdrawn', $payout->net_amount);
+            }
+
+            Log::warning('Jeko webhook: Transfer failed → Balance refunded', [
+                'payout_id' => $payout->id,
+                'transfer_id' => $transferId,
+                'reason' => $reason,
+                'owner_id' => $payout->user_id,
+            ]);
         }
     }
 }

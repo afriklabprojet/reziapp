@@ -332,6 +332,364 @@ class GoogleMapsService
     }
 
     // ─────────────────────────────────────────────
+    // NEARBY SEARCH (Places API)
+    // ─────────────────────────────────────────────
+
+    /**
+     * Google Places → mapping vers types PointOfInterest.
+     */
+    private const PLACE_TYPE_MAP = [
+        'restaurant'     => 'restaurant',
+        'supermarket'    => 'supermarket',
+        'grocery_or_supermarket' => 'supermarket',
+        'pharmacy'       => 'pharmacy',
+        'hospital'       => 'hospital',
+        'doctor'         => 'hospital',
+        'bank'           => 'bank',
+        'atm'            => 'bank',
+        'bus_station'    => 'transport',
+        'transit_station' => 'transport',
+        'taxi_stand'     => 'transport',
+        'shopping_mall'  => 'mall',
+        'school'         => 'school',
+        'university'     => 'school',
+        'mosque'         => 'mosque',
+        'church'         => 'church',
+        'park'           => 'park',
+        'gym'            => 'gym',
+    ];
+
+    /**
+     * Rechercher les points d'intérêt à proximité d'une position.
+     *
+     * @param  float   $lat       Latitude du centre
+     * @param  float   $lng       Longitude du centre
+     * @param  int     $radius    Rayon en mètres (max 5000)
+     * @param  array   $types     Types Google Places à chercher
+     * @return array   Liste de POIs formatés
+     */
+    public function nearbySearch(
+        float $lat,
+        float $lng,
+        int $radius = 1000,
+        array $types = ['restaurant', 'supermarket', 'pharmacy', 'hospital', 'bank', 'bus_station', 'shopping_mall', 'school', 'mosque', 'church', 'park', 'gym']
+    ): array {
+        $allResults = [];
+
+        // Google Nearby Search ne supporte qu'un type par requête
+        // On regroupe en batches pour limiter les appels API
+        foreach ($types as $type) {
+            $cacheKey = "nearby_search:" . md5("{$lat},{$lng}:{$radius}:{$type}");
+
+            $results = Cache::remember($cacheKey, 86400, function () use ($lat, $lng, $radius, $type) {
+                try {
+                    $response = Http::get("{$this->baseUrl}/place/nearbysearch/json", [
+                        'location' => "{$lat},{$lng}",
+                        'radius'   => $radius,
+                        'type'     => $type,
+                        'language' => 'fr',
+                        'key'      => $this->apiKey,
+                    ]);
+
+                    $data = $response->json();
+
+                    if (!in_array($data['status'], ['OK', 'ZERO_RESULTS'])) {
+                        Log::warning('Google Nearby Search error', [
+                            'status' => $data['status'],
+                            'type'   => $type,
+                        ]);
+                        return [];
+                    }
+
+                    return collect($data['results'] ?? [])
+                        ->take(3) // Max 3 résultats par type
+                        ->map(function ($place) use ($lat, $lng, $type) {
+                            $placeLat = $place['geometry']['location']['lat'];
+                            $placeLng = $place['geometry']['location']['lng'];
+                            $distance = $this->haversineDistance($lat, $lng, $placeLat, $placeLng);
+
+                            return [
+                                'name'             => $place['name'],
+                                'type'             => self::PLACE_TYPE_MAP[$type] ?? 'other',
+                                'google_type'      => $type,
+                                'latitude'         => $placeLat,
+                                'longitude'        => $placeLng,
+                                'distance_meters'  => round($distance),
+                                'walking_time_minutes' => (int) ceil($distance / 83), // ~5 km/h
+                                'rating'           => $place['rating'] ?? null,
+                                'place_id'         => $place['place_id'] ?? null,
+                                'vicinity'         => $place['vicinity'] ?? null,
+                                'open_now'         => $place['opening_hours']['open_now'] ?? null,
+                            ];
+                        })
+                        ->toArray();
+                } catch (\Exception $e) {
+                    Log::error('Google Nearby Search exception', [
+                        'error' => $e->getMessage(),
+                        'type'  => $type,
+                    ]);
+                    return [];
+                }
+            });
+
+            $allResults = array_merge($allResults, $results);
+        }
+
+        // Trier par distance
+        usort($allResults, fn ($a, $b) => $a['distance_meters'] <=> $b['distance_meters']);
+
+        return $allResults;
+    }
+
+    // ─────────────────────────────────────────────
+    // REVERSE GEOCODING
+    // ─────────────────────────────────────────────
+
+    /**
+     * Reverse geocoding : coordonnées → adresse structurée.
+     *
+     * @param  float  $lat
+     * @param  float  $lng
+     * @return array|null  ['address', 'commune', 'quartier', 'city', 'country_code']
+     */
+    public function reverseGeocode(float $lat, float $lng): ?array
+    {
+        $cacheKey = "reverse_geocode:" . md5("{$lat},{$lng}");
+
+        return Cache::remember($cacheKey, 86400, function () use ($lat, $lng) {
+            try {
+                $response = Http::get("{$this->baseUrl}/geocode/json", [
+                    'latlng'   => "{$lat},{$lng}",
+                    'language' => 'fr',
+                    'key'      => $this->apiKey,
+                ]);
+
+                $data = $response->json();
+
+                if ($data['status'] !== 'OK' || empty($data['results'])) {
+                    return null;
+                }
+
+                $result = $data['results'][0];
+                $components = collect($result['address_components'] ?? []);
+
+                // Extraire commune et quartier
+                $commune = $components->first(fn ($c) => in_array('locality', $c['types']))['long_name']
+                    ?? $components->first(fn ($c) => in_array('administrative_area_level_2', $c['types']))['long_name']
+                    ?? null;
+
+                $quartier = $components->first(fn ($c) => in_array('sublocality_level_1', $c['types']))['long_name']
+                    ?? $components->first(fn ($c) => in_array('sublocality', $c['types']))['long_name']
+                    ?? $components->first(fn ($c) => in_array('neighborhood', $c['types']))['long_name']
+                    ?? null;
+
+                $city = $components->first(fn ($c) => in_array('administrative_area_level_1', $c['types']))['long_name']
+                    ?? $commune;
+
+                $countryCode = $components->first(fn ($c) => in_array('country', $c['types']))['short_name'] ?? 'CI';
+
+                return [
+                    'address'      => $result['formatted_address'],
+                    'commune'      => $commune,
+                    'quartier'     => $quartier,
+                    'city'         => $city,
+                    'country_code' => strtoupper($countryCode),
+                    'place_id'     => $result['place_id'] ?? null,
+                ];
+            } catch (\Exception $e) {
+                Log::error('Google Reverse Geocode exception', ['error' => $e->getMessage()]);
+                return null;
+            }
+        });
+    }
+
+    // ─────────────────────────────────────────────
+    // STREET VIEW
+    // ─────────────────────────────────────────────
+
+    /**
+     * Vérifier si une image Street View est disponible à cette position.
+     *
+     * @return bool
+     */
+    public function hasStreetView(float $lat, float $lng, int $radius = 100): bool
+    {
+        $cacheKey = "streetview_available:" . md5("{$lat},{$lng}:{$radius}");
+
+        return Cache::remember($cacheKey, 604800, function () use ($lat, $lng, $radius) {
+            try {
+                $response = Http::get("{$this->baseUrl}/streetview/metadata", [
+                    'location' => "{$lat},{$lng}",
+                    'radius'   => $radius,
+                    'key'      => $this->apiKey,
+                ]);
+
+                $data = $response->json();
+                return ($data['status'] ?? '') === 'OK';
+            } catch (\Exception $e) {
+                return false;
+            }
+        });
+    }
+
+    /**
+     * Générer l'URL d'une image Street View.
+     *
+     * @param  float   $lat
+     * @param  float   $lng
+     * @param  string  $size     "WxH"
+     * @param  int     $heading  Direction (0-360)
+     * @param  int     $pitch    Inclinaison (-90 à 90)
+     * @return string  URL de l'image
+     */
+    public function getStreetViewUrl(
+        float $lat,
+        float $lng,
+        string $size = '600x400',
+        ?int $heading = null,
+        int $pitch = 0
+    ): string {
+        $params = [
+            'location' => "{$lat},{$lng}",
+            'size'     => $size,
+            'pitch'    => $pitch,
+            'key'      => $this->apiKey,
+        ];
+
+        if ($heading !== null) {
+            $params['heading'] = $heading;
+        }
+
+        return "{$this->baseUrl}/streetview?" . http_build_query($params);
+    }
+
+    // ─────────────────────────────────────────────
+    // ADDRESS VALIDATION
+    // ─────────────────────────────────────────────
+
+    /**
+     * Valider qu'une position GPS correspond à une adresse réelle.
+     * Utilise le reverse geocoding + vérifie la cohérence.
+     *
+     * @param  float   $lat
+     * @param  float   $lng
+     * @param  string  $expectedCity  Ville attendue (ex: 'Abidjan')
+     * @return array   ['valid', 'confidence', 'issues', 'suggested_address']
+     */
+    public function validateAddress(float $lat, float $lng, ?string $expectedCity = null): array
+    {
+        $result = [
+            'valid'       => false,
+            'confidence'  => 0,
+            'issues'      => [],
+            'address'     => null,
+            'commune'     => null,
+            'quartier'    => null,
+        ];
+
+        $geocode = $this->reverseGeocode($lat, $lng);
+
+        if (!$geocode) {
+            $result['issues'][] = 'Impossible de résoudre cette position en adresse';
+            return $result;
+        }
+
+        $result['address']  = $geocode['address'];
+        $result['commune']  = $geocode['commune'];
+        $result['quartier'] = $geocode['quartier'];
+
+        $confidence = 50; // Base
+
+        // Vérifier que c'est en Côte d'Ivoire ou Burkina Faso
+        if (in_array($geocode['country_code'], ['CI', 'BF'])) {
+            $confidence += 20;
+        } else {
+            $result['issues'][] = "Position hors zone couverte (pays: {$geocode['country_code']})";
+            return $result;
+        }
+
+        // Vérifier la cohérence avec la ville attendue
+        if ($expectedCity) {
+            $cityMatch = str_contains(
+                mb_strtolower($geocode['city'] . ' ' . $geocode['commune'] . ' ' . $geocode['address']),
+                mb_strtolower($expectedCity)
+            );
+            if ($cityMatch) {
+                $confidence += 20;
+            } else {
+                $result['issues'][] = "La position semble être à {$geocode['city']}, pas à {$expectedCity}";
+                $confidence -= 20;
+            }
+        } else {
+            $confidence += 10;
+        }
+
+        // Vérifier que commune est rempli
+        if ($geocode['commune']) {
+            $confidence += 10;
+        } else {
+            $result['issues'][] = 'Commune non détectée — position trop vague';
+        }
+
+        $result['confidence'] = max(0, min(100, $confidence));
+        $result['valid'] = $result['confidence'] >= 50;
+
+        return $result;
+    }
+
+    // ─────────────────────────────────────────────
+    // MAPBOX ISOCHRONE
+    // ─────────────────────────────────────────────
+
+    /**
+     * Obtenir les zones accessibles en X minutes (Mapbox Isochrone API).
+     *
+     * @param  float   $lat
+     * @param  float   $lng
+     * @param  array   $minutes   Temps en minutes (ex: [5, 10, 15])
+     * @param  string  $profile   walking|cycling|driving
+     * @return array|null  GeoJSON FeatureCollection
+     */
+    public function getIsochrone(
+        float $lat,
+        float $lng,
+        array $minutes = [5, 10, 15],
+        string $profile = 'walking'
+    ): ?array {
+        $mapboxToken = config('services.mapbox.access_token');
+        if (!$mapboxToken) {
+            return null;
+        }
+
+        $contours = implode(',', $minutes);
+        $cacheKey = "isochrone:" . md5("{$lat},{$lng}:{$contours}:{$profile}");
+
+        return Cache::remember($cacheKey, 86400, function () use ($lat, $lng, $contours, $profile, $mapboxToken) {
+            try {
+                $response = Http::get("https://api.mapbox.com/isochrone/v1/mapbox/{$profile}/{$lng},{$lat}", [
+                    'contours_minutes' => $contours,
+                    'polygons'         => 'true',
+                    'generalize'       => 50,
+                    'access_token'     => $mapboxToken,
+                ]);
+
+                if (!$response->successful()) {
+                    Log::warning('Mapbox Isochrone API error', [
+                        'status' => $response->status(),
+                        'body'   => $response->body(),
+                    ]);
+                    return null;
+                }
+
+                return $response->json();
+            } catch (\Exception $e) {
+                Log::error('Mapbox Isochrone exception', ['error' => $e->getMessage()]);
+                return null;
+            }
+        });
+    }
+
+    // ─────────────────────────────────────────────
     // HELPERS
     // ─────────────────────────────────────────────
 
@@ -345,5 +703,23 @@ class GoogleMapsService
         }
 
         return ($point['lat'] ?? $point['latitude'] ?? 0) . ',' . ($point['lng'] ?? $point['longitude'] ?? 0);
+    }
+
+    /**
+     * Distance Haversine entre deux points (en mètres).
+     */
+    protected function haversineDistance(float $lat1, float $lng1, float $lat2, float $lng2): float
+    {
+        $earthRadius = 6371000; // mètres
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLng = deg2rad($lng2 - $lng1);
+
+        $a = sin($dLat / 2) ** 2
+            + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng / 2) ** 2;
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        return $earthRadius * $c;
     }
 }

@@ -45,7 +45,7 @@
                 <h2 class="text-lg font-semibold text-gray-900 mb-4">Prix de base</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-gray-50 rounded-xl p-4">
-                        <span class="text-sm text-gray-500">Par nuit</span>
+                        <span class="text-sm text-gray-500">Par jour</span>
                         <p class="text-2xl font-bold text-orange-500">
                             {{ number_format($residence->price_per_day, 0, ',', ' ') }} FCFA</p>
                     </div>
@@ -56,17 +56,17 @@
                                 {{ number_format($residence->price_per_week, 0, ',', ' ') }} FCFA</p>
                             <span
                                 class="text-xs text-gray-400">{{ number_format($residence->price_per_week / 7, 0, ',', ' ') }}
-                                FCFA/nuit</span>
+                                FCFA/jour</span>
                         </div>
                     @endif
                     @if ($residence->price_per_month)
                         <div class="bg-gray-50 rounded-xl p-4">
-                            <span class="text-sm text-gray-500">Par mois</span>
+                            <span class="text-sm text-gray-500">Par jour</span>
                             <p class="text-2xl font-bold text-orange-500">
                                 {{ number_format($residence->price_per_month, 0, ',', ' ') }} FCFA</p>
                             <span
                                 class="text-xs text-gray-400">{{ number_format($residence->price_per_month / 30, 0, ',', ' ') }}
-                                FCFA/nuit</span>
+                                FCFA/jour</span>
                         </div>
                     @endif
                 </div>
@@ -199,7 +199,7 @@
                                 </div>
                                 <div class="text-lg font-bold text-orange-500 mb-3">
                                     {{ number_format($season->price_per_night, 0, ',', ' ') }} FCFA<span
-                                        class="text-sm font-normal text-gray-500">/nuit</span>
+                                        class="text-sm font-normal text-gray-500">/jour</span>
                                 </div>
                                 @if ($season->min_nights > 1)
                                     <p class="text-xs text-gray-500 mb-3">Min. {{ $season->min_nights }} nuits</p>
@@ -265,7 +265,7 @@
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Modifier le prix</h3>
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nouveau prix (FCFA/nuit)</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nouveau prix (FCFA/jour)</label>
                         <input type="number" x-model="price"
                             class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
                     </div>

@@ -11,18 +11,23 @@
     <div x-data="chatShow({
         conversationId: {{ $conversation->id }},
         lastMessageId: {{ $lastMsg?->id ?? 0 }},
+        firstMessageId: {{ $messages->first()?->id ?? 0 }},
         currentUserId: {{ auth()->id() }},
         isPinned: {{ $conversation->isPinned() ? 'true' : 'false' }},
         isMuted: {{ $conversation->isMuted() ? 'true' : 'false' }},
         isArchived: {{ $conversation->isArchived() ? 'true' : 'false' }},
+        hasMoreMessages: {{ ($hasMoreMessages ?? false) ? 'true' : 'false' }},
         chatIndexUrl: '{{ route('chat.index') }}',
         ownAvatarUrl: '{{ auth()->user()->getAvatarUrl() }}',
         ownInitial: '{{ strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}',
         otherAvatarUrl: '{{ $other->getAvatarUrl() }}',
         otherInitial: '{{ strtoupper(mb_substr($other->name, 0, 1)) }}',
+        themeColor: '{{ $conversation->theme_color ?? 'orange' }}',
     })"
-        @keydown.escape="showTemplates = false; showDocuments = false; showQuickReplies = false; showEmojiPicker = false"
-        class="flex h-[calc(100vh-10rem)] min-h-120 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        @keydown.escape="showTemplates = false; showDocuments = false; showQuickReplies = false; showEmojiPicker = false; showGifPicker = false; showSearchPanel = false; showThemePicker = false"
+        @keydown.ctrl.f.prevent="showSearchPanel = !showSearchPanel"
+        @keydown.meta.f.prevent="showSearchPanel = !showSearchPanel"
+        class="flex h-[calc(100dvh-8rem)] md:h-[calc(100vh-10rem)] min-h-120 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
 
         {{-- ==================== SIDEBAR (desktop) ==================== --}}
         <div class="hidden lg:flex flex-col w-80 border-r border-gray-100 bg-gray-50/50">
@@ -115,7 +120,16 @@
                     @endif
                     <div class="min-w-0">
                         <h2 class="text-sm font-bold text-gray-900 truncate">{{ $other->name }}</h2>
-                        @if ($conversation->residence)
+                        @if (isset($otherLastSeen) && $otherLastSeen)
+                            @if ($otherLastSeen->diffInMinutes(now()) < 5)
+                                <p class="text-[11px] text-green-500 font-medium flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                                    En ligne
+                                </p>
+                            @else
+                                <p class="text-[11px] text-gray-400">Vu {{ $otherLastSeen->diffForHumans() }}</p>
+                            @endif
+                        @elseif ($conversation->residence)
                             <p class="text-[11px] text-gray-400 truncate flex items-center gap-1">
                                 <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" stroke-width="2"
                                     viewBox="0 0 24 24">
@@ -130,6 +144,16 @@
 
                 {{-- Actions --}}
                 <div class="flex items-center gap-0.5 shrink-0" x-data="{ showMenu: false }">
+                    {{-- Search in conversation --}}
+                    <button @click="showSearchPanel = !showSearchPanel"
+                        class="p-2 rounded-lg transition-colors"
+                        :class="showSearchPanel ? 'text-orange-600 bg-orange-50' : 'text-gray-400 hover:text-orange-500 hover:bg-orange-50'"
+                        title="Rechercher (Ctrl+F)">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                    </button>
+
                     {{-- Documents --}}
                     @if ($conversation->sharedDocuments->count())
                         <button @click="showDocuments = !showDocuments"
@@ -172,6 +196,20 @@
                                 </svg>
                                 <span x-text="isMuted ? 'Réactiver' : 'Désactiver les notif.'"></span>
                             </button>
+                            {{-- Theme picker --}}
+                            <div class="border-t border-gray-100 my-1"></div>
+                            <div class="px-3.5 py-2">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Thème</p>
+                                <div class="flex items-center gap-1.5">
+                                    @foreach (\App\Models\Conversation::THEME_COLORS as $colorName => $colorData)
+                                        <button @click="changeTheme('{{ $colorName }}'); showMenu = false"
+                                            class="w-6 h-6 rounded-full border-2 transition-transform hover:scale-110"
+                                            :class="themeColor === '{{ $colorName }}' ? 'border-gray-800 scale-110' : 'border-transparent'"
+                                            style="background-color: {{ $colorData['hex'] }}"
+                                            title="{{ ucfirst($colorName) }}"></button>
+                                    @endforeach
+                                </div>
+                            </div>
                             <div class="border-t border-gray-100 my-1"></div>
                             <button @click="archive(); showMenu = false"
                                 class="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
@@ -187,9 +225,48 @@
                 </div>
             </div>
 
+            {{-- ========= Search in conversation panel ========= --}}
+            <div x-show="showSearchPanel" x-transition
+                class="border-b border-gray-100 bg-white px-4 sm:px-5 py-2.5">
+                <div class="flex items-center gap-2">
+                    <div class="flex-1 relative">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                        <input type="text" x-model="searchQuery" @input.debounce.400ms="searchInConversation()"
+                            @keydown.escape="showSearchPanel = false"
+                            placeholder="Rechercher dans la conversation…"
+                            class="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-300 focus:border-orange-400 focus:bg-white transition-all">
+                    </div>
+                    <span x-show="searchResults.length > 0" class="text-xs text-gray-400 shrink-0" x-text="searchResults.length + ' résultat(s)'"></span>
+                    <button @click="showSearchPanel = false; searchQuery = ''; searchResults = []"
+                        class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div x-show="searchResults.length > 0" class="mt-2 max-h-40 overflow-y-auto space-y-1">
+                    <template x-for="result in searchResults" :key="result.id">
+                        <button @click="scrollToMessage(result.id)" class="w-full text-left flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg hover:bg-orange-50 transition-colors">
+                            <span class="text-[10px] text-gray-400 shrink-0" x-text="result.date"></span>
+                            <span class="truncate" :class="result.is_own ? 'text-orange-600' : 'text-gray-700'" x-text="result.content"></span>
+                        </button>
+                    </template>
+                </div>
+            </div>
+
             {{-- ========= Messages area ========= --}}
             <div id="messages-container" x-ref="messagesContainer" class="flex-1 overflow-y-auto px-4 sm:px-6 py-4"
                 style="background-color: #f8f7f4; background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22><circle cx=%2230%22 cy=%2230%22 r=%221%22 fill=%22%23e5e2db%22 fill-opacity=%220.3%22/></svg>');">
+
+                {{-- Load more sentinel --}}
+                <div x-show="loadingMore" class="flex justify-center py-3">
+                    <span class="inline-block w-5 h-5 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin"></span>
+                </div>
+                <div x-show="hasMoreMessages && !loadingMore" class="flex justify-center py-2">
+                    <button @click="loadOlderMessages()" class="text-xs text-orange-500 hover:text-orange-600 font-medium">Charger les messages précédents</button>
+                </div>
 
                 {{-- Date grouped messages --}}
                 <div class="space-y-4 messages-list">
@@ -403,6 +480,48 @@
 
             {{-- ========= Input bar ========= --}}
             <div class="border-t border-gray-100 bg-linear-to-t from-white via-white to-gray-50/50 px-3 sm:px-4 py-3">
+                {{-- GIF Picker Panel --}}
+                <div x-show="showGifPicker" x-cloak x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-2"
+                    @click.outside="showGifPicker = false"
+                    class="mb-2 bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden">
+                    <div class="flex items-center gap-2 px-3 py-2.5 border-b border-gray-100">
+                        <svg class="w-4 h-4 text-purple-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>
+                        <input type="text" x-model="gifSearchQuery" @input.debounce.500ms="searchGifs()" placeholder="Rechercher un GIF…"
+                            class="flex-1 text-sm bg-gray-50 border-none rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-purple-300 focus:bg-white placeholder:text-gray-400">
+                    </div>
+                    <div class="p-2 max-h-56 overflow-y-auto">
+                        <div x-show="gifLoading" class="flex justify-center py-6">
+                            <span class="inline-block w-5 h-5 border-2 border-gray-300 border-t-purple-500 rounded-full animate-spin"></span>
+                        </div>
+                        <div x-show="!gifLoading && gifResults.length === 0" class="text-center py-6 text-sm text-gray-400">
+                            <span x-text="gifSearchQuery ? 'Aucun GIF trouvé' : 'Tapez pour rechercher des GIFs'"></span>
+                        </div>
+                        <div class="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
+                            <template x-for="gif in gifResults" :key="gif.id">
+                                <button @click="sendGif(gif)" class="relative rounded-xl overflow-hidden aspect-square hover:opacity-80 hover:scale-105 transition-all">
+                                    <img :src="gif.preview" :alt="'GIF'" class="w-full h-full object-cover" loading="lazy">
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Voice Recording Indicator --}}
+                <div x-show="isRecording" x-transition class="mb-2 flex items-center gap-3 px-4 py-3 bg-red-50 border border-red-200 rounded-2xl">
+                    <span class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+                    <span class="text-sm font-medium text-red-700 flex-1">Enregistrement en cours…</span>
+                    <span class="text-xs text-red-500 tabular-nums" x-text="recordingDuration"></span>
+                    <button @click="cancelRecording()" class="p-1 text-red-400 hover:text-red-600 rounded-lg hover:bg-red-100 transition-colors" title="Annuler">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+                    </button>
+                    <button @click="stopRecording()" class="p-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors" title="Envoyer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" /></svg>
+                    </button>
+                </div>
+
                 {{-- Emoji Picker Panel --}}
                 <div x-show="showEmojiPicker" x-cloak x-transition:enter="transition ease-out duration-200"
                     x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
@@ -461,6 +580,24 @@
                             <input type="file" class="hidden" @change="uploadFile($event)"
                                 accept="image/*,.pdf,.doc,.docx,.xls,.xlsx">
                         </label>
+
+                        {{-- GIF --}}
+                        <button @click="showGifPicker = !showGifPicker; showEmojiPicker = false; showTemplates = false; showQuickReplies = false"
+                            class="p-2 rounded-xl transition-all active:scale-90"
+                            :class="showGifPicker ? 'text-purple-600 bg-purple-50' : 'text-gray-400 hover:text-purple-500 hover:bg-purple-50'"
+                            title="GIF">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M11.5 9H13v6h-1.5zM9 9H6c-.6 0-1 .5-1 1v4c0 .5.4 1 1 1h3c.6 0 1-.5 1-1v-2H8.5v1.5h-2v-3H10V10c0-.5-.4-1-1-1zm10 1.5V9h-4.5v6H16v-2h2v-1.5h-2v-1z"/></svg>
+                        </button>
+
+                        {{-- Voice --}}
+                        <button @click="startRecording()"
+                            x-show="!isRecording"
+                            class="p-2 text-gray-400 hover:text-red-500 rounded-xl hover:bg-red-50 transition-all active:scale-90"
+                            title="Message vocal">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" />
+                            </svg>
+                        </button>
 
                         {{-- Templates --}}
                         @if ($templates->count())
@@ -523,6 +660,36 @@
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                             </svg>
                         </button>
+                    </div>
+                </div>
+
+                {{-- Context menu for edit/delete --}}
+                <div x-show="contextMenuVisible" x-transition
+                    class="fixed z-[100] bg-white rounded-xl shadow-xl border border-gray-200 py-1 w-44"
+                    :style="`left: ${contextMenuX}px; top: ${contextMenuY}px`"
+                    @click.outside="contextMenuVisible = false">
+                    <button @click="startEditMessage()"
+                        class="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg>
+                        Modifier
+                    </button>
+                    <button @click="confirmDeleteMessage()"
+                        class="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
+                        Supprimer
+                    </button>
+                </div>
+
+                {{-- Inline edit overlay --}}
+                <div x-show="editingMessageId" x-transition class="border-t border-blue-200 bg-blue-50/60 px-4 py-2">
+                    <div class="flex items-center gap-2">
+                        <div class="flex-1">
+                            <label class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Modification</label>
+                            <input type="text" x-model="editContent" @keydown.enter="saveEditMessage()" @keydown.escape="cancelEditMessage()"
+                                class="w-full px-3 py-1.5 text-sm bg-white border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-400">
+                        </div>
+                        <button @click="saveEditMessage()" class="p-1.5 text-blue-600 hover:bg-blue-100 rounded-lg">✓</button>
+                        <button @click="cancelEditMessage()" class="p-1.5 text-gray-400 hover:bg-gray-100 rounded-lg">✕</button>
                     </div>
                 </div>
 

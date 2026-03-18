@@ -23,18 +23,18 @@ class CheckDocumentExpiry extends Command
             ->whereNotNull('expiry_date')
             ->whereBetween('expiry_date', [now(), now()->addDays(30)])
             ->whereNull('deleted_at')
-            ->with('user')
+            ->with('owner')
             ->get();
 
         $notified = 0;
 
-        foreach ($expiringDocuments->groupBy('user_id') as $userId => $documents) {
-            $user = User::find($userId);
+        foreach ($expiringDocuments->groupBy('owner_id') as $ownerId => $documents) {
+            $user = User::find($ownerId);
             if (!$user) {
                 continue;
             }
 
-            $user->notify(new \Illuminate\Notifications\Messages\MailMessage());
+            $user->notify(new DocumentExpiryNotification($documents));
 
             // Send a simple database notification
             $user->notifications()->create([

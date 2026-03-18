@@ -87,8 +87,8 @@
     </div>
 
     {{-- Statistiques rapides --}}
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        <div class="bg-white rounded-xl border border-gray-100 p-4 text-center">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
+        <div class="bg-white rounded-xl border border-gray-100 p-3 sm:p-4 text-center">
             <div class="w-10 h-10 mx-auto bg-blue-100 rounded-lg flex items-center justify-center mb-2">
                 <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -98,7 +98,7 @@
             <p class="text-2xl font-bold text-gray-900">{{ $stats['total_bookings'] }}</p>
             <p class="text-sm text-gray-500">Réservations</p>
         </div>
-        <div class="bg-white rounded-xl border border-gray-100 p-4 text-center">
+        <div class="bg-white rounded-xl border border-gray-100 p-3 sm:p-4 text-center">
             <div class="w-10 h-10 mx-auto bg-red-100 rounded-lg flex items-center justify-center mb-2">
                 <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -108,7 +108,7 @@
             <p class="text-2xl font-bold text-gray-900">{{ $stats['total_favorites'] }}</p>
             <p class="text-sm text-gray-500">Favoris</p>
         </div>
-        <div class="bg-white rounded-xl border border-gray-100 p-4 text-center">
+        <div class="bg-white rounded-xl border border-gray-100 p-3 sm:p-4 text-center">
             <div class="w-10 h-10 mx-auto bg-yellow-100 rounded-lg flex items-center justify-center mb-2">
                 <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -118,7 +118,7 @@
             <p class="text-2xl font-bold text-gray-900">{{ $stats['total_reviews'] }}</p>
             <p class="text-sm text-gray-500">Avis laissés</p>
         </div>
-        <div class="bg-white rounded-xl border border-gray-100 p-4 text-center">
+        <div class="bg-white rounded-xl border border-gray-100 p-3 sm:p-4 text-center">
             <div class="w-10 h-10 mx-auto bg-green-100 rounded-lg flex items-center justify-center mb-2">
                 <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

@@ -6,7 +6,7 @@
     <div>
         <!-- En-tête -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Mes réservations</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Mes réservations</h1>
             <p class="mt-2 text-gray-600">Gérez vos réservations passées et à venir</p>
         </div>
 

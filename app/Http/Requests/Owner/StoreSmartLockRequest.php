@@ -19,7 +19,7 @@ class StoreSmartLockRequest extends FormRequest
     {
         return [
             'residence_id' => ['required', 'integer', 'exists:residences,id'],
-            'name'         => ['required', 'string', 'max:255'],
+            'device_name'  => ['required', 'string', 'max:255'],
             'provider'     => ['required', Rule::in(array_keys(SmartLock::PROVIDERS))],
             'device_id'    => ['nullable', 'string', 'max:255'],
         ];
@@ -29,7 +29,7 @@ class StoreSmartLockRequest extends FormRequest
     {
         return [
             'residence_id.required' => 'Sélectionnez une résidence.',
-            'name.required'         => 'Le nom de la serrure est obligatoire.',
+            'device_name.required'  => 'Le nom de la serrure est obligatoire.',
             'provider.required'     => 'Sélectionnez un fournisseur.',
         ];
     }

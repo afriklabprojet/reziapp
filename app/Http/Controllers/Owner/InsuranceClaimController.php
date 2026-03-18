@@ -28,8 +28,8 @@ class InsuranceClaimController extends Controller
     public function create(): View
     {
         $user       = request()->user();
-        $insurances = \App\Models\BookingInsurance::whereHas('booking', fn ($q) => $q->where('owner_id', $user->id))
-            ->with('booking.residence')
+        $insurances = \App\Models\BookingInsurance::whereHas('booking.residence', fn ($q) => $q->where('owner_id', $user->id))
+            ->with(['booking.residence', 'plan'])
             ->where('status', 'active')
             ->get();
 
@@ -64,7 +64,7 @@ class InsuranceClaimController extends Controller
 
     public function show(InsuranceClaim $claim): View
     {
-        $claim->load('bookingInsurance.booking');
+        $claim->load(['bookingInsurance.booking.residence', 'bookingInsurance.plan']);
 
         return view('owner.insurance-claims.show', compact('claim'));
     }

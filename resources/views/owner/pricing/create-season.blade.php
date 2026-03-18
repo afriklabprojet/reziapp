@@ -80,7 +80,7 @@
                             </div>
                             <div>
                                 <label for="price_per_month" class="block text-sm font-medium text-gray-700 mb-2">Prix par
-                                    mois (FCFA)</label>
+                                    jour (FCFA)</label>
                                 <input type="number" name="price_per_month" id="price_per_month"
                                     value="{{ old('price_per_month') }}" min="0" step="100"
                                     placeholder="Optionnel"

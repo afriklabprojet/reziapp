@@ -39,7 +39,7 @@ class LeaseContractService
         $nights    = $booking->check_in->diffInDays($booking->check_out);
 
         $data = array_merge([
-            'owner_id'       => $residence->user_id,
+            'owner_id'       => $residence->owner_id,
             'tenant_id'      => $booking->user_id,
             'residence_id'   => $booking->residence_id,
             'booking_id'     => $booking->id,
@@ -110,8 +110,9 @@ class LeaseContractService
      */
     public function sendToTenant(LeaseContract $contract): LeaseContract
     {
-        if ($contract->status !== LeaseContract::STATUS_DRAFT) {
-            throw new \RuntimeException('Le contrat doit être à l\'état brouillon pour être envoyé.');
+        // Permettre l'envoi depuis brouillon ou le renvoi de notification si déjà pending_tenant
+        if (! in_array($contract->status, [LeaseContract::STATUS_DRAFT, LeaseContract::STATUS_PENDING_TENANT])) {
+            throw new \RuntimeException('Le contrat doit être à l\'état brouillon ou en attente pour être envoyé.');
         }
 
         // Régénérer le PDF à jour
@@ -130,8 +131,8 @@ class LeaseContractService
      */
     public function sign(LeaseContract $contract, User $signer, string $ip): LeaseContract
     {
-        $isOwner  = $signer->id === $contract->owner_id;
-        $isTenant = $signer->id === $contract->tenant_id;
+        $isOwner  = (int) $signer->id === (int) $contract->owner_id;
+        $isTenant = (int) $signer->id === (int) $contract->tenant_id;
 
         if (! $isOwner && ! $isTenant) {
             throw new \RuntimeException('Vous n\'êtes pas autorisé à signer ce contrat.');
@@ -182,7 +183,7 @@ class LeaseContractService
             throw new \RuntimeException('Seul un contrat actif peut être résilié.');
         }
 
-        $terminatedBy = $initiator->id === $contract->owner_id ? 'owner' : 'tenant';
+        $terminatedBy = (int) $initiator->id === (int) $contract->owner_id ? 'owner' : 'tenant';
 
         $contract->update([
             'status'            => LeaseContract::STATUS_TERMINATED,
