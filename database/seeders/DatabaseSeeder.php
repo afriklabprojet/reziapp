@@ -30,7 +30,11 @@ class DatabaseSeeder extends Seeder
         $this->command->info('Creating amenities...');
         $amenities = $this->createAmenities();
 
-        // 2. Créer un admin
+        // 2b. Créer les plans d'abonnement
+        $this->command->info('Creating subscription plans...');
+        $this->call(SubscriptionPlanSeeder::class);
+
+        // 3. Créer un admin
         $this->command->info('Creating admin user...');
         $admin = User::factory()->create([
             'name' => 'Admin REZI',

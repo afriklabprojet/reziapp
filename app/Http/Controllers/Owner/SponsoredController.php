@@ -69,27 +69,6 @@ class SponsoredController extends Controller
             'target_communes' => 'nullable|array',
         ]);
 
-        // Vérifier la limite d'abonnement
-        $user = Auth::user();
-        $plan = $user->currentPlan();
-        $maxSponsored = $plan ? ($plan->max_sponsored_per_month ?? 0) : 0;
-
-        if ($maxSponsored === 0) {
-            return back()->with('error', 'Votre abonnement ne permet pas de créer des mises en avant. Passez à un plan supérieur.')
-                ->withInput();
-        }
-
-        $currentMonthCount = SponsoredListing::where('user_id', $user->id)
-            ->whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->whereNotIn('status', ['cancelled'])
-            ->count();
-
-        if ($currentMonthCount >= $maxSponsored) {
-            return back()->with('error', "Vous avez atteint votre limite de {$maxSponsored} mises en avant par mois. Passez à un plan supérieur pour en créer davantage.")
-                ->withInput();
-        }
-
         // Vérifier que la résidence appartient au propriétaire
         $residence = Residence::where('id', $validated['residence_id'])
             ->where('owner_id', Auth::id())
