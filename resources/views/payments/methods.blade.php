@@ -30,12 +30,12 @@
                 @if($method->is_default)
                 <span class="badge badge-success">Par défaut</span>
                 @else
-                <form action="{{ route('payments.set-default-method', $method) }}" method="POST">
+                <form action="{{ route('payments.methods.default', $method) }}" method="POST">
                     @csrf
                     <button type="submit" class="text-sm text-orange-600 hover:text-orange-700 font-medium">Définir par défaut</button>
                 </form>
                 @endif
-                <form action="{{ route('payments.delete-method', $method) }}" method="POST" onsubmit="return confirm('Supprimer cette méthode ?')">
+                <form action="{{ route('payments.methods.delete', $method) }}" method="POST" onsubmit="return confirm('Supprimer cette méthode ?')">
                     @csrf @method('DELETE')
                     <button type="submit" class="text-sm text-red-500 hover:text-red-700">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -57,7 +57,7 @@
     <!-- Add New Method -->
     <div class="bg-white rounded-xl shadow-sm border p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Ajouter une méthode</h2>
-        <form action="{{ route('payments.store-method') }}" method="POST" class="space-y-4">
+        <form action="{{ route('payments.methods.store') }}" method="POST" class="space-y-4">
             @csrf
             <div>
                 <label for="provider_code" class="block text-sm font-medium text-gray-700 mb-1">Opérateur</label>

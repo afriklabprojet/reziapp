@@ -14,8 +14,6 @@ class BlockedDate extends Model
         'start_date',
         'end_date',
         'reason',
-        'notes',
-        'blocked_by_user_id',
     ];
 
     protected $casts = [
@@ -27,11 +25,6 @@ class BlockedDate extends Model
     public function residence()
     {
         return $this->belongsTo(Residence::class);
-    }
-
-    public function blockedBy()
-    {
-        return $this->belongsTo(User::class, 'blocked_by_user_id');
     }
 
     // Scopes

@@ -76,7 +76,7 @@ Route::prefix('residences')->name('residences.')->group(function () {
 Route::get('/ical/{token}.ics', [\App\Http\Controllers\Owner\IcalController::class, 'export'])->name('ical.export');
 
 // Guidebook public (partagé aux voyageurs)
-Route::get('/guidebook/{token}', [\App\Http\Controllers\Owner\GuidebookController::class, 'publicView'])->name('guidebook.public');
+Route::get('/guidebook/{token}', [\App\Http\Controllers\Owner\GuidebookController::class, 'publicShow'])->name('guidebook.public');
 
 /*
 |--------------------------------------------------------------------------
@@ -746,8 +746,9 @@ Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
             Route::get('/', [\App\Http\Controllers\Owner\DamageReportController::class, 'index'])->name('index');
             Route::get('/create', [\App\Http\Controllers\Owner\DamageReportController::class, 'create'])->name('create');
             Route::post('/', [\App\Http\Controllers\Owner\DamageReportController::class, 'store'])->name('store');
-            Route::get('/{damageReport}', [\App\Http\Controllers\Owner\DamageReportController::class, 'show'])->name('show');
-            Route::patch('/{damageReport}/status', [\App\Http\Controllers\Owner\DamageReportController::class, 'updateStatus'])->name('status');
+            Route::get('/{damage}', [\App\Http\Controllers\Owner\DamageReportController::class, 'show'])->name('show');
+            Route::patch('/{damage}/status', [\App\Http\Controllers\Owner\DamageReportController::class, 'updateStatus'])->name('status');
+            Route::delete('/{damage}', [\App\Http\Controllers\Owner\DamageReportController::class, 'destroy'])->name('destroy');
         });
 
         // ============================================
@@ -761,6 +762,10 @@ Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
             Route::get('/{guidebook}/edit', [\App\Http\Controllers\Owner\GuidebookController::class, 'edit'])->name('edit');
             Route::put('/{guidebook}', [\App\Http\Controllers\Owner\GuidebookController::class, 'update'])->name('update');
             Route::delete('/{guidebook}', [\App\Http\Controllers\Owner\GuidebookController::class, 'destroy'])->name('destroy');
+            Route::post('/{guidebook}/toggle-publish', [\App\Http\Controllers\Owner\GuidebookController::class, 'togglePublish'])->name('toggle-publish');
+            Route::post('/{guidebook}/sections', [\App\Http\Controllers\Owner\GuidebookController::class, 'addSection'])->name('add-section');
+            Route::delete('/{guidebook}/sections/{section}', [\App\Http\Controllers\Owner\GuidebookController::class, 'removeSection'])->name('remove-section');
+            Route::post('/{guidebook}/recommendations', [\App\Http\Controllers\Owner\GuidebookController::class, 'addRecommendation'])->name('add-recommendation');
         });
 
         // ============================================
@@ -790,9 +795,8 @@ Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
         // ============================================
         Route::prefix('utilities')->name('utilities.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Owner\UtilityController::class, 'index'])->name('index');
-            Route::get('/create', [\App\Http\Controllers\Owner\UtilityController::class, 'create'])->name('create');
             Route::post('/', [\App\Http\Controllers\Owner\UtilityController::class, 'store'])->name('store');
-            Route::patch('/alerts/{alert}/dismiss', [\App\Http\Controllers\Owner\UtilityController::class, 'dismissAlert'])->name('dismiss-alert');
+            Route::patch('/alerts/{alert}/dismiss', [\App\Http\Controllers\Owner\UtilityController::class, 'acknowledgeAlert'])->name('dismiss-alert');
         });
 
         // ============================================
@@ -800,7 +804,7 @@ Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
         // ============================================
         Route::prefix('performance')->name('performance.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Owner\PerformanceController::class, 'index'])->name('index');
-            Route::get('/benchmark', [\App\Http\Controllers\Owner\PerformanceController::class, 'benchmark'])->name('benchmark');
+            Route::get('/{residence}/benchmark', [\App\Http\Controllers\Owner\PerformanceController::class, 'benchmark'])->name('benchmark');
         });
 
         // ============================================
@@ -808,8 +812,9 @@ Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
         // ============================================
         Route::prefix('yield')->name('yield.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Owner\YieldController::class, 'index'])->name('index');
-            Route::patch('/settings', [\App\Http\Controllers\Owner\YieldController::class, 'updateSettings'])->name('update-settings');
-            Route::post('/apply-gap-discount', [\App\Http\Controllers\Owner\YieldController::class, 'applyGapDiscount'])->name('apply-gap-discount');
+            Route::post('/toggle-auto-pricing', [\App\Http\Controllers\Owner\YieldController::class, 'toggleAutoPricing'])->name('toggle-auto-pricing');
+            Route::post('/toggle-gap-night', [\App\Http\Controllers\Owner\YieldController::class, 'toggleGapNight'])->name('toggle-gap-night');
+            Route::get('/gaps', [\App\Http\Controllers\Owner\YieldController::class, 'gaps'])->name('gaps');
         });
 
         // ============================================
@@ -817,8 +822,8 @@ Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
         // ============================================
         Route::prefix('screening')->name('screening.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Owner\GuestScreeningController::class, 'index'])->name('index');
-            Route::get('/{guestScore}', [\App\Http\Controllers\Owner\GuestScreeningController::class, 'show'])->name('show');
-            Route::post('/{guestScore}/recalculate', [\App\Http\Controllers\Owner\GuestScreeningController::class, 'recalculate'])->name('recalculate');
+            Route::get('/{score}', [\App\Http\Controllers\Owner\GuestScreeningController::class, 'show'])->name('show');
+            Route::post('/{score}/recalculate', [\App\Http\Controllers\Owner\GuestScreeningController::class, 'recalculate'])->name('recalculate');
         });
 
         // ============================================
@@ -826,8 +831,9 @@ Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
         // ============================================
         Route::prefix('alerts')->name('alerts.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Owner\OwnerAlertController::class, 'index'])->name('index');
-            Route::patch('/{alert}/read', [\App\Http\Controllers\Owner\OwnerAlertController::class, 'markRead'])->name('mark-read');
-            Route::patch('/settings', [\App\Http\Controllers\Owner\OwnerAlertController::class, 'updateSettings'])->name('update-settings');
+            Route::patch('/{alert}/acknowledge', [\App\Http\Controllers\Owner\OwnerAlertController::class, 'acknowledge'])->name('acknowledge');
+            Route::patch('/{alert}/resolve', [\App\Http\Controllers\Owner\OwnerAlertController::class, 'resolve'])->name('resolve');
+            Route::patch('/{alert}/dismiss', [\App\Http\Controllers\Owner\OwnerAlertController::class, 'dismiss'])->name('dismiss');
         });
 
         // ============================================

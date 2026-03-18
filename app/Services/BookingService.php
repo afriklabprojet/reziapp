@@ -10,8 +10,6 @@ use App\Models\Coupon;
 use App\Models\PromoCode;
 use App\Models\Residence;
 use App\Models\User;
-use App\Notifications\BookingConfirmation;
-use App\Notifications\NewBookingRequest;
 use App\Services\CacheInvalidationService;
 use App\Services\CouponService;
 use Carbon\Carbon;

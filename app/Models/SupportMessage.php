@@ -9,18 +9,22 @@ class SupportMessage extends Model
 {
     use HasFactory;
 
+    protected $table = 'ticket_messages';
+
     protected $fillable = [
-        'ticket_id',
+        'support_ticket_id',
         'user_id',
         'message',
         'attachments',
-        'is_internal_note',
+        'is_internal',
+        'is_auto_reply',
         'read_at',
     ];
 
     protected $casts = [
         'attachments' => 'array',
-        'is_internal_note' => 'boolean',
+        'is_internal' => 'boolean',
+        'is_auto_reply' => 'boolean',
         'read_at' => 'datetime',
     ];
 
@@ -31,7 +35,7 @@ class SupportMessage extends Model
      */
     public function ticket()
     {
-        return $this->belongsTo(SupportTicket::class, 'ticket_id');
+        return $this->belongsTo(SupportTicket::class, 'support_ticket_id');
     }
 
     /**
@@ -50,7 +54,7 @@ class SupportMessage extends Model
     public function scopeFromCustomer($query)
     {
         return $query->whereHas('ticket', function ($q) {
-            $q->whereColumn('support_messages.user_id', 'support_tickets.user_id');
+            $q->whereColumn('ticket_messages.user_id', 'support_tickets.user_id');
         });
     }
 
@@ -60,8 +64,8 @@ class SupportMessage extends Model
     public function scopeFromStaff($query)
     {
         return $query->whereHas('ticket', function ($q) {
-            $q->whereColumn('support_messages.user_id', '!=', 'support_tickets.user_id');
-        })->where('is_internal_note', false);
+            $q->whereColumn('ticket_messages.user_id', '!=', 'support_tickets.user_id');
+        })->where('is_internal', false);
     }
 
     /**
@@ -69,7 +73,7 @@ class SupportMessage extends Model
      */
     public function scopeInternalNotes($query)
     {
-        return $query->where('is_internal_note', true);
+        return $query->where('is_internal', true);
     }
 
     /**
@@ -77,7 +81,7 @@ class SupportMessage extends Model
      */
     public function scopePublic($query)
     {
-        return $query->where('is_internal_note', false);
+        return $query->where('is_internal', false);
     }
 
     /**
@@ -103,7 +107,7 @@ class SupportMessage extends Model
      */
     public function getIsFromStaffAttribute(): bool
     {
-        return $this->user_id !== $this->ticket->user_id && !$this->is_internal_note;
+        return $this->user_id !== $this->ticket->user_id && !$this->is_internal;
     }
 
     /**

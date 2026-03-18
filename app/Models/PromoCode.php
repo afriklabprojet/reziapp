@@ -21,14 +21,13 @@ class PromoCode extends Model
         'max_discount',
         'valid_from',
         'valid_until',
-        'usage_limit',
-        'usage_count',
-        'per_user_limit',
-        'residence_ids',
-        'user_ids',
+        'max_uses',
+        'uses_count',
+        'max_uses_per_user',
+        'residence_id',
+        'user_id',
         'first_booking_only',
         'min_nights',
-        'applicable_days',
         'is_active',
     ];
 
@@ -36,16 +35,13 @@ class PromoCode extends Model
         'value' => 'decimal:2',
         'min_amount' => 'decimal:2',
         'max_discount' => 'decimal:2',
-        'valid_from' => 'datetime',
-        'valid_until' => 'datetime',
-        'usage_limit' => 'integer',
-        'usage_count' => 'integer',
-        'per_user_limit' => 'integer',
-        'residence_ids' => 'array',
-        'user_ids' => 'array',
+        'valid_from' => 'date',
+        'valid_until' => 'date',
+        'max_uses' => 'integer',
+        'uses_count' => 'integer',
+        'max_uses_per_user' => 'integer',
         'first_booking_only' => 'boolean',
         'min_nights' => 'integer',
-        'applicable_days' => 'array',
         'is_active' => 'boolean',
     ];
 
@@ -62,8 +58,8 @@ class PromoCode extends Model
                     ->orWhere('valid_until', '>=', now());
             })
             ->where(function ($q) {
-                $q->whereNull('usage_limit')
-                    ->orWhereColumn('usage_count', '<', 'usage_limit');
+                $q->whereNull('max_uses')
+                    ->orWhereColumn('uses_count', '<', 'max_uses');
             });
     }
 

@@ -26,6 +26,7 @@ return [
         'address' => env('REZI_COMPANY_ADDRESS', "Abidjan, Cocody\nCôte d'Ivoire"),
         'website' => env('REZI_COMPANY_WEBSITE', 'www.rezi.ci'),
         'tax_id' => env('REZI_COMPANY_TAX_ID', 'CI-000000000'),
+        'city' => env('REZI_COMPANY_CITY', 'Abidjan'),
     ],
 
     /*
@@ -53,6 +54,8 @@ return [
         'owner_commission_rate' => env('REZI_OWNER_COMMISSION_RATE', 0.10), // 10% propriétaire (fallback, PlatformSetting a priorité)
         'min_withdrawal' => env('REZI_MIN_WITHDRAWAL', 5000),            // 5 000 FCFA minimum
     ],
+
+    'invoice_to_owner' => env('REZI_INVOICE_TO_OWNER', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -198,6 +201,8 @@ return [
         'max_width' => env('PHOTO_MAX_WIDTH', 1920),
         'max_height' => env('PHOTO_MAX_HEIGHT', 1080),
         'quality' => env('PHOTO_QUALITY', 85),
+        'thumb_width' => env('PHOTO_THUMB_WIDTH', 400),
+        'thumb_height' => env('PHOTO_THUMB_HEIGHT', 300),
     ],
 
     /*

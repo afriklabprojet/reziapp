@@ -76,7 +76,7 @@
 
             <div class="bg-white rounded-2xl border border-gray-100 p-6">
                 <h2 class="text-lg font-bold text-gray-900 mb-4">Mettre à jour le statut</h2>
-                <form action="{{ route('owner.damages.update-status', $damage) }}" method="POST" class="space-y-4">
+                <form action="{{ route('owner.damages.status', $damage) }}" method="POST" class="space-y-4">
                     @csrf @method('PATCH')
                     <select name="status" class="w-full rounded-xl border-gray-200 text-sm py-3 px-4">
                         @foreach(\App\Models\DamageReport::STATUSES as $key => $label)

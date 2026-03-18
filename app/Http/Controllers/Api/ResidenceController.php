@@ -263,7 +263,7 @@ class ResidenceController extends Controller
     {
         $amenities = Cache::remember('api:amenities', 3600, function () {
             return \App\Models\Amenity::orderBy('name')
-                ->select(['id', 'name', 'icon', 'category'])
+                ->select(['id', 'name', 'icon'])
                 ->get();
         });
 

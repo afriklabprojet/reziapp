@@ -18,13 +18,11 @@ class ResidenceResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'slug' => $this->slug,
 
             // Localisation
             'location' => [
                 'address' => $this->address,
                 'city' => $this->city,
-                'country' => $this->country,
                 'country_code' => $this->country_code,
                 'coordinates' => [
                     'latitude' => (float) $this->latitude,
@@ -46,14 +44,13 @@ class ResidenceResource extends JsonResource
             'features' => [
                 'bedrooms' => $this->bedrooms,
                 'bathrooms' => $this->bathrooms,
-                'area' => (float) $this->area,
+                'surface_area' => (float) $this->surface_area,
                 'type' => $this->type,
-                'furnished' => (bool) $this->furnished,
             ],
 
             // Disponibilité
             'availability' => [
-                'available' => (bool) $this->available,
+                'available' => (bool) $this->is_available,
                 'status' => $this->status,
             ],
 

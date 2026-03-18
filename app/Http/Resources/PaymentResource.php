@@ -33,8 +33,8 @@ class PaymentResource extends JsonResource
             'is_failed' => (bool) in_array($this->status, ['failed', 'cancelled']),
 
             // Méthode
-            'payment_method' => $this->payment_method,
-            'provider' => $this->provider_code ?? 'jeko',
+            'payment_method' => $this->whenLoaded('paymentMethod', fn () => $this->paymentMethod->type),
+            'provider' => $this->whenLoaded('provider', fn () => $this->provider->code, 'jeko'),
 
             // Relations
             'booking' => $this->whenLoaded('booking', fn () => [
@@ -43,7 +43,7 @@ class PaymentResource extends JsonResource
             ]),
 
             // Timestamps
-            'paid_at' => $this->paid_at?->toIso8601String(),
+            'paid_at' => $this->completed_at?->toIso8601String(),
             'created_at' => $this->created_at->toIso8601String(),
         ];
     }

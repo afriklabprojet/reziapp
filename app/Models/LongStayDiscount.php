@@ -12,13 +12,13 @@ class LongStayDiscount extends Model
     protected $fillable = [
         'residence_id',
         'min_nights',
-        'discount_percent',
+        'discount_percentage',
         'is_active',
     ];
 
     protected $casts = [
         'min_nights' => 'integer',
-        'discount_percent' => 'decimal:2',
+        'discount_percentage' => 'decimal:2',
         'is_active' => 'boolean',
     ];
 

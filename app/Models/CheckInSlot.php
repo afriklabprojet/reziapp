@@ -11,18 +11,18 @@ class CheckInSlot extends Model
 
     protected $fillable = [
         'residence_id',
-        'check_in_from',
-        'check_in_until',
-        'check_out_until',
+        'check_in_start',
+        'check_in_end',
+        'check_out_time',
         'flexible_check_in',
         'early_check_in_fee',
         'late_check_out_fee',
     ];
 
     protected $casts = [
-        'check_in_from' => 'string', // Format H:i
-        'check_in_until' => 'string',
-        'check_out_until' => 'string',
+        'check_in_start' => 'string', // Format H:i
+        'check_in_end' => 'string',
+        'check_out_time' => 'string',
         'flexible_check_in' => 'boolean',
         'early_check_in_fee' => 'decimal:2',
         'late_check_out_fee' => 'decimal:2',

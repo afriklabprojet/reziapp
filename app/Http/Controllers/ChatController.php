@@ -793,7 +793,7 @@ class ChatController extends Controller
             'q' => 'required|string|min:1|max:50',
         ]);
 
-        $apiKey = config('services.tenor.key', 'AIzaSyDqhF8PfGFfJaGp_UZLzlNOMQ3Vszjf3bQ'); // Clé publique Tenor
+        $apiKey = config('services.tenor.key');
         $limit = 20;
 
         try {

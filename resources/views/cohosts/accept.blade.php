@@ -74,7 +74,7 @@
 
         <div class="p-6 border-t bg-gray-50">
             @auth
-            <form action="{{ route('cohosts.accept.process', $cohost->invitation_token) }}" method="POST" class="flex items-center gap-3">
+            <form action="{{ route('cohost.invitation.accept', $cohost->invitation_token) }}" method="POST" class="flex items-center gap-3">
                 @csrf
                 <button type="submit" class="btn-primary flex-1">Accepter l'invitation</button>
                 <a href="{{ url('/') }}" class="btn-secondary">Refuser</a>

@@ -20,7 +20,6 @@ class Conversation extends Model
         'status',
         'pinned_at',
         'muted_at',
-        'muted_until',
         'last_message_at',
         'unread_user_count',
         'unread_owner_count',

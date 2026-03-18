@@ -55,12 +55,16 @@ return [
     */
 
     'google_cloud_vision' => [
-        'api_key' => env('GOOGLE_CLOUD_VISION_API_KEY', env('GOOGLE_MAPS_API_KEY')),
+        'api_key' => env('GOOGLE_CLOUD_VISION_API_KEY'),
     ],
 
     'mapbox' => [
         'access_token' => env('MAPBOX_ACCESS_TOKEN'),
         'style' => env('MAPBOX_STYLE', 'mapbox://styles/mapbox/streets-v12'),
+    ],
+
+    'tenor' => [
+        'key' => env('TENOR_API_KEY'),
     ],
 
     'rezi' => [
