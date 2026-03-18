@@ -66,6 +66,8 @@ class SeoData extends Model
     {
         return $this->og_data['image'] ?? null;
     }
+
+    /**
      * Obtenir ou créer les données SEO pour un modèle
      */
     public static function forModel(Model $model, string $locale = 'fr'): ?self
