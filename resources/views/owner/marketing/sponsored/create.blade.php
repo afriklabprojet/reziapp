@@ -28,6 +28,17 @@
             </p>
         </div>
 
+        @if (session('error'))
+            <div class="flex items-start gap-3 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+                <svg class="w-5 h-5 shrink-0 text-red-500 mt-0.5" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                </svg>
+                <span>{{ session('error') }}</span>
+            </div>
+        @endif
+
         @if ($errors->any())
             <div class="flex items-start gap-3 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
                 <svg class="w-5 h-5 shrink-0 text-red-500 mt-0.5" fill="none" stroke="currentColor" stroke-width="2"
@@ -43,25 +54,40 @@
             </div>
         @endif
 
-        <form action="{{ route('owner.marketing.sponsored.store') }}" method="POST" class="space-y-6">
-            @csrf
-
-            {{-- ====== Section 1 : Résidence ====== --}}
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <div class="flex items-center gap-3 mb-5">
-                    <span
-                        class="flex items-center justify-center w-7 h-7 rounded-full bg-gray-900 text-white text-xs font-bold">1</span>
-                    <h3 class="text-base font-bold text-gray-900">Sélectionnez une résidence</h3>
+        @if ($residences->isEmpty())
+            <div class="flex items-start gap-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-700">
+                <svg class="w-5 h-5 shrink-0 text-amber-500 mt-0.5" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+                <div>
+                    <p class="font-medium">Aucune résidence disponible</p>
+                    <p class="text-xs mt-0.5">Vous devez avoir au moins une résidence approuvée pour créer une campagne sponsorisée.
+                        <a href="{{ route('owner.residences.create') }}" class="text-orange-600 hover:underline font-semibold">Créer une résidence</a>
+                    </p>
                 </div>
-                <select name="residence_id" required x-model="residenceId"
-                    class="w-full text-sm border-gray-200 rounded-xl bg-gray-50 focus:ring-orange-500 focus:border-orange-500 transition-colors">
-                    <option value="">Choisir une résidence</option>
-                    @foreach ($residences as $residence)
-                        <option value="{{ $residence->id }}" {{ old('residence_id') == $residence->id ? 'selected' : '' }}>
-                            {{ $residence->name }} — {{ $residence->commune }}
-                        </option>
-                    @endforeach
-                </select>
+            </div>
+        @else
+            <form action="{{ route('owner.marketing.sponsored.store') }}" method="POST" class="space-y-6">
+                @csrf
+
+                {{-- ====== Section 1 : Résidence ====== --}}
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-5">
+                        <span
+                            class="flex items-center justify-center w-7 h-7 rounded-full bg-gray-900 text-white text-xs font-bold">1</span>
+                        <h3 class="text-base font-bold text-gray-900">Sélectionnez une résidence</h3>
+                    </div>
+                    <select name="residence_id" required x-model="residenceId"
+                        class="w-full text-sm border-gray-200 rounded-xl bg-gray-50 focus:ring-orange-500 focus:border-orange-500 transition-colors">
+                        <option value="">Choisir une résidence</option>
+                        @foreach ($residences as $residence)
+                            <option value="{{ $residence->id }}" {{ old('residence_id') == $residence->id ? 'selected' : '' }}>
+                                {{ $residence->name }} — {{ $residence->commune }}
+                            </option>
+                        @endforeach
+                    </select>
                 @error('residence_id')
                     <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
                 @enderror
@@ -271,5 +297,6 @@
                 </button>
             </div>
         </form>
+        @endif
     </div>
 @endsection
