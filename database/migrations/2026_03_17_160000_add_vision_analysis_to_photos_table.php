@@ -9,7 +9,7 @@ return new class () extends Migration {
     {
         Schema::table('photos', function (Blueprint $table) {
             // Auto-tagging
-            $table->json('tags')->nullable()->after('is_optimized');
+            $table->json('tags')->nullable()->after('is_primary');
             $table->string('room_type', 50)->nullable()->after('tags');
 
             // Modération SafeSearch

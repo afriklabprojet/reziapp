@@ -14,15 +14,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('bookings', function (Blueprint $table) {
-            $table->index(['residence_id', 'status', 'check_in', 'check_out'], 'bookings_availability_check_index');
-        });
+        // Guard: skip if indexes already exist (partial migration recovery)
+        $bookingIndexes = collect(Schema::getIndexes('bookings'))->pluck('name')->toArray();
+        if (!in_array('bookings_availability_check_index', $bookingIndexes)) {
+            Schema::table('bookings', function (Blueprint $table) {
+                $table->index(['residence_id', 'status', 'check_in', 'check_out'], 'bookings_availability_check_index');
+            });
+        }
 
         // Index pour le filtrage par type_location (zones populaires, page d'accueil)
         if (Schema::hasColumn('residences', 'type_location')) {
-            Schema::table('residences', function (Blueprint $table) {
-                $table->index(['status', 'is_available', 'type_location'], 'residences_type_location_index');
-            });
+            $residenceIndexes = collect(Schema::getIndexes('residences'))->pluck('name')->toArray();
+            if (!in_array('residences_type_location_index', $residenceIndexes)) {
+                Schema::table('residences', function (Blueprint $table) {
+                    $table->index(['status', 'is_available', 'type_location'], 'residences_type_location_index');
+                });
+            }
         }
     }
 
