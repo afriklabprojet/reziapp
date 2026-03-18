@@ -142,7 +142,7 @@ class Residence extends Model
         'is_verified' => 'boolean',
         'is_top_residence' => 'boolean',
         'verified_at' => 'datetime',
-        'house_rules' => 'array',
+        'house_rules' => 'string',  // Le formulaire envoie du texte, pas un JSON
         'average_rating' => 'decimal:1',
         'reviews_count' => 'integer',
         // Règles de la maison

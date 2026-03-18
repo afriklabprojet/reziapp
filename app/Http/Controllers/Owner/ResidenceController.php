@@ -14,6 +14,7 @@ use App\Models\Photo;
 use App\Models\Residence;
 use App\Services\PhotoUploadService;
 use App\Services\ResidenceService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -174,12 +175,8 @@ class ResidenceController extends Controller
             }
         }
 
+        // La mise à jour des amenities est gérée par le service dans la même transaction
         $this->residenceService->update($residence, $data);
-
-        // Mettre à jour les équipements
-        if ($request->has('amenities')) {
-            $residence->amenities()->sync($request->amenities);
-        }
 
         return redirect()
             ->route('owner.residences.edit', $residence)
@@ -253,7 +250,7 @@ class ResidenceController extends Controller
     /**
      * Basculer la disponibilité
      */
-    public function toggleAvailability(Residence $residence): RedirectResponse
+    public function toggleAvailability(Request $request, Residence $residence): RedirectResponse|JsonResponse
     {
         Gate::authorize('update', $residence);
 
@@ -262,8 +259,18 @@ class ResidenceController extends Controller
         ]);
 
         $status = $residence->is_available ? 'disponible' : 'occupée';
+        $message = "La résidence est maintenant marquée comme {$status}.";
 
-        return back()->with('success', "La résidence est maintenant marquée comme {$status}.");
+        // Retourner JSON si requête AJAX
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'is_available' => $residence->is_available,
+            ]);
+        }
+
+        return back()->with('success', $message);
     }
 
     /**
