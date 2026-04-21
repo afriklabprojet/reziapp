@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: false # jamais annuler un deploy en cours
 
 env:
-  PHP_VERSION: '8.2'
+  PHP_VERSION: '8.4'
   NODE_VERSION: '20'
   DEPLOY_PATH: /var/www/reziapp
 
