@@ -92,7 +92,9 @@ class BookingFlowTest extends TestCase
     {
         $response = $this->get(route('bookings.create', $this->residence));
 
-        $response->assertRedirect(route('login'));
+        // La route bookings.create est intentionnellement accessible aux invités
+        // (voir routes/web/misc.php — "Routes de réservation pour invités (sans auth)")
+        $response->assertStatus(200);
     }
 
     #[Test]
