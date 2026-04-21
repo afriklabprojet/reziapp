@@ -146,12 +146,12 @@ class PricingServiceTest extends TestCase
         // owner_subtotal = 150000 - 10000 + 5000 = 145000
         $this->assertEquals(145000, $result['owner_subtotal']);
 
-        // commission = 145000 × 0.03 = 4350
-        $this->assertEquals(4350, $result['rezi_commission']);
-        $this->assertEquals(3, $result['rezi_commission_rate']);
+        // commission = 145000 × 0.10 = 14500
+        $this->assertEquals(14500, $result['rezi_commission']);
+        $this->assertEquals(10, $result['rezi_commission_rate']);
 
-        // earnings = 145000 - 4350 = 140650
-        $this->assertEquals(140650, $result['owner_earnings']);
+        // earnings = 145000 - 14500 = 130500
+        $this->assertEquals(130500, $result['owner_earnings']);
     }
 
     // ─── Edge cases ───
