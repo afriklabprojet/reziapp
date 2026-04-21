@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -65,11 +66,14 @@ class ResidenceCrudTest extends TestCase
             'quartier' => 'Riviera',
             'latitude' => 5.3600,
             'longitude' => -4.0083,
+            'type' => 'villa',
+            'type_location' => 'apartment',
+            'price_period' => 'month',
             'price_per_month' => 250000,
             'bedrooms' => 3,
             'bathrooms' => 2,
+            'max_guests' => 4,
             'surface_area' => 120,
-            'type' => 'villa',
             'is_available' => true,
         ];
 
@@ -202,6 +206,8 @@ class ResidenceCrudTest extends TestCase
     #[Test]
     public function can_upload_photos_with_residence(): void
     {
+        Queue::fake(); // Éviter le job OptimizeResidencePhoto (colonne is_optimized absente en SQLite)
+
         $photo1 = UploadedFile::fake()->image('photo1.jpg');
         $photo2 = UploadedFile::fake()->image('photo2.jpg');
 
@@ -215,10 +221,13 @@ class ResidenceCrudTest extends TestCase
             'quartier' => 'Riviera',
             'latitude' => 5.3600,
             'longitude' => -4.0083,
+            'type' => 'villa',
+            'type_location' => 'apartment',
+            'price_period' => 'month',
             'price_per_month' => 250000,
             'bedrooms' => 2,
             'bathrooms' => 1,
-            'type' => 'villa',
+            'max_guests' => 2,
             'photos' => [$photo1, $photo2],
         ];
 

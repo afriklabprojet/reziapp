@@ -117,21 +117,6 @@ class ResidenceController extends Controller
             $request->validated(),
         );
 
-        // Upload des photos si présentes
-        if ($request->hasFile('photos')) {
-            $firstPhoto = null;
-            foreach ($request->file('photos') as $index => $photo) {
-                $uploadedPhoto = $this->photoService->upload($residence, $photo, $index);
-                if ($index === 0) {
-                    $firstPhoto = $uploadedPhoto;
-                }
-            }
-            // Définir la première photo comme primaire
-            if ($firstPhoto) {
-                $this->photoService->setPrimary($firstPhoto);
-            }
-        }
-
         // Attacher les équipements
         if ($request->has('amenities')) {
             $residence->amenities()->sync($request->amenities);
@@ -168,7 +153,7 @@ class ResidenceController extends Controller
         $data = $request->validated();
 
         // Les checkboxes non cochées n'envoient rien — forcer à false/0
-        $booleanFields = ['is_available', 'has_elevator', 'instant_book', 'pets_allowed', 'smoking_allowed', 'parties_allowed', 'is_accessible', 'deposit_negotiable'];
+        $booleanFields = ['is_available', 'has_elevator', 'instant_book', 'pets_allowed', 'smoking_allowed', 'parties_allowed', 'is_accessible', 'deposit_negotiable', 'is_work_travel_ready'];
         foreach ($booleanFields as $field) {
             if (!isset($data[$field])) {
                 $data[$field] = false;

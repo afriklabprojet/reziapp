@@ -48,9 +48,11 @@ class StoreResidenceRequest extends FormRequest
                         [$lat, $lng, $lat]
                     )
                     ->where(function ($q) use ($name) {
-                        // Nom identique ou très proche (SOUNDEX ou LIKE)
-                        $q->where('name', $name)
-                          ->orWhereRaw('SOUNDEX(name) = SOUNDEX(?)', [$name]);
+                        // Nom identique ou très proche (SOUNDEX sur MySQL uniquement)
+                        $q->where('name', $name);
+                        if (\DB::connection()->getDriverName() === 'mysql') {
+                            $q->orWhereRaw('SOUNDEX(name) = SOUNDEX(?)', [$name]);
+                        }
                     })
                     ->exists();
 
@@ -100,7 +102,7 @@ class StoreResidenceRequest extends FormRequest
             'rental_type' => ['nullable', 'string', 'in:standard,short_term,colocation,corporate,seasonal'],
             'type_location' => ['required', 'string', 'in:apartment,residence_meublee,hotel'],
             'price_period' => ['required', 'string', 'in:day,night,month'],
-            
+
             // Localisation
             'address' => ['required', 'string', 'max:500'],
             'country_code' => ['required', 'string', 'size:2', 'exists:countries,code'],
@@ -109,14 +111,14 @@ class StoreResidenceRequest extends FormRequest
             'quartier' => ['required', 'string', 'max:100'],
             'latitude' => ['required', 'numeric', 'between:-90,90'],
             'longitude' => ['required', 'numeric', 'between:-180,180'],
-            
+
             // Tarification — prix conditionnel selon type_location
             'price_per_day' => ['nullable', 'numeric', 'min:0', 'required_if:type_location,residence_meublee,hotel'],
             'price_per_week' => ['nullable', 'numeric', 'min:0'],
             'price_per_month' => ['nullable', 'numeric', 'min:10000', 'required_if:type_location,apartment'],
             'deposit_negotiable' => ['boolean'],
             'deposit_terms' => ['nullable', 'string', 'max:1000'],
-            
+
             // Caractéristiques
             'bedrooms' => ['required', 'integer', 'min:0', 'max:20'],
             'bathrooms' => ['required', 'integer', 'min:1', 'max:10'],
@@ -124,39 +126,39 @@ class StoreResidenceRequest extends FormRequest
             'surface_area' => ['nullable', 'integer', 'min:5', 'max:10000'],
             'floor' => ['nullable', 'integer', 'min:-5', 'max:100'],
             'has_elevator' => ['boolean'],
-            
+
             // Disponibilité
             'is_available' => ['boolean'],
             'available_from' => ['nullable', 'date', 'after_or_equal:today'],
             'min_nights' => ['nullable', 'integer', 'min:1', 'max:365'],
             'max_nights' => ['nullable', 'integer', 'min:1', 'max:365', 'gte:min_nights'],
             'instant_book' => ['boolean'],
-            
+
             // Horaires
             'check_in_time' => ['nullable', 'date_format:H:i'],
             'check_out_time' => ['nullable', 'date_format:H:i'],
-            
+
             // Règles
             'house_rules' => ['nullable', 'string', 'max:2000'],
             'pets_allowed' => ['boolean'],
             'smoking_allowed' => ['boolean'],
             'parties_allowed' => ['boolean'],
-            
+
             // Location
             'lease_type' => ['nullable', 'string', 'in:written,verbal,flexible'],
             'target_tenants' => ['nullable', 'array'],
             'target_tenants.*' => ['string', 'in:students,families,professionals,couples,tourists'],
-            
+
             // Accessibilité
             'is_accessible' => ['boolean'],
             'accessibility_features' => ['nullable', 'array'],
             'accessibility_features.*' => ['string', 'max:100'],
-            
+
             // Média
             'virtual_tour_url' => ['nullable', 'url', 'max:500'],
             'photos' => ['nullable', 'array', 'max:10'],
             'photos.*' => ['image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
-            
+
             // Équipements
             'amenities' => ['nullable', 'array'],
             'amenities.*' => ['numeric', 'exists:amenities,id'],
@@ -184,7 +186,7 @@ class StoreResidenceRequest extends FormRequest
             'type_location.in' => 'Le type de location sélectionné n\'est pas valide.',
             'price_period.required' => 'La période de prix est obligatoire.',
             'price_period.in' => 'La période de prix sélectionnée n\'est pas valide.',
-            
+
             // Localisation
             'address.required' => 'L\'adresse est obligatoire.',
             'country_code.required' => 'Le pays est obligatoire.',
@@ -196,7 +198,7 @@ class StoreResidenceRequest extends FormRequest
             'latitude.between' => 'La latitude doit être entre -90 et 90.',
             'longitude.required' => 'Veuillez positionner votre résidence sur la carte.',
             'longitude.between' => 'La longitude doit être entre -180 et 180.',
-            
+
             // Tarification
             'price_per_month.required' => 'Le prix mensuel est obligatoire.',
             'price_per_month.required_if' => 'Le prix mensuel est obligatoire pour un appartement.',
@@ -205,7 +207,7 @@ class StoreResidenceRequest extends FormRequest
             'price_per_day.required_if' => 'Le prix journalier est obligatoire pour ce type de location.',
             'price_per_week.min' => 'Le prix hebdomadaire doit être positif.',
             'deposit_terms.max' => 'Les conditions de caution ne peuvent pas dépasser 1000 caractères.',
-            
+
             // Caractéristiques
             'bedrooms.required' => 'Le nombre de chambres est obligatoire.',
             'bedrooms.min' => 'Le nombre de chambres doit être au moins 0.',
@@ -220,7 +222,7 @@ class StoreResidenceRequest extends FormRequest
             'surface_area.max' => 'La surface ne peut pas dépasser 10 000 m².',
             'floor.min' => 'L\'étage ne peut pas être inférieur à -5.',
             'floor.max' => 'L\'étage ne peut pas dépasser 100.',
-            
+
             // Disponibilité
             'available_from.date' => 'La date de disponibilité n\'est pas valide.',
             'available_from.after_or_equal' => 'La date de disponibilité doit être aujourd\'hui ou ultérieure.',
@@ -229,21 +231,21 @@ class StoreResidenceRequest extends FormRequest
             'max_nights.min' => 'Le séjour maximum doit être d\'au moins 1 nuit.',
             'max_nights.max' => 'Le séjour maximum ne peut pas dépasser 365 nuits.',
             'max_nights.gte' => 'Le séjour maximum doit être supérieur ou égal au minimum.',
-            
+
             // Horaires
             'check_in_time.date_format' => 'L\'heure d\'arrivée doit être au format HH:MM.',
             'check_out_time.date_format' => 'L\'heure de départ doit être au format HH:MM.',
-            
+
             // Règles
             'house_rules.max' => 'Les règles ne peuvent pas dépasser 2000 caractères.',
-            
+
             // Location
             'lease_type.in' => 'Le type de bail sélectionné n\'est pas valide.',
             'target_tenants.*.in' => 'Le profil de locataire sélectionné n\'est pas valide.',
-            
+
             // Accessibilité
             'accessibility_features.*.max' => 'Chaque caractéristique d\'accessibilité ne peut pas dépasser 100 caractères.',
-            
+
             // Média
             'virtual_tour_url.url' => 'Le lien de visite virtuelle doit être une URL valide.',
             'virtual_tour_url.max' => 'Le lien de visite virtuelle ne peut pas dépasser 500 caractères.',
@@ -251,7 +253,7 @@ class StoreResidenceRequest extends FormRequest
             'photos.*.image' => 'Le fichier doit être une image.',
             'photos.*.mimes' => 'Les photos doivent être au format JPEG, JPG, PNG ou WEBP.',
             'photos.*.max' => 'Chaque photo ne peut pas dépasser 5 MB.',
-            
+
             // Équipements
             'amenities.*.exists' => 'L\'équipement sélectionné n\'existe pas.',
         ];
