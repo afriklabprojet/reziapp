@@ -14,8 +14,8 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('type'); // message, review, residence, contact, system
-            $table->string('title');
-            $table->text('body');
+            $table->string('title')->nullable();
+            $table->text('body')->nullable();
             $table->string('icon')->nullable();
             $table->string('action_url')->nullable();
             $table->json('data')->nullable();

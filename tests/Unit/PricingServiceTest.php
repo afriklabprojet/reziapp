@@ -118,10 +118,10 @@ class PricingServiceTest extends TestCase
 
         $subtotal = 100000; // 2 × 50000
         $cleaningFee = 0; // pas de colonne cleaning_fee sur residences
-        $serviceFee = round($subtotal * 0.10); // 10000
-        $taxableAmount = $subtotal + $cleaningFee + $serviceFee; // 110000
-        $taxes = round($taxableAmount * 0.18); // 19800
-        $total = $subtotal + $cleaningFee + $serviceFee + $taxes; // 129800
+        $serviceFee = 0; // commission prélevée sur le propriétaire, pas sur le locataire
+        $taxableAmount = $subtotal + $cleaningFee; // 100000
+        $taxes = round($taxableAmount * 0.18); // 18000
+        $total = $subtotal + $cleaningFee + $serviceFee + $taxes; // 118000
 
         $this->assertEquals($subtotal, $result['subtotal']);
         $this->assertEquals($serviceFee, $result['service_fee']);
