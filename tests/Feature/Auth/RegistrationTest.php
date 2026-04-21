@@ -2,8 +2,6 @@
 
 namespace Tests\Feature\Auth;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

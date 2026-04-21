@@ -9,15 +9,12 @@ use App\Models\CancellationPolicy;
 use App\Models\Residence;
 use App\Models\User;
 use App\Services\BookingService;
-use App\Services\CouponService;
-use App\Services\PaymentService;
-use App\Services\PricingService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
 use Tests\RequiresMysql;
+use Tests\TestCase;
 
 /**
  * Tests critiques du BookingService — double booking, edge cases, concurrence

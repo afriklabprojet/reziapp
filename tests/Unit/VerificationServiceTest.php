@@ -180,7 +180,7 @@ class VerificationServiceTest extends TestCase
             'Activité frauduleuse détectée',
             $admin->id,
             'full',
-            true
+            true,
         );
 
         $this->assertNotNull($blacklist);

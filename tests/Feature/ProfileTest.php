@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\Attributes\Test;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

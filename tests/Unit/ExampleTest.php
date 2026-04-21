@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 

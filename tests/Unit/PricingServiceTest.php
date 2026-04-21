@@ -2,12 +2,11 @@
 
 namespace Tests\Unit;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\Attributes\Test;
 use App\Models\Residence;
 use App\Services\PricingService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**

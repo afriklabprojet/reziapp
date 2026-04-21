@@ -2,8 +2,6 @@
 
 namespace Tests\Feature\Payment;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\Attributes\Test;
 use App\Events\PaymentCompleted;
 use App\Models\Booking;
 use App\Models\Payment;
@@ -14,6 +12,7 @@ use App\Services\JekoService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
@@ -67,7 +66,7 @@ class JekoPaymentTest extends TestCase
                 'name' => 'Jeko Pay',
                 'is_active' => true,
                 'is_sandbox' => true,
-            ]
+            ],
         );
     }
 

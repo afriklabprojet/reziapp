@@ -3,11 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\Booking;
-use App\Models\BookingRequest;
 use App\Models\CancellationPolicy;
 use App\Models\Residence;
 use App\Models\User;
-use App\Services\BookingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\Test;

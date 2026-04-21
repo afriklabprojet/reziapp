@@ -2,13 +2,12 @@
 
 namespace Tests\Feature\Auth;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\Attributes\Test;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as SocialiteUser;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**

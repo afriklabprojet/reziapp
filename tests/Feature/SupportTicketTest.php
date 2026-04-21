@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\CancellationPolicy;
-use App\Models\Residence;
 use App\Models\SupportTicket;
 use App\Models\User;
 use App\Services\SupportService;
@@ -87,7 +85,7 @@ class SupportTicketTest extends TestCase
             'general',
             'Test ticket',
             'Content',
-            priority: 'low'
+            priority: 'low',
         );
 
         $this->assertNotNull($ticket->ticket_number);
@@ -107,7 +105,7 @@ class SupportTicketTest extends TestCase
             'general',
             'Mon ticket',
             'Description du problème',
-            priority: 'medium'
+            priority: 'medium',
         );
 
         $response = $this->actingAs($this->user)
@@ -127,7 +125,7 @@ class SupportTicketTest extends TestCase
             'general',
             'Ticket privé',
             'Contenu privé',
-            priority: 'medium'
+            priority: 'medium',
         );
 
         $response = $this->actingAs($other)
@@ -149,7 +147,7 @@ class SupportTicketTest extends TestCase
             'payment',
             'Cycle de vie',
             'Testing lifecycle',
-            priority: 'high'
+            priority: 'high',
         );
 
         $this->assertEquals('open', $ticket->status);
@@ -178,7 +176,7 @@ class SupportTicketTest extends TestCase
             'technical',
             'Reopen test',
             'Test de réouverture',
-            priority: 'low'
+            priority: 'low',
         );
 
         $service->resolveTicket($ticket);
@@ -197,7 +195,7 @@ class SupportTicketTest extends TestCase
             'general',
             'Rate test',
             'Testing satisfaction rating',
-            priority: 'medium'
+            priority: 'medium',
         );
         $service->resolveTicket($ticket);
 
@@ -215,7 +213,7 @@ class SupportTicketTest extends TestCase
             'general',
             'Invalid rating',
             'Testing boundary',
-            priority: 'low'
+            priority: 'low',
         );
 
         $this->expectException(\Exception::class);
@@ -235,7 +233,7 @@ class SupportTicketTest extends TestCase
             'general',
             'Message test',
             'Initial message',
-            priority: 'medium'
+            priority: 'medium',
         );
 
         $message = $service->addMessage($ticket, $this->user->id, 'Réponse supplémentaire');
@@ -254,7 +252,7 @@ class SupportTicketTest extends TestCase
             'general',
             'First response test',
             'Waiting for admin',
-            priority: 'high'
+            priority: 'high',
         );
 
         $this->assertNull($ticket->first_response_at);

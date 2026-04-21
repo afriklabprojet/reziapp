@@ -4,12 +4,9 @@ namespace Tests\Feature\Payment;
 
 use App\Models\Booking;
 use App\Models\CancellationPolicy;
-use App\Models\Payment;
 use App\Models\PaymentProvider;
 use App\Models\Residence;
 use App\Models\User;
-use App\Services\JekoService;
-use App\Services\PaymentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Http;
@@ -78,7 +75,7 @@ class PaymentFlowTest extends TestCase
                 'name' => 'Jeko Pay',
                 'is_active' => true,
                 'is_sandbox' => true,
-            ]
+            ],
         );
     }
 

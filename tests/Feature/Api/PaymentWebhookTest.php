@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api;
 
-use App\Models\Booking;
 use App\Models\CancellationPolicy;
-use App\Models\Residence;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

@@ -12,8 +12,8 @@ trait RequiresMysql
      */
     protected function skipIfSqlite(): void
     {
-        if (config('database.default') === 'sqlite' || 
-            config('database.connections.' . config('database.default') . '.driver') === 'sqlite') {
+        if (config('database.default') === 'sqlite' ||
+            config('database.connections.'.config('database.default').'.driver') === 'sqlite') {
             $this->markTestSkipped('Ce test requiert MySQL et ne peut pas être exécuté avec SQLite.');
         }
     }

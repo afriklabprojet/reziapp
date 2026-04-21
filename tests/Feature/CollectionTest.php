@@ -2,10 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\CancellationPolicy;
 use App\Models\Collection;
-use App\Models\Favorite;
-use App\Models\Residence;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;

@@ -57,7 +57,7 @@ class ShareTest extends TestCase
             'whatsapp',
             null,
             '127.0.0.1',
-            'Mozilla/5.0'
+            'Mozilla/5.0',
         );
 
         $this->assertInstanceOf(PropertyShare::class, $share);
@@ -75,7 +75,7 @@ class ShareTest extends TestCase
             $this->residence->id,
             'facebook',
             $user->id,
-            '127.0.0.1'
+            '127.0.0.1',
         );
 
         $this->assertEquals($user->id, $share->user_id);

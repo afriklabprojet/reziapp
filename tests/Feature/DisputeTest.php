@@ -7,7 +7,6 @@ use App\Models\CancellationPolicy;
 use App\Models\Dispute;
 use App\Models\Residence;
 use App\Models\User;
-use App\Services\DisputeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\Test;
@@ -108,7 +107,7 @@ class DisputeTest extends TestCase
                 'type' => $type,
                 'reason' => 'Logement non conforme à la description',
                 'detailed_description' => 'La résidence ne correspondait pas aux photos et à la description. '
-                    . 'Il manquait la climatisation qui était annoncée.',
+                    .'Il manquait la climatisation qui était annoncée.',
             ]);
 
         $response->assertRedirect();

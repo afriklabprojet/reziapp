@@ -108,7 +108,7 @@ class CancellationServiceTest extends TestCase
         $cancellation = $this->service->cancelByGuest(
             $booking,
             'Changement de plans',
-            'J\'ai dû modifier mes dates de voyage.'
+            'J\'ai dû modifier mes dates de voyage.',
         );
 
         $this->assertNotNull($cancellation);
@@ -134,7 +134,7 @@ class CancellationServiceTest extends TestCase
         $cancellation = $this->service->cancelByOwner(
             $booking,
             'Indisponibilité imprévue',
-            'Travaux urgents dans la résidence.'
+            'Travaux urgents dans la résidence.',
         );
 
         $this->assertNotNull($cancellation);

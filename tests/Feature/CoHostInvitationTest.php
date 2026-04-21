@@ -161,7 +161,7 @@ class CoHostInvitationTest extends TestCase
             'email' => 'cohost@example.com',
             'name' => 'Test CoHost',
             'status' => 'pending',
-            'invitation_token' => 'valid-test-token-' . Str::random(48),
+            'invitation_token' => 'valid-test-token-'.Str::random(48),
             'invited_at' => now(),
             'expires_at' => now()->addDays(7),
         ]);
@@ -183,7 +183,7 @@ class CoHostInvitationTest extends TestCase
             'email' => 'cohost@example.com',
             'name' => 'Test CoHost',
             'status' => 'pending',
-            'invitation_token' => 'accept-test-token-' . Str::random(48),
+            'invitation_token' => 'accept-test-token-'.Str::random(48),
             'invited_at' => now(),
             'expires_at' => now()->addDays(7),
         ]);
@@ -209,7 +209,7 @@ class CoHostInvitationTest extends TestCase
             'email' => 'cohost@example.com',
             'name' => 'Test CoHost',
             'status' => 'pending',
-            'invitation_token' => 'wrong-email-token-' . Str::random(48),
+            'invitation_token' => 'wrong-email-token-'.Str::random(48),
             'invited_at' => now(),
             'expires_at' => now()->addDays(7),
         ]);
@@ -233,7 +233,7 @@ class CoHostInvitationTest extends TestCase
             'email' => 'expired@example.com',
             'name' => 'Expired CoHost',
             'status' => 'pending',
-            'invitation_token' => 'expired-token-' . Str::random(48),
+            'invitation_token' => 'expired-token-'.Str::random(48),
             'invited_at' => now()->subDays(10),
             'expires_at' => now()->subDays(3), // Expiré
         ]);
@@ -256,7 +256,7 @@ class CoHostInvitationTest extends TestCase
             'email' => 'decline@example.com',
             'name' => 'Declined CoHost',
             'status' => 'pending',
-            'invitation_token' => 'decline-token-' . Str::random(48),
+            'invitation_token' => 'decline-token-'.Str::random(48),
             'invited_at' => now(),
             'expires_at' => now()->addDays(7),
         ]);

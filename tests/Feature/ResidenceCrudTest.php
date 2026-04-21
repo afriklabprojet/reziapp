@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\Residence;
 use App\Models\Country;
+use App\Models\Residence;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -39,7 +39,7 @@ class ResidenceCrudTest extends TestCase
                 'max_lat' => 10.7400,
                 'min_lng' => -8.6000,
                 'max_lng' => -2.4900,
-            ]
+            ],
         );
 
         // Créer des utilisateurs de test
