@@ -29,7 +29,7 @@ class ReferralRewarded extends Notification implements ShouldQueue
             $reward = number_format($this->referral->referrer_reward, 0, ',', ' ');
             $referredName = $this->referral->referred->name ?? 'votre filleul';
 
-            return (new MailMessage)
+            return (new MailMessage())
                 ->subject("💰 {$reward} FCFA crédités sur votre compte !")
                 ->greeting("Bonjour {$notifiable->name} !")
                 ->line("Votre récompense de parrainage de **{$reward} FCFA** a été créditée sur votre solde de parrainage.")
@@ -41,7 +41,7 @@ class ReferralRewarded extends Notification implements ShouldQueue
         $reward = number_format($this->referral->referred_reward, 0, ',', ' ');
         $referrerName = $this->referral->referrer->name ?? 'votre parrain';
 
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject("🎁 {$reward} FCFA de bienvenue crédités !")
             ->greeting("Bonjour {$notifiable->name} !")
             ->line("Grâce au parrainage de **{$referrerName}**, vous avez reçu **{$reward} FCFA** sur votre solde.")

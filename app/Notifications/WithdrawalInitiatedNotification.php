@@ -22,7 +22,8 @@ class WithdrawalInitiatedNotification extends Notification implements ShouldQueu
         private Payout $payout,
         private string $ipAddress,
         private string $userAgent,
-    ) {}
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -41,17 +42,17 @@ class WithdrawalInitiatedNotification extends Notification implements ShouldQueu
         };
 
         $destination = $this->payout->phone_number
-            ?? ($this->payout->bank_name . ' — ' . $this->payout->bank_account);
+            ?? ($this->payout->bank_name.' — '.$this->payout->bank_account);
 
-        return (new MailMessage)
-            ->subject('⚠️ Retrait initié — ' . number_format((float) $this->payout->net_amount, 0, ',', ' ') . ' FCFA')
+        return (new MailMessage())
+            ->subject('⚠️ Retrait initié — '.number_format((float) $this->payout->net_amount, 0, ',', ' ').' FCFA')
             ->greeting('Retrait initié depuis votre compte')
-            ->line('Un retrait de **' . number_format((float) $this->payout->net_amount, 0, ',', ' ') . ' FCFA** vient d\'être initié depuis votre espace propriétaire.')
-            ->line('**Méthode :** ' . $method)
-            ->line('**Destination :** ' . $destination)
-            ->line('**Référence :** ' . $this->payout->reference)
-            ->line('**Date :** ' . now()->translatedFormat('d F Y à H:i'))
-            ->line('**Adresse IP :** ' . $this->ipAddress)
+            ->line('Un retrait de **'.number_format((float) $this->payout->net_amount, 0, ',', ' ').' FCFA** vient d\'être initié depuis votre espace propriétaire.')
+            ->line('**Méthode :** '.$method)
+            ->line('**Destination :** '.$destination)
+            ->line('**Référence :** '.$this->payout->reference)
+            ->line('**Date :** '.now()->translatedFormat('d F Y à H:i'))
+            ->line('**Adresse IP :** '.$this->ipAddress)
             ->line('')
             ->line('Si vous n\'êtes **PAS** à l\'origine de cette demande, **contactez-nous immédiatement** pour bloquer le versement.')
             ->action('Voir mes revenus', route('owner.earnings.index'))
@@ -62,7 +63,7 @@ class WithdrawalInitiatedNotification extends Notification implements ShouldQueu
     {
         return [
             'title' => 'Retrait initié',
-            'message' => 'Retrait de ' . number_format((float) $this->payout->net_amount, 0, ',', ' ') . ' FCFA initié vers ' . ($this->payout->phone_number ?? $this->payout->bank_name),
+            'message' => 'Retrait de '.number_format((float) $this->payout->net_amount, 0, ',', ' ').' FCFA initié vers '.($this->payout->phone_number ?? $this->payout->bank_name),
             'type' => 'withdrawal_initiated',
             'payout_id' => $this->payout->id,
             'amount' => $this->payout->net_amount,

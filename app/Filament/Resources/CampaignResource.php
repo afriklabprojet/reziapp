@@ -353,8 +353,8 @@ class CampaignResource extends Resource
                     ->requiresConfirmation()
                     ->modalHeading('Envoyer la campagne')
                     ->modalDescription(fn (Campaign $record) => 'Êtes-vous sûr de vouloir envoyer cette campagne à '
-                        . number_format(app(MarketingService::class)->getCampaignRecipients($record)->count(), 0, ',', ' ')
-                        . ' destinataires ? Cette action est irréversible.')
+                        .number_format(app(MarketingService::class)->getCampaignRecipients($record)->count(), 0, ',', ' ')
+                        .' destinataires ? Cette action est irréversible.')
                     ->modalSubmitActionLabel('Oui, envoyer')
                     ->action(function (Campaign $record) {
                         try {
@@ -398,13 +398,13 @@ class CampaignResource extends Resource
                             if ($record->type === 'email') {
                                 Mail::raw($content, function ($message) use ($record, $user) {
                                     $message->to($user->email)
-                                        ->subject('[TEST] ' . ($record->subject ?? $record->name));
+                                        ->subject('[TEST] '.($record->subject ?? $record->name));
                                 });
                             }
 
                             Notification::make()
                                 ->title('Test envoyé !')
-                                ->body('Message de test envoyé à ' . $user->email)
+                                ->body('Message de test envoyé à '.$user->email)
                                 ->success()
                                 ->send();
                         } catch (\Exception $e) {

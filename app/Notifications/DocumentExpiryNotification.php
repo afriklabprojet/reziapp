@@ -16,7 +16,8 @@ class DocumentExpiryNotification extends Notification implements ShouldQueue
 
     public function __construct(
         private Collection $documents,
-    ) {}
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -34,10 +35,10 @@ class DocumentExpiryNotification extends Notification implements ShouldQueue
             return "• **{$doc->name}** — {$expiryDate} ({$status})";
         });
 
-        $mail = (new MailMessage)
+        $mail = (new MailMessage())
             ->subject("⚠️ {$count} document(s) expirent bientôt")
             ->greeting("Bonjour {$notifiable->name},")
-            ->line("Les documents suivants nécessitent votre attention :");
+            ->line('Les documents suivants nécessitent votre attention :');
 
         foreach ($docList as $line) {
             $mail->line($line);
@@ -54,7 +55,7 @@ class DocumentExpiryNotification extends Notification implements ShouldQueue
         return [
             'type' => 'document_expiry',
             'title' => 'Documents expirant bientôt',
-            'message' => $this->documents->count() . ' document(s) expirent dans les 30 prochains jours.',
+            'message' => $this->documents->count().' document(s) expirent dans les 30 prochains jours.',
             'documents' => $this->documents->map(fn ($d) => [
                 'name' => $d->name,
                 'expiry_date' => $d->expiry_date?->format('d/m/Y'),

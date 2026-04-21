@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -112,6 +114,7 @@ class AutoReply extends Model
                     return $currentTime >= $startTime || $currentTime <= $endTime;
                 }
 
+                // no break
             case 'manual':
                 return false; // Déclenché manuellement uniquement
 

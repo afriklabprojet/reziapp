@@ -17,12 +17,12 @@ class AvailabilityController extends Controller
      */
     public function index(Request $request, Residence $residence): JsonResponse
     {
-        $startDate = $request->input('start_date') 
-            ? Carbon::parse($request->input('start_date')) 
+        $startDate = $request->input('start_date')
+            ? Carbon::parse($request->input('start_date'))
             : now()->startOfMonth();
-        
-        $endDate = $request->input('end_date') 
-            ? Carbon::parse($request->input('end_date')) 
+
+        $endDate = $request->input('end_date')
+            ? Carbon::parse($request->input('end_date'))
             : now()->addMonths(3)->endOfMonth();
 
         $calendar = AvailabilityCalendar::getCalendar($residence->id, $startDate, $endDate);
@@ -95,10 +95,10 @@ class AvailabilityController extends Controller
         $endDate = Carbon::parse($request->end_date);
 
         $count = AvailabilityCalendar::blockDates(
-            $residence->id, 
-            $startDate, 
-            $endDate, 
-            $request->note
+            $residence->id,
+            $startDate,
+            $endDate,
+            $request->note,
         );
 
         return response()->json([
@@ -146,10 +146,10 @@ class AvailabilityController extends Controller
         $endDate = Carbon::parse($request->end_date);
 
         $count = AvailabilityCalendar::setCustomPrice(
-            $residence->id, 
-            $startDate, 
-            $endDate, 
-            $request->price
+            $residence->id,
+            $startDate,
+            $endDate,
+            $request->price,
         );
 
         return response()->json([
@@ -232,7 +232,7 @@ class AvailabilityController extends Controller
         $seasonalPricing = SeasonalPricing::createFromTemplate(
             $residence->id,
             $request->template,
-            $request->year
+            $request->year,
         );
 
         if (!$seasonalPricing) {

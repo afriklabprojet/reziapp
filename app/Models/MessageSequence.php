@@ -10,12 +10,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MessageSequence extends Model
 {
-    const TRIGGER_BOOKING_CONFIRMED    = 'booking_confirmed';
-    const TRIGGER_CHECK_IN_APPROACHING = 'check_in_approaching';
-    const TRIGGER_POST_CHECKOUT        = 'post_checkout';
-    const TRIGGER_PRE_CHECKOUT         = 'pre_checkout';
+    public const TRIGGER_BOOKING_CONFIRMED    = 'booking_confirmed';
+    public const TRIGGER_CHECK_IN_APPROACHING = 'check_in_approaching';
+    public const TRIGGER_POST_CHECKOUT        = 'post_checkout';
+    public const TRIGGER_PRE_CHECKOUT         = 'pre_checkout';
 
-    const TRIGGERS = [
+    public const TRIGGERS = [
         self::TRIGGER_BOOKING_CONFIRMED    => 'Réservation confirmée',
         self::TRIGGER_CHECK_IN_APPROACHING => 'Arrivée approche',
         self::TRIGGER_POST_CHECKOUT        => 'Après le départ',

@@ -57,7 +57,7 @@ class ManageSponsoredListingsCommand extends Command
             $this->line("  ✅ En pause → Complétée: #{$sponsored->id}");
         }
 
-        $this->info("📊 Résumé:");
+        $this->info('📊 Résumé:');
         $this->info("   - Expirées complétées: {$expiredCount}");
         $this->info("   - Budget épuisé (pause): {$budgetCount}");
         $this->info("   - En pause expirées: {$pausedExpiredCount}");

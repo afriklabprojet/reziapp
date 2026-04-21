@@ -17,6 +17,7 @@ class CreateOwnerBadge extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['awarded_by'] = auth()->id();
+
         return $data;
     }
 }

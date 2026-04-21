@@ -180,7 +180,7 @@ class ResidenceObserver
 
         // Si la ville a changé → invalider aussi l'ancienne ville
         if ($residence->isDirty('city') && $residence->getOriginal('city')) {
-            $keys[] = "{$cc}_" . strtolower($residence->getOriginal('city'));
+            $keys[] = "{$cc}_".strtolower($residence->getOriginal('city'));
         }
 
         // Si le pays a changé → invalider aussi l'ancien pays
@@ -189,7 +189,7 @@ class ResidenceObserver
             $keys[] = "{$oldCc}_{$city}";
             $keys[] = "{$oldCc}_all";
             if ($residence->getOriginal('city')) {
-                $keys[] = "{$oldCc}_" . strtolower($residence->getOriginal('city'));
+                $keys[] = "{$oldCc}_".strtolower($residence->getOriginal('city'));
             }
         }
 

@@ -16,7 +16,8 @@ class CleaningTaskController extends Controller
 {
     public function __construct(
         private CleaningTaskService $cleaningService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {

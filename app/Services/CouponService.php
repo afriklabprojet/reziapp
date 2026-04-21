@@ -61,7 +61,7 @@ class CouponService
         if ($coupon->min_nights && $nights < $coupon->min_nights) {
             return [
                 'valid' => false,
-                'error' => 'Minimum ' . $coupon->min_nights . ' nuits requis pour ce coupon.',
+                'error' => 'Minimum '.$coupon->min_nights.' nuits requis pour ce coupon.',
             ];
         }
 
@@ -69,7 +69,7 @@ class CouponService
         if ($coupon->min_amount && $subtotal < $coupon->min_amount) {
             return [
                 'valid' => false,
-                'error' => 'Montant minimum ' . number_format($coupon->min_amount, 0, ',', ' ') . ' FCFA requis.',
+                'error' => 'Montant minimum '.number_format($coupon->min_amount, 0, ',', ' ').' FCFA requis.',
             ];
         }
 
@@ -82,7 +82,7 @@ class CouponService
             'type' => $coupon->discount_type,
             'value' => $coupon->discount_value,
             'discount' => $discount,
-            'formatted_discount' => number_format($discount, 0, ',', ' ') . ' FCFA',
+            'formatted_discount' => number_format($discount, 0, ',', ' ').' FCFA',
             'formatted_value' => $coupon->discount_label,
             'source' => 'coupon', // Pour différencier du promo_code
         ];
@@ -113,11 +113,11 @@ class CouponService
         }
 
         if ($coupon->min_nights && $nights < $coupon->min_nights) {
-            return ['discount' => 0, 'coupon' => null, 'error' => 'Minimum ' . $coupon->min_nights . ' nuits requis'];
+            return ['discount' => 0, 'coupon' => null, 'error' => 'Minimum '.$coupon->min_nights.' nuits requis'];
         }
 
         if ($coupon->min_amount && $subtotal < $coupon->min_amount) {
-            return ['discount' => 0, 'coupon' => null, 'error' => 'Montant minimum ' . number_format($coupon->min_amount, 0, ',', ' ') . ' FCFA'];
+            return ['discount' => 0, 'coupon' => null, 'error' => 'Montant minimum '.number_format($coupon->min_amount, 0, ',', ' ').' FCFA'];
         }
 
         $discount = $coupon->calculateDiscount($subtotal);

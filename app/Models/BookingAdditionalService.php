@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -112,12 +114,12 @@ class BookingAdditionalService extends Model
      * Créer un service pour une réservation
      */
     public static function createForBooking(
-        Booking $booking, 
-        AdditionalService $service, 
+        Booking $booking,
+        AdditionalService $service,
         int $quantity = 1,
         ?float $customPrice = null,
         ?\DateTime $scheduledAt = null,
-        ?string $notes = null
+        ?string $notes = null,
     ): self {
         $unitPrice = $customPrice ?? $service->price;
         $totalPrice = $service->calculatePrice($quantity, $booking->nights, $booking->guests);

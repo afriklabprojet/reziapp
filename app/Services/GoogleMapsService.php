@@ -33,7 +33,7 @@ class GoogleMapsService
         string|array $origin,
         string|array $destination,
         string $mode = 'driving',
-        string $language = 'fr'
+        string $language = 'fr',
     ): ?array {
         $origin = $this->formatLatLng($origin);
         $destination = $this->formatLatLng($destination);
@@ -58,6 +58,7 @@ class GoogleMapsService
                         'origin' => $origin,
                         'destination' => $destination,
                     ]);
+
                     return null;
                 }
 
@@ -84,6 +85,7 @@ class GoogleMapsService
                 ];
             } catch (\Exception $e) {
                 Log::error('Google Directions API exception', ['error' => $e->getMessage()]);
+
                 return null;
             }
         });
@@ -104,12 +106,12 @@ class GoogleMapsService
     public function getDistanceMatrix(
         array $origins,
         array $destinations,
-        string $mode = 'driving'
+        string $mode = 'driving',
     ): ?array {
         $originsStr = collect($origins)->map(fn ($o) => $this->formatLatLng($o))->implode('|');
         $destsStr = collect($destinations)->map(fn ($d) => $this->formatLatLng($d))->implode('|');
 
-        $cacheKey = "distance_matrix:" . md5("{$originsStr}:{$destsStr}:{$mode}");
+        $cacheKey = 'distance_matrix:'.md5("{$originsStr}:{$destsStr}:{$mode}");
 
         return Cache::remember($cacheKey, 3600, function () use ($originsStr, $destsStr, $mode) {
             try {
@@ -125,6 +127,7 @@ class GoogleMapsService
 
                 if ($data['status'] !== 'OK') {
                     Log::warning('Google Distance Matrix API error', ['status' => $data['status']]);
+
                     return null;
                 }
 
@@ -148,6 +151,7 @@ class GoogleMapsService
                 return $results;
             } catch (\Exception $e) {
                 Log::error('Google Distance Matrix API exception', ['error' => $e->getMessage()]);
+
                 return null;
             }
         });
@@ -161,12 +165,12 @@ class GoogleMapsService
         float $userLng,
         float $residenceLat,
         float $residenceLng,
-        string $mode = 'driving'
+        string $mode = 'driving',
     ): ?array {
         $results = $this->getDistanceMatrix(
             [['lat' => $userLat, 'lng' => $userLng]],
             [['lat' => $residenceLat, 'lng' => $residenceLng]],
-            $mode
+            $mode,
         );
 
         return $results[0] ?? null;
@@ -193,7 +197,7 @@ class GoogleMapsService
         int $zoom = 15,
         string $size = '600x300',
         array $markers = [],
-        string $maptype = 'roadmap'
+        string $maptype = 'roadmap',
     ): string {
         $params = [
             'center' => "{$lat},{$lng}",
@@ -216,7 +220,7 @@ class GoogleMapsService
 
         $params['markers'] = "color:red|label:R|{$lat},{$lng}";
 
-        $url = "{$this->baseUrl}/staticmap?" . http_build_query($params);
+        $url = "{$this->baseUrl}/staticmap?".http_build_query($params);
 
         // Ajouter les marqueurs additionnels
         foreach ($markers as $marker) {
@@ -251,9 +255,9 @@ class GoogleMapsService
     public function autocomplete(
         string $input,
         array $countries = ['ci', 'bf'],
-        string $types = 'geocode'
+        string $types = 'geocode',
     ): array {
-        $cacheKey = "places_autocomplete:" . md5("{$input}:{$types}:" . implode(',', $countries));
+        $cacheKey = 'places_autocomplete:'.md5("{$input}:{$types}:".implode(',', $countries));
 
         return Cache::remember($cacheKey, 1800, function () use ($input, $countries, $types) {
             try {
@@ -269,6 +273,7 @@ class GoogleMapsService
 
                 if ($data['status'] !== 'OK' && $data['status'] !== 'ZERO_RESULTS') {
                     Log::warning('Google Places Autocomplete error', ['status' => $data['status']]);
+
                     return [];
                 }
 
@@ -282,6 +287,7 @@ class GoogleMapsService
                     ->toArray();
             } catch (\Exception $e) {
                 Log::error('Google Places Autocomplete exception', ['error' => $e->getMessage()]);
+
                 return [];
             }
         });
@@ -326,6 +332,7 @@ class GoogleMapsService
                 ];
             } catch (\Exception $e) {
                 Log::error('Google Place Details exception', ['error' => $e->getMessage()]);
+
                 return null;
             }
         });
@@ -372,14 +379,22 @@ class GoogleMapsService
         float $lat,
         float $lng,
         int $radius = 1000,
-        array $types = ['restaurant', 'supermarket', 'pharmacy', 'hospital', 'bank', 'bus_station', 'shopping_mall', 'school', 'mosque', 'church', 'park', 'gym']
+        array $types = ['restaurant', 'supermarket', 'pharmacy', 'hospital', 'bank', 'bus_station', 'shopping_mall', 'school', 'mosque', 'church', 'park', 'gym'],
     ): array {
         $allResults = [];
+
+        // Circuit breaker : si l'API a renvoyé REQUEST_DENIED récemment, on arrête
+        // d'appeler Google pour éviter le spam de logs et les latences inutiles.
+        if (Cache::get('google_places_api_disabled')) {
+            Log::info('NearbySearch: circuit breaker actif, skip appel Google Places API');
+
+            return [];
+        }
 
         // Google Nearby Search ne supporte qu'un type par requête
         // On regroupe en batches pour limiter les appels API
         foreach ($types as $type) {
-            $cacheKey = "nearby_search:" . md5("{$lat},{$lng}:{$radius}:{$type}");
+            $cacheKey = 'nearby_search:'.md5("{$lat},{$lng}:{$radius}:{$type}");
 
             $results = Cache::remember($cacheKey, 86400, function () use ($lat, $lng, $radius, $type) {
                 try {
@@ -394,10 +409,16 @@ class GoogleMapsService
                     $data = $response->json();
 
                     if (!in_array($data['status'], ['OK', 'ZERO_RESULTS'])) {
+                        // REQUEST_DENIED = clé API non autorisée → activer circuit breaker 24h
+                        // pour éviter 12 appels bloquants × N pages vues
+                        if ($data['status'] === 'REQUEST_DENIED') {
+                            Cache::put('google_places_api_disabled', true, 86400);
+                        }
                         Log::warning('Google Nearby Search error', [
                             'status' => $data['status'],
                             'type'   => $type,
                         ]);
+
                         return [];
                     }
 
@@ -428,6 +449,7 @@ class GoogleMapsService
                         'error' => $e->getMessage(),
                         'type'  => $type,
                     ]);
+
                     return [];
                 }
             });
@@ -454,7 +476,7 @@ class GoogleMapsService
      */
     public function reverseGeocode(float $lat, float $lng): ?array
     {
-        $cacheKey = "reverse_geocode:" . md5("{$lat},{$lng}");
+        $cacheKey = 'reverse_geocode:'.md5("{$lat},{$lng}");
 
         return Cache::remember($cacheKey, 86400, function () use ($lat, $lng) {
             try {
@@ -498,6 +520,7 @@ class GoogleMapsService
                 ];
             } catch (\Exception $e) {
                 Log::error('Google Reverse Geocode exception', ['error' => $e->getMessage()]);
+
                 return null;
             }
         });
@@ -514,7 +537,7 @@ class GoogleMapsService
      */
     public function hasStreetView(float $lat, float $lng, int $radius = 100): bool
     {
-        $cacheKey = "streetview_available:" . md5("{$lat},{$lng}:{$radius}");
+        $cacheKey = 'streetview_available:'.md5("{$lat},{$lng}:{$radius}");
 
         return Cache::remember($cacheKey, 604800, function () use ($lat, $lng, $radius) {
             try {
@@ -525,6 +548,7 @@ class GoogleMapsService
                 ]);
 
                 $data = $response->json();
+
                 return ($data['status'] ?? '') === 'OK';
             } catch (\Exception $e) {
                 return false;
@@ -547,7 +571,7 @@ class GoogleMapsService
         float $lng,
         string $size = '600x400',
         ?int $heading = null,
-        int $pitch = 0
+        int $pitch = 0,
     ): string {
         $params = [
             'location' => "{$lat},{$lng}",
@@ -560,7 +584,7 @@ class GoogleMapsService
             $params['heading'] = $heading;
         }
 
-        return "{$this->baseUrl}/streetview?" . http_build_query($params);
+        return "{$this->baseUrl}/streetview?".http_build_query($params);
     }
 
     // ─────────────────────────────────────────────
@@ -591,6 +615,7 @@ class GoogleMapsService
 
         if (!$geocode) {
             $result['issues'][] = 'Impossible de résoudre cette position en adresse';
+
             return $result;
         }
 
@@ -605,14 +630,15 @@ class GoogleMapsService
             $confidence += 20;
         } else {
             $result['issues'][] = "Position hors zone couverte (pays: {$geocode['country_code']})";
+
             return $result;
         }
 
         // Vérifier la cohérence avec la ville attendue
         if ($expectedCity) {
             $cityMatch = str_contains(
-                mb_strtolower($geocode['city'] . ' ' . $geocode['commune'] . ' ' . $geocode['address']),
-                mb_strtolower($expectedCity)
+                mb_strtolower($geocode['city'].' '.$geocode['commune'].' '.$geocode['address']),
+                mb_strtolower($expectedCity),
             );
             if ($cityMatch) {
                 $confidence += 20;
@@ -654,7 +680,7 @@ class GoogleMapsService
         float $lat,
         float $lng,
         array $minutes = [5, 10, 15],
-        string $profile = 'walking'
+        string $profile = 'walking',
     ): ?array {
         $mapboxToken = config('services.mapbox.access_token');
         if (!$mapboxToken) {
@@ -662,7 +688,7 @@ class GoogleMapsService
         }
 
         $contours = implode(',', $minutes);
-        $cacheKey = "isochrone:" . md5("{$lat},{$lng}:{$contours}:{$profile}");
+        $cacheKey = 'isochrone:'.md5("{$lat},{$lng}:{$contours}:{$profile}");
 
         return Cache::remember($cacheKey, 86400, function () use ($lat, $lng, $contours, $profile, $mapboxToken) {
             try {
@@ -678,12 +704,14 @@ class GoogleMapsService
                         'status' => $response->status(),
                         'body'   => $response->body(),
                     ]);
+
                     return null;
                 }
 
                 return $response->json();
             } catch (\Exception $e) {
                 Log::error('Mapbox Isochrone exception', ['error' => $e->getMessage()]);
+
                 return null;
             }
         });
@@ -702,7 +730,7 @@ class GoogleMapsService
             return $point;
         }
 
-        return ($point['lat'] ?? $point['latitude'] ?? 0) . ',' . ($point['lng'] ?? $point['longitude'] ?? 0);
+        return ($point['lat'] ?? $point['latitude'] ?? 0).','.($point['lng'] ?? $point['longitude'] ?? 0);
     }
 
     /**

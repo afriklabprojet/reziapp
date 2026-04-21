@@ -5,9 +5,7 @@ namespace App\Http\Controllers\Payment;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Notification;
-use App\Services\BookingService;
 use App\Services\JekoPaymentService;
-use App\Services\PaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -60,14 +58,14 @@ class BookingPaymentCallbackController extends Controller
             // Notify owner of new confirmed booking
             if ($residence->owner) {
                 $residence->owner->notify(
-                    new \App\Notifications\NewBookingReceived($booking, $residence)
+                    new \App\Notifications\NewBookingReceived($booking, $residence),
                 );
 
                 Notification::send(
                     $residence->owner,
                     'booking',
                     'Nouvelle réservation confirmée',
-                    ($booking->user?->name ?? 'Un client') . ' a réservé ' . $residence->name,
+                    ($booking->user?->name ?? 'Un client').' a réservé '.$residence->name,
                     route('owner.bookings.show', $booking),
                     ['booking_id' => $booking->id],
                 );
@@ -77,8 +75,8 @@ class BookingPaymentCallbackController extends Controller
             if ($booking->user) {
                 $booking->user->notify(
                     new \App\Notifications\PaymentConfirmed(
-                        $this->findOrCreatePayment($booking)
-                    )
+                        $this->findOrCreatePayment($booking),
+                    ),
                 );
             }
         } else {
@@ -93,15 +91,15 @@ class BookingPaymentCallbackController extends Controller
                 $residence->owner->notify(
                     new \App\Notifications\BookingRequestReceived(
                         $booking,
-                        $residence
-                    )
+                        $residence,
+                    ),
                 );
 
                 Notification::send(
                     $residence->owner,
                     'booking',
                     'Nouvelle demande de réservation (payée)',
-                    ($booking->user?->name ?? 'Un client') . ' a payé et demande à réserver ' . $residence->name,
+                    ($booking->user?->name ?? 'Un client').' a payé et demande à réserver '.$residence->name,
                     route('owner.bookings.requests'),
                     ['booking_id' => $booking->id, 'residence_id' => $residence->id],
                 );
@@ -112,7 +110,7 @@ class BookingPaymentCallbackController extends Controller
         if ($booking->user?->is_guest) {
             try {
                 $booking->user->notify(
-                    new \App\Notifications\GuestBookingConfirmation($booking, $residence)
+                    new \App\Notifications\GuestBookingConfirmation($booking, $residence),
                 );
             } catch (\Throwable $e) {
                 Log::warning('Could not send guest confirmation', ['error' => $e->getMessage()]);

@@ -16,7 +16,8 @@ class RentReminderNotification extends Notification implements ShouldQueue
 
     public function __construct(
         private RentReminder $reminder,
-    ) {}
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -30,13 +31,13 @@ class RentReminderNotification extends Notification implements ShouldQueue
             ? 'Rappel urgent : Loyer en retard'
             : 'Rappel : Loyer à venir';
 
-        return (new MailMessage)
-            ->subject($subject . ' — ' . $this->reminder->residence?->name)
-            ->greeting('Bonjour ' . $notifiable->name . ',')
+        return (new MailMessage())
+            ->subject($subject.' — '.$this->reminder->residence?->name)
+            ->greeting('Bonjour '.$notifiable->name.',')
             ->line($isOverdue
-                ? 'Votre loyer de ' . number_format($this->reminder->amount, 0, ',', ' ') . ' FCFA est en retard.'
-                : 'Votre loyer de ' . number_format($this->reminder->amount, 0, ',', ' ') . ' FCFA arrive à échéance le ' . $this->reminder->due_date->translatedFormat('d F Y') . '.')
-            ->line('Résidence : ' . ($this->reminder->residence?->name ?? 'N/A'))
+                ? 'Votre loyer de '.number_format($this->reminder->amount, 0, ',', ' ').' FCFA est en retard.'
+                : 'Votre loyer de '.number_format($this->reminder->amount, 0, ',', ' ').' FCFA arrive à échéance le '.$this->reminder->due_date->translatedFormat('d F Y').'.')
+            ->line('Résidence : '.($this->reminder->residence?->name ?? 'N/A'))
             ->action('Voir mes paiements', url('/'))
             ->salutation('L\'équipe REZI');
     }

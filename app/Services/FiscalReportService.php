@@ -44,8 +44,8 @@ class FiscalReportService
         $revenueByMonth = [];
         $expensesByMonth = [];
         for ($m = 1; $m <= 12; $m++) {
-            $revenueByMonth[$m]  = $bookings->filter(fn($b) => Carbon::parse($b->created_at)->month === $m)->sum('total_amount');
-            $expensesByMonth[$m] = $expenses->filter(fn($e) => $e->expense_date->month === $m)->sum('amount');
+            $revenueByMonth[$m]  = $bookings->filter(fn ($b) => Carbon::parse($b->created_at)->month === $m)->sum('total_amount');
+            $expensesByMonth[$m] = $expenses->filter(fn ($e) => $e->expense_date->month === $m)->sum('amount');
         }
 
         // Revenue by residence

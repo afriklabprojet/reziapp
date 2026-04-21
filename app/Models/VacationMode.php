@@ -58,13 +58,17 @@ class VacationMode extends Model
 
     public function daysRemaining(): int
     {
-        if (!$this->isCurrentlyActive()) return 0;
+        if (!$this->isCurrentlyActive()) {
+            return 0;
+        }
+
         return (int) now()->diffInDays($this->end_date, false);
     }
 
     public function affectsResidence(int $residenceId): bool
     {
         $affected = $this->affected_residences ?? [];
+
         return empty($affected) || in_array($residenceId, $affected);
     }
 

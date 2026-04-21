@@ -240,7 +240,7 @@
                     .setLngLat([this.userLocation.lng, this.userLocation.lat])
                     .addTo(this.heroMap);
             }
-        }" class="relative bg-gray-50 flex flex-col">
+        }" class="relative bg-sand-50 flex flex-col">
 
             {{-- 1. HERO IMMERSIF - MAP INTERFACE --}}
             <div class="relative min-h-[85vh] lg:min-h-[90vh] w-full overflow-hidden bg-gray-900 flex flex-col"
@@ -262,7 +262,7 @@
 
                     {{-- Grille décorative (style tech) - masquée quand carte Mapbox active --}}
                     <div class="absolute inset-0 opacity-10" x-show="gpsState !== 'success'"
-                        style="background-image: linear-gradient(rgba(16, 185, 129, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(16, 185, 129, 0.3) 1px, transparent 1px); background-size: 50px 50px;">
+                        style="background-image: linear-gradient(rgba(247, 147, 30, 0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(247, 147, 30, 0.25) 1px, transparent 1px); background-size: 50px 50px;">
                     </div>
 
                     {{-- Cercles de radar animés --}}
@@ -292,9 +292,9 @@
                             </div>
                         @endif
 
-                        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-4">
+                        <h1 class="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-4">
                             Trouvez un logement
-                            <span class="block text-transparent bg-clip-text bg-linear-to-r from-orange-400 to-teal-300">à
+                            <span class="block text-transparent bg-clip-text bg-linear-to-r from-orange-300 to-amber-400">à
                                 côté de vous</span>
                         </h1>
                         <p class="text-base sm:text-lg text-gray-300 max-w-lg mx-auto">
@@ -598,7 +598,7 @@
                                     </div>
                                     {{-- Bouton Carte amélioré --}}
                                     <a :href="mapUrl()"
-                                        class="flex items-center gap-3 w-full p-3 bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 rounded-xl text-white transition-all group shadow-lg">
+                                        class="flex items-center gap-3 w-full p-3 bg-linear-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 rounded-xl text-white transition-all group shadow-lg">
                                         <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
                                             <svg aria-hidden="true" class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -664,7 +664,7 @@
                                 {{-- Action buttons row --}}
                                 <div class="flex gap-2">
                                     <a :href="mapUrl()"
-                                        class="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 rounded-xl text-white text-sm font-semibold transition-all shadow-lg">
+                                        class="flex-1 flex items-center justify-center gap-2 py-2.5 bg-linear-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 rounded-xl text-white text-sm font-semibold transition-all shadow-lg">
                                         <svg aria-hidden="true" class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -715,7 +715,7 @@
             {{-- 2. BOTTOM SHEET - RESULTS --}}
             <div x-show="showResidences" x-transition:enter="transition ease-out duration-500"
                 x-transition:enter-start="translate-y-full opacity-0" x-transition:enter-end="translate-y-0 opacity-100"
-                class="relative z-30 -mt-8 bg-gray-50 rounded-t-3xl pt-4 pb-20 lg:pb-8" x-cloak id="nearby-residences">
+                class="relative z-30 -mt-8 bg-sand-100 rounded-t-3xl pt-4 pb-20 lg:pb-8" x-cloak id="nearby-residences">
 
                 {{-- Drag Handle --}}
                 <div class="flex justify-center mb-4">
@@ -933,68 +933,57 @@
                 </div>
             </div>
 
-            {{-- 3. SECTION MICRO-RASSURANCE (Visible only after scroll or search trigger if user scrolls down) --}}
-            <div class="bg-white py-8 sm:py-12 border-t border-gray-100">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-8">
-                    <div class="flex items-center gap-3 reveal-hidden"
-                        x-intersect.once="$el.classList.add('reveal-visible')">
-                        <div
-                            class="w-10 h-10 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center shrink-0">
-                            <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+            {{-- 3. SECTION MICRO-RASSURANCE —— Icônes premium avec gradient --}}
+            <div class="bg-white py-10 sm:py-16 border-t border-gray-100">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-10">
+                        <div class="flex flex-col items-center text-center gap-4 reveal-hidden"
+                            x-intersect.once="$el.classList.add('reveal-visible')">
+                            <div class="w-16 h-16 rounded-2xl bg-linear-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/25 transition-transform duration-300 hover:scale-110">
+                                <svg aria-hidden="true" class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="font-bold text-gray-900">Logements vérifiés</div>
+                                <div class="text-sm text-gray-500 mt-1">Chaque annonce est contrôlée par notre équipe REZI.</div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="font-bold text-gray-900 text-sm">Vérifié</div>
-                            <div class="text-xs text-gray-500">Par REZI</div>
+                        <div class="flex flex-col items-center text-center gap-4 reveal-hidden reveal-delay-1"
+                            x-intersect.once="$el.classList.add('reveal-visible')">
+                            <div class="w-16 h-16 rounded-2xl bg-linear-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/25 transition-transform duration-300 hover:scale-110">
+                                <svg aria-hidden="true" class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="font-bold text-gray-900">Disponibilité en temps réel</div>
+                                <div class="text-sm text-gray-500 mt-1">Consultez les disponibilités à jour, sans surprise.</div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex items-center gap-3 reveal-hidden reveal-delay-1"
-                        x-intersect.once="$el.classList.add('reveal-visible')">
-                        <div
-                            class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                            <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                        <div class="flex flex-col items-center text-center gap-4 reveal-hidden reveal-delay-2"
+                            x-intersect.once="$el.classList.add('reveal-visible')">
+                            <div class="w-16 h-16 rounded-2xl bg-linear-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/25 transition-transform duration-300 hover:scale-110">
+                                <svg aria-hidden="true" class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="font-bold text-gray-900">Contact direct</div>
+                                <div class="text-sm text-gray-500 mt-1">Discutez directement avec le propriétaire, sans commission.</div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="font-bold text-gray-900 text-sm">Temps réel</div>
-                            <div class="text-xs text-gray-500">Dispo immédiate</div>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-3 reveal-hidden reveal-delay-2"
-                        x-intersect.once="$el.classList.add('reveal-visible')">
-                        <div
-                            class="w-10 h-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-                            <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <div class="font-bold text-gray-900 text-sm">Direct</div>
-                            <div class="text-xs text-gray-500">Zéro intermédiaire</div>
-                        </div>
-                    </div>
-                    {{-- Mode Exploration Trigger --}}
-                    <div class="flex items-center gap-3 cursor-pointer hover:opacity-75 transition reveal-hidden reveal-delay-3"
-                        x-intersect.once="$el.classList.add('reveal-visible')">
-                        <div
-                            class="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center shrink-0">
-                            <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <div class="font-bold text-gray-900 text-sm">Explorer</div>
-                            <div class="text-xs text-gray-500">Autre quartier</div>
+                        <div class="flex flex-col items-center text-center gap-4 reveal-hidden reveal-delay-3"
+                            x-intersect.once="$el.classList.add('reveal-visible')">
+                            <div class="w-16 h-16 rounded-2xl bg-linear-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-lg shadow-violet-500/25 transition-transform duration-300 hover:scale-110">
+                                <svg aria-hidden="true" class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="font-bold text-gray-900">Carte interactive</div>
+                                <div class="text-sm text-gray-500 mt-1">Explorez Abidjan par quartier avec notre carte géolocalisée.</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1095,7 +1084,7 @@
                                     </svg>
                                     Sélection Premium
                                 </div>
-                                <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">
+                                <h2 class="font-display text-2xl sm:text-3xl font-bold text-gray-900">
                                     Résidences Vedettes
                                     @if (isset($userLocation) && !empty($userLocation['city']))
                                         <span class="text-orange-500">à {{ $userLocation['city'] }}</span>
@@ -1115,13 +1104,14 @@
                         </div>
 
                         {{-- Featured Grid - Dynamic from Database --}}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 reveal-hidden reveal-delay-1"
-                            x-intersect.once="$el.classList.add('reveal-visible')">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+
+                            @php $staggerClasses = ['', 'reveal-delay-1', 'reveal-delay-2', 'reveal-delay-3', 'reveal-delay-4', 'reveal-delay-5']; @endphp
 
                             @forelse($featuredResidences as $index => $residence)
                                 {{-- Featured Card --}}
-                                <div
-                                    class="group relative bg-white rounded-2xl {{ $index === 0 ? 'border-2 border-amber-200 shadow-lg shadow-amber-100/50' : 'border border-gray-200 shadow-md' }} overflow-hidden hover:shadow-xl {{ $index === 0 ? 'hover:border-amber-300' : 'hover:border-orange-200' }} transition-all duration-300">
+                                <div x-intersect.once="$el.classList.add('reveal-visible')"
+                                    class="group relative reveal-card card-lift {{ $staggerClasses[$index] ?? '' }} bg-white rounded-2xl {{ $index === 0 ? 'border-2 border-amber-200 shadow-lg shadow-amber-100/50' : 'border border-gray-200 shadow-md' }} overflow-hidden {{ $index === 0 ? 'hover:border-amber-300' : 'hover:border-orange-200' }} transition-all duration-300">
                                     {{-- Boost Badge --}}
                                     @if ($index === 0)
                                         <div
@@ -1323,7 +1313,7 @@
                 </section>
 
                 {{-- 5. SECTION LES PLUS POPULAIRES --}}
-                <section class="py-10 sm:py-16 bg-gray-50">
+                <section class="py-10 sm:py-16 bg-sand-100">
                     <div class="max-w-7xl mx-auto px-4 sm:px-6">
                         {{-- Section Header --}}
                         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10 reveal-hidden"
@@ -1340,7 +1330,7 @@
                                     </svg>
                                     Tendances
                                 </div>
-                                <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Les plus populaires 🔥</h2>
+                                <h2 class="font-display text-2xl sm:text-3xl font-bold text-gray-900">Les plus populaires 🔥</h2>
                                 <p class="mt-2 text-sm text-gray-500">Les résidences les plus consultées cette semaine</p>
                             </div>
                             <a href="{{ route('residences.index') }}?sort=popular"
@@ -1355,8 +1345,7 @@
                         </div>
 
                         {{-- Popular Grid - Dynamic from Database --}}
-                        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 reveal-hidden reveal-delay-1"
-                            x-intersect.once="$el.classList.add('reveal-visible')">
+                        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
 
                             @php
                                 $rankColors = [
@@ -1369,7 +1358,8 @@
 
                             @forelse($popularZones as $index => $zone)
                                 <a href="{{ route('residences.index', ['commune' => $zone['name']]) }}"
-                                    class="group relative bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 {{ $index === 0 ? 'ring-2 ring-rose-200' : '' }}">
+                                    x-intersect.once="$el.classList.add('reveal-visible')"
+                                    class="group relative reveal-card card-lift-warm {{ $staggerClasses[$index] ?? '' }} bg-white rounded-2xl shadow-md overflow-hidden {{ $index === 0 ? 'ring-2 ring-rose-200' : '' }}">
                                     {{-- Rank Badge --}}
                                     <div
                                         class="absolute top-4 left-4 z-10 w-10 h-10 {{ $index < 3 ? 'bg-linear-to-br ' . ($rankColors[$index] ?? $rankColors[3]) : $rankColors[3] }} rounded-full flex items-center justify-center shadow-lg">
@@ -1434,30 +1424,300 @@
 
                         </div>
 
-                        {{-- Stats Bar - Dynamic from Database --}}
-                        <div class="mt-8 sm:mt-10 bg-white rounded-2xl p-4 sm:p-6 border border-gray-100 shadow-sm reveal-scale"
-                            x-intersect.once="$el.classList.add('reveal-visible')">
+                        {{-- Stats Bar — Compteurs animés --}}
+                        <div class="mt-8 sm:mt-10 bg-white rounded-2xl p-4 sm:p-6 border border-gray-100 shadow-sm"
+                            x-data="{
+                                r: 0, o: 0, c: 0, ct: 0, animated: false,
+                                startCounting() {
+                                    if (this.animated) return;
+                                    this.animated = true;
+                                    const items = [
+                                        ['r', {{ $stats['residences'] ?? 0 }}],
+                                        ['o', {{ $stats['owners'] ?? 0 }}],
+                                        ['c', {{ $stats['communes'] ?? 0 }}],
+                                        ['ct', {{ $stats['contacts'] ?? 0 }}]
+                                    ];
+                                    items.forEach(([k, t]) => {
+                                        let cur = 0;
+                                        const inc = Math.max(1, Math.ceil(t / 55));
+                                        const id = setInterval(() => {
+                                            cur = Math.min(cur + inc, t);
+                                            this[k] = cur;
+                                            if (cur >= t) clearInterval(id);
+                                        }, 25);
+                                    });
+                                }
+                            }"
+                            x-intersect.once="startCounting()">
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-center">
                                 <div>
-                                    <div class="text-2xl sm:text-3xl font-bold text-gray-900">
+                                    <div class="text-2xl sm:text-3xl font-bold text-gray-900" x-text="r.toLocaleString('fr-FR')">
                                         {{ number_format($stats['residences'] ?? 0) }}</div>
                                     <div class="text-xs text-gray-500 mt-1">Résidences disponibles</div>
                                 </div>
                                 <div>
-                                    <div class="text-2xl sm:text-3xl font-bold text-orange-500">{{ $stats['owners'] ?? 0 }}
+                                    <div class="text-2xl sm:text-3xl font-bold text-orange-500" x-text="o.toLocaleString('fr-FR')">{{ $stats['owners'] ?? 0 }}
                                     </div>
                                     <div class="text-xs text-gray-500 mt-1">Propriétaires actifs</div>
                                 </div>
                                 <div>
-                                    <div class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $stats['communes'] ?? 0 }}
+                                    <div class="text-2xl sm:text-3xl font-bold text-gray-900" x-text="c.toLocaleString('fr-FR')">{{ $stats['communes'] ?? 0 }}
                                     </div>
                                     <div class="text-xs text-gray-500 mt-1">Zones couvertes</div>
                                 </div>
                                 <div>
-                                    <div class="text-2xl sm:text-3xl font-bold text-amber-500">
+                                    <div class="text-2xl sm:text-3xl font-bold text-amber-500" x-text="ct.toLocaleString('fr-FR')">
                                         {{ number_format($stats['contacts'] ?? 0) }}</div>
                                     <div class="text-xs text-gray-500 mt-1">Demandes de contact</div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {{-- 6. COMMENT ÇA MARCHE —— 3 étapes premium --}}
+                <section class="py-16 sm:py-24 bg-white overflow-hidden">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                        {{-- Header --}}
+                        <div class="text-center mb-14 sm:mb-20 reveal-hidden"
+                            x-intersect.once="$el.classList.add('reveal-visible')">
+                            <div class="inline-flex items-center gap-2 bg-orange-100 text-orange-600 px-4 py-2 rounded-full text-sm font-bold mb-5">
+                                <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                                Simple &amp; Rapide
+                            </div>
+                            <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-gray-900">
+                                Trouver votre logement en<br class="hidden sm:block">
+                                <span class="text-gradient-primary">3 étapes simples</span>
+                            </h2>
+                            <p class="mt-4 text-gray-500 max-w-xl mx-auto text-base leading-relaxed">
+                                De la recherche à l'emménagement, REZI vous accompagne à chaque étape
+                            </p>
+                        </div>
+
+                        {{-- 3 Steps --}}
+                        <div class="relative grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
+                            {{-- Ligne connectrice (desktop) --}}
+                            <div class="hidden md:block absolute left-[calc(16.67%+3rem)] right-[calc(16.67%+3rem)] h-px bg-linear-to-r from-orange-200 via-orange-400 to-orange-200 z-0" style="top: 2.5rem;"></div>
+
+                            {{-- Étape 1 — Recherchez --}}
+                            <div class="relative flex flex-col items-center text-center reveal-hidden reveal-delay-1"
+                                x-intersect.once="$el.classList.add('reveal-visible')">
+                                <div class="relative z-10 mb-6">
+                                    <div class="w-20 h-20 bg-linear-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center shadow-xl shadow-orange-500/30 transition-transform duration-300 hover:scale-105">
+                                        <svg aria-hidden="true" class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                        </svg>
+                                    </div>
+                                    <div class="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md border border-orange-100">
+                                        <span class="text-sm font-black text-orange-500">1</span>
+                                    </div>
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-900 mb-3">Recherchez</h3>
+                                <p class="text-gray-500 text-sm leading-relaxed max-w-xs">
+                                    Filtrez par quartier, budget et type de logement. Explorez la carte interactive pour trouver les disponibilités près de vous.
+                                </p>
+                            </div>
+
+                            {{-- Étape 2 — Contactez --}}
+                            <div class="relative flex flex-col items-center text-center reveal-hidden reveal-delay-3"
+                                x-intersect.once="$el.classList.add('reveal-visible')">
+                                <div class="relative z-10 mb-6">
+                                    <div class="w-20 h-20 bg-linear-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/30 transition-transform duration-300 hover:scale-105">
+                                        <svg aria-hidden="true" class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                        </svg>
+                                    </div>
+                                    <div class="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md border border-blue-100">
+                                        <span class="text-sm font-black text-blue-500">2</span>
+                                    </div>
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-900 mb-3">Contactez</h3>
+                                <p class="text-gray-500 text-sm leading-relaxed max-w-xs">
+                                    Envoyez votre demande directement au propriétaire, sans commission ni intermédiaire. Réponse sous 24h garantie.
+                                </p>
+                            </div>
+
+                            {{-- Étape 3 — Emménagez --}}
+                            <div class="relative flex flex-col items-center text-center reveal-hidden reveal-delay-5"
+                                x-intersect.once="$el.classList.add('reveal-visible')">
+                                <div class="relative z-10 mb-6">
+                                    <div class="w-20 h-20 bg-linear-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-xl shadow-emerald-500/30 transition-transform duration-300 hover:scale-105">
+                                        <svg aria-hidden="true" class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                        </svg>
+                                    </div>
+                                    <div class="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md border border-emerald-100">
+                                        <span class="text-sm font-black text-emerald-500">3</span>
+                                    </div>
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-900 mb-3">Emménagez</h3>
+                                <p class="text-gray-500 text-sm leading-relaxed max-w-xs">
+                                    Signez votre contrat, récupérez vos clés et installez-vous dans votre nouveau logement à Abidjan.
+                                </p>
+                            </div>
+                        </div>
+
+                        {{-- CTA Button --}}
+                        <div class="mt-14 text-center reveal-hidden reveal-delay-7"
+                            x-intersect.once="$el.classList.add('reveal-visible')">
+                            <a href="{{ route('residences.index') }}"
+                                class="inline-flex items-center gap-3 bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 rounded-2xl font-bold text-base shadow-xl shadow-orange-500/30 transition-all duration-200 hover:scale-105">
+                                <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                                Commencer ma recherche
+                            </a>
+                            <p class="mt-3 text-sm text-gray-400">100% gratuit &middot; Aucune inscription requise</p>
+                        </div>
+                    </div>
+                </section>
+
+                {{-- 7. TÉMOIGNAGES CLIENTS —— Preuve sociale --}}
+                <section class="py-16 sm:py-24 bg-linear-to-br from-sand-50 to-terracotta-50/30">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                        {{-- Header --}}
+                        <div class="text-center mb-12 reveal-hidden"
+                            x-intersect.once="$el.classList.add('reveal-visible')">
+                            <div class="inline-flex items-center gap-2 bg-amber-100 text-amber-700 px-4 py-2 rounded-full text-sm font-bold mb-5">
+                                <svg aria-hidden="true" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                Avis clients
+                            </div>
+                            <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-gray-900">
+                                Ils ont trouvé leur logement
+                                <span class="text-gradient-primary">avec REZI</span>
+                            </h2>
+                            <p class="mt-3 text-gray-500 max-w-lg mx-auto">
+                                Des milliers de personnes ont déjà trouvé leur logement idéal à Abidjan grâce à notre plateforme
+                            </p>
+                        </div>
+
+                        {{-- Testimonials Grid --}}
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                            {{-- Témoignage 1 --}}
+                            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 reveal-card card-lift-warm reveal-delay-1"
+                                x-intersect.once="$el.classList.add('reveal-visible')">
+                                <div class="flex gap-0.5 mb-4">
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                </div>
+                                <svg aria-hidden="true" class="w-8 h-8 text-orange-200 mb-3" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                                </svg>
+                                <p class="text-gray-600 text-sm leading-relaxed mb-6">
+                                    "Grâce à REZI, j'ai trouvé un superbe appartement à Cocody en moins de 48h. La communication directe avec le propriétaire a rendu les choses très simples. Je recommande !"
+                                </p>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-linear-to-br from-orange-400 to-orange-600 flex items-center justify-center shrink-0">
+                                        <span class="text-white font-bold text-sm">AK</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold text-gray-900 text-sm">Awa Koné</div>
+                                        <div class="text-xs text-gray-400 flex items-center gap-1">
+                                            <svg aria-hidden="true" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            </svg>
+                                            Cocody, Abidjan
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Témoignage 2 --}}
+                            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 reveal-card card-lift-warm reveal-delay-3"
+                                x-intersect.once="$el.classList.add('reveal-visible')">
+                                <div class="flex gap-0.5 mb-4">
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                </div>
+                                <svg aria-hidden="true" class="w-8 h-8 text-blue-200 mb-3" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                                </svg>
+                                <p class="text-gray-600 text-sm leading-relaxed mb-6">
+                                    "La plateforme est simple et efficace. J'ai contacté 3 propriétaires différents et obtenu une réponse le même jour. Le logement correspondait exactement à mes attentes."
+                                </p>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-linear-to-br from-blue-400 to-blue-600 flex items-center justify-center shrink-0">
+                                        <span class="text-white font-bold text-sm">MB</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold text-gray-900 text-sm">Moussa Bamba</div>
+                                        <div class="text-xs text-gray-400 flex items-center gap-1">
+                                            <svg aria-hidden="true" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            </svg>
+                                            Marcory, Abidjan
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Témoignage 3 --}}
+                            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 reveal-card card-lift-warm reveal-delay-5"
+                                x-intersect.once="$el.classList.add('reveal-visible')">
+                                <div class="flex gap-0.5 mb-4">
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                </div>
+                                <svg aria-hidden="true" class="w-8 h-8 text-emerald-200 mb-3" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                                </svg>
+                                <p class="text-gray-600 text-sm leading-relaxed mb-6">
+                                    "En tant qu'expatriée, j'avais peur de trouver un logement depuis l'étranger. REZI m'a permis de gérer tout à distance. Le propriétaire était sérieux et très professionnel."
+                                </p>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-linear-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shrink-0">
+                                        <span class="text-white font-bold text-sm">FD</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold text-gray-900 text-sm">Fatou Diallo</div>
+                                        <div class="text-xs text-gray-400 flex items-center gap-1">
+                                            <svg aria-hidden="true" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            </svg>
+                                            Plateau, Abidjan
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        {{-- Social proof bar --}}
+                        <div class="mt-12 flex flex-wrap justify-center gap-8 reveal-hidden reveal-delay-7"
+                            x-intersect.once="$el.classList.add('reveal-visible')">
+                            <div class="flex items-center gap-3 text-sm text-gray-500">
+                                <div class="flex -space-x-1.5">
+                                    <div class="w-7 h-7 rounded-full bg-orange-400 border-2 border-white text-white text-[9px] font-bold flex items-center justify-center">A</div>
+                                    <div class="w-7 h-7 rounded-full bg-blue-400 border-2 border-white text-white text-[9px] font-bold flex items-center justify-center">D</div>
+                                    <div class="w-7 h-7 rounded-full bg-emerald-400 border-2 border-white text-white text-[9px] font-bold flex items-center justify-center">G</div>
+                                    <div class="w-7 h-7 rounded-full bg-purple-400 border-2 border-white text-white text-[9px] font-bold flex items-center justify-center">J</div>
+                                    <div class="w-7 h-7 rounded-full bg-amber-400 border-2 border-white text-white text-[9px] font-bold flex items-center justify-center">M</div>
+                                </div>
+                                <span><strong class="text-gray-900">{{ number_format(max(200, ($stats['contacts'] ?? 0) + 150)) }}+</strong> utilisateurs satisfaits</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-gray-500">
+                                <div class="flex gap-0.5">
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                    <svg aria-hidden="true" class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                </div>
+                                <span>Note moyenne <strong class="text-gray-900">4.9 / 5</strong></span>
                             </div>
                         </div>
                     </div>

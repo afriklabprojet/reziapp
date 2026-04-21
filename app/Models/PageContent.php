@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -36,7 +38,7 @@ class PageContent extends Model
         return Cache::remember(
             "page_content.{$slug}",
             static::CACHE_TTL,
-            fn () => static::where('page_slug', $slug)->where('is_active', true)->first()
+            fn () => static::where('page_slug', $slug)->where('is_active', true)->first(),
         );
     }
 
@@ -95,7 +97,7 @@ class PageContent extends Model
                 'paragraphs' => [
                     "En Afrique de l'Ouest, trouver un logement meublé de qualité peut être un véritable parcours du combattant. Entre les arnaques, les informations incomplètes et le manque de transparence, les locataires perdent un temps précieux.",
                     "REZI est né de cette frustration. Nous avons créé une plateforme qui met la technologie au service de la recherche immobilière, avec des outils de géolocalisation avancés, des photos vérifiées et un système d'avis transparent.",
-                    "Que vous soyez un expatrié, un professionnel en déplacement ou un étudiant, REZI vous accompagne pour trouver le logement qui correspond à vos besoins — rapidement et en toute confiance.",
+                    'Que vous soyez un expatrié, un professionnel en déplacement ou un étudiant, REZI vous accompagne pour trouver le logement qui correspond à vos besoins — rapidement et en toute confiance.',
                 ],
                 'features' => [
                     ['title' => 'Géolocalisation', 'description' => 'Recherche sur carte interactive avec filtres par zone', 'color' => 'orange'],
@@ -108,7 +110,7 @@ class PageContent extends Model
                 'title' => 'En 3 étapes simples',
                 'subtitle' => "De la recherche à l'emménagement, REZI vous accompagne à chaque étape.",
                 'items' => [
-                    ['title' => 'Recherchez', 'description' => "Explorez les résidences meublées par commune, budget ou sur la carte interactive."],
+                    ['title' => 'Recherchez', 'description' => 'Explorez les résidences meublées par commune, budget ou sur la carte interactive.'],
                     ['title' => 'Contactez', 'description' => 'Échangez directement avec le propriétaire via notre messagerie sécurisée et planifiez une visite.'],
                     ['title' => 'Emménagez', 'description' => 'Réservez en ligne, payez en toute sécurité et installez-vous dans votre nouveau chez-vous.'],
                 ],
@@ -116,8 +118,8 @@ class PageContent extends Model
             'values' => [
                 'title' => 'Ce qui nous guide au quotidien',
                 'items' => [
-                    ['title' => 'Transparence', 'description' => "Des informations claires et vérifiées sur chaque résidence. Pas de surprises, pas de frais cachés. Chaque annonce est modérée par notre équipe."],
-                    ['title' => 'Communauté', 'description' => "Nous construisons un écosystème de confiance entre propriétaires et locataires. Les avis vérifiés aident chacun à prendre les bonnes décisions."],
+                    ['title' => 'Transparence', 'description' => 'Des informations claires et vérifiées sur chaque résidence. Pas de surprises, pas de frais cachés. Chaque annonce est modérée par notre équipe.'],
+                    ['title' => 'Communauté', 'description' => 'Nous construisons un écosystème de confiance entre propriétaires et locataires. Les avis vérifiés aident chacun à prendre les bonnes décisions.'],
                     ['title' => 'Innovation', 'description' => "Carte interactive, notifications en temps réel, paiement sécurisé — nous utilisons la technologie pour transformer l'immobilier en Côte d'Ivoire."],
                 ],
             ],
@@ -126,8 +128,8 @@ class PageContent extends Model
                 'items' => [
                     ['title' => 'Gain de temps', 'description' => 'Filtres avancés, carte interactive et alertes personnalisées. Trouvez en minutes ce qui prenait des jours.'],
                     ['title' => 'Sécurité maximale', 'description' => 'Paiements sécurisés, identités vérifiées, annonces modérées. Votre tranquillité est notre priorité.'],
-                    ['title' => 'Support réactif', 'description' => "Une équipe dédiée disponible par email, téléphone ou via la plateforme."],
-                    ['title' => '100% mobile', 'description' => "Application web progressive (PWA) installable, pensée pour le mobile. Cherchez où que vous soyez."],
+                    ['title' => 'Support réactif', 'description' => 'Une équipe dédiée disponible par email, téléphone ou via la plateforme.'],
+                    ['title' => '100% mobile', 'description' => 'Application web progressive (PWA) installable, pensée pour le mobile. Cherchez où que vous soyez.'],
                 ],
             ],
             'cta' => [
@@ -148,7 +150,7 @@ class PageContent extends Model
             'hero' => [
                 'title' => 'Une question ?',
                 'highlight' => 'Parlons-en.',
-                'description' => "Notre équipe est disponible pour vous accompagner dans votre recherche de logement meublé ou pour toute question sur la plateforme.",
+                'description' => 'Notre équipe est disponible pour vous accompagner dans votre recherche de logement meublé ou pour toute question sur la plateforme.',
             ],
             'cards' => [
                 'email' => config('rezi.company.email', 'contact@rezi.ci'),
@@ -169,11 +171,11 @@ class PageContent extends Model
                 'items' => [
                     [
                         'question' => 'REZI est-il gratuit pour les locataires ?',
-                        'answer' => "Oui ! La recherche et la consultation des annonces sont entièrement gratuites. Vous ne payez que lorsque vous effectuez une réservation.",
+                        'answer' => 'Oui ! La recherche et la consultation des annonces sont entièrement gratuites. Vous ne payez que lorsque vous effectuez une réservation.',
                     ],
                     [
                         'question' => 'Comment publier mon logement sur REZI ?',
-                        'answer' => "Créez un compte propriétaire, ajoutez les détails de votre résidence (photos, description, prix) et soumettez votre annonce. Notre équipe la vérifie sous 24h avant publication.",
+                        'answer' => 'Créez un compte propriétaire, ajoutez les détails de votre résidence (photos, description, prix) et soumettez votre annonce. Notre équipe la vérifie sous 24h avant publication.',
                     ],
                     [
                         'question' => 'Les annonces sont-elles vérifiées ?',
@@ -185,7 +187,7 @@ class PageContent extends Model
                     ],
                     [
                         'question' => 'Comment signaler un problème avec un logement ?',
-                        'answer' => "Vous pouvez nous contacter par email, téléphone ou WhatsApp. Vous pouvez aussi utiliser le bouton \"Signaler\" présent sur chaque annonce. Notre équipe traite les signalements sous 24h.",
+                        'answer' => 'Vous pouvez nous contacter par email, téléphone ou WhatsApp. Vous pouvez aussi utiliser le bouton "Signaler" présent sur chaque annonce. Notre équipe traite les signalements sous 24h.',
                     ],
                 ],
             ],
@@ -196,11 +198,11 @@ class PageContent extends Model
                     ['day' => 'Samedi', 'hours' => '9h00 – 15h00', 'open' => true],
                     ['day' => 'Dimanche', 'hours' => 'Fermé', 'open' => false],
                 ],
-                'note' => "Les urgences liées à une réservation en cours sont traitées 7j/7 par email.",
+                'note' => 'Les urgences liées à une réservation en cours sont traitées 7j/7 par email.',
             ],
             'cta' => [
                 'title' => 'Vous êtes propriétaire ?',
-                'description' => "Publiez votre résidence gratuitement et touchez des milliers de locataires potentiels.",
+                'description' => 'Publiez votre résidence gratuitement et touchez des milliers de locataires potentiels.',
                 'cta_primary' => 'Guide propriétaire',
                 'cta_secondary' => 'Créer un compte',
             ],
@@ -265,7 +267,7 @@ class PageContent extends Model
             'sections' => [
                 [
                     'title' => '1. Collecte des données',
-                    'content' => "REZI collecte les données personnelles que vous fournissez lors de votre inscription et utilisation de la plateforme : nom, email, téléphone, adresse, photos de résidences, données de localisation.",
+                    'content' => 'REZI collecte les données personnelles que vous fournissez lors de votre inscription et utilisation de la plateforme : nom, email, téléphone, adresse, photos de résidences, données de localisation.',
                 ],
                 [
                     'title' => '2. Utilisation des données',
@@ -277,7 +279,7 @@ class PageContent extends Model
                 ],
                 [
                     'title' => '4. Sécurité',
-                    'content' => "Nous mettons en œuvre des mesures de sécurité appropriées pour protéger vos données : chiffrement SSL, accès restreint, sauvegardes régulières.",
+                    'content' => 'Nous mettons en œuvre des mesures de sécurité appropriées pour protéger vos données : chiffrement SSL, accès restreint, sauvegardes régulières.',
                 ],
                 [
                     'title' => '5. Vos droits',
@@ -305,7 +307,7 @@ class PageContent extends Model
                 ],
                 [
                     'title' => 'Directeur de la publication',
-                    'content' => "Le directeur de la publication est le représentant légal de REZI SAS.",
+                    'content' => 'Le directeur de la publication est le représentant légal de REZI SAS.',
                 ],
                 [
                     'title' => 'Hébergement',
@@ -333,10 +335,10 @@ class PageContent extends Model
                     'icon' => '🏠',
                     'color' => 'orange',
                     'questions' => [
-                        ['q' => 'Comment rechercher une résidence sur REZI ?', 'a' => "Utilisez la barre de recherche sur la page d'accueil ou la carte interactive pour trouver des résidences par commune, type de logement ou budget."],
-                        ['q' => 'Est-ce que REZI est gratuit pour les locataires ?', 'a' => 'Oui, la recherche et la consultation des annonces sur REZI sont entièrement gratuites.'],
-                        ['q' => 'Comment contacter un propriétaire ?', 'a' => 'Sur la page de chaque résidence, cliquez sur le bouton « Contacter le propriétaire ». Un compte est nécessaire pour cette fonctionnalité.'],
-                        ['q' => 'Les résidences sont-elles vérifiées ?', 'a' => 'Toutes les annonces publiées sur REZI passent par un processus de modération avant d\'être visibles.'],
+                        ['question' => 'Comment rechercher une résidence sur REZI ?', 'answer' => "Utilisez la barre de recherche sur la page d'accueil ou la carte interactive pour trouver des résidences par commune, type de logement ou budget."],
+                        ['question' => 'Est-ce que REZI est gratuit pour les locataires ?', 'answer' => 'Oui, la recherche et la consultation des annonces sur REZI sont entièrement gratuites.'],
+                        ['question' => 'Comment contacter un propriétaire ?', 'answer' => 'Sur la page de chaque résidence, cliquez sur le bouton « Contacter le propriétaire ». Un compte est nécessaire pour cette fonctionnalité.'],
+                        ['question' => 'Les résidences sont-elles vérifiées ?', 'answer' => 'Toutes les annonces publiées sur REZI passent par un processus de modération avant d\'être visibles.'],
                     ],
                 ],
                 [
@@ -344,9 +346,9 @@ class PageContent extends Model
                     'icon' => '🔑',
                     'color' => 'blue',
                     'questions' => [
-                        ['q' => 'Comment publier une annonce sur REZI ?', 'a' => "Créez un compte propriétaire, puis accédez à votre tableau de bord. Cliquez sur « Ajouter une résidence » et suivez l'assistant de publication."],
-                        ['q' => 'La publication est-elle gratuite ?', 'a' => 'Oui, la publication d\'annonces est gratuite. Des options payantes de mise en avant sont disponibles.'],
-                        ['q' => 'Comment augmenter la visibilité de mon annonce ?', 'a' => 'Ajoutez des photos de qualité, une description détaillée et répondez rapidement aux contacts.'],
+                        ['question' => 'Comment publier une annonce sur REZI ?', 'answer' => "Créez un compte propriétaire, puis accédez à votre tableau de bord. Cliquez sur « Ajouter une résidence » et suivez l'assistant de publication."],
+                        ['question' => 'La publication est-elle gratuite ?', 'answer' => 'Oui, la publication d\'annonces est gratuite. Des options payantes de mise en avant sont disponibles.'],
+                        ['question' => 'Comment augmenter la visibilité de mon annonce ?', 'answer' => 'Ajoutez des photos de qualité, une description détaillée et répondez rapidement aux contacts.'],
                     ],
                 ],
                 [
@@ -354,8 +356,8 @@ class PageContent extends Model
                     'icon' => '💳',
                     'color' => 'emerald',
                     'questions' => [
-                        ['q' => 'Quels moyens de paiement acceptez-vous ?', 'a' => 'Nous acceptons Orange Money, MTN Money, Moov Money et Wave.'],
-                        ['q' => 'Les paiements sont-ils sécurisés ?', 'a' => 'Oui, tous les paiements sont traités via des passerelles de paiement sécurisées et certifiées.'],
+                        ['question' => 'Quels moyens de paiement acceptez-vous ?', 'answer' => 'Nous acceptons Orange Money, MTN Money, Moov Money et Wave.'],
+                        ['question' => 'Les paiements sont-ils sécurisés ?', 'answer' => 'Oui, tous les paiements sont traités via des passerelles de paiement sécurisées et certifiées.'],
                     ],
                 ],
             ],
@@ -374,7 +376,7 @@ class PageContent extends Model
                 [
                     'number' => 1,
                     'title' => 'Créer votre compte propriétaire',
-                    'content' => "Inscrivez-vous sur REZI et sélectionnez le rôle « Propriétaire ». Complétez votre profil avec vos informations de contact et une photo. Un profil complet inspire confiance aux locataires potentiels.",
+                    'content' => 'Inscrivez-vous sur REZI et sélectionnez le rôle « Propriétaire ». Complétez votre profil avec vos informations de contact et une photo. Un profil complet inspire confiance aux locataires potentiels.',
                     'tip' => 'Un profil vérifié avec photo obtient en moyenne 3x plus de contacts.',
                 ],
                 [
@@ -392,7 +394,7 @@ class PageContent extends Model
                 [
                     'number' => 3,
                     'title' => 'Optimiser votre annonce',
-                    'content' => "Pour maximiser vos contacts et votre visibilité :",
+                    'content' => 'Pour maximiser vos contacts et votre visibilité :',
                     'tips' => [
                         'Photos de qualité — Des photos lumineuses augmentent les contacts de 70%.',
                         'Description détaillée — Décrivez les équipements, le quartier, les commodités.',
@@ -405,9 +407,9 @@ class PageContent extends Model
                     'title' => 'Utiliser les outils marketing',
                     'content' => 'REZI propose plusieurs outils pour booster votre visibilité.',
                     'tools' => [
-                        ['name' => 'Sponsoring', 'icon' => '🚀', 'description' => 'Mettez votre résidence en avant dans les résultats de recherche.'],
-                        ['name' => 'Promotions', 'icon' => '🎁', 'description' => 'Créez des offres spéciales pour attirer plus de locataires.'],
-                        ['name' => 'Statistiques', 'icon' => '📊', 'description' => 'Suivez les performances de vos annonces en temps réel.'],
+                        ['icon' => '🚀', 'name' => 'Sponsoring', 'description' => 'Mettez votre résidence en avant dans les résultats de recherche.'],
+                        ['icon' => '🎁', 'name' => 'Promotions', 'description' => 'Créez des offres spéciales pour attirer plus de locataires.'],
+                        ['icon' => '📊', 'name' => 'Statistiques', 'description' => 'Suivez les performances de vos annonces en temps réel.'],
                     ],
                 ],
             ],

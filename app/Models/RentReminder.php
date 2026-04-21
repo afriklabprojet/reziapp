@@ -9,26 +9,26 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RentReminder extends Model
 {
-    const STATUS_PENDING  = 'pending';
-    const STATUS_SENT     = 'sent';
-    const STATUS_PAID     = 'paid';
-    const STATUS_OVERDUE  = 'overdue';
+    public const STATUS_PENDING  = 'pending';
+    public const STATUS_SENT     = 'sent';
+    public const STATUS_PAID     = 'paid';
+    public const STATUS_OVERDUE  = 'overdue';
 
-    const STATUSES = [
+    public const STATUSES = [
         self::STATUS_PENDING => 'En attente',
         self::STATUS_SENT    => 'Envoyé',
         self::STATUS_PAID    => 'Payé',
         self::STATUS_OVERDUE => 'En retard',
     ];
 
-    const LEVEL_NONE      = 'none';
-    const LEVEL_J5        = 'j5';
-    const LEVEL_J3        = 'j3';
-    const LEVEL_J1        = 'j1';
-    const LEVEL_OVERDUE   = 'overdue';
-    const LEVEL_ESCALATED = 'escalated';
+    public const LEVEL_NONE      = 'none';
+    public const LEVEL_J5        = 'j5';
+    public const LEVEL_J3        = 'j3';
+    public const LEVEL_J1        = 'j1';
+    public const LEVEL_OVERDUE   = 'overdue';
+    public const LEVEL_ESCALATED = 'escalated';
 
-    const CHANNELS = ['email', 'sms', 'whatsapp'];
+    public const CHANNELS = ['email', 'sms', 'whatsapp'];
 
     protected $fillable = [
         'owner_id', 'tenant_id', 'residence_id', 'lease_contract_id',

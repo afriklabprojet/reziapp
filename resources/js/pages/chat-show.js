@@ -273,7 +273,7 @@ export default function chatShow(config = {}) {
                     this.playNotifSound();
                     this.markAsRead();
                 }
-            } catch (e) { /* silence */ }
+            } catch (_e) { /* silence */ }
         },
 
         setupVisibility() {
@@ -374,7 +374,7 @@ export default function chatShow(config = {}) {
             this.sending = true;
             const tempId = `temp-${Date.now()}`;
             const isImage = file.type.startsWith('image/');
-            let previewUrl = isImage ? URL.createObjectURL(file) : null;
+            const previewUrl = isImage ? URL.createObjectURL(file) : null;
 
             this.insertOptimisticFileBubble(tempId, file.name, isImage, previewUrl, 'uploading');
             this.scrollToBottom();
@@ -531,7 +531,7 @@ export default function chatShow(config = {}) {
         async markAsRead() {
             try {
                 await this.fetchJson(`/chat/${this.conversationId}/read`, { method: 'POST' });
-            } catch (e) { /* silence */ }
+            } catch (_e) { /* silence */ }
         },
 
         markAllVisibleAsRead() {
@@ -617,14 +617,14 @@ export default function chatShow(config = {}) {
             container.insertAdjacentHTML('beforeend', html);
         },
 
-        appendMessage(data, isOwn) {
+        appendMessage(data, _isOwn) {
             if (document.getElementById(`msg-${data.id}`)) return;
 
             const container = this.$refs.messagesContainer?.querySelector('.messages-list');
             if (!container) return;
 
             const time = new Date(data.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-            const status = data.read_at ? 'read' : (data.delivered_at ? 'delivered' : 'sent');
+            const _status = data.read_at ? 'read' : (data.delivered_at ? 'delivered' : 'sent');
 
             const otherAvatar = this.otherAvatarUrl
                 ? `<div class="shrink-0 mb-5"><img src="${this.esc(this.otherAvatarUrl)}" alt="" class="w-7 h-7 rounded-full object-cover ring-2 ring-white shadow-sm"></div>`
@@ -742,7 +742,7 @@ export default function chatShow(config = {}) {
             try {
                 await this.fetchJson(`/chat/${this.conversationId}/${endpoint}`, { method: 'POST' });
                 this.isPinned = !this.isPinned;
-            } catch (e) { }
+            } catch (_e) { }
         },
 
         async toggleMute() {
@@ -750,7 +750,7 @@ export default function chatShow(config = {}) {
             try {
                 await this.fetchJson(`/chat/${this.conversationId}/${endpoint}`, { method: 'POST' });
                 this.isMuted = !this.isMuted;
-            } catch (e) { }
+            } catch (_e) { }
         },
 
         async archive() {
@@ -761,7 +761,7 @@ export default function chatShow(config = {}) {
             try {
                 await this.fetchJson(`/chat/${this.conversationId}/${endpoint}`, { method: 'POST' });
                 window.location.href = this.chatIndexUrl;
-            } catch (e) { }
+            } catch (_e) { }
         },
 
         // ========================
@@ -788,7 +788,7 @@ export default function chatShow(config = {}) {
 
             // Find or create reactions container (after the bubble div)
             let reactionsDiv = msgEl.querySelector('.reactions-bar');
-            const bubble = msgEl.querySelector('.space-y-0\\.5, [class*="space-y-0.5"]') || msgEl.querySelector('.items-end, .items-start');
+            const _bubble = msgEl.querySelector('.space-y-0\\.5, [class*="space-y-0.5"]') || msgEl.querySelector('.items-end, .items-start');
 
             if (!reactions || reactions.length === 0) {
                 if (reactionsDiv) reactionsDiv.remove();
@@ -1050,7 +1050,7 @@ export default function chatShow(config = {}) {
             try {
                 const res = await this.fetchJson(`/chat/${this.conversationId}/search?q=${encodeURIComponent(q)}`);
                 this.searchResults = res.results || [];
-            } catch (e) {
+            } catch (_e) {
                 this.searchResults = [];
             }
         },
@@ -1137,7 +1137,7 @@ export default function chatShow(config = {}) {
                 const audio = new Audio('/sounds/message.mp3');
                 audio.volume = 0.3;
                 audio.play().catch(() => { });
-            } catch (e) { }
+            } catch (_e) { }
         },
 
         esc(text) {

@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Residence;
 use App\Models\SeoData;
-use Illuminate\Database\Eloquent\Model;
 
 class SeoService
 {
@@ -18,7 +17,7 @@ class SeoService
         $keywords = $this->generateKeywords($residence);
         $structuredData = $this->generateStructuredData($residence);
         $ogData = $this->generateOpenGraphData($residence);
-        
+
         return SeoData::updateOrCreate(
             [
                 'seoable_type' => Residence::class,
@@ -32,7 +31,7 @@ class SeoService
                 'structured_data' => $structuredData,
                 'canonical_url' => route('residences.show', $residence),
                 'og_data' => $ogData,
-            ]
+            ],
         );
     }
 
@@ -44,25 +43,25 @@ class SeoService
         $type = $this->translateType($residence->type);
         $location = $residence->commune ?? $residence->city ?? 'Abidjan';
         $bedrooms = $residence->bedrooms ? "{$residence->bedrooms} ch." : '';
-        
+
         $title = "{$type} meublé";
         if ($bedrooms) {
             $title .= " {$bedrooms}";
         }
         $title .= " à {$location}";
-        
+
         if ($residence->price_per_night) {
             $price = number_format($residence->price_per_night, 0, ',', ' ');
             $title .= " - {$price} FCFA/jour";
         }
-        
-        $title .= " | REZI";
-        
+
+        $title .= ' | REZI';
+
         // Limiter à 60 caractères
         if (strlen($title) > 60) {
             $title = "{$type} meublé à {$location} | REZI";
         }
-        
+
         return $title;
     }
 
@@ -75,9 +74,9 @@ class SeoService
         $location = implode(', ', array_filter([
             $residence->commune,
             $residence->city ?? 'Abidjan',
-            'Côte d\'Ivoire'
+            'Côte d\'Ivoire',
         ]));
-        
+
         $features = [];
         if ($residence->bedrooms) {
             $features[] = "{$residence->bedrooms} chambre(s)";
@@ -88,20 +87,20 @@ class SeoService
         if ($residence->surface_area) {
             $features[] = "{$residence->surface_area}m²";
         }
-        
-        $featuresText = $features ? ' - ' . implode(', ', $features) : '';
-        
-        $price = $residence->price_per_night 
-            ? number_format($residence->price_per_night, 0, ',', ' ') . ' FCFA/jour' 
+
+        $featuresText = $features ? ' - '.implode(', ', $features) : '';
+
+        $price = $residence->price_per_night
+            ? number_format($residence->price_per_night, 0, ',', ' ').' FCFA/jour'
             : '';
-        
+
         $description = "Louez ce {$type} meublé à {$location}{$featuresText}. {$price}. Réservation en ligne sécurisée sur REZI.";
-        
+
         // Limiter à 155 caractères
         if (strlen($description) > 155) {
             $description = "Louez ce {$type} meublé à {$location}. {$price}. Réservation sécurisée sur REZI.";
         }
-        
+
         return $description;
     }
 
@@ -121,14 +120,14 @@ class SeoService
             'airbnb',
             'hébergement',
         ];
-        
+
         // Ajouter les équipements
         if ($residence->relationLoaded('amenities')) {
             foreach ($residence->amenities->take(5) as $amenity) {
                 $keywords[] = $amenity->name;
             }
         }
-        
+
         // Type de location
         if ($residence->rental_type === 'colocation') {
             $keywords[] = 'colocation';
@@ -138,7 +137,7 @@ class SeoService
             $keywords[] = 'entrée coucher';
             $keywords[] = 'location journalière';
         }
-        
+
         return array_filter(array_unique($keywords));
     }
 
@@ -148,14 +147,14 @@ class SeoService
     protected function generateStructuredData(Residence $residence): array
     {
         $photo = $residence->photos->first();
-        
+
         return [
             '@context' => 'https://schema.org',
             '@type' => 'LodgingBusiness',
             'name' => $residence->title,
             'description' => $residence->description,
             'url' => route('residences.show', $residence),
-            'image' => $photo ? asset('storage/' . $photo->path) : null,
+            'image' => $photo ? asset('storage/'.$photo->path) : null,
             'address' => [
                 '@type' => 'PostalAddress',
                 'addressLocality' => $residence->city ?? 'Abidjan',
@@ -167,15 +166,15 @@ class SeoService
                 'latitude' => $residence->latitude,
                 'longitude' => $residence->longitude,
             ],
-            'priceRange' => $residence->price_per_night 
-                ? number_format($residence->price_per_night, 0) . ' FCFA' 
+            'priceRange' => $residence->price_per_night
+                ? number_format($residence->price_per_night, 0).' FCFA'
                 : null,
             'aggregateRating' => $residence->reviews_count > 0 ? [
                 '@type' => 'AggregateRating',
                 'ratingValue' => $residence->average_rating,
                 'reviewCount' => $residence->reviews_count,
             ] : null,
-            'amenityFeature' => $residence->amenities->map(fn($a) => [
+            'amenityFeature' => $residence->amenities->map(fn ($a) => [
                 '@type' => 'LocationFeatureSpecification',
                 'name' => $a->name,
             ])->toArray(),
@@ -188,13 +187,13 @@ class SeoService
     protected function generateOpenGraphData(Residence $residence): array
     {
         $photo = $residence->photos->first();
-        
+
         return [
             'og:type' => 'website',
             'og:title' => $this->generateTitle($residence),
             'og:description' => $this->generateDescription($residence),
             'og:url' => route('residences.show', $residence),
-            'og:image' => $photo ? asset('storage/' . $photo->path) : asset('images/og-default.jpg'),
+            'og:image' => $photo ? asset('storage/'.$photo->path) : asset('images/og-default.jpg'),
             'og:site_name' => 'REZI',
             'og:locale' => 'fr_CI',
             'twitter:card' => 'summary_large_image',
@@ -225,7 +224,7 @@ class SeoService
     public function generateSitemap(): string
     {
         $urls = [];
-        
+
         // Pages statiques
         $staticPages = [
             ['url' => route('home'), 'priority' => '1.0', 'changefreq' => 'daily'],
@@ -236,11 +235,11 @@ class SeoService
             ['url' => route('pages.faq'), 'priority' => '0.5', 'changefreq' => 'monthly'],
             ['url' => route('pages.guide-proprietaire'), 'priority' => '0.6', 'changefreq' => 'monthly'],
         ];
-        
+
         foreach ($staticPages as $page) {
             $urls[] = $this->formatSitemapUrl($page['url'], $page['priority'], $page['changefreq']);
         }
-        
+
         // Résidences actives
         Residence::where('status', 'active')
             ->where('is_active', true)
@@ -251,16 +250,16 @@ class SeoService
                         route('residences.show', $residence),
                         '0.8',
                         'weekly',
-                        $residence->updated_at->toW3cString()
+                        $residence->updated_at->toW3cString(),
                     );
                 }
             });
-        
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
         $xml .= implode("\n", $urls);
         $xml .= "\n</urlset>";
-        
+
         return $xml;
     }
 
@@ -276,8 +275,8 @@ class SeoService
         }
         $xml .= "    <changefreq>{$changefreq}</changefreq>\n";
         $xml .= "    <priority>{$priority}</priority>\n";
-        $xml .= "  </url>";
-        
+        $xml .= '  </url>';
+
         return $xml;
     }
 }

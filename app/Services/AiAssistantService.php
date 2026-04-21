@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -176,7 +177,7 @@ PROMPT;
         };
 
         $servicesText = count($services) > 0
-            ? 'Services inclus : ' . implode(', ', $services)
+            ? 'Services inclus : '.implode(', ', $services)
             : 'Aucun service inclus spécifié';
 
         $prompt = <<<PROMPT
@@ -258,7 +259,7 @@ PROMPT;
         }
 
         // Cache pour éviter les appels redondants (5 min)
-        $cacheKey = $cachePrefix . '_' . md5($prompt);
+        $cacheKey = $cachePrefix.'_'.md5($prompt);
         if ($cached = Cache::get($cacheKey)) {
             return $cached;
         }
@@ -273,6 +274,7 @@ PROMPT;
             if ($content) {
                 $content = trim($content);
                 Cache::put($cacheKey, $content, now()->addMinutes(5));
+
                 return $content;
             }
         } catch (\Throwable $e) {
@@ -285,6 +287,157 @@ PROMPT;
         return null;
     }
 
+    // ====================================================================
+    // CHATBOT CONVERSATION
+    // ====================================================================
+
+    /**
+     * Conversation multi-tours avec l'IA (chatbot locataire 24/7).
+     *
+     * @param  array  $messages  Historique [{role: 'user'|'assistant', content: '...'}]
+     * @param  array  $context   Contexte optionnel (résidence courante, commune, budget…)
+     * @return string|null
+     */
+    public function chat(array $messages, array $context = []): ?string
+    {
+        if (! $this->isAvailable()) {
+            return null;
+        }
+
+        $systemPrompt = $this->buildChatbotSystemPrompt($context);
+
+        try {
+            $reply = match ($this->provider) {
+                'gemini' => $this->callGeminiChat($systemPrompt, $messages),
+                'openai' => $this->callOpenAIChat($systemPrompt, $messages),
+                default  => null,
+            };
+
+            return $reply ? trim($reply) : null;
+        } catch (\Throwable $e) {
+            Log::error('AI Chatbot: Exception', [
+                'provider' => $this->provider,
+                'error'    => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    private function buildChatbotSystemPrompt(array $context): string
+    {
+        $commune  = $context['commune'] ?? '';
+        $budget   = $context['budget'] ?? '';
+        $residence = $context['residence'] ?? '';
+
+        $contextLines = '';
+        if ($commune) {
+            $contextLines .= "\n- Commune d'intérêt : {$commune}";
+        }
+        if ($budget) {
+            $contextLines .= "\n- Budget indicatif : {$budget} FCFA/mois";
+        }
+        if ($residence) {
+            $contextLines .= "\n- Résidence consultée : {$residence}";
+        }
+
+        return <<<SYSTEM
+Tu es l'assistant IA de REZI, plateforme de location de résidences meublées à Abidjan, Côte d'Ivoire.
+Tu aides les locataires potentiels 24h/24, 7j/7.
+
+Ton rôle :
+- Répondre aux questions sur les résidences disponibles, les quartiers d'Abidjan, les prix du marché
+- Aider à comprendre le processus de réservation REZI (contact → visite → dossier → contrat)
+- Orienter vers le bon type de logement selon les besoins (durée, budget, quartier)
+- Expliquer les documents nécessaires pour louer
+- Rassurer sur les garanties REZI (paiements sécurisés, résidences vérifiées)
+- Si tu ne sais pas quelque chose, recommander de contacter l'équipe REZI
+
+Règles absolues :
+- Toujours répondre en français
+- Réponses courtes et utiles (3-5 phrases max sauf si on te demande des détails)
+- Ne jamais inventer de prix ou de disponibilités spécifiques
+- Ne jamais donner d'informations personnelles sur d'autres utilisateurs
+- Si une question sort du domaine immobilier, recentrer poliment{$contextLines}
+
+Tu parles au nom de REZI. Sois chaleureux, professionnel et utile.
+SYSTEM;
+    }
+
+    private function callGeminiChat(string $systemPrompt, array $messages): ?string
+    {
+        $url = "https://generativelanguage.googleapis.com/v1beta/models/{$this->model}:generateContent?key={$this->apiKey}";
+
+        // Convertir l'historique au format Gemini
+        $contents = [];
+        foreach ($messages as $msg) {
+            $role = $msg['role'] === 'assistant' ? 'model' : 'user';
+            $contents[] = [
+                'role'  => $role,
+                'parts' => [['text' => $msg['content']]],
+            ];
+        }
+
+        // Prepend system prompt dans le premier message user
+        if (! empty($contents) && $contents[0]['role'] === 'user') {
+            $contents[0]['parts'][0]['text'] = $systemPrompt."\n\n".$contents[0]['parts'][0]['text'];
+        }
+
+        /** @var Response $response */
+        $response = Http::timeout(30)->post($url, [
+            'contents'         => $contents,
+            'generationConfig' => [
+                'maxOutputTokens' => 400,
+                'temperature'     => 0.8,
+            ],
+        ]);
+
+        if ($response->successful()) {
+            return $response->json('candidates.0.content.parts.0.text');
+        }
+
+        Log::warning('AI Chatbot (Gemini): API call failed', [
+            'status' => $response->status(),
+            'body'   => substr($response->body(), 0, 300),
+        ]);
+
+        return null;
+    }
+
+    private function callOpenAIChat(string $systemPrompt, array $messages): ?string
+    {
+        $baseUrl = config('services.openai.base_url', 'https://api.openai.com/v1');
+
+        $chatMessages = [['role' => 'system', 'content' => $systemPrompt]];
+        foreach ($messages as $msg) {
+            $chatMessages[] = ['role' => $msg['role'], 'content' => $msg['content']];
+        }
+
+        /** @var Response $response */
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer '.$this->apiKey,
+            'Content-Type'  => 'application/json',
+        ])
+        ->timeout(30)
+        ->post("{$baseUrl}/chat/completions", [
+            'model'       => $this->model,
+            'messages'    => $chatMessages,
+            'max_tokens'  => 400,
+            'temperature' => 0.8,
+        ]);
+
+        if ($response->successful()) {
+            return $response->json('choices.0.message.content');
+        }
+
+        Log::warning('AI Chatbot (OpenAI): API call failed', [
+            'status' => $response->status(),
+            'body'   => substr($response->body(), 0, 300),
+        ]);
+
+        return null;
+    }
+
     /**
      * Appeler l'API Google Gemini.
      */
@@ -292,11 +445,12 @@ PROMPT;
     {
         $url = "https://generativelanguage.googleapis.com/v1beta/models/{$this->model}:generateContent?key={$this->apiKey}";
 
+        /** @var Response $response */
         $response = Http::timeout(30)->post($url, [
             'contents' => [
                 [
                     'parts' => [
-                        ['text' => "Tu es un assistant expert en immobilier à Abidjan, Côte d'Ivoire. Tu réponds toujours en français. Tu es concis et professionnel.\n\n" . $prompt],
+                        ['text' => "Tu es un assistant expert en immobilier à Abidjan, Côte d'Ivoire. Tu réponds toujours en français. Tu es concis et professionnel.\n\n".$prompt],
                     ],
                 ],
             ],
@@ -328,8 +482,9 @@ PROMPT;
     {
         $baseUrl = config('services.openai.base_url', 'https://api.openai.com/v1');
 
+        /** @var Response $response */
         $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->apiKey,
+            'Authorization' => 'Bearer '.$this->apiKey,
             'Content-Type'  => 'application/json',
         ])
         ->timeout(30)
@@ -398,7 +553,7 @@ PROMPT;
         };
 
         $amenitiesText = count($amenities) > 0
-            ? 'Équipements : ' . implode(', ', $amenities)
+            ? 'Équipements : '.implode(', ', $amenities)
             : '';
 
         return <<<PROMPT

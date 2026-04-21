@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use App\Models\OwnerBadge;
+use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 class IdentityVerificationService
 {
     // Types de documents acceptés par pays
-    const DOCUMENT_TYPES = [
+    public const DOCUMENT_TYPES = [
         'CI' => [
             'cni' => 'Carte Nationale d\'Identité',
             'passport' => 'Passeport',
@@ -42,11 +42,11 @@ class IdentityVerificationService
     ];
 
     // Statuts de vérification
-    const STATUS_PENDING = 'pending';
-    const STATUS_REVIEWING = 'reviewing';
-    const STATUS_APPROVED = 'approved';
-    const STATUS_REJECTED = 'rejected';
-    const STATUS_EXPIRED = 'expired';
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_REVIEWING = 'reviewing';
+    public const STATUS_APPROVED = 'approved';
+    public const STATUS_REJECTED = 'rejected';
+    public const STATUS_EXPIRED = 'expired';
 
     /**
      * Obtenir les types de documents pour un pays
@@ -65,12 +65,12 @@ class IdentityVerificationService
         UploadedFile $documentFront,
         ?UploadedFile $documentBack = null,
         ?UploadedFile $selfie = null,
-        array $metadata = []
+        array $metadata = [],
     ): array {
         // Valider le type de document
         $countryCode = $user->country_code ?? 'CI';
         $validTypes = $this->getDocumentTypes($countryCode);
-        
+
         if (!isset($validTypes[$documentType])) {
             return [
                 'success' => false,
@@ -79,20 +79,20 @@ class IdentityVerificationService
         }
 
         // Stocker les documents de manière sécurisée
-        $folder = "identity-docs/{$user->id}/" . Str::random(16);
-        
+        $folder = "identity-docs/{$user->id}/".Str::random(16);
+
         $frontPath = $documentFront->storeAs(
-            $folder, 
-            'front.' . $documentFront->getClientOriginalExtension(),
-            'private'
+            $folder,
+            'front.'.$documentFront->getClientOriginalExtension(),
+            'private',
         );
 
         $backPath = null;
         if ($documentBack) {
             $backPath = $documentBack->storeAs(
                 $folder,
-                'back.' . $documentBack->getClientOriginalExtension(),
-                'private'
+                'back.'.$documentBack->getClientOriginalExtension(),
+                'private',
             );
         }
 
@@ -100,8 +100,8 @@ class IdentityVerificationService
         if ($selfie) {
             $selfiePath = $selfie->storeAs(
                 $folder,
-                'selfie.' . $selfie->getClientOriginalExtension(),
-                'private'
+                'selfie.'.$selfie->getClientOriginalExtension(),
+                'private',
             );
         }
 
@@ -193,7 +193,7 @@ class IdentityVerificationService
     protected function deleteVerificationDocuments(User $user): void
     {
         $data = $user->identity_verification_data ?? [];
-        
+
         if (isset($data['front_path'])) {
             Storage::disk('private')->delete($data['front_path']);
         }
@@ -221,7 +221,7 @@ class IdentityVerificationService
      */
     public function isVerified(User $user): bool
     {
-        return $user->identity_verification_status === self::STATUS_APPROVED 
+        return $user->identity_verification_status === self::STATUS_APPROVED
             && $user->identity_verified_at !== null;
     }
 

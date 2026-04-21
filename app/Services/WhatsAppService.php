@@ -16,9 +16,9 @@ class WhatsAppService
     public function __construct()
     {
         $this->apiUrl = config('services.whatsapp.api_url', 'https://graph.facebook.com/v18.0');
-        $this->apiToken = config('services.whatsapp.token', '');
-        $this->phoneNumberId = config('services.whatsapp.phone_number_id', '');
-        $this->enabled = config('services.whatsapp.enabled', false);
+        $this->apiToken = config('services.whatsapp.token') ?? '';
+        $this->phoneNumberId = config('services.whatsapp.phone_number_id') ?? '';
+        $this->enabled = (bool) config('services.whatsapp.enabled', false);
     }
 
     /**
@@ -28,11 +28,12 @@ class WhatsAppService
     {
         if (!$this->enabled) {
             Log::info("WhatsApp désactivé - Message template '{$templateName}' non envoyé à {$to}");
+
             return null;
         }
 
         $phone = $this->formatPhoneNumber($to);
-        
+
         $message = WhatsappMessage::create([
             'user_id' => $userId,
             'phone_number' => $phone,
@@ -43,6 +44,7 @@ class WhatsAppService
         ]);
 
         try {
+            /** @var \Illuminate\Http\Client\Response $response */
             $response = Http::withToken($this->apiToken)
                 ->post("{$this->apiUrl}/{$this->phoneNumberId}/messages", [
                     'messaging_product' => 'whatsapp',
@@ -87,11 +89,12 @@ class WhatsAppService
     {
         if (!$this->enabled) {
             Log::info("WhatsApp désactivé - Message non envoyé à {$to}");
+
             return null;
         }
 
         $phone = $this->formatPhoneNumber($to);
-        
+
         $message = WhatsappMessage::create([
             'user_id' => $userId,
             'phone_number' => $phone,
@@ -101,6 +104,7 @@ class WhatsAppService
         ]);
 
         try {
+            /** @var \Illuminate\Http\Client\Response $response */
             $response = Http::withToken($this->apiToken)
                 ->post("{$this->apiUrl}/{$this->phoneNumberId}/messages", [
                     'messaging_product' => 'whatsapp',
@@ -173,17 +177,17 @@ class WhatsAppService
     {
         // Supprimer tout sauf les chiffres
         $phone = preg_replace('/[^0-9]/', '', $phone);
-        
+
         // Si commence par 0, remplacer par indicatif pays (225 pour CI)
         if (str_starts_with($phone, '0')) {
-            $phone = '225' . substr($phone, 1);
+            $phone = '225'.substr($phone, 1);
         }
-        
+
         // Si pas d'indicatif, ajouter 225
         if (strlen($phone) <= 10) {
-            $phone = '225' . $phone;
+            $phone = '225'.$phone;
         }
-        
+
         return $phone;
     }
 
@@ -218,17 +222,17 @@ class WhatsAppService
     public static function generateLink(string $phone, string $message = ''): string
     {
         $phone = preg_replace('/[^0-9]/', '', $phone);
-        
+
         if (str_starts_with($phone, '0')) {
-            $phone = '225' . substr($phone, 1);
+            $phone = '225'.substr($phone, 1);
         }
-        
+
         $url = "https://wa.me/{$phone}";
-        
+
         if ($message) {
-            $url .= '?text=' . urlencode($message);
+            $url .= '?text='.urlencode($message);
         }
-        
+
         return $url;
     }
 }

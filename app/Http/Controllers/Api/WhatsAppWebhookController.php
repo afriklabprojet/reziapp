@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\WhatsappMessage;
-use App\Models\User;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\User;
+use App\Models\WhatsappMessage;
 use App\Services\WhatsAppService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -26,13 +26,14 @@ class WhatsAppWebhookController extends Controller
     public function verify(Request $request)
     {
         $verifyToken = config('services.whatsapp.verify_token');
-        
+
         $mode = $request->query('hub_mode');
         $token = $request->query('hub_verify_token');
         $challenge = $request->query('hub_challenge');
 
         if ($mode === 'subscribe' && $token === $verifyToken) {
             Log::info('WhatsApp webhook verified');
+
             return response($challenge, 200);
         }
 
@@ -50,24 +51,24 @@ class WhatsAppWebhookController extends Controller
     public function handle(Request $request)
     {
         $payload = $request->all();
-        
+
         Log::info('WhatsApp webhook received', ['payload' => $payload]);
 
         try {
             // Structure du webhook Meta
             $entries = $payload['entry'] ?? [];
-            
+
             foreach ($entries as $entry) {
                 $changes = $entry['changes'] ?? [];
-                
+
                 foreach ($changes as $change) {
                     $value = $change['value'] ?? [];
-                    
+
                     // Traiter les statuts de messages
                     if (isset($value['statuses'])) {
                         $this->handleStatuses($value['statuses']);
                     }
-                    
+
                     // Traiter les messages entrants
                     if (isset($value['messages'])) {
                         $this->handleIncomingMessages($value['messages'], $value['contacts'] ?? []);
@@ -164,7 +165,7 @@ class WhatsAppWebhookController extends Controller
             // Enregistrer le message entrant
             $incomingMessage = WhatsappMessage::create([
                 'phone_number' => $from,
-                'message_type' => 'incoming_' . $type,
+                'message_type' => 'incoming_'.$type,
                 'message_content' => $content,
                 'whatsapp_message_id' => $messageId,
                 'status' => 'received',
@@ -176,11 +177,11 @@ class WhatsAppWebhookController extends Controller
             ]);
 
             // Trouver l'utilisateur par numéro
-            $user = User::where('phone', 'LIKE', '%' . substr($from, -8))->first();
-            
+            $user = User::where('phone', 'LIKE', '%'.substr($from, -8))->first();
+
             if ($user) {
                 $incomingMessage->update(['user_id' => $user->id]);
-                
+
                 // Router vers une conversation ou répondre automatiquement
                 $this->routeIncomingMessage($user, $content, $from, $name);
             } else {
@@ -201,11 +202,11 @@ class WhatsAppWebhookController extends Controller
 
         return match ($type) {
             'text' => $msg['text']['body'] ?? '',
-            'image' => '[Image: ' . ($msg['image']['caption'] ?? 'Sans légende') . ']',
-            'document' => '[Document: ' . ($msg['document']['filename'] ?? 'Fichier') . ']',
+            'image' => '[Image: '.($msg['image']['caption'] ?? 'Sans légende').']',
+            'document' => '[Document: '.($msg['document']['filename'] ?? 'Fichier').']',
             'audio' => '[Message vocal]',
-            'video' => '[Vidéo: ' . ($msg['video']['caption'] ?? 'Sans légende') . ']',
-            'location' => '[Localisation: ' . ($msg['location']['name'] ?? 'Position') . ']',
+            'video' => '[Vidéo: '.($msg['video']['caption'] ?? 'Sans légende').']',
+            'location' => '[Localisation: '.($msg['location']['name'] ?? 'Position').']',
             'contacts' => '[Contact partagé]',
             'sticker' => '[Sticker]',
             'interactive' => $this->extractInteractiveResponse($msg['interactive'] ?? []),
@@ -242,6 +243,7 @@ class WhatsAppWebhookController extends Controller
 
         if ($keywords) {
             $this->handleKeywordResponse($phone, $keywords, $user);
+
             return;
         }
 
@@ -311,7 +313,7 @@ class WhatsAppWebhookController extends Controller
      */
     protected function sendWelcomeMessage(string $phone, ?string $name): void
     {
-        $greeting = $name ? "Bonjour {$name} ! 👋" : "Bonjour ! 👋";
+        $greeting = $name ? "Bonjour {$name} ! 👋" : 'Bonjour ! 👋';
 
         $message = "{$greeting}\n\nMerci de contacter REZI, votre plateforme de location de résidences meublées à Abidjan.\n\n🏠 Créez votre compte gratuitement :\nhttps://reziapp.ci/register\n\n✨ Avantages :\n• Accès à +500 résidences\n• Réservation en ligne\n• Paiement sécurisé\n• Support 7j/7\n\nÀ bientôt sur REZI !";
 

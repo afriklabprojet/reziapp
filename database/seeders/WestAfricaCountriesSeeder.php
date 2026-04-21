@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Country;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class WestAfricaCountriesSeeder extends Seeder
@@ -164,7 +164,7 @@ class WestAfricaCountriesSeeder extends Seeder
         foreach ($countries as $countryData) {
             // Check if country exists
             $existing = DB::table('countries')->where('code', $countryData['code'])->first();
-            
+
             if ($existing) {
                 // Update existing
                 DB::table('countries')

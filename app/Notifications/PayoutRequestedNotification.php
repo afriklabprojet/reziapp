@@ -16,7 +16,8 @@ class PayoutRequestedNotification extends Notification implements ShouldQueue
 
     public function __construct(
         private Payout $payout,
-    ) {}
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -35,13 +36,13 @@ class PayoutRequestedNotification extends Notification implements ShouldQueue
             default => $this->payout->payout_method,
         };
 
-        return (new MailMessage)
-            ->subject('Nouvelle demande de retrait — ' . number_format((float) $this->payout->net_amount, 0, ',', ' ') . ' FCFA')
+        return (new MailMessage())
+            ->subject('Nouvelle demande de retrait — '.number_format((float) $this->payout->net_amount, 0, ',', ' ').' FCFA')
             ->greeting('Nouvelle demande de retrait')
-            ->line('**' . $owner->name . '** a demandé un retrait de **' . number_format((float) $this->payout->net_amount, 0, ',', ' ') . ' FCFA**.')
-            ->line('Méthode : ' . $method)
-            ->line('Destination : ' . ($this->payout->phone_number ?? $this->payout->bank_name . ' — ' . $this->payout->bank_account))
-            ->line('Référence : ' . $this->payout->reference)
+            ->line('**'.$owner->name.'** a demandé un retrait de **'.number_format((float) $this->payout->net_amount, 0, ',', ' ').' FCFA**.')
+            ->line('Méthode : '.$method)
+            ->line('Destination : '.($this->payout->phone_number ?? $this->payout->bank_name.' — '.$this->payout->bank_account))
+            ->line('Référence : '.$this->payout->reference)
             ->action('Gérer dans l\'admin', url('/admin/payouts'))
             ->line('Veuillez traiter cette demande dans les 48h.');
     }
@@ -50,7 +51,7 @@ class PayoutRequestedNotification extends Notification implements ShouldQueue
     {
         return [
             'title' => 'Demande de retrait',
-            'message' => $this->payout->user->name . ' demande un retrait de ' . number_format((float) $this->payout->net_amount, 0, ',', ' ') . ' FCFA',
+            'message' => $this->payout->user->name.' demande un retrait de '.number_format((float) $this->payout->net_amount, 0, ',', ' ').' FCFA',
             'type' => 'payout_request',
             'payout_id' => $this->payout->id,
             'amount' => $this->payout->net_amount,

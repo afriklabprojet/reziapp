@@ -4,8 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Maintenance en cours - REZI</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css'])
 </head>
 <body class="font-sans antialiased bg-linear-to-br from-orange-500 to-orange-600">
@@ -14,7 +15,7 @@
         <div class="mb-8">
             <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="REZI" class="h-16 w-auto brightness-0 invert">
         </div>
-        
+
         {{-- Maintenance illustration --}}
         <div class="relative mb-8">
             <div class="w-32 h-32 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
@@ -23,7 +24,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
             </div>
-            
+
             {{-- Animated circles --}}
             <div class="absolute inset-0 flex items-center justify-center">
                 <div class="w-40 h-40 border border-white/20 rounded-full animate-ping" style="animation-duration: 3s;"></div>
@@ -32,16 +33,16 @@
                 <div class="w-48 h-48 border border-white/10 rounded-full animate-ping" style="animation-duration: 4s;"></div>
             </div>
         </div>
-        
+
         {{-- Message --}}
         <h1 class="text-3xl sm:text-4xl font-bold text-white text-center mb-4">
             Maintenance en cours
         </h1>
         <p class="text-orange-100 text-center max-w-md mb-8 text-lg">
-            Nous améliorons REZI pour vous offrir une meilleure expérience. 
+            Nous améliorons REZI pour vous offrir une meilleure expérience.
             Nous serons de retour très bientôt !
         </p>
-        
+
         {{-- Progress indicator --}}
         <div class="w-full max-w-xs mb-8">
             <div class="h-2 bg-white/20 rounded-full overflow-hidden">
@@ -49,7 +50,7 @@
             </div>
             <p class="text-center text-white/70 text-sm mt-2">Progression estimée : 75%</p>
         </div>
-        
+
         {{-- Contact & social --}}
         <div class="text-center">
             <p class="text-white/80 mb-4">Restez informé :</p>

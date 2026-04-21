@@ -12,14 +12,18 @@ use Illuminate\Support\Facades\Mail;
 
 class SendBroadcastEmail implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public function __construct(
         public User $user,
         public string $title,
         public string $body,
-        public ?string $actionUrl = null
-    ) {}
+        public ?string $actionUrl = null,
+    ) {
+    }
 
     public function handle(): void
     {

@@ -43,11 +43,11 @@ class BookingRequestReceived extends Notification implements ShouldQueue
         $isPaid = $this->bookingRequest instanceof Booking && $this->bookingRequest->payment_status === 'paid';
 
         return (new MailMessage())
-            ->subject("📋 Demande de réservation" . ($isPaid ? ' (payée)' : '') . " — {$this->residence->name}")
+            ->subject('📋 Demande de réservation'.($isPaid ? ' (payée)' : '')." — {$this->residence->name}")
             ->greeting("Bonjour {$notifiable->name},")
             ->line("**{$guestName}** souhaite réserver votre résidence **{$this->residence->name}**.")
             ->when($isPaid, fn ($mail) => $mail->line('✅ **Le client a déjà payé.**'))
-            ->line("**Dates demandées :**")
+            ->line('**Dates demandées :**')
             ->line("• Arrivée : {$checkIn}")
             ->line("• Départ : {$checkOut}")
             ->line("• Voyageurs : {$guests}")
@@ -69,7 +69,7 @@ class BookingRequestReceived extends Notification implements ShouldQueue
             'guest_name' => $this->bookingRequest->user?->name ?? 'Client',
             'check_in' => $this->bookingRequest->check_in->toDateString(),
             'check_out' => $this->bookingRequest->check_out->toDateString(),
-            'message' => 'Demande de réservation pour ' . $this->residence->name,
+            'message' => 'Demande de réservation pour '.$this->residence->name,
         ];
     }
 }

@@ -14,7 +14,8 @@ class YieldController extends Controller
 {
     public function __construct(
         private YieldManagementService $yieldService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {
@@ -43,6 +44,7 @@ class YieldController extends Controller
         ]);
 
         $status = $residence->auto_pricing_enabled ? 'activé' : 'désactivé';
+
         return back()->with('success', "Yield management $status.");
     }
 
@@ -62,6 +64,7 @@ class YieldController extends Controller
         ]);
 
         $status = $residence->gap_night_pricing_enabled ? 'activé' : 'désactivé';
+
         return back()->with('success', "Gap-night pricing $status.");
     }
 

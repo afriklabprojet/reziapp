@@ -345,7 +345,7 @@
         <div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
 
             {{-- ─── SIDEBAR ─── --}}
-            <div class="lg:w-[420px] xl:w-[460px] bg-white border-r border-gray-200 flex flex-col overflow-hidden"
+            <div class="lg:w-105 xl:w-115 bg-white border-r border-gray-200 flex flex-col overflow-hidden"
                 :class="showSidebar ? 'flex-1 lg:flex-none' : 'hidden lg:flex'">
 
                 <div class="flex items-center justify-between px-4 py-2.5 border-b border-gray-100 bg-gray-50/50 shrink-0">

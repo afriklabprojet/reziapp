@@ -32,7 +32,8 @@ class BookingApiController extends Controller
     public function __construct(
         protected BookingService $bookingService,
         protected PricingService $pricingService,
-    ) {}
+    ) {
+    }
 
     /**
      * Create a new booking.
@@ -218,12 +219,17 @@ class BookingApiController extends Controller
                 'success' => true,
                 'message' => 'Réservation annulée.',
                 'refund_amount' => $result['refund_amount'],
-                'formatted_refund' => number_format($result['refund_amount'], 0, ',', ' ') . ' FCFA',
+                'formatted_refund' => number_format($result['refund_amount'], 0, ',', ' ').' FCFA',
             ]);
         } catch (\Exception $e) {
+            Log::error('API booking cancellation failed', [
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+            ]);
+
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'message' => config('app.debug') ? $e->getMessage() : 'Annulation impossible. Veuillez contacter le support.',
                 'error_code' => 'CANCEL_FAILED',
             ], 400);
         }

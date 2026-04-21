@@ -11,8 +11,9 @@ use Illuminate\Support\Facades\Log;
 class InsuranceCallbackController extends Controller
 {
     public function __construct(
-        protected JekoPaymentService $jekoService
-    ) {}
+        protected JekoPaymentService $jekoService,
+    ) {
+    }
 
     /**
      * Handle insurance payment success redirect.

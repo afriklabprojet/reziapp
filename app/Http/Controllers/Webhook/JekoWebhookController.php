@@ -3,25 +3,27 @@
 namespace App\Http\Controllers\Webhook;
 
 use App\Http\Controllers\Controller;
+use App\Models\BookingInsurance;
 use App\Models\Payment;
 use App\Models\Payout;
 use App\Models\SponsoredListing;
 use App\Models\Subscription;
 use App\Models\SubscriptionPayment;
-use App\Models\BookingInsurance;
 use App\Models\WebhookEvent;
 use App\Services\JekoPaymentService;
 use App\Services\PaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class JekoWebhookController extends Controller
 {
     public function __construct(
         protected JekoPaymentService $jekoService,
-        protected PaymentService $paymentService
-    ) {}
+        protected PaymentService $paymentService,
+    ) {
+    }
 
     /**
      * Handle incoming Jeko webhooks.
@@ -40,7 +42,7 @@ class JekoWebhookController extends Controller
         if (! $this->jekoService->verifyWebhookSignature($rawBody, $signature)) {
             Log::channel('security')->warning('Jeko webhook: Invalid signature', [
                 'ip' => $request->ip(),
-                'signature' => substr($signature, 0, 20) . '...',
+                'signature' => substr($signature, 0, 20).'...',
             ]);
 
             return response('Invalid signature', 401);
@@ -58,6 +60,7 @@ class JekoWebhookController extends Controller
                 'event_id' => $eventId,
                 'event' => $event,
             ]);
+
             return response('OK', 200); // Return 200 so Jeko doesn't retry
         }
 
@@ -109,6 +112,7 @@ class JekoWebhookController extends Controller
             Log::warning('Jeko webhook: Missing reference in transaction.completed', [
                 'transaction_id' => $transactionId,
             ]);
+
             return;
         }
 
@@ -139,6 +143,7 @@ class JekoWebhookController extends Controller
                 'reference' => $reference,
                 'transaction_id' => $transactionId,
             ]);
+
             return;
         }
 
@@ -148,6 +153,7 @@ class JekoWebhookController extends Controller
                 'sponsored_id' => $sponsored->id,
                 'reference' => $reference,
             ]);
+
             return;
         }
 
@@ -193,6 +199,7 @@ class JekoWebhookController extends Controller
             Log::warning('Jeko webhook: No booking payment found for reference', [
                 'reference' => $reference,
             ]);
+
             return;
         }
 
@@ -200,17 +207,23 @@ class JekoWebhookController extends Controller
             Log::info('Jeko webhook: Booking payment already completed', [
                 'payment_id' => $payment->id,
             ]);
+
             return;
         }
 
         if ($status === 'success') {
-            $payment->markAsCompleted([
-                'jeko_transaction_id' => $transactionId,
-                'payment_method' => $paymentMethod,
-                'executed_at' => $executedAt,
-            ]);
-            
-            $this->paymentService->onPaymentSuccess($payment);
+            DB::transaction(function () use ($payment, $transactionId, $paymentMethod, $executedAt) {
+                $payment->markAsCompleted([
+                    'jeko_transaction_id' => $transactionId,
+                    'payment_method' => $paymentMethod,
+                    'executed_at' => $executedAt,
+                ]);
+
+                // onPaymentSuccess confirme la réservation et crédite le propriétaire.
+                // Les deux opérations doivent être atomiques : si l'une échoue,
+                // le paiement NE doit PAS être marqué complet sans confirmation booking.
+                $this->paymentService->onPaymentSuccess($payment);
+            });
 
             Log::info('Jeko webhook: Booking payment confirmed', [
                 'payment_id' => $payment->id,
@@ -232,6 +245,7 @@ class JekoWebhookController extends Controller
             Log::warning('Jeko webhook: No subscription payment found for reference', [
                 'reference' => $reference,
             ]);
+
             return;
         }
 
@@ -239,6 +253,7 @@ class JekoWebhookController extends Controller
             Log::info('Jeko webhook: Subscription payment already processed', [
                 'subscription_payment_id' => $subscriptionPayment->id,
             ]);
+
             return;
         }
 
@@ -278,6 +293,7 @@ class JekoWebhookController extends Controller
             Log::warning('Jeko webhook: No insurance found for reference', [
                 'reference' => $reference,
             ]);
+
             return;
         }
 
@@ -285,6 +301,7 @@ class JekoWebhookController extends Controller
             Log::info('Jeko webhook: Insurance already active', [
                 'insurance_id' => $insurance->id,
             ]);
+
             return;
         }
 
@@ -320,6 +337,7 @@ class JekoWebhookController extends Controller
             Log::warning('Jeko webhook: No payment found for reference', [
                 'reference' => $reference,
             ]);
+
             return;
         }
 
@@ -360,6 +378,7 @@ class JekoWebhookController extends Controller
 
         if (! $transferId) {
             Log::warning('Jeko webhook: Missing transfer ID', ['event' => $event]);
+
             return;
         }
 
@@ -371,6 +390,7 @@ class JekoWebhookController extends Controller
                 'transfer_id' => $transferId,
                 'event' => $event,
             ]);
+
             return;
         }
 
@@ -380,6 +400,7 @@ class JekoWebhookController extends Controller
                 'payout_id' => $payout->id,
                 'transfer_id' => $transferId,
             ]);
+
             return;
         }
 

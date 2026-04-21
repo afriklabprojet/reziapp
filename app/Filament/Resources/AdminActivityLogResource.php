@@ -104,7 +104,7 @@ class AdminActivityLogResource extends Resource
                     ->options(
                         User::where('role', 'admin')
                             ->pluck('name', 'id')
-                            ->toArray()
+                            ->toArray(),
                     )
                     ->searchable(),
                 Tables\Filters\SelectFilter::make('model_type')

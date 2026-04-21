@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\SupportTicket;
 use App\Services\SupportService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class SupportController extends Controller
 {
@@ -20,7 +22,8 @@ class SupportController extends Controller
      */
     public function index()
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
         $tickets = $this->supportService->getUserTickets($user->id);
         $unreadCount = $this->supportService->getUnreadCount($user->id);
 
@@ -35,7 +38,7 @@ class SupportController extends Controller
         $booking = null;
         if ($request->filled('booking_id')) {
             $booking = \App\Models\Booking::with('residence')
-                ->where('user_id', auth()->id())
+                ->where('user_id', Auth::id())
                 ->findOrFail($request->booking_id);
         }
 
@@ -61,7 +64,8 @@ class SupportController extends Controller
         ]);
 
         try {
-            $user = auth()->user();
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
 
             // Process attachments
             $attachments = [];
@@ -86,9 +90,11 @@ class SupportController extends Controller
                 ->route('support.show', $ticket)
                 ->with('success', 'Votre demande a été envoyée. Numéro de ticket: '.$ticket->ticket_number);
         } catch (\Exception $e) {
+            Log::error('Support ticket creation failed', ['error' => $e->getMessage()]);
+
             return back()
                 ->withInput()
-                ->with('error', $e->getMessage());
+                ->with('error', config('app.debug') ? $e->getMessage() : 'Une erreur est survenue lors de l\'envoi. Veuillez réessayer.');
         }
     }
 
@@ -97,7 +103,8 @@ class SupportController extends Controller
      */
     public function show(SupportTicket $ticket)
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
         // Check authorization
         if ($ticket->user_id !== $user->id && !$user->isAdmin()) {
@@ -117,7 +124,8 @@ class SupportController extends Controller
      */
     public function reply(Request $request, SupportTicket $ticket)
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
         // Check authorization
         if ($ticket->user_id !== $user->id && !$user->isAdmin()) {
@@ -157,7 +165,8 @@ class SupportController extends Controller
      */
     public function close(SupportTicket $ticket)
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
         if ($ticket->user_id !== $user->id) {
             abort(403);
@@ -173,7 +182,8 @@ class SupportController extends Controller
      */
     public function reopen(SupportTicket $ticket)
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
         if ($ticket->user_id !== $user->id) {
             abort(403);
@@ -189,7 +199,8 @@ class SupportController extends Controller
      */
     public function rate(Request $request, SupportTicket $ticket)
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
         if ($ticket->user_id !== $user->id) {
             abort(403);
@@ -212,7 +223,8 @@ class SupportController extends Controller
      */
     public function apiIndex()
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
         $tickets = $this->supportService->getUserTickets($user->id);
 
         return response()->json([
@@ -235,7 +247,7 @@ class SupportController extends Controller
 
         try {
             $ticket = $this->supportService->createTicket(
-                auth()->id(),
+                Auth::id(),
                 $validated['category'],
                 $validated['subject'],
                 $validated['message'],
@@ -248,9 +260,11 @@ class SupportController extends Controller
                 'message' => 'Ticket créé avec succès',
             ]);
         } catch (\Exception $e) {
+            Log::error('API support ticket creation failed', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'message' => config('app.debug') ? $e->getMessage() : 'Impossible de créer le ticket. Veuillez réessayer.',
             ], 400);
         }
     }
@@ -260,7 +274,8 @@ class SupportController extends Controller
      */
     public function apiShow(SupportTicket $ticket)
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
         if ($ticket->user_id !== $user->id && !$user->isAdmin()) {
             return response()->json(['error' => 'Non autorisé'], 403);
@@ -279,7 +294,8 @@ class SupportController extends Controller
      */
     public function apiReply(Request $request, SupportTicket $ticket)
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
         if ($ticket->user_id !== $user->id && !$user->isAdmin()) {
             return response()->json(['error' => 'Non autorisé'], 403);
@@ -313,7 +329,7 @@ class SupportController extends Controller
      */
     public function apiUnreadCount()
     {
-        $count = $this->supportService->getUnreadCount(auth()->id());
+        $count = $this->supportService->getUnreadCount(Auth::id());
 
         return response()->json([
             'success' => true,

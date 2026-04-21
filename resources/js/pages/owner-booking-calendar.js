@@ -16,7 +16,7 @@ export default function calendarApp(config = {}) {
             const lastDay = new Date(year, month + 1, 0);
 
             // Jours vides au début
-            let startDay = firstDay.getDay() || 7;
+            const startDay = firstDay.getDay() || 7;
             for (let i = 1; i < startDay; i++) {
                 days.push({ isEmpty: true, dayOfMonth: '' });
             }

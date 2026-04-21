@@ -10,7 +10,6 @@ use App\Models\GuestScore;
 use App\Models\IdentityVerification;
 use App\Models\TenantReview;
 use App\Models\User;
-use Carbon\Carbon;
 
 class GuestScreeningService
 {
@@ -61,7 +60,7 @@ class GuestScreeningService
                 'damage_reports_count' => $damageCount,
                 'flags'                => $flags,
                 'last_calculated_at'   => now(),
-            ]
+            ],
         );
     }
 
@@ -158,7 +157,7 @@ class GuestScreeningService
         $flags = [];
 
         if ($cancellationRate > 30) {
-            $flags[] = 'Taux d\'annulation élevé (' . $cancellationRate . '%)';
+            $flags[] = 'Taux d\'annulation élevé ('.$cancellationRate.'%)';
         }
 
         if ($damageCount > 0) {
@@ -171,7 +170,7 @@ class GuestScreeningService
 
         $accountAge = $user->created_at->diffInDays(now());
         if ($accountAge < 7) {
-            $flags[] = 'Compte très récent (' . $accountAge . ' jour(s))';
+            $flags[] = 'Compte très récent ('.$accountAge.' jour(s))';
         }
 
         return $flags;

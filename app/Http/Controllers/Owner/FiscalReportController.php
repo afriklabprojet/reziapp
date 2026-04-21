@@ -15,7 +15,8 @@ class FiscalReportController extends Controller
 {
     public function __construct(
         private FiscalReportService $fiscalService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {

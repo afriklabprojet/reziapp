@@ -22,7 +22,8 @@ class LeaseContractController extends Controller
 {
     public function __construct(
         private readonly LeaseContractService $contractService,
-    ) {}
+    ) {
+    }
 
     // ===== INDEX =====
 
@@ -33,9 +34,11 @@ class LeaseContractController extends Controller
         $contracts = LeaseContract::forOwner($owner->id)
             ->with(['tenant:id,name,email,phone', 'residence:id,name,commune'])
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->status))
-            ->when($request->filled('search'), fn ($q) => $q->whereHas('tenant', fn ($sq) =>
+            ->when($request->filled('search'), fn ($q) => $q->whereHas(
+                'tenant',
+                fn ($sq) =>
                 $sq->where('name', 'like', "%{$request->search}%")
-                    ->orWhere('email', 'like', "%{$request->search}%")
+                    ->orWhere('email', 'like', "%{$request->search}%"),
             ))
             ->latest()
             ->paginate(15)
@@ -70,12 +73,12 @@ class LeaseContractController extends Controller
         $tenantIds = $tenantIds->merge(
             \Illuminate\Support\Facades\DB::table('bookings')
                 ->whereIn('residence_id', $owner->residences()->pluck('id'))
-                ->pluck('user_id')
+                ->pluck('user_id'),
         );
 
         // Locataires via contrats existants
         $tenantIds = $tenantIds->merge(
-            LeaseContract::where('owner_id', $owner->id)->pluck('tenant_id')
+            LeaseContract::where('owner_id', $owner->id)->pluck('tenant_id'),
         );
 
         $tenants = User::whereIn('id', $tenantIds->unique()->filter())
@@ -188,7 +191,7 @@ class LeaseContractController extends Controller
 
         $reason = $request->termination_reason;
         if ($request->filled('termination_notes')) {
-            $reason .= ' — ' . $request->termination_notes;
+            $reason .= ' — '.$request->termination_notes;
         }
 
         $this->contractService->terminate(

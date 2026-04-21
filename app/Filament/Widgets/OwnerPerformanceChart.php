@@ -4,7 +4,6 @@ namespace App\Filament\Widgets;
 
 use App\Models\OwnerAnalytics;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Carbon;
 
 class OwnerPerformanceChart extends ChartWidget
 {

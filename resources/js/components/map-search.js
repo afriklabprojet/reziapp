@@ -284,7 +284,7 @@ export default function mapSearch(config) {
 
         highlightMarker(id) {
             this.markers.forEach(({ element, marker }) => {
-                if (element.dataset.id == id) {
+                if (element.dataset.id === String(id)) {
                     element.classList.add('active');
                     // Amener au premier plan
                     const lat = marker.getLngLat().lat;
@@ -393,7 +393,6 @@ export default function mapSearch(config) {
                     };
 
                     const accuracy = Math.round(position.coords.accuracy);
-                    console.log(`Carte: position obtenue (±${accuracy}m)`);
 
                     // Ajouter un marker pour l'utilisateur avec cercle de précision
                     const el = document.createElement('div');
@@ -420,7 +419,7 @@ export default function mapSearch(config) {
                     }));
                 },
                 (error) => {
-                    console.log('Géolocalisation non disponible:', error.message);
+                    console.warn('Géolocalisation non disponible:', error.message);
                 },
                 { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
             );

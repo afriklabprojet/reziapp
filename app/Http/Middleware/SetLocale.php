@@ -26,9 +26,9 @@ class SetLocale
     public function handle(Request $request, Closure $next): Response
     {
         $locale = $this->determineLocale($request);
-        
+
         App::setLocale($locale);
-        
+
         // Store in session for future requests
         Session::put('locale', $locale);
 
@@ -85,7 +85,7 @@ class SetLocale
     protected function getPreferredBrowserLocale(Request $request): ?string
     {
         $acceptLanguage = $request->header('Accept-Language');
-        
+
         if (!$acceptLanguage) {
             return null;
         }
@@ -96,10 +96,10 @@ class SetLocale
             $parts = explode(';', $part);
             $locale = strtolower(trim($parts[0]));
             $quality = isset($parts[1]) ? (float) str_replace('q=', '', $parts[1]) : 1.0;
-            
+
             // Extract primary language tag (e.g., 'fr' from 'fr-FR')
             $primaryLocale = explode('-', $locale)[0];
-            
+
             if ($this->isSupported($primaryLocale)) {
                 $locales[$primaryLocale] = $quality;
             }
@@ -111,6 +111,7 @@ class SetLocale
 
         // Sort by quality and return the best match
         arsort($locales);
+
         return array_key_first($locales);
     }
 }

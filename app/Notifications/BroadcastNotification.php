@@ -15,8 +15,9 @@ class BroadcastNotification extends Notification implements ShouldQueue
         public string $title,
         public string $body,
         public ?string $actionUrl = null,
-        public string $icon = 'info'
-    ) {}
+        public string $icon = 'info',
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -25,9 +26,9 @@ class BroadcastNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $mail = (new MailMessage)
+        $mail = (new MailMessage())
             ->subject($this->title)
-            ->greeting('Bonjour ' . $notifiable->name . ',')
+            ->greeting('Bonjour '.$notifiable->name.',')
             ->line($this->body);
 
         if ($this->actionUrl) {

@@ -34,7 +34,7 @@ export default function searchForm(config = {}) {
                         this.longitude = position.coords.longitude;
                     },
                     (error) => {
-                        console.log('Géolocalisation échouée:', error.message);
+                        console.warn('Géolocalisation échouée:', error.message);
                     },
                     { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
                 );

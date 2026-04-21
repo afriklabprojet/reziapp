@@ -12,8 +12,9 @@ use Illuminate\Support\Facades\Log;
 class JekoCallbackController extends Controller
 {
     public function __construct(
-        protected JekoPaymentService $jekoService
-    ) {}
+        protected JekoPaymentService $jekoService,
+    ) {
+    }
 
     /**
      * Handle Jeko success redirect callback.

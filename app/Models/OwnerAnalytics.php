@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -89,7 +91,7 @@ class OwnerAnalytics extends Model
     public static function getTotals(int $userId, $startDate = null, $endDate = null): array
     {
         $query = self::forOwner($userId);
-        
+
         if ($startDate && $endDate) {
             $query->forPeriod($startDate, $endDate);
         }
@@ -113,14 +115,14 @@ class OwnerAnalytics extends Model
     public static function getChartData(int $userId, int $days = 30): array
     {
         $startDate = now()->subDays($days);
-        
+
         $data = self::forOwner($userId)
             ->where('date', '>=', $startDate)
             ->orderBy('date')
             ->get();
 
         return [
-            'labels' => $data->pluck('date')->map(fn($d) => $d->format('d/m'))->toArray(),
+            'labels' => $data->pluck('date')->map(fn ($d) => $d->format('d/m'))->toArray(),
             'views' => $data->pluck('residence_views')->toArray(),
             'bookings' => $data->pluck('bookings_count')->toArray(),
             'revenue' => $data->pluck('revenue')->toArray(),
@@ -139,7 +141,7 @@ class OwnerAnalytics extends Model
         foreach ($current as $key => $value) {
             $prevValue = $previous[$key] ?? 0;
             $change = $prevValue > 0 ? (($value - $prevValue) / $prevValue) * 100 : 0;
-            
+
             $comparison[$key] = [
                 'current' => $value,
                 'previous' => $prevValue,

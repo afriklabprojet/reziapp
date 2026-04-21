@@ -16,7 +16,8 @@ class AiAssistantController extends Controller
 {
     public function __construct(
         private readonly AiAssistantService $ai,
-    ) {}
+    ) {
+    }
 
     /**
      * Générer une description d'annonce.

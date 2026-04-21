@@ -19,7 +19,8 @@ class SecurityDepositReturnedNotification extends Notification implements Should
 
     public function __construct(
         protected SecurityDeposit $deposit,
-    ) {}
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -46,8 +47,8 @@ class SecurityDepositReturnedNotification extends Notification implements Should
 
         if ($isFullReturn) {
             $mail->line("Votre caution de **{$totalAmount} {$currency}** vous est restituée intégralement.")
-                 ->line("Mode de restitution : " . ($this->deposit->return_payment_method ?? 'Non renseigné'))
-                 ->line("Référence : " . ($this->deposit->return_reference ?? 'N/A'));
+                 ->line('Mode de restitution : '.($this->deposit->return_payment_method ?? 'Non renseigné'))
+                 ->line('Référence : '.($this->deposit->return_reference ?? 'N/A'));
         } else {
             $mail->line("Caution initiale : **{$totalAmount} {$currency}**")
                  ->line("Montant restitué : **{$returnedAmount} {$currency}**")

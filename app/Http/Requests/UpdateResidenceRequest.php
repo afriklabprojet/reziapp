@@ -100,6 +100,11 @@ class UpdateResidenceRequest extends FormRequest
             'max_nights' => ['nullable', 'integer', 'min:1', 'max:365', 'gte:min_nights'],
             'instant_book' => ['sometimes', 'boolean'],
 
+            // Nouveaux champs Airbnb
+            'cleaning_fee' => ['nullable', 'numeric', 'min:0'],
+            'is_work_travel_ready' => ['sometimes', 'boolean'],
+            'sustainability_score' => ['nullable', 'integer', 'min:0', 'max:100'],
+
             // Horaires
             'check_in_time' => ['nullable', 'date_format:H:i'],
             'check_out_time' => ['nullable', 'date_format:H:i'],

@@ -46,8 +46,8 @@ class UnifiedCalendarController extends Controller
 
         foreach ($bookings as $booking) {
             $events[] = [
-                'id'    => 'booking-' . $booking->id,
-                'title' => $booking->residence?->name . ' — ' . ($booking->user?->name ?? 'Réservation'),
+                'id'    => 'booking-'.$booking->id,
+                'title' => $booking->residence?->name.' — '.($booking->user?->name ?? 'Réservation'),
                 'start' => $booking->check_in,
                 'end'   => $booking->check_out,
                 'color' => '#4F46E5', // Indigo
@@ -64,8 +64,8 @@ class UnifiedCalendarController extends Controller
 
         foreach ($cleanings as $task) {
             $events[] = [
-                'id'    => 'cleaning-' . $task->id,
-                'title' => '🧹 ' . ($task->residence?->name ?? 'Ménage'),
+                'id'    => 'cleaning-'.$task->id,
+                'title' => '🧹 '.($task->residence?->name ?? 'Ménage'),
                 'start' => $task->scheduled_date->toDateString(),
                 'color' => '#10B981', // Emerald
                 'type'  => 'cleaning',
@@ -80,8 +80,8 @@ class UnifiedCalendarController extends Controller
 
         foreach ($reminders as $reminder) {
             $events[] = [
-                'id'    => 'rent-' . $reminder->id,
-                'title' => '💰 Loyer ' . ($reminder->residence?->name ?? ''),
+                'id'    => 'rent-'.$reminder->id,
+                'title' => '💰 Loyer '.($reminder->residence?->name ?? ''),
                 'start' => $reminder->due_date->toDateString(),
                 'color' => $reminder->isOverdue() ? '#EF4444' : '#F59E0B', // Red or Amber
                 'type'  => 'rent_reminder',
@@ -96,8 +96,8 @@ class UnifiedCalendarController extends Controller
 
         foreach ($maintenance as $req) {
             $events[] = [
-                'id'    => 'maintenance-' . $req->id,
-                'title' => '🔧 ' . $req->title,
+                'id'    => 'maintenance-'.$req->id,
+                'title' => '🔧 '.$req->title,
                 'start' => $req->created_at->toDateString(),
                 'color' => '#F97316', // Orange
                 'type'  => 'maintenance',
@@ -111,8 +111,8 @@ class UnifiedCalendarController extends Controller
 
         foreach ($expenses as $expense) {
             $events[] = [
-                'id'    => 'expense-' . $expense->id,
-                'title' => '📋 ' . number_format($expense->amount, 0, ',', ' ') . ' F — ' . $expense->category_label,
+                'id'    => 'expense-'.$expense->id,
+                'title' => '📋 '.number_format($expense->amount, 0, ',', ' ').' F — '.$expense->category_label,
                 'start' => $expense->expense_date->toDateString(),
                 'color' => '#8B5CF6', // Violet
                 'type'  => 'expense',

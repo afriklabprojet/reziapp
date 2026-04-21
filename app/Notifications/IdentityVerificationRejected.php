@@ -13,8 +13,9 @@ class IdentityVerificationRejected extends Notification implements ShouldQueue
     use Queueable;
 
     public function __construct(
-        protected IdentityVerification $verification
-    ) {}
+        protected IdentityVerification $verification,
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -23,7 +24,7 @@ class IdentityVerificationRejected extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $mail = (new MailMessage)
+        $mail = (new MailMessage())
             ->subject('❌ Vérification d\'identité rejetée — REZI')
             ->greeting("Bonjour {$notifiable->name},")
             ->line('Votre demande de vérification d\'identité a été **rejetée**.');

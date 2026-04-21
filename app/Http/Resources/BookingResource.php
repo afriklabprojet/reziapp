@@ -44,7 +44,7 @@ class BookingResource extends JsonResource
                 'discount' => (float) ($this->discount_amount ?? 0),
                 'total' => (float) $this->total_amount,
                 'currency' => $this->currency ?? 'XOF',
-                'formatted_total' => number_format((float) $this->total_amount, 0, ',', ' ') . ' FCFA',
+                'formatted_total' => number_format((float) $this->total_amount, 0, ',', ' ').' FCFA',
             ],
 
             // Status
@@ -58,8 +58,8 @@ class BookingResource extends JsonResource
                 'name' => $this->residence->name,
                 'address' => $this->residence->address,
                 'commune' => $this->residence->commune,
-                'thumbnail' => $this->residence->photos->first() 
-                    ? url('storage/' . $this->residence->photos->first()->path)
+                'thumbnail' => $this->residence->photos->first()
+                    ? url('storage/'.$this->residence->photos->first()->path)
                     : null,
             ]),
 

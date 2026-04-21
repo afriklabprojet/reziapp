@@ -6,7 +6,6 @@ use App\Models\Booking;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
 class BookingsChartWidget extends ChartWidget
 {

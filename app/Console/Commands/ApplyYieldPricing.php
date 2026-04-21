@@ -17,10 +17,10 @@ class ApplyYieldPricing extends Command
         $days    = (int) $this->option('days');
         $results = $service->applyAutoPricing($days);
 
-        $this->info(count($results) . ' résidence(s) traité(s) pour le yield management.');
+        $this->info(count($results).' résidence(s) traité(s) pour le yield management.');
 
         $gapResults = $service->applyGapNightPricing();
-        $this->info(count($gapResults) . ' résidence(s) avec gap-night pricing appliqué.');
+        $this->info(count($gapResults).' résidence(s) avec gap-night pricing appliqué.');
 
         return self::SUCCESS;
     }

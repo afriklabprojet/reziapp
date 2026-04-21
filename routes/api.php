@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookingApiController;
+use App\Http\Controllers\Api\ChatbotController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\GeoSearchController;
 use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\PaymentApiController;
+use App\Http\Controllers\Api\RecommendationController;
 use App\Http\Controllers\Api\ResidenceController;
 use App\Http\Controllers\Webhook\JekoWebhookController;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +50,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/health', function () {
         $health = \Illuminate\Support\Facades\Cache::get('system:health', []);
         $allOk = empty($health) || collect($health)->every(fn ($c) => $c['status'] === 'ok');
+
         return response()->json([
             'success' => true,
             'status' => $allOk ? 'healthy' : 'degraded',
@@ -77,6 +80,14 @@ Route::prefix('v1')->group(function () {
             ->name('api.residences.index');
         Route::get('/residences/{residence}', [ResidenceController::class, 'show'])
             ->name('api.residences.show');
+
+        // Résidences similaires (sans auth)
+        Route::get('/residences/{residence}/similar', [RecommendationController::class, 'similar'])
+            ->name('api.residences.similar');
+
+        // Chatbot IA 24/7 (public, rate-limited dans le controller)
+        Route::get('/chatbot/status', [ChatbotController::class, 'status'])->name('api.chatbot.status');
+        Route::post('/chatbot/message', [ChatbotController::class, 'message'])->name('api.chatbot.message');
 
         // Calendrier de disponibilité (public)
         Route::get('/residences/{residence}/availability', [\App\Http\Controllers\Api\AvailabilityController::class, 'index'])
@@ -211,6 +222,17 @@ Route::prefix('v1')->group(function () {
         // Enregistrer une vue
         Route::post('/residences/{residence}/view', [ResidenceController::class, 'recordView'])
             ->name('api.residences.view');
+
+        /*
+        |----------------------------------------------------------------------
+        | Recommandations IA (matching locataire → résidence)
+        |----------------------------------------------------------------------
+        */
+        Route::prefix('recommendations')->name('api.recommendations.')->group(function () {
+            Route::get('/', [RecommendationController::class, 'index'])->name('index');
+            Route::get('/profile', [RecommendationController::class, 'profile'])->name('profile');
+            Route::post('/invalidate', [RecommendationController::class, 'invalidate'])->name('invalidate');
+        });
 
         // Calculate price before booking
         Route::post('/residences/{residence}/price', [BookingApiController::class, 'calculatePrice'])

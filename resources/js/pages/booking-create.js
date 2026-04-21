@@ -142,7 +142,7 @@ export default function bookingCreateForm(config) {
             today.setHours(0, 0, 0, 0);
 
             // Padding for start of week (Monday = 1)
-            let startDay = firstDay.getDay() || 7; // Sunday = 7
+            const startDay = firstDay.getDay() || 7; // Sunday = 7
             for (let i = 1; i < startDay; i++) {
                 days.push({ key: `pad-${i}`, isEmpty: true, available: false, dayOfMonth: '', date: '' });
             }
@@ -329,7 +329,7 @@ export default function bookingCreateForm(config) {
                 } else {
                     this.codeError = data.error || 'Code invalide ou expiré.';
                 }
-            } catch (error) {
+            } catch (_error) {
                 this.codeError = 'Erreur de connexion lors de la validation.';
             }
         },

@@ -24,7 +24,8 @@ class PropertyInspectionController extends Controller
 {
     public function __construct(
         private readonly PropertyInspectionService $inspectionService,
-    ) {}
+    ) {
+    }
 
     // ===== INDEX =====
 

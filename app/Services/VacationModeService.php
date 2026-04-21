@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\VacationMode;
 use App\Models\Residence;
 use App\Models\User;
+use App\Models\VacationMode;
 
 class VacationModeService
 {

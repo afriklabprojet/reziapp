@@ -212,7 +212,7 @@ export default function residenceWizard(config) {
                 } else {
                     this.aiError = data.error || 'Erreur lors de la génération.';
                 }
-            } catch (e) { this.aiError = 'Erreur de connexion.'; }
+            } catch (_e) { this.aiError = 'Erreur de connexion.'; }
             this.aiLoading = false;
         },
 
@@ -233,7 +233,7 @@ export default function residenceWizard(config) {
                 } else {
                     this.aiError = data.error || 'Erreur lors de la génération.';
                 }
-            } catch (e) { this.aiError = 'Erreur de connexion.'; }
+            } catch (_e) { this.aiError = 'Erreur de connexion.'; }
             this.aiTitleLoading = false;
         },
 
@@ -255,7 +255,7 @@ export default function residenceWizard(config) {
                 } else {
                     this.aiError = data.error || 'Erreur lors de l\'amélioration.';
                 }
-            } catch (e) { this.aiError = 'Erreur de connexion.'; }
+            } catch (_e) { this.aiError = 'Erreur de connexion.'; }
             this.aiImproveLoading = false;
         },
 
@@ -301,7 +301,7 @@ export default function residenceWizard(config) {
                     const error = await response.json();
                     alert(error.message || 'Une erreur est survenue');
                 }
-            } catch (e) {
+            } catch (_e) {
                 alert('Erreur de connexion');
             } finally {
                 this.isSubmitting = false;

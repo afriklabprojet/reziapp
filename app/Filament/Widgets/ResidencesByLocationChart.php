@@ -41,7 +41,7 @@ class ResidencesByLocationChart extends ChartWidget
                     ],
                 ],
             ],
-            'labels' => $data->map(fn($r) => $r->commune ?? 'N/A')->toArray(),
+            'labels' => $data->map(fn ($r) => $r->commune ?? 'N/A')->toArray(),
         ];
     }
 

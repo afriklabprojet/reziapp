@@ -8,7 +8,6 @@ use App\Models\Booking;
 use App\Models\IcalBlockedDate;
 use App\Models\IcalFeed;
 use App\Models\Residence;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -69,6 +68,7 @@ class IcalService
                 'last_error'  => $e->getMessage(),
             ]);
             Log::error("iCal import failed for feed {$feed->id}: {$e->getMessage()}");
+
             return 0;
         }
     }
@@ -89,15 +89,15 @@ class IcalService
             'PRODID:-//REZI//Calendar//FR',
             'CALSCALE:GREGORIAN',
             'METHOD:PUBLISH',
-            'X-WR-CALNAME:' . $residence->name,
+            'X-WR-CALNAME:'.$residence->name,
         ];
 
         foreach ($bookings as $booking) {
             $lines[] = 'BEGIN:VEVENT';
-            $lines[] = 'UID:booking-' . $booking->id . '@reziapp.ci';
-            $lines[] = 'DTSTART;VALUE=DATE:' . Carbon::parse($booking->check_in)->format('Ymd');
-            $lines[] = 'DTEND;VALUE=DATE:' . Carbon::parse($booking->check_out)->format('Ymd');
-            $lines[] = 'SUMMARY:Réservé - ' . ($booking->user->name ?? 'Voyageur');
+            $lines[] = 'UID:booking-'.$booking->id.'@reziapp.ci';
+            $lines[] = 'DTSTART;VALUE=DATE:'.Carbon::parse($booking->check_in)->format('Ymd');
+            $lines[] = 'DTEND;VALUE=DATE:'.Carbon::parse($booking->check_out)->format('Ymd');
+            $lines[] = 'SUMMARY:Réservé - '.($booking->user->name ?? 'Voyageur');
             $lines[] = 'STATUS:CONFIRMED';
             $lines[] = 'END:VEVENT';
         }

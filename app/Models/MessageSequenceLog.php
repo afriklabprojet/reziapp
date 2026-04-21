@@ -9,10 +9,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MessageSequenceLog extends Model
 {
-    const STATUS_PENDING   = 'pending';
-    const STATUS_SENT      = 'sent';
-    const STATUS_FAILED    = 'failed';
-    const STATUS_CANCELLED = 'cancelled';
+    public const STATUS_PENDING   = 'pending';
+    public const STATUS_SENT      = 'sent';
+    public const STATUS_FAILED    = 'failed';
+    public const STATUS_CANCELLED = 'cancelled';
 
     protected $fillable = [
         'message_sequence_id', 'step_id', 'booking_id', 'user_id',

@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\UtilityReading;
-use App\Models\UtilityAlert;
-use App\Models\Residence;
 use App\Models\User;
+use App\Models\UtilityAlert;
+use App\Models\UtilityReading;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -98,7 +97,7 @@ class UtilityService
                 'threshold_value' => $historicalAvg * 2,
                 'current_value'   => $dailyAvg,
                 'status'          => 'active',
-                'message'         => "Consommation anormalement élevée de {$reading->type_label} : " . round($dailyAvg, 1) . " {$reading->unit}/jour (moyenne : " . round($historicalAvg, 1) . ")",
+                'message'         => "Consommation anormalement élevée de {$reading->type_label} : ".round($dailyAvg, 1)." {$reading->unit}/jour (moyenne : ".round($historicalAvg, 1).')',
                 'triggered_at'    => now(),
             ]);
         }

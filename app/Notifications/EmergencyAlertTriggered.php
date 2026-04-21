@@ -36,7 +36,7 @@ class EmergencyAlertTriggered extends Notification implements ShouldQueue
             ->subject("🆘 URGENCE {$type} — Utilisateur {$user->name}")
             ->greeting('ALERTE URGENCE')
             ->line("L'utilisateur **{$user->name}** (ID: {$user->id}) a déclenché une alerte **{$type}**.")
-            ->line("**Date :** " . $this->alert->created_at->format('d/m/Y à H:i:s'));
+            ->line('**Date :** '.$this->alert->created_at->format('d/m/Y à H:i:s'));
 
         if ($this->alert->message) {
             $mail->line("**Message :** {$this->alert->message}");
@@ -47,7 +47,7 @@ class EmergencyAlertTriggered extends Notification implements ShouldQueue
         }
 
         return $mail
-            ->line("**Téléphone :** " . ($user->phone ?? 'Non renseigné'))
+            ->line('**Téléphone :** '.($user->phone ?? 'Non renseigné'))
             ->line('Action immédiate requise. Les contacts d\'urgence de l\'utilisateur ont été notifiés.')
             ->salutation('Système REZI — Alerte automatique');
     }

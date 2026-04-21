@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Services\PromoCodeService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class PromoCodeController extends Controller
 {

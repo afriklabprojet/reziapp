@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\VerifyPaymentStatus;
 use App\Models\Booking;
 use App\Models\OwnerBalance;
 use App\Models\Payment;
@@ -9,9 +10,6 @@ use App\Models\PaymentMethod;
 use App\Models\PaymentProvider;
 use App\Models\PlatformSetting;
 use App\Models\User;
-use App\Jobs\VerifyPaymentStatus;
-use App\Services\BusinessEventService;
-use App\Services\CacheInvalidationService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -44,6 +42,7 @@ class PaymentService
                 'payment_id' => $existing->id,
                 'booking_id' => $booking->id,
             ]);
+
             return $existing;
         }
 
@@ -54,7 +53,7 @@ class PaymentService
             'total_amount' => $booking->total_amount,
         ];
 
-        $idempotencyKey = 'bk_' . $booking->id . '_' . $user->id . '_' . Str::random(8);
+        $idempotencyKey = 'bk_'.$booking->id.'_'.$user->id.'_'.Str::random(8);
 
         $payment = Payment::create([
             'idempotency_key' => $idempotencyKey,
@@ -149,6 +148,7 @@ class PaymentService
                 Log::channel('critical')->error('onPaymentSuccess: Payment not found', [
                     'payment_id' => $payment?->id,
                 ]);
+
                 return;
             }
 
@@ -158,6 +158,7 @@ class PaymentService
                     'payment_id' => $payment->id,
                     'booking_id' => $payment->booking_id,
                 ]);
+
                 return;
             }
 
@@ -181,7 +182,7 @@ class PaymentService
                 // Invalidate caches for booking, residence availability, user data
                 CacheInvalidationService::invalidateBooking(
                     $payment->booking->residence_id,
-                    $payment->booking->user_id
+                    $payment->booking->user_id,
                 );
                 CacheInvalidationService::invalidatePayment($payment->booking->user_id);
 
@@ -232,6 +233,7 @@ class PaymentService
                 'payment_id' => $payment->id,
                 'booking_id' => $payment->booking_id,
             ]);
+
             return;
         }
 
@@ -251,6 +253,7 @@ class PaymentService
                     'owner_id' => $ownerId,
                     'amount' => $ownerAmount,
                 ]);
+
                 return;
             }
 
@@ -300,7 +303,7 @@ class PaymentService
                 $owner,
                 'booking',
                 'Nouvelle réservation confirmée',
-                ($payment->user?->name ?? 'Un client') . ' a réservé ' . $payment->booking->residence->name,
+                ($payment->user?->name ?? 'Un client').' a réservé '.$payment->booking->residence->name,
                 route('owner.bookings.show', $payment->booking),
                 ['booking_id' => $payment->booking->id],
             );

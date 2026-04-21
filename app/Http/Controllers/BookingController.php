@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBookingRequestRequest;
@@ -8,10 +10,9 @@ use App\Models\Booking;
 use App\Models\BookingRequest;
 use App\Models\Residence;
 use App\Models\User;
-use App\Notifications\GuestBookingConfirmation;
 use App\Services\BookingService;
-use App\Services\PricingService;
 use App\Services\JekoPaymentService;
+use App\Services\PricingService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,6 +36,7 @@ class BookingController extends Controller
         // Validation des inputs query string
         $checkIn = null;
         $checkOut = null;
+
         try {
             if ($request->query('check_in')) {
                 $checkIn = Carbon::parse($request->query('check_in'));
@@ -556,7 +558,7 @@ class BookingController extends Controller
             $timeline->push(['date' => $booking->actual_check_out, 'label' => 'Check-out effectué', 'icon' => 'arrow-left']);
         }
         if ($booking->cancelled_at) {
-            $timeline->push(['date' => $booking->cancelled_at, 'label' => 'Annulée — ' . ($booking->cancellation_reason ?? ''), 'icon' => 'x-mark']);
+            $timeline->push(['date' => $booking->cancelled_at, 'label' => 'Annulée — '.($booking->cancellation_reason ?? ''), 'icon' => 'x-mark']);
         }
         $timeline = $timeline->sortBy('date')->values();
 

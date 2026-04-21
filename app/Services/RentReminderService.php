@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Models\RentReminder;
 use App\Models\User;
 use App\Notifications\RentReminderNotification;
-use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class RentReminderService

@@ -10,7 +10,6 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class BroadcastNotification extends Page implements HasForms
@@ -79,12 +78,12 @@ class BroadcastNotification extends Page implements HasForms
                                 $specific = $get('specific_users') ?? [];
 
                                 return match ($audience) {
-                                    'all' => User::where('role', '!=', 'admin')->count() . ' utilisateurs',
-                                    'owners' => User::where('role', 'owner')->count() . ' propriétaires',
-                                    'users' => User::where('role', 'user')->count() . ' locataires',
-                                    'verified_owners' => User::where('role', 'owner')->where('is_verified', true)->count() . ' propriétaires vérifiés',
-                                    'active_users' => User::where('role', '!=', 'admin')->where('updated_at', '>=', now()->subDays(30))->count() . ' utilisateurs actifs',
-                                    'specific' => count($specific) . ' utilisateurs sélectionnés',
+                                    'all' => User::where('role', '!=', 'admin')->count().' utilisateurs',
+                                    'owners' => User::where('role', 'owner')->count().' propriétaires',
+                                    'users' => User::where('role', 'user')->count().' locataires',
+                                    'verified_owners' => User::where('role', 'owner')->where('is_verified', true)->count().' propriétaires vérifiés',
+                                    'active_users' => User::where('role', '!=', 'admin')->where('updated_at', '>=', now()->subDays(30))->count().' utilisateurs actifs',
+                                    'specific' => count($specific).' utilisateurs sélectionnés',
                                     default => '-',
                                 };
                             }),
@@ -190,6 +189,7 @@ class BroadcastNotification extends Page implements HasForms
                 ->body('Aucun utilisateur correspondant aux critères')
                 ->danger()
                 ->send();
+
             return;
         }
 
@@ -198,12 +198,13 @@ class BroadcastNotification extends Page implements HasForms
             title: $data['title'],
             body: $data['body'],
             actionUrl: $data['action_url'] ?? null,
-            icon: $data['icon'] ?? 'info'
+            icon: $data['icon'] ?? 'info',
         );
 
         $channels = $data['channel'];
 
         DB::beginTransaction();
+
         try {
             foreach ($users as $user) {
                 if (in_array('database', $channels)) {
@@ -226,7 +227,7 @@ class BroadcastNotification extends Page implements HasForms
                     'audience' => $data['target_audience'],
                     'channels' => $channels,
                     'recipient_count' => $users->count(),
-                ]
+                ],
             );
 
             DB::commit();
@@ -248,7 +249,7 @@ class BroadcastNotification extends Page implements HasForms
 
             Notification::make()
                 ->title('Erreur')
-                ->body('Erreur lors de l\'envoi: ' . $e->getMessage())
+                ->body('Erreur lors de l\'envoi: '.$e->getMessage())
                 ->danger()
                 ->send();
         }

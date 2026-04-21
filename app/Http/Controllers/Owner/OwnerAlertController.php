@@ -15,7 +15,8 @@ class OwnerAlertController extends Controller
 {
     public function __construct(
         private OwnerAlertService $alertService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {
@@ -27,18 +28,21 @@ class OwnerAlertController extends Controller
     public function acknowledge(OwnerAlert $alert): RedirectResponse
     {
         $alert->acknowledge();
+
         return back()->with('success', 'Alerte acquittée.');
     }
 
     public function resolve(OwnerAlert $alert): RedirectResponse
     {
         $alert->resolve();
+
         return back()->with('success', 'Alerte résolue.');
     }
 
     public function dismiss(OwnerAlert $alert): RedirectResponse
     {
         $alert->dismiss();
+
         return back()->with('success', 'Alerte masquée.');
     }
 }

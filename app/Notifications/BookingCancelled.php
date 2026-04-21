@@ -42,7 +42,7 @@ class BookingCancelled extends Notification implements ShouldQueue
             $mail->line("La réservation de **{$guestName}** pour **{$this->residence->name}** a été annulée.");
         }
 
-        $mail->line("**Détails :**")
+        $mail->line('**Détails :**')
             ->line("• Arrivée : {$checkIn}")
             ->line("• Départ : {$checkOut}")
             ->line("• Réf. : {$this->booking->reference}");
@@ -68,7 +68,7 @@ class BookingCancelled extends Notification implements ShouldQueue
             'cancelled_by' => $this->cancelledBy,
             'check_in' => $this->booking->check_in->toDateString(),
             'check_out' => $this->booking->check_out->toDateString(),
-            'message' => 'Réservation annulée pour ' . $this->residence->name,
+            'message' => 'Réservation annulée pour '.$this->residence->name,
         ];
     }
 }

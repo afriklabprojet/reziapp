@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Owner;
 
-use App\Models\TenantReview;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreTenantReviewRequest extends FormRequest

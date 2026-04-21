@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -36,11 +38,11 @@ class MarketPriceData extends Model
     ];
 
     // Residence types
-    const TYPE_APARTMENT = 'apartment';
-    const TYPE_STUDIO = 'studio';
-    const TYPE_HOUSE = 'house';
-    const TYPE_VILLA = 'villa';
-    const TYPE_ROOM = 'room';
+    public const TYPE_APARTMENT = 'apartment';
+    public const TYPE_STUDIO = 'studio';
+    public const TYPE_HOUSE = 'house';
+    public const TYPE_VILLA = 'villa';
+    public const TYPE_ROOM = 'room';
 
     // ===== RELATIONSHIPS =====
 
@@ -90,7 +92,7 @@ class MarketPriceData extends Model
         string $city,
         string $residenceType,
         ?int $bedrooms = null,
-        string $countryCode = 'CI'
+        string $countryCode = 'CI',
     ): ?array {
         $query = self::forCountry($countryCode)
             ->forCity($city)
@@ -125,7 +127,7 @@ class MarketPriceData extends Model
         string $residenceType,
         float $price,
         ?int $bedrooms = null,
-        string $countryCode = 'CI'
+        string $countryCode = 'CI',
     ): array {
         $market = self::getMarketPrice($city, $residenceType, $bedrooms, $countryCode);
 
@@ -141,19 +143,19 @@ class MarketPriceData extends Model
 
         if ($diffPercent < -20) {
             $status = 'very_low';
-            $message = 'Prix très attractif - ' . abs(round($diffPercent)) . '% en dessous du marché';
+            $message = 'Prix très attractif - '.abs(round($diffPercent)).'% en dessous du marché';
         } elseif ($diffPercent < -10) {
             $status = 'low';
-            $message = 'Prix attractif - ' . abs(round($diffPercent)) . '% en dessous du marché';
+            $message = 'Prix attractif - '.abs(round($diffPercent)).'% en dessous du marché';
         } elseif ($diffPercent < 10) {
             $status = 'fair';
             $message = 'Prix conforme au marché';
         } elseif ($diffPercent < 20) {
             $status = 'high';
-            $message = 'Prix légèrement élevé - ' . round($diffPercent) . '% au-dessus du marché';
+            $message = 'Prix légèrement élevé - '.round($diffPercent).'% au-dessus du marché';
         } else {
             $status = 'very_high';
-            $message = 'Prix élevé - ' . round($diffPercent) . '% au-dessus du marché';
+            $message = 'Prix élevé - '.round($diffPercent).'% au-dessus du marché';
         }
 
         return [
@@ -196,6 +198,6 @@ class MarketPriceData extends Model
      */
     public function getFormattedAvgPrice(): string
     {
-        return number_format($this->avg_price_per_night, 0, ',', ' ') . ' FCFA/nuit';
+        return number_format($this->avg_price_per_night, 0, ',', ' ').' FCFA/nuit';
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 // Ajouter les colonnes manquantes à residences
 Schema::table('residences', function (Blueprint $table) {

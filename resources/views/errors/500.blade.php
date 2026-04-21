@@ -4,8 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Erreur serveur - REZI</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css'])
 </head>
 <body class="font-sans antialiased bg-gray-50">
@@ -14,7 +15,7 @@
         <a href="{{ route('home') }}" class="mb-8">
             <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="REZI" class="h-12 w-auto">
         </a>
-        
+
         {{-- Error illustration --}}
         <div class="relative mb-8">
             <div class="text-[150px] sm:text-[200px] font-black text-gray-100 leading-none select-none">
@@ -26,16 +27,16 @@
                 </svg>
             </div>
         </div>
-        
+
         {{-- Message --}}
         <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-3">
             Oups ! Une erreur s'est produite
         </h1>
         <p class="text-gray-600 text-center max-w-md mb-8">
-            Notre équipe technique a été notifiée et travaille à résoudre le problème. 
+            Notre équipe technique a été notifiée et travaille à résoudre le problème.
             Veuillez réessayer dans quelques instants.
         </p>
-        
+
         {{-- Actions --}}
         <div class="flex flex-col sm:flex-row gap-4">
             <button onclick="location.reload()" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/30">
@@ -51,7 +52,7 @@
                 Retour à l'accueil
             </a>
         </div>
-        
+
         {{-- Status indicator --}}
         <div class="mt-12 text-center">
             <div class="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 text-amber-700 rounded-full text-sm">

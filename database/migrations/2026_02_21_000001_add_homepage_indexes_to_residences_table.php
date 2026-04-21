@@ -11,8 +11,7 @@ use Illuminate\Support\Facades\Schema;
  * L'index composite (status, is_available) accélère ces requêtes.
  * L'index géo couvre les requêtes de recherche par rayon.
  */
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         Schema::table('residences', function (Blueprint $table) {
@@ -22,7 +21,7 @@ return new class extends Migration
             // Index composite pour les requêtes géolocalisées
             $table->index(
                 ['status', 'is_available', 'latitude', 'longitude'],
-                'idx_residences_geo_search'
+                'idx_residences_geo_search',
             );
 
             // Index pour le tri par commune (zones populaires)

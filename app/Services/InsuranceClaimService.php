@@ -42,6 +42,7 @@ class InsuranceClaimService
         }
 
         $claim->update($data);
+
         return $claim->fresh();
     }
 
@@ -51,6 +52,7 @@ class InsuranceClaimService
         $evidence = array_merge($evidence, $newEvidence);
 
         $claim->update(['evidence' => $evidence]);
+
         return $claim->fresh();
     }
 }

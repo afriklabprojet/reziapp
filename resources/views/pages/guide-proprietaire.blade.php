@@ -78,10 +78,21 @@
                         {{-- Tools/Requirements --}}
                         @if(!empty($step['tools']))
                         <div class="bg-gray-50 rounded-xl p-4">
-                            <h4 class="font-medium text-gray-900 mb-2">Outils nécessaires</h4>
-                            <div class="flex flex-wrap gap-2">
+                            <h4 class="font-medium text-gray-900 mb-2 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                                Outils marketing
+                            </h4>
+                            <div class="space-y-3 mt-4">
                                 @foreach($step['tools'] as $tool)
-                                <span class="px-3 py-1 bg-white rounded-full text-sm text-gray-700 border">{{ $tool }}</span>
+                                <div class="flex items-start">
+                                    <span class="text-2xl mr-3 shrink-0">{{ $tool['icon'] }}</span>
+                                    <div>
+                                        <div class="font-medium text-gray-900">{{ $tool['name'] }}</div>
+                                        <p class="text-sm text-gray-600 mt-0.5">{{ $tool['description'] }}</p>
+                                    </div>
+                                </div>
                                 @endforeach
                             </div>
                         </div>

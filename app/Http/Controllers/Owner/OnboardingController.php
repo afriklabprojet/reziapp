@@ -14,7 +14,8 @@ class OnboardingController extends Controller
 {
     public function __construct(
         private OnboardingService $onboardingService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {

@@ -67,7 +67,7 @@ class ContactController extends Controller
             $residence->owner,
             'contact',
             'Nouvelle demande de contact',
-            ($request->user()->name ?? 'Un visiteur') . ' vous a contacté pour ' . $residence->name,
+            ($request->user()->name ?? 'Un visiteur').' vous a contacté pour '.$residence->name,
             route('owner.contacts.show', $contact),
             ['contact_id' => $contact->id, 'residence_id' => $residence->id],
         );

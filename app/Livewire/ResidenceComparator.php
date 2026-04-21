@@ -28,6 +28,7 @@ class ResidenceComparator extends Component
     {
         if (empty($this->residenceIds)) {
             $this->residences = collect();
+
             return;
         }
 
@@ -46,6 +47,7 @@ class ResidenceComparator extends Component
                 'type' => 'warning',
                 'message' => "Maximum {$this->maxCompare} résidences à comparer",
             ]);
+
             return;
         }
 
@@ -54,6 +56,7 @@ class ResidenceComparator extends Component
                 'type' => 'info',
                 'message' => 'Déjà dans la comparaison',
             ]);
+
             return;
         }
 
@@ -166,7 +169,7 @@ class ResidenceComparator extends Component
     {
         return match ($field) {
             'type' => $residence->category?->name ?? ($residence->type ?? 'Non spécifié'),
-            'location' => ($residence->commune ?? '') . ', ' . ($residence->city ?? ''),
+            'location' => ($residence->commune ?? '').', '.($residence->city ?? ''),
             'surface' => $residence->surface_area,
             'bedrooms' => $residence->bedrooms,
             'bathrooms' => $residence->bathrooms,
@@ -190,7 +193,7 @@ class ResidenceComparator extends Component
     {
         // Collecter tous les équipements uniques
         $allAmenities = collect();
-        
+
         foreach ($this->residences as $residence) {
             foreach ($residence->amenities as $amenity) {
                 $allAmenities->put($amenity->id, [

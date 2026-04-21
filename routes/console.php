@@ -91,3 +91,8 @@ Schedule::command('rezi:check-owner-alerts')->everyThirtyMinutes()
 Schedule::command('rezi:expire-lock-codes')->hourly()
     ->withoutOverlapping()
     ->runInBackground();
+
+// Mettre à jour les statistiques de rareté (viewers 24h, réservations du mois) — toutes les heures
+Schedule::command('rezi:update-scarcity-stats')->hourly()
+    ->withoutOverlapping()
+    ->runInBackground();

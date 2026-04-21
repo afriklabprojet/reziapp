@@ -9,15 +9,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OwnerAlert extends Model
 {
-    const TYPE_RESPONSE_TIME_SLA = 'response_time_sla';
-    const TYPE_LOW_OCCUPANCY     = 'low_occupancy';
-    const TYPE_PRICE_SUGGESTION  = 'price_suggestion';
-    const TYPE_REVIEW_PENDING    = 'review_pending';
-    const TYPE_DOCUMENT_EXPIRY   = 'document_expiry';
-    const TYPE_HIGH_CONSUMPTION  = 'high_consumption';
-    const TYPE_BOOKING_GAP       = 'booking_gap';
+    public const TYPE_RESPONSE_TIME_SLA = 'response_time_sla';
+    public const TYPE_LOW_OCCUPANCY     = 'low_occupancy';
+    public const TYPE_PRICE_SUGGESTION  = 'price_suggestion';
+    public const TYPE_REVIEW_PENDING    = 'review_pending';
+    public const TYPE_DOCUMENT_EXPIRY   = 'document_expiry';
+    public const TYPE_HIGH_CONSUMPTION  = 'high_consumption';
+    public const TYPE_BOOKING_GAP       = 'booking_gap';
 
-    const TYPES = [
+    public const TYPES = [
         self::TYPE_RESPONSE_TIME_SLA => 'Temps de réponse SLA',
         self::TYPE_LOW_OCCUPANCY     => 'Faible occupation',
         self::TYPE_PRICE_SUGGESTION  => 'Suggestion de prix',
@@ -27,14 +27,14 @@ class OwnerAlert extends Model
         self::TYPE_BOOKING_GAP       => 'Nuit orpheline',
     ];
 
-    const SEVERITY_INFO     = 'info';
-    const SEVERITY_WARNING  = 'warning';
-    const SEVERITY_CRITICAL = 'critical';
+    public const SEVERITY_INFO     = 'info';
+    public const SEVERITY_WARNING  = 'warning';
+    public const SEVERITY_CRITICAL = 'critical';
 
-    const STATUS_ACTIVE       = 'active';
-    const STATUS_ACKNOWLEDGED = 'acknowledged';
-    const STATUS_RESOLVED     = 'resolved';
-    const STATUS_DISMISSED    = 'dismissed';
+    public const STATUS_ACTIVE       = 'active';
+    public const STATUS_ACKNOWLEDGED = 'acknowledged';
+    public const STATUS_RESOLVED     = 'resolved';
+    public const STATUS_DISMISSED    = 'dismissed';
 
     protected $fillable = [
         'user_id', 'residence_id', 'alert_type', 'severity',

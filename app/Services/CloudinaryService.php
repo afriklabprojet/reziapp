@@ -61,6 +61,7 @@ class CloudinaryService
 
             if ($response->successful()) {
                 $data = $response->json();
+
                 return [
                     'public_id' => $data['public_id'],
                     'url' => $data['secure_url'],
@@ -72,10 +73,12 @@ class CloudinaryService
             }
 
             Log::error('Cloudinary upload failed', ['response' => $response->body()]);
+
             return null;
 
         } catch (\Exception $e) {
             Log::error('Cloudinary upload error', ['error' => $e->getMessage()]);
+
             return null;
         }
     }
@@ -109,6 +112,7 @@ class CloudinaryService
 
         } catch (\Exception $e) {
             Log::error('Cloudinary delete error', ['error' => $e->getMessage()]);
+
             return false;
         }
     }
@@ -129,7 +133,7 @@ class CloudinaryService
         ], $options);
 
         $transformStr = collect($transformations)
-            ->map(fn($value, $key) => "{$key}_{$value}")
+            ->map(fn ($value, $key) => "{$key}_{$value}")
             ->implode(',');
 
         return "https://res.cloudinary.com/{$this->cloudName}/image/upload/{$transformStr}/{$publicId}";
@@ -158,7 +162,7 @@ class CloudinaryService
         }
 
         return collect($widths)
-            ->map(fn($w) => $this->getOptimizedUrl($publicId, ['w' => $w]) . " {$w}w")
+            ->map(fn ($w) => $this->getOptimizedUrl($publicId, ['w' => $w])." {$w}w")
             ->implode(', ');
     }
 
@@ -169,10 +173,10 @@ class CloudinaryService
     {
         ksort($params);
         $signatureString = collect($params)
-            ->map(fn($value, $key) => "{$key}={$value}")
+            ->map(fn ($value, $key) => "{$key}={$value}")
             ->implode('&');
 
-        return sha1($signatureString . $this->apiSecret);
+        return sha1($signatureString.$this->apiSecret);
     }
 
     /**
@@ -187,7 +191,7 @@ class CloudinaryService
         try {
             $timestamp = time();
             $fullPath = Storage::disk('public')->path($localPath);
-            
+
             $params = [
                 'folder' => "rezi/{$folder}",
                 'timestamp' => $timestamp,
@@ -212,6 +216,7 @@ class CloudinaryService
 
         } catch (\Exception $e) {
             Log::error('Cloudinary migration error', ['error' => $e->getMessage()]);
+
             return null;
         }
     }

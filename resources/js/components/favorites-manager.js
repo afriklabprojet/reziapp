@@ -179,7 +179,7 @@ export default function favoritesManager(config = {}) {
                         const data = await response.json();
                         this.favorites = data.favorites || [];
                     }
-                } catch (error) {
+                } catch (_error) {
                     // Silencieux
                 }
             }

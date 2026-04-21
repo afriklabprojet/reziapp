@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -30,20 +32,20 @@ class WhatsappMessage extends Model
     ];
 
     // Message types
-    const TYPE_BOOKING_NOTIFICATION = 'booking_notification';
-    const TYPE_MESSAGE_NOTIFICATION = 'message_notification';
-    const TYPE_CHECK_IN_REMINDER = 'check_in_reminder';
-    const TYPE_PAYMENT_CONFIRMATION = 'payment_confirmation';
-    const TYPE_REVIEW_REQUEST = 'review_request';
-    const TYPE_PROMOTIONAL = 'promotional';
-    const TYPE_CUSTOM = 'custom';
+    public const TYPE_BOOKING_NOTIFICATION = 'booking_notification';
+    public const TYPE_MESSAGE_NOTIFICATION = 'message_notification';
+    public const TYPE_CHECK_IN_REMINDER = 'check_in_reminder';
+    public const TYPE_PAYMENT_CONFIRMATION = 'payment_confirmation';
+    public const TYPE_REVIEW_REQUEST = 'review_request';
+    public const TYPE_PROMOTIONAL = 'promotional';
+    public const TYPE_CUSTOM = 'custom';
 
     // Status
-    const STATUS_PENDING = 'pending';
-    const STATUS_SENT = 'sent';
-    const STATUS_DELIVERED = 'delivered';
-    const STATUS_READ = 'read';
-    const STATUS_FAILED = 'failed';
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_SENT = 'sent';
+    public const STATUS_DELIVERED = 'delivered';
+    public const STATUS_READ = 'read';
+    public const STATUS_FAILED = 'failed';
 
     // ===== RELATIONSHIPS =====
 
@@ -131,7 +133,7 @@ class WhatsappMessage extends Model
         string $messageType,
         string $content,
         ?string $templateName = null,
-        array $metadata = []
+        array $metadata = [],
     ): self {
         return self::create([
             'user_id' => $userId,
@@ -150,7 +152,7 @@ class WhatsappMessage extends Model
     public static function getStats(?int $userId = null, int $days = 30): array
     {
         $query = self::where('created_at', '>=', now()->subDays($days));
-        
+
         if ($userId) {
             $query->where('user_id', $userId);
         }

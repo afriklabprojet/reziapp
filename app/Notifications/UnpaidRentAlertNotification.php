@@ -20,7 +20,8 @@ class UnpaidRentAlertNotification extends Notification implements ShouldQueue
     public function __construct(
         protected Booking $booking,
         protected int $daysOverdue,
-    ) {}
+    ) {
+    }
 
     public function via(object $notifiable): array
     {

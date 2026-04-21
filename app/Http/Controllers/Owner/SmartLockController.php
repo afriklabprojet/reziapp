@@ -17,7 +17,8 @@ class SmartLockController extends Controller
 {
     public function __construct(
         private SmartLockService $lockService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {
@@ -73,6 +74,7 @@ class SmartLockController extends Controller
     public function revokeCode(SmartLockCode $code): RedirectResponse
     {
         $code->revoke();
+
         return back()->with('success', 'Code révoqué.');
     }
 

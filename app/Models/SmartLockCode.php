@@ -9,13 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SmartLockCode extends Model
 {
-    const TYPE_TEMPORARY = 'temporary';
-    const TYPE_PERMANENT = 'permanent';
-    const TYPE_ONE_TIME  = 'one_time';
+    public const TYPE_TEMPORARY = 'temporary';
+    public const TYPE_PERMANENT = 'permanent';
+    public const TYPE_ONE_TIME  = 'one_time';
 
-    const STATUS_ACTIVE  = 'active';
-    const STATUS_EXPIRED = 'expired';
-    const STATUS_REVOKED = 'revoked';
+    public const STATUS_ACTIVE  = 'active';
+    public const STATUS_EXPIRED = 'expired';
+    public const STATUS_REVOKED = 'revoked';
 
     protected $fillable = [
         'smart_lock_id', 'booking_id', 'code', 'code_type', 'status',

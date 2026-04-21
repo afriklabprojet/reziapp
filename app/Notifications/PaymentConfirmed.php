@@ -16,7 +16,8 @@ class PaymentConfirmed extends Notification implements ShouldQueue
 
     public function __construct(
         private Payment $payment,
-    ) {}
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -29,15 +30,15 @@ class PaymentConfirmed extends Notification implements ShouldQueue
         $residence = $this->payment->booking?->residence;
         $residenceName = $residence?->name ?? 'votre réservation';
 
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject("✅ Paiement confirmé — {$amount} FCFA")
             ->greeting("Bonjour {$notifiable->name},")
             ->line("Votre paiement de **{$amount} FCFA** a été confirmé avec succès.")
-            ->line("**Détails du paiement :**")
+            ->line('**Détails du paiement :**')
             ->line("• Résidence : {$residenceName}")
             ->line("• Montant : {$amount} FCFA")
             ->line("• Référence : {$this->payment->reference}")
-            ->line("• Date : " . ($this->payment->completed_at?->format('d/m/Y à H:i') ?? now()->format('d/m/Y à H:i')))
+            ->line('• Date : '.($this->payment->completed_at?->format('d/m/Y à H:i') ?? now()->format('d/m/Y à H:i')))
             ->when($this->payment->booking, function ($mail) {
                 $checkIn = $this->payment->booking->check_in?->format('d/m/Y');
                 $checkOut = $this->payment->booking->check_out?->format('d/m/Y');
@@ -61,7 +62,7 @@ class PaymentConfirmed extends Notification implements ShouldQueue
             'amount' => $this->payment->total_amount,
             'reference' => $this->payment->reference,
             'residence_name' => $this->payment->booking?->residence?->name,
-            'message' => 'Paiement de ' . number_format((float) $this->payment->total_amount, 0, ',', ' ') . ' FCFA confirmé',
+            'message' => 'Paiement de '.number_format((float) $this->payment->total_amount, 0, ',', ' ').' FCFA confirmé',
         ];
     }
 }

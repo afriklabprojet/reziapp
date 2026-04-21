@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -70,7 +72,7 @@ class AvailabilityCalendar extends Model
             $query->where('date', '<=', $to);
         }
 
-        return $query->pluck('date')->map(fn($d) => $d->format('Y-m-d'));
+        return $query->pluck('date')->map(fn ($d) => $d->format('Y-m-d'));
     }
 
     /**
@@ -146,7 +148,7 @@ class AvailabilityCalendar extends Model
         $existingDates = self::where('residence_id', $residenceId)
             ->whereBetween('date', [$startDate, $endDate])
             ->get()
-            ->keyBy(fn($item) => $item->date->format('Y-m-d'));
+            ->keyBy(fn ($item) => $item->date->format('Y-m-d'));
 
         $calendar = collect();
         $current = $startDate->copy();
@@ -211,8 +213,9 @@ class AvailabilityCalendar extends Model
 
             if (!$dayPrice) {
                 // Vérifier prix saisonnier
-                $seasonal = $seasonalPricing->first(fn($s) => 
-                    $date->between($s->start_date, $s->end_date)
+                $seasonal = $seasonalPricing->first(
+                    fn ($s) =>
+                    $date->between($s->start_date, $s->end_date),
                 );
 
                 if ($seasonal) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -247,7 +249,7 @@ class Payout extends Model
             $this->user,
             'system',
             'Versement effectué',
-            'Votre versement de ' . number_format($this->net_amount, 0, ',', ' ') . ' FCFA a été traité.',
+            'Votre versement de '.number_format($this->net_amount, 0, ',', ' ').' FCFA a été traité.',
             route('owner.earnings.index'),
             ['payout_id' => $this->id, 'amount' => $this->net_amount],
         );

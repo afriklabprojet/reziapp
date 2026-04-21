@@ -21,7 +21,10 @@ use Illuminate\Support\Facades\Storage;
  */
 class SystemHealthCheck implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public int $tries = 1;
 
@@ -72,9 +75,11 @@ class SystemHealthCheck implements ShouldQueue
     private function checkDatabase(): array
     {
         $start = microtime(true);
+
         try {
             DB::select('SELECT 1');
             $ms = round((microtime(true) - $start) * 1000);
+
             return ['status' => $ms > 1000 ? 'degraded' : 'ok', 'response_ms' => $ms];
         } catch (\Throwable $e) {
             return ['status' => 'down', 'response_ms' => 0, 'details' => $e->getMessage()];
@@ -84,12 +89,14 @@ class SystemHealthCheck implements ShouldQueue
     private function checkCache(): array
     {
         $start = microtime(true);
+
         try {
-            $key = 'health:probe:' . uniqid();
+            $key = 'health:probe:'.uniqid();
             Cache::put($key, 'ok', 10);
             $value = Cache::get($key);
             Cache::forget($key);
             $ms = round((microtime(true) - $start) * 1000);
+
             return ['status' => $value === 'ok' ? ($ms > 500 ? 'degraded' : 'ok') : 'down', 'response_ms' => $ms];
         } catch (\Throwable $e) {
             return ['status' => 'down', 'response_ms' => 0, 'details' => $e->getMessage()];
@@ -99,12 +106,14 @@ class SystemHealthCheck implements ShouldQueue
     private function checkStorage(): array
     {
         $start = microtime(true);
+
         try {
             $file = 'health-check-probe.tmp';
             Storage::put($file, 'ok');
             $value = Storage::get($file);
             Storage::delete($file);
             $ms = round((microtime(true) - $start) * 1000);
+
             return ['status' => $value === 'ok' ? 'ok' : 'degraded', 'response_ms' => $ms];
         } catch (\Throwable $e) {
             return ['status' => 'down', 'response_ms' => 0, 'details' => $e->getMessage()];
@@ -118,14 +127,16 @@ class SystemHealthCheck implements ShouldQueue
         }
 
         $start = microtime(true);
+
         try {
             $response = Http::timeout(5)
                 ->withHeaders([
-                    'Authorization' => 'Bearer ' . config('services.jeko.api_key'),
+                    'Authorization' => 'Bearer '.config('services.jeko.api_key'),
                     'X-Api-Key-Id' => config('services.jeko.api_key_id'),
                 ])
-                ->get(config('services.jeko.base_url', 'https://api.jeko.africa') . '/health');
+                ->get(config('services.jeko.base_url', 'https://api.jeko.africa').'/health');
             $ms = round((microtime(true) - $start) * 1000);
+
             return [
                 'status' => $response->successful() ? ($ms > 3000 ? 'degraded' : 'ok') : 'degraded',
                 'response_ms' => $ms,

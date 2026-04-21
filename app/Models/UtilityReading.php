@@ -9,19 +9,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UtilityReading extends Model
 {
-    const TYPE_ELECTRICITY = 'electricity';
-    const TYPE_WATER       = 'water';
-    const TYPE_GAS         = 'gas';
-    const TYPE_INTERNET    = 'internet';
+    public const TYPE_ELECTRICITY = 'electricity';
+    public const TYPE_WATER       = 'water';
+    public const TYPE_GAS         = 'gas';
+    public const TYPE_INTERNET    = 'internet';
 
-    const TYPES = [
+    public const TYPES = [
         self::TYPE_ELECTRICITY => 'Électricité (CIE)',
         self::TYPE_WATER       => 'Eau (SODECI)',
         self::TYPE_GAS         => 'Gaz',
         self::TYPE_INTERNET    => 'Internet',
     ];
 
-    const UNITS = [
+    public const UNITS = [
         self::TYPE_ELECTRICITY => 'kWh',
         self::TYPE_WATER       => 'm³',
         self::TYPE_GAS         => 'm³',

@@ -53,7 +53,7 @@ class TwoFactorController extends Controller
         $qrCodeUrl = $this->google2fa->getQRCodeUrl(
             config('app.name', 'REZI'),
             $user->email,
-            $secret
+            $secret,
         );
 
         return view('auth.two-factor.setup', [
@@ -233,13 +233,13 @@ class TwoFactorController extends Controller
 
         if (! $user->two_factor_enabled) {
             return redirect()->intended(
-                $user->isOwner() ? route('owner.dashboard') : route('client.dashboard')
+                $user->isOwner() ? route('owner.dashboard') : route('client.dashboard'),
             );
         }
 
         if (session('2fa_verified')) {
             return redirect()->intended(
-                $user->isOwner() ? route('owner.dashboard') : route('client.dashboard')
+                $user->isOwner() ? route('owner.dashboard') : route('client.dashboard'),
             );
         }
 
@@ -248,7 +248,7 @@ class TwoFactorController extends Controller
             session(['2fa_verified' => true]);
 
             return redirect()->intended(
-                $user->isOwner() ? route('owner.dashboard') : route('client.dashboard')
+                $user->isOwner() ? route('owner.dashboard') : route('client.dashboard'),
             );
         }
 
@@ -271,7 +271,7 @@ class TwoFactorController extends Controller
 
         if (! $user->two_factor_enabled || ! $user->two_factor_secret) {
             return redirect()->intended(
-                $user->isOwner() ? route('owner.dashboard') : route('client.dashboard')
+                $user->isOwner() ? route('owner.dashboard') : route('client.dashboard'),
             );
         }
 
@@ -296,7 +296,7 @@ class TwoFactorController extends Controller
         }
 
         $redirect = redirect()->intended(
-            $user->isOwner() ? route('owner.dashboard') : route('client.dashboard')
+            $user->isOwner() ? route('owner.dashboard') : route('client.dashboard'),
         );
 
         return $cookie ? $redirect->withCookie($cookie) : $redirect;
@@ -315,7 +315,7 @@ class TwoFactorController extends Controller
 
         if (! $user->two_factor_enabled || ! $user->two_factor_recovery_codes) {
             return redirect()->intended(
-                $user->isOwner() ? route('owner.dashboard') : route('client.dashboard')
+                $user->isOwner() ? route('owner.dashboard') : route('client.dashboard'),
             );
         }
 
@@ -360,7 +360,7 @@ class TwoFactorController extends Controller
         }
 
         return redirect()->intended(
-            $user->isOwner() ? route('owner.dashboard') : route('client.dashboard')
+            $user->isOwner() ? route('owner.dashboard') : route('client.dashboard'),
         );
     }
 
@@ -421,7 +421,7 @@ class TwoFactorController extends Controller
     {
         $codes = [];
         for ($i = 0; $i < 8; $i++) {
-            $codes[] = strtoupper(Str::random(5) . '-' . Str::random(5));
+            $codes[] = strtoupper(Str::random(5).'-'.Str::random(5));
         }
 
         return $codes;

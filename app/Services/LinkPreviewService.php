@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 class LinkPreviewService
 {
@@ -18,7 +18,7 @@ class LinkPreviewService
         }
 
         // Cache pendant 24h
-        $cacheKey = 'link_preview:' . md5($url);
+        $cacheKey = 'link_preview:'.md5($url);
 
         return Cache::remember($cacheKey, 86400, function () use ($url) {
             try {

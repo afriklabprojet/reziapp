@@ -116,6 +116,7 @@ class MessageSequenceService
 
         if (!$booking || !$step) {
             $log->markFailed('Booking or step missing');
+
             return;
         }
 
@@ -130,10 +131,10 @@ class MessageSequenceService
 
         $renderedMessage = $step->renderMessage($data);
         $subject = $step->subject ? str_replace(
-            array_map(fn ($k) => '{' . $k . '}', array_keys($data)),
+            array_map(fn ($k) => '{'.$k.'}', array_keys($data)),
             array_values($data),
-            $step->subject
-        ) : 'Message de ' . ($booking->residence->name ?? 'REZI');
+            $step->subject,
+        ) : 'Message de '.($booking->residence->name ?? 'REZI');
 
         // Envoyer selon le canal
         match ($step->channel) {
@@ -195,7 +196,7 @@ class MessageSequenceService
                      'message' => "Bonjour {guest_name},\n\nVotre arrivée approche ! Voici les informations pratiques :\n\n📍 Adresse : consultez votre espace réservation\n🔑 Instructions d'accès : à venir la veille\n\nN'hésitez pas à nous contacter pour toute question.\n\nÀ très bientôt !\n{owner_name}"],
                     ['delay_hours' => 4, 'delay_reference' => 'before_checkin', 'channel' => 'whatsapp',
                      'subject' => null,
-                     'message' => "Bonjour {guest_name} ! Bienvenue à {residence_name}. Votre logement est prêt. Bonne arrivée ! 🏠"],
+                     'message' => 'Bonjour {guest_name} ! Bienvenue à {residence_name}. Votre logement est prêt. Bonne arrivée ! 🏠'],
                 ],
             ],
             [

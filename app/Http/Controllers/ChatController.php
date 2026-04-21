@@ -529,7 +529,7 @@ class ChatController extends Controller
                 $otherParticipant,
                 'message',
                 'Nouveau message',
-                $user->name . ' vous a envoyé un message concernant ' . $residence->title,
+                $user->name.' vous a envoyé un message concernant '.$residence->title,
                 route('chat.show', $conversation),
                 ['residence_id' => $residence->id],
             );
@@ -677,7 +677,7 @@ class ChatController extends Controller
         $this->authorize('view', $conversation);
 
         $validated = $request->validate([
-            'color' => 'required|string|in:' . implode(',', array_keys(Conversation::THEME_COLORS)),
+            'color' => 'required|string|in:'.implode(',', array_keys(Conversation::THEME_COLORS)),
         ]);
 
         $conversation->update(['theme_color' => $validated['color']]);
@@ -703,7 +703,7 @@ class ChatController extends Controller
         $file = $request->file('audio');
         $duration = $request->input('duration', 0); // durée en secondes
 
-        $path = $file->store('voice_messages/' . $conversation->id, 'private');
+        $path = $file->store('voice_messages/'.$conversation->id, 'private');
 
         $message = $conversation->messages()->create([
             'sender_id' => $user->id,

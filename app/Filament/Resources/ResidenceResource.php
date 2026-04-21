@@ -111,9 +111,14 @@ class ResidenceResource extends Resource
                                     ->label('Ville')
                                     ->options(function (Get $get) {
                                         $code = $get('country_code');
-                                        if (! $code) return [];
+                                        if (! $code) {
+                                            return [];
+                                        }
                                         $country = Country::where('code', $code)->first();
-                                        if (! $country) return [];
+                                        if (! $country) {
+                                            return [];
+                                        }
+
                                         return City::where('country_id', $country->id)
                                             ->active()->ordered()
                                             ->pluck('name', 'name');
@@ -126,14 +131,21 @@ class ResidenceResource extends Resource
                                     ->options(function (Get $get) {
                                         $cityName = $get('city');
                                         $code = $get('country_code');
-                                        if (! $cityName || ! $code) return [];
+                                        if (! $cityName || ! $code) {
+                                            return [];
+                                        }
                                         $country = Country::where('code', $code)->first();
-                                        if (! $country) return [];
+                                        if (! $country) {
+                                            return [];
+                                        }
                                         $city = City::where('country_id', $country->id)
                                             ->where('name', $cityName)->first();
-                                        if (! $city) return [];
+                                        if (! $city) {
+                                            return [];
+                                        }
                                         $communes = CommuneList::where('city_id', $city->id)
                                             ->active()->pluck('name', 'name');
+
                                         return $communes->isNotEmpty() ? $communes : [];
                                     })
                                     ->searchable()
@@ -307,8 +319,11 @@ class ResidenceResource extends Resource
                     ->label('Pays')
                     ->badge()
                     ->formatStateUsing(function (?string $state): string {
-                        if (!$state) return 'CI';
+                        if (!$state) {
+                            return 'CI';
+                        }
                         $country = Country::where('code', $state)->first();
+
                         return $country ? "{$country->flag_emoji} {$state}" : $state;
                     })
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -608,7 +623,7 @@ class ResidenceResource extends Resource
                                 "{$count} résidences approuvées en masse",
                                 null,
                                 null,
-                                ['action' => 'approve', 'count' => $count, 'ids' => $records->pluck('id')->toArray()]
+                                ['action' => 'approve', 'count' => $count, 'ids' => $records->pluck('id')->toArray()],
                             );
 
                             Notification::make()
@@ -646,7 +661,7 @@ class ResidenceResource extends Resource
                                 "{$count} résidences rejetées en masse: {$data['rejection_reason']}",
                                 null,
                                 null,
-                                ['action' => 'reject', 'count' => $count, 'reason' => $data['rejection_reason']]
+                                ['action' => 'reject', 'count' => $count, 'reason' => $data['rejection_reason']],
                             );
 
                             Notification::make()
@@ -682,7 +697,7 @@ class ResidenceResource extends Resource
                                 "{$count} résidences suspendues: {$data['suspension_reason']}",
                                 null,
                                 null,
-                                ['action' => 'suspend', 'count' => $count]
+                                ['action' => 'suspend', 'count' => $count],
                             );
 
                             Notification::make()

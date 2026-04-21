@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\Booking;
 use App\Models\SmartLock;
 use App\Models\SmartLockCode;
-use App\Models\Booking;
 use Carbon\Carbon;
-use Illuminate\Support\Str;
 
 class SmartLockService
 {

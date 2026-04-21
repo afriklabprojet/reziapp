@@ -16,7 +16,8 @@ class InvoiceOverdue extends Notification implements ShouldQueue
 
     public function __construct(
         private Invoice $invoice,
-    ) {}
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -31,11 +32,11 @@ class InvoiceOverdue extends Notification implements ShouldQueue
             ? now()->diffInDays($this->invoice->due_date)
             : 0;
 
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject("⚠️ Facture en retard — {$this->invoice->invoice_number}")
             ->greeting("Bonjour {$notifiable->name},")
             ->line("Votre facture **{$this->invoice->invoice_number}** de **{$amount} FCFA** est en retard de paiement.")
-            ->line("**Détails :**")
+            ->line('**Détails :**')
             ->line("• Numéro : {$this->invoice->invoice_number}")
             ->line("• Montant : {$amount} FCFA")
             ->line("• Échéance : {$dueDate}")
@@ -53,7 +54,7 @@ class InvoiceOverdue extends Notification implements ShouldQueue
             'invoice_number' => $this->invoice->invoice_number,
             'amount' => $this->invoice->total,
             'due_date' => $this->invoice->due_date?->toDateString(),
-            'message' => 'Facture ' . $this->invoice->invoice_number . ' en retard de paiement',
+            'message' => 'Facture '.$this->invoice->invoice_number.' en retard de paiement',
         ];
     }
 }

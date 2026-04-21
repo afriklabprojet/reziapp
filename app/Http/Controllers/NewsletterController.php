@@ -27,12 +27,13 @@ class NewsletterController extends Controller
         $email = strtolower(trim($request->email));
 
         // Rate limiting : max 5 tentatives par IP par heure
-        $key = 'newsletter-subscribe:' . $request->ip();
+        $key = 'newsletter-subscribe:'.$request->ip();
         if (RateLimiter::tooManyAttempts($key, 5)) {
             $seconds = RateLimiter::availableIn($key);
+
             return response()->json([
                 'success' => false,
-                'message' => "Trop de tentatives. Réessayez dans " . ceil($seconds / 60) . " minute(s).",
+                'message' => 'Trop de tentatives. Réessayez dans '.ceil($seconds / 60).' minute(s).',
             ], 429);
         }
         RateLimiter::hit($key, 3600);
@@ -117,6 +118,7 @@ class NewsletterController extends Controller
 
         if ($subscriber) {
             $subscriber->resubscribe();
+
             return redirect()->route('home')->with('success', 'Vous êtes de nouveau inscrit à la newsletter ! 🎉');
         }
 

@@ -26,7 +26,7 @@ class ResidenceRejected extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $mail = (new MailMessage())
-            ->subject('❌ Résidence non approuvée — ' . $this->residence->name)
+            ->subject('❌ Résidence non approuvée — '.$this->residence->name)
             ->greeting("Bonjour {$notifiable->name},")
             ->line("Votre résidence **{$this->residence->name}** n'a pas été approuvée par notre équipe de modération.");
 

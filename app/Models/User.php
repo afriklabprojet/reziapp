@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Notifications\LoyaltyTierUpgraded;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -58,18 +61,9 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'jeko_contact_id',
     ];
 
-    /**
-     * Champs protégés contre le mass assignment.
-     * Modifiables uniquement via $user->field = value (code explicite).
-     */
-    protected $guarded_fields_note = [
-        // role, is_guest, guest_token, referral_balance, wallet_credit,
-        // identity_verified, identity_verified_at, verification_level,
-        // is_suspended, suspended_until, suspension_reason,
-        // two_factor_enabled, two_factor_secret, two_factor_recovery_codes,
-        // trusted_device_token, trusted_device_expires_at, last_security_check,
-        // withdrawal_pin, withdrawal_pin_set_at, withdrawal_pin_attempts, withdrawal_pin_locked_until,
-    ];
+    // Tous les champs non listés dans $fillable sont automatiquement protégés
+    // contre le mass assignment par Eloquent (role, is_guest, wallet_credit,
+    // is_suspended, two_factor_secret, withdrawal_pin…).
 
     /**
      * The attributes that should be hidden for serialization.
@@ -111,7 +105,73 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
             'last_login_at' => 'datetime',
             'withdrawal_pin_set_at' => 'datetime',
             'withdrawal_pin_locked_until' => 'datetime',
+            // Fidélité
+            'loyalty_points' => 'integer',
+            'loyalty_bookings_count' => 'integer',
+            'loyalty_nights_count' => 'integer',
+            'loyalty_total_spent' => 'decimal:2',
+            'loyalty_tier_upgraded_at' => 'datetime',
         ];
+    }
+
+    // ===== LOYAUTÉ =====
+
+    /** Définition des paliers de fidélité */
+    public const LOYALTY_TIERS = [
+        'standard'  => ['label' => 'Standard', 'color' => 'gray',   'min_bookings' => 0,  'discount' => 0,  'icon' => '⬜'],
+        'bronze'    => ['label' => 'Bronze',   'color' => 'amber',  'min_bookings' => 3,  'discount' => 5,  'icon' => '🥉'],
+        'silver'    => ['label' => 'Silver',   'color' => 'slate',  'min_bookings' => 8,  'discount' => 10, 'icon' => '🥈'],
+        'gold'      => ['label' => 'Gold',     'color' => 'yellow', 'min_bookings' => 20, 'discount' => 15, 'icon' => '🥇'],
+        'platinum'  => ['label' => 'Platinum', 'color' => 'violet', 'min_bookings' => 50, 'discount' => 20, 'icon' => '💎'],
+    ];
+
+    /** Pourcentage de réduction lié au tier actuel */
+    public function getLoyaltyDiscountAttribute(): int
+    {
+        return self::LOYALTY_TIERS[$this->loyalty_tier ?? 'standard']['discount'] ?? 0;
+    }
+
+    /** Label lisible du tier */
+    public function getLoyaltyTierLabelAttribute(): string
+    {
+        return self::LOYALTY_TIERS[$this->loyalty_tier ?? 'standard']['label'] ?? 'Standard';
+    }
+
+    /** Icône du tier */
+    public function getLoyaltyTierIconAttribute(): string
+    {
+        return self::LOYALTY_TIERS[$this->loyalty_tier ?? 'standard']['icon'] ?? '⬜';
+    }
+
+    /** Recalcule et met à jour le tier de fidélité */
+    public function recalculateLoyaltyTier(): void
+    {
+        $bookings = $this->loyalty_bookings_count ?? 0;
+        $newTier  = 'standard';
+
+        foreach (array_reverse(self::LOYALTY_TIERS) as $tier => $config) {
+            if ($bookings >= $config['min_bookings']) {
+                $newTier = $tier;
+                break;
+            }
+        }
+
+        if ($newTier !== $this->loyalty_tier) {
+            $oldTier = $this->loyalty_tier ?? 'standard';
+            $this->loyalty_tier = $newTier;
+            $this->loyalty_tier_upgraded_at = now();
+            $this->save();
+
+            // Notifier l'utilisateur de son passage au palier supérieur
+            // (uniquement si upgrade réel, pas downgrade)
+            $tierKeys = array_keys(self::LOYALTY_TIERS);
+            $oldIdx   = array_search($oldTier, $tierKeys, true);
+            $newIdx   = array_search($newTier, $tierKeys, true);
+
+            if ($newIdx !== false && $oldIdx !== false && $newIdx > $oldIdx) {
+                $this->notify(new LoyaltyTierUpgraded($newTier, $oldTier));
+            }
+        }
     }
 
     /**
@@ -179,6 +239,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
                 'name' => $name,
                 'phone' => $phone ?? $user->phone,
             ]);
+
             return $user;
         }
 
@@ -821,6 +882,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
                 'withdrawal_pin_attempts' => 0,
                 'withdrawal_pin_locked_until' => null,
             ]);
+
             return true;
         }
 
@@ -859,6 +921,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
                 'withdrawal_pin_attempts' => 0,
                 'withdrawal_pin_locked_until' => null,
             ]);
+
             return false;
         }
 

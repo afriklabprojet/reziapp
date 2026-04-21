@@ -35,7 +35,7 @@ class NewBookingReceived extends Notification implements ShouldQueue
             ->subject("🎉 Nouvelle réservation — {$this->residence->name}")
             ->greeting("Bonjour {$notifiable->name},")
             ->line("Bonne nouvelle ! **{$guestName}** a réservé votre résidence **{$this->residence->name}**.")
-            ->line("**Détails :**")
+            ->line('**Détails :**')
             ->line("• Arrivée : {$checkIn}")
             ->line("• Départ : {$checkOut}")
             ->line("• Nuits : {$this->booking->nights}")
@@ -56,7 +56,7 @@ class NewBookingReceived extends Notification implements ShouldQueue
             'check_in' => $this->booking->check_in->toDateString(),
             'check_out' => $this->booking->check_out->toDateString(),
             'total_amount' => $this->booking->total_amount,
-            'message' => 'Nouvelle réservation pour ' . $this->residence->name,
+            'message' => 'Nouvelle réservation pour '.$this->residence->name,
         ];
     }
 }

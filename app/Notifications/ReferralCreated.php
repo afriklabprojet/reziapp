@@ -26,7 +26,7 @@ class ReferralCreated extends Notification implements ShouldQueue
     {
         $referredName = $this->referral->referred->name ?? 'Un utilisateur';
 
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('🎉 Nouveau filleul inscrit !')
             ->greeting("Bonjour {$notifiable->name} !")
             ->line("**{$referredName}** s'est inscrit(e) sur REZI grâce à votre code de parrainage.")
@@ -41,7 +41,7 @@ class ReferralCreated extends Notification implements ShouldQueue
             'type' => 'referral_created',
             'referral_id' => $this->referral->id,
             'referred_name' => $this->referral->referred->name ?? 'Utilisateur',
-            'message' => ($this->referral->referred->name ?? 'Un utilisateur') . ' s\'est inscrit(e) grâce à votre parrainage.',
+            'message' => ($this->referral->referred->name ?? 'Un utilisateur').' s\'est inscrit(e) grâce à votre parrainage.',
             'url' => route('owner.marketing.referrals.index'),
         ];
     }

@@ -9,13 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UtilityAlert extends Model
 {
-    const ALERT_HIGH_CONSUMPTION   = 'high_consumption';
-    const ALERT_ABNORMAL_SPIKE     = 'abnormal_spike';
-    const ALERT_THRESHOLD_EXCEEDED = 'threshold_exceeded';
+    public const ALERT_HIGH_CONSUMPTION   = 'high_consumption';
+    public const ALERT_ABNORMAL_SPIKE     = 'abnormal_spike';
+    public const ALERT_THRESHOLD_EXCEEDED = 'threshold_exceeded';
 
-    const STATUS_ACTIVE       = 'active';
-    const STATUS_ACKNOWLEDGED = 'acknowledged';
-    const STATUS_RESOLVED     = 'resolved';
+    public const STATUS_ACTIVE       = 'active';
+    public const STATUS_ACKNOWLEDGED = 'acknowledged';
+    public const STATUS_RESOLVED     = 'resolved';
 
     protected $fillable = [
         'residence_id', 'user_id', 'utility_type', 'alert_type',

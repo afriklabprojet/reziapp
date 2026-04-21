@@ -22,7 +22,10 @@ use Illuminate\Support\Facades\Log;
  */
 class ProcessAutoKyc implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Nombre max de tentatives.
@@ -74,7 +77,7 @@ class ProcessAutoKyc implements ShouldQueue
 
         $this->verification->update([
             'status' => 'manual_review',
-            'admin_notes' => '🤖 KYC Auto — Job échoué: ' . $exception->getMessage(),
+            'admin_notes' => '🤖 KYC Auto — Job échoué: '.$exception->getMessage(),
         ]);
     }
 }

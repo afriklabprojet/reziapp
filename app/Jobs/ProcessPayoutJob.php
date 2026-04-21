@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use App\Models\Payout;
-use App\Models\User;
 use App\Services\JekoPaymentService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -25,14 +24,18 @@ use Illuminate\Support\Facades\Log;
  */
 class ProcessPayoutJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public int $tries = 3;
     public int $backoff = 60; // 1 minute entre les tentatives
 
     public function __construct(
         public Payout $payout,
-    ) {}
+    ) {
+    }
 
     public function handle(JekoPaymentService $jekoService): void
     {
@@ -44,6 +47,7 @@ class ProcessPayoutJob implements ShouldQueue
                 'payout_id' => $payout?->id,
                 'status' => $payout?->status,
             ]);
+
             return;
         }
 
@@ -51,6 +55,7 @@ class ProcessPayoutJob implements ShouldQueue
 
         if (! $owner) {
             $payout->markAsFailed('Propriétaire introuvable.');
+
             return;
         }
 
@@ -59,6 +64,7 @@ class ProcessPayoutJob implements ShouldQueue
             Log::warning('ProcessPayoutJob: Jeko service not enabled, keeping payout pending', [
                 'payout_id' => $payout->id,
             ]);
+
             // Ne pas marquer comme échoué — admin traitera manuellement
             return;
         }

@@ -6,8 +6,6 @@ use App\Filament\Resources\DisputeResource\Pages;
 use App\Models\Dispute;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Infolists;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;

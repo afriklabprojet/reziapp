@@ -22,7 +22,10 @@ use Illuminate\Support\Facades\Storage;
  */
 class OptimizeResidencePhoto implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Nombre de tentatives max
@@ -158,7 +161,7 @@ class OptimizeResidencePhoto implements ShouldQueue
                         $duplicates = $analyzer->findDuplicates(
                             $analysis['image_hash'],
                             $this->photo->id,
-                            5  // threshold : distance Hamming max
+                            5,  // threshold : distance Hamming max
                         );
 
                         if (!empty($duplicates)) {
@@ -173,7 +176,7 @@ class OptimizeResidencePhoto implements ShouldQueue
 
                             if (!empty($crossResidenceDuplicates)) {
                                 $analysisData['moderation_status'] = 'review';
-                                $analysisData['moderation_reason'] = 'Photo similaire détectée sur une autre annonce (' . $dupInfo . ')';
+                                $analysisData['moderation_reason'] = 'Photo similaire détectée sur une autre annonce ('.$dupInfo.')';
                             }
                         }
                     }

@@ -2,15 +2,14 @@
 
 namespace App\Services;
 
-use App\Models\Residence;
 use App\Models\MarketPriceData;
-use App\Models\User;
+use App\Models\Residence;
 use Illuminate\Support\Collection;
 
 class RealEstateService
 {
     // Types de location disponibles en Afrique de l'Ouest
-    const RENTAL_TYPES = [
+    public const RENTAL_TYPES = [
         'standard' => [
             'label' => 'Location standard',
             'description' => 'Location mensuelle classique avec bail',
@@ -44,7 +43,7 @@ class RealEstateService
     ];
 
     // Types de bail
-    const LEASE_TYPES = [
+    public const LEASE_TYPES = [
         'verbal' => 'Accord verbal',
         'written' => 'Bail écrit simple',
         'notarized' => 'Bail notarié',
@@ -52,7 +51,7 @@ class RealEstateService
     ];
 
     // Locataires cibles
-    const TARGET_TENANTS = [
+    public const TARGET_TENANTS = [
         'individual' => 'Particuliers',
         'family' => 'Familles',
         'student' => 'Étudiants',
@@ -69,10 +68,10 @@ class RealEstateService
     {
         $rentalType = $residence->rental_type ?? 'standard';
         $config = self::RENTAL_TYPES[$rentalType] ?? self::RENTAL_TYPES['standard'];
-        
+
         $monthlyPrice = $residence->price;
         $suggestedDeposit = $monthlyPrice * $config['deposit_months'];
-        
+
         return [
             'suggested_amount' => $suggestedDeposit,
             'months' => $config['deposit_months'],
@@ -94,11 +93,11 @@ class RealEstateService
             ->where('status', 'approved')
             ->whereBetween('bedrooms', [
                 max(1, $residence->bedrooms - 1),
-                $residence->bedrooms + 1
+                $residence->bedrooms + 1,
             ])
             ->whereBetween('price', [
                 $residence->price * 0.7,
-                $residence->price * 1.3
+                $residence->price * 1.3,
             ])
             ->orderByRaw('ABS(price - ?)', [$residence->price])
             ->limit($limit)
@@ -114,7 +113,7 @@ class RealEstateService
             $residence->commune ?? $residence->city,
             $residence->type,
             $residence->bedrooms ?? 1,
-            $residence->country_code ?? 'CI'
+            $residence->country_code ?? 'CI',
         );
 
         if (!$marketData) {
@@ -240,6 +239,7 @@ class RealEstateService
         // Trier par priorité
         usort($suggestions, function ($a, $b) {
             $priorities = ['high' => 1, 'medium' => 2, 'low' => 3];
+
             return ($priorities[$a['priority']] ?? 3) <=> ($priorities[$b['priority']] ?? 3);
         });
 
@@ -280,18 +280,32 @@ class RealEstateService
 
         // Informations complètes (max 15 points)
         $infoScore = 0;
-        if ($residence->bedrooms) $infoScore += 3;
-        if ($residence->bathrooms) $infoScore += 3;
-        if ($residence->surface) $infoScore += 3;
-        if ($residence->rental_type) $infoScore += 3;
-        if ($residence->lease_type) $infoScore += 3;
+        if ($residence->bedrooms) {
+            $infoScore += 3;
+        }
+        if ($residence->bathrooms) {
+            $infoScore += 3;
+        }
+        if ($residence->surface) {
+            $infoScore += 3;
+        }
+        if ($residence->rental_type) {
+            $infoScore += 3;
+        }
+        if ($residence->lease_type) {
+            $infoScore += 3;
+        }
         $score += $infoScore;
         $breakdown['info'] = ['score' => $infoScore, 'max' => 15, 'label' => 'Informations'];
 
         // Propriétaire vérifié (max 15 points)
         $ownerScore = 0;
-        if ($residence->user->phone_verified) $ownerScore += 5;
-        if ($residence->user->identity_verified_at) $ownerScore += 10;
+        if ($residence->user->phone_verified) {
+            $ownerScore += 5;
+        }
+        if ($residence->user->identity_verified_at) {
+            $ownerScore += 10;
+        }
         $score += $ownerScore;
         $breakdown['owner'] = ['score' => $ownerScore, 'max' => 15, 'label' => 'Propriétaire'];
 
@@ -309,12 +323,25 @@ class RealEstateService
      */
     protected function getGrade(float $score): string
     {
-        if ($score >= 90) return 'A+';
-        if ($score >= 80) return 'A';
-        if ($score >= 70) return 'B+';
-        if ($score >= 60) return 'B';
-        if ($score >= 50) return 'C';
-        if ($score >= 40) return 'D';
+        if ($score >= 90) {
+            return 'A+';
+        }
+        if ($score >= 80) {
+            return 'A';
+        }
+        if ($score >= 70) {
+            return 'B+';
+        }
+        if ($score >= 60) {
+            return 'B';
+        }
+        if ($score >= 50) {
+            return 'C';
+        }
+        if ($score >= 40) {
+            return 'D';
+        }
+
         return 'F';
     }
 
@@ -325,7 +352,7 @@ class RealEstateService
     {
         $price = $residence->price;
         $rentalType = $residence->rental_type ?? 'standard';
-        
+
         // Taux d'occupation estimé selon le type
         $occupancyRates = [
             'standard' => 0.95,      // 95% (bail long terme)
@@ -334,9 +361,9 @@ class RealEstateService
             'corporate' => 0.90,     // 90%
             'seasonal' => 0.50,      // 50% (très saisonnier)
         ];
-        
+
         $occupancy = $occupancyRates[$rentalType] ?? 0.80;
-        
+
         // Calcul selon la période
         if ($rentalType === 'short_term') {
             // Prix à la nuit
@@ -348,11 +375,11 @@ class RealEstateService
             $monthlyRevenue = $price * $occupancy;
             $yearlyRevenue = $monthlyRevenue * 12;
         }
-        
+
         // Déduire les frais estimés (15% pour maintenance, vacance, etc.)
         $expenses = $yearlyRevenue * 0.15;
         $netYearly = $yearlyRevenue - $expenses;
-        
+
         return [
             'gross_monthly' => round($monthlyRevenue),
             'gross_yearly' => round($yearlyRevenue),

@@ -208,6 +208,7 @@ class VerificationController extends Controller
         $rateLimitKey = 'phone-send:'.$user->id;
         if (RateLimiter::tooManyAttempts($rateLimitKey, 3)) {
             $seconds = RateLimiter::availableIn($rateLimitKey);
+
             return back()->with('error', "Trop de demandes. Réessayez dans {$seconds} secondes.");
         }
 
@@ -296,6 +297,7 @@ class VerificationController extends Controller
         $rateLimitKey = 'phone-verify:'.$user->id;
         if (RateLimiter::tooManyAttempts($rateLimitKey, 10)) {
             $seconds = RateLimiter::availableIn($rateLimitKey);
+
             return back()->with('error', "Trop de tentatives. Réessayez dans {$seconds} secondes.");
         }
 
@@ -320,6 +322,7 @@ class VerificationController extends Controller
 
             if ($remaining <= 0) {
                 $verification->update(['status' => 'failed']);
+
                 return back()->with('error', 'Trop de tentatives échouées. Demandez un nouveau code.');
             }
 
@@ -455,6 +458,7 @@ class VerificationController extends Controller
             if ($request->expectsJson()) {
                 return response()->json(['success' => false, 'message' => $message], 429);
             }
+
             return back()->with('error', $message);
         }
 
@@ -465,6 +469,7 @@ class VerificationController extends Controller
             if ($request->expectsJson()) {
                 return response()->json(['success' => false, 'message' => $message], 422);
             }
+
             return back()->with('error', $message);
         }
 
@@ -560,7 +565,7 @@ class VerificationController extends Controller
             app(\App\Services\SmsService::class)->send($phone, $message);
         } catch (\Throwable $e) {
             Log::warning('[KYC SMS] Failed to send OTP', [
-                'phone' => substr($phone, 0, -4) . '****',
+                'phone' => substr($phone, 0, -4).'****',
                 'error' => $e->getMessage(),
             ]);
         }

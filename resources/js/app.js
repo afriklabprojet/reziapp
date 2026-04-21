@@ -47,6 +47,8 @@ import { copyToClipboard, copyShareLink } from './components/clipboard';
 import supportShow from './pages/support-show';
 import ownerResidenceMap from './pages/owner-residence-show';
 import { confirmEmergency } from './pages/verification-dashboard';
+import recommendationStrip from './components/recommendation-strip';
+import chatbot from './components/chatbot';
 
 // Register Alpine components before start
 window.Alpine = Alpine;
@@ -75,6 +77,8 @@ Alpine.data('paymentForm', (config) => paymentForm(config));
 Alpine.data('templatesManager', (config) => templatesManager(config));
 Alpine.data('analyticsPage', (config) => analyticsPage(config));
 Alpine.data('bookingCalendar', (config) => bookingCalendar(config));
+Alpine.data('recommendationStrip', (userId, residences, limit) => recommendationStrip(userId, residences, limit));
+Alpine.data('chatbot', (config) => chatbot(config));
 Alpine.data('residenceIndex', (config) => residenceIndex(config));
 Alpine.data('lazyImage', (src, blurSrc) => lazyImage(src, blurSrc));
 Alpine.data('searchForm', (config) => searchForm(config));

@@ -99,6 +99,7 @@ class PaymentController extends Controller
                 'booking_id' => $booking->id,
                 'amount' => $booking->total_amount,
             ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Montant de réservation invalide.',
@@ -197,6 +198,7 @@ class PaymentController extends Controller
         // Guard: check expiry
         if ($payment->expires_at && $payment->expires_at->isPast()) {
             $payment->markAsFailed('Paiement expiré — délai de vérification dépassé');
+
             return response()->json([
                 'success' => false,
                 'message' => 'Le délai de vérification est expiré. Veuillez relancer le paiement.',
@@ -319,11 +321,13 @@ class PaymentController extends Controller
                 \Illuminate\Support\Facades\Log::warning('Legacy webhook: Invalid signature', [
                     'ip' => $request->ip(),
                 ]);
+
                 return response()->json(['error' => 'Invalid signature'], 401);
             }
         } else {
             // Pas de secret configuré — bloquer par sécurité
             \Illuminate\Support\Facades\Log::warning('Legacy webhook: No secret configured, rejecting');
+
             return response()->json(['error' => 'Webhook not configured'], 403);
         }
 

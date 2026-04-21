@@ -15,7 +15,8 @@ class ClientController extends Controller
 {
     public function __construct(
         private readonly ClientDashboardService $dashboardService,
-    ) {}
+    ) {
+    }
 
     /**
      * Dashboard principal du client

@@ -27,14 +27,14 @@ class CriticalFraudAlert extends Notification implements ShouldQueue
         $targetUser = $this->report->targetUser;
 
         return (new MailMessage())
-            ->subject('🚨 ALERTE FRAUDE CRITIQUE — Score ' . $this->report->risk_score)
-            ->greeting("Alerte admin,")
-            ->line("Un signalement de fraude **critique** a été détecté.")
+            ->subject('🚨 ALERTE FRAUDE CRITIQUE — Score '.$this->report->risk_score)
+            ->greeting('Alerte admin,')
+            ->line('Un signalement de fraude **critique** a été détecté.')
             ->line("**Type :** {$this->report->fraud_type}")
             ->line("**Score de risque :** {$this->report->risk_score}/100")
-            ->line("**Utilisateur ciblé :** " . ($targetUser?->name ?? 'Inconnu') . " (ID: {$this->report->target_user_id})")
-            ->line("**Description :** " . ($this->report->description ?? 'Aucune'))
-            ->action('Voir le signalement', url('/admin/fraud-reports/' . $this->report->id))
+            ->line('**Utilisateur ciblé :** '.($targetUser?->name ?? 'Inconnu')." (ID: {$this->report->target_user_id})")
+            ->line('**Description :** '.($this->report->description ?? 'Aucune'))
+            ->action('Voir le signalement', url('/admin/fraud-reports/'.$this->report->id))
             ->line('Action immédiate requise.')
             ->salutation('Système REZI — Détection automatique');
     }

@@ -405,7 +405,8 @@ class DocumentValidationResult
         public readonly bool $passed,
         public readonly array $errors = [],
         public readonly array $warnings = [],
-    ) {}
+    ) {
+    }
 
     public function failed(): bool
     {

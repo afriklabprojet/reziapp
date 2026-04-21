@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Models\Booking;
 use App\Models\LeaseContract;
 use App\Models\RentReceipt;
-use App\Models\Residence;
 use App\Notifications\RentReceiptNotification;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -27,7 +26,8 @@ class RentReceiptService
     public function __construct(
         private readonly WhatsAppService $whatsApp,
         private readonly NotificationService $notifications,
-    ) {}
+    ) {
+    }
 
     // ===== CRÉATION =====
 
@@ -209,13 +209,13 @@ class RentReceiptService
     private function buildWhatsAppMessage(RentReceipt $receipt): string
     {
         return "🏠 *Quittance de loyer - REZI*\n\n"
-            . "Bonjour {$receipt->tenant->name},\n\n"
-            . "Votre quittance de loyer est disponible :\n"
-            . "• *Référence :* {$receipt->reference}\n"
-            . "• *Période :* {$receipt->period_label}\n"
-            . "• *Montant :* " . number_format($receipt->total_amount, 0, ',', ' ') . " {$receipt->currency}\n"
-            . "• *Résidence :* {$receipt->residence->title}\n\n"
-            . "Connectez-vous à votre espace REZI pour télécharger le document.\n\n"
-            . '_REZI – Votre plateforme de résidences meublées à Abidjan_';
+            ."Bonjour {$receipt->tenant->name},\n\n"
+            ."Votre quittance de loyer est disponible :\n"
+            ."• *Référence :* {$receipt->reference}\n"
+            ."• *Période :* {$receipt->period_label}\n"
+            .'• *Montant :* '.number_format($receipt->total_amount, 0, ',', ' ')." {$receipt->currency}\n"
+            ."• *Résidence :* {$receipt->residence->title}\n\n"
+            ."Connectez-vous à votre espace REZI pour télécharger le document.\n\n"
+            .'_REZI – Votre plateforme de résidences meublées à Abidjan_';
     }
 }

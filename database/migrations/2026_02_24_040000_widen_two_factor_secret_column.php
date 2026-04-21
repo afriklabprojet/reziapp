@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Le secret 2FA chiffré avec Crypt::encryptString() dépasse 255 caractères.
      * On passe la colonne en TEXT pour stocker le JSON chiffré complet.

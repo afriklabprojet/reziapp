@@ -9,15 +9,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GuidebookRecommendation extends Model
 {
-    const CATEGORY_RESTAURANT  = 'restaurant';
-    const CATEGORY_CAFE        = 'cafe';
-    const CATEGORY_SHOPPING    = 'shopping';
-    const CATEGORY_ACTIVITY    = 'activity';
-    const CATEGORY_PHARMACY    = 'pharmacy';
-    const CATEGORY_SUPERMARKET = 'supermarket';
-    const CATEGORY_TRANSPORT   = 'transport';
+    public const CATEGORY_RESTAURANT  = 'restaurant';
+    public const CATEGORY_CAFE        = 'cafe';
+    public const CATEGORY_SHOPPING    = 'shopping';
+    public const CATEGORY_ACTIVITY    = 'activity';
+    public const CATEGORY_PHARMACY    = 'pharmacy';
+    public const CATEGORY_SUPERMARKET = 'supermarket';
+    public const CATEGORY_TRANSPORT   = 'transport';
 
-    const CATEGORIES = [
+    public const CATEGORIES = [
         self::CATEGORY_RESTAURANT  => 'Restaurant',
         self::CATEGORY_CAFE        => 'Café',
         self::CATEGORY_SHOPPING    => 'Shopping',

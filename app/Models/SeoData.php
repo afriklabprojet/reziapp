@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -86,52 +88,52 @@ class SeoData extends Model
         $tags = [];
 
         if ($this->meta_title) {
-            $tags[] = '<title>' . e($this->meta_title) . '</title>';
-            $tags[] = '<meta name="title" content="' . e($this->meta_title) . '">';
+            $tags[] = '<title>'.e($this->meta_title).'</title>';
+            $tags[] = '<meta name="title" content="'.e($this->meta_title).'">';
         }
 
         if ($this->meta_description) {
-            $tags[] = '<meta name="description" content="' . e($this->meta_description) . '">';
+            $tags[] = '<meta name="description" content="'.e($this->meta_description).'">';
         }
 
         if ($this->meta_keywords && count($this->meta_keywords) > 0) {
-            $tags[] = '<meta name="keywords" content="' . e(implode(', ', $this->meta_keywords)) . '">';
+            $tags[] = '<meta name="keywords" content="'.e(implode(', ', $this->meta_keywords)).'">';
         }
 
         if ($this->robots) {
-            $tags[] = '<meta name="robots" content="' . e($this->robots) . '">';
+            $tags[] = '<meta name="robots" content="'.e($this->robots).'">';
         }
 
         if ($this->canonical_url) {
-            $tags[] = '<link rel="canonical" href="' . e($this->canonical_url) . '">';
+            $tags[] = '<link rel="canonical" href="'.e($this->canonical_url).'">';
         }
 
         // Open Graph
         if ($this->og_title) {
-            $tags[] = '<meta property="og:title" content="' . e($this->og_title) . '">';
+            $tags[] = '<meta property="og:title" content="'.e($this->og_title).'">';
         }
 
         if ($this->og_description) {
-            $tags[] = '<meta property="og:description" content="' . e($this->og_description) . '">';
+            $tags[] = '<meta property="og:description" content="'.e($this->og_description).'">';
         }
 
         if ($this->og_image) {
-            $tags[] = '<meta property="og:image" content="' . e($this->og_image) . '">';
+            $tags[] = '<meta property="og:image" content="'.e($this->og_image).'">';
         }
 
         $tags[] = '<meta property="og:type" content="website">';
-        $tags[] = '<meta property="og:locale" content="' . e($this->locale ?? 'fr_FR') . '">';
+        $tags[] = '<meta property="og:locale" content="'.e($this->locale ?? 'fr_FR').'">';
 
         // Twitter Card
         $tags[] = '<meta name="twitter:card" content="summary_large_image">';
         if ($this->og_title) {
-            $tags[] = '<meta name="twitter:title" content="' . e($this->og_title) . '">';
+            $tags[] = '<meta name="twitter:title" content="'.e($this->og_title).'">';
         }
         if ($this->og_description) {
-            $tags[] = '<meta name="twitter:description" content="' . e($this->og_description) . '">';
+            $tags[] = '<meta name="twitter:description" content="'.e($this->og_description).'">';
         }
         if ($this->og_image) {
-            $tags[] = '<meta name="twitter:image" content="' . e($this->og_image) . '">';
+            $tags[] = '<meta name="twitter:image" content="'.e($this->og_image).'">';
         }
 
         return implode("\n    ", $tags);
@@ -146,7 +148,7 @@ class SeoData extends Model
             return '';
         }
 
-        return '<script type="application/ld+json">' . json_encode($this->structured_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>';
+        return '<script type="application/ld+json">'.json_encode($this->structured_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES).'</script>';
     }
 
     /**

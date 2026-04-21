@@ -279,7 +279,7 @@ export default function addressAutocomplete() {
                         badge.style.display = 'inline-flex';
                     }
                 }
-            } catch (e) {
+            } catch (_e) {
                 // Silently fail
             }
         },

@@ -18,7 +18,8 @@ class GuidebookController extends Controller
 {
     public function __construct(
         private GuidebookService $guidebookService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {
@@ -33,6 +34,7 @@ class GuidebookController extends Controller
     public function create(): View
     {
         $residences = request()->user()->residences()->orderBy('name')->get();
+
         return view('owner.guidebooks.create', compact('residences'));
     }
 
@@ -47,6 +49,7 @@ class GuidebookController extends Controller
     public function show(Guidebook $guidebook): View
     {
         $guidebook->load('sections', 'recommendations', 'residence');
+
         return view('owner.guidebooks.show', compact('guidebook'));
     }
 
@@ -91,6 +94,7 @@ class GuidebookController extends Controller
     public function removeSection(Guidebook $guidebook, GuidebookSection $section): RedirectResponse
     {
         $section->delete();
+
         return back()->with('success', 'Section supprimée.');
     }
 
@@ -98,7 +102,7 @@ class GuidebookController extends Controller
     {
         $validated = $request->validate([
             'name'        => 'required|string|max:255',
-            'category'    => 'required|in:' . implode(',', array_keys(GuidebookRecommendation::CATEGORIES)),
+            'category'    => 'required|in:'.implode(',', array_keys(GuidebookRecommendation::CATEGORIES)),
             'address'     => 'nullable|string|max:500',
             'description' => 'nullable|string|max:1000',
             'distance'    => 'nullable|string|max:100',

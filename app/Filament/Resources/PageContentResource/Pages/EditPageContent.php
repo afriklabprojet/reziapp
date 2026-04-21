@@ -35,7 +35,7 @@ class EditPageContent extends EditRecord
     public function form(Form $form): Form
     {
         $slug = $this->record?->page_slug ?? '';
-        
+
         return $form->schema([
             Forms\Components\Section::make('Informations générales')
                 ->schema([
@@ -124,7 +124,7 @@ class EditPageContent extends EditRecord
                         ->label('Paragraphes')
                         ->simple(
                             Forms\Components\Textarea::make('text')
-                                ->rows(2)
+                                ->rows(2),
                         )
                         ->defaultItems(3)
                         ->columnSpanFull(),
@@ -154,7 +154,7 @@ class EditPageContent extends EditRecord
                 ->collapsible()
                 ->collapsed(),
 
-            // Steps Section  
+            // Steps Section
             Forms\Components\Section::make('Section Étapes')
                 ->schema([
                     Forms\Components\TextInput::make('data.steps.title')
@@ -509,13 +509,13 @@ class EditPageContent extends EditRecord
                             Forms\Components\Repeater::make('substeps')
                                 ->label('Sous-étapes')
                                 ->simple(
-                                    Forms\Components\TextInput::make('text')
+                                    Forms\Components\TextInput::make('text'),
                                 )
                                 ->columnSpanFull(),
                             Forms\Components\Repeater::make('tips')
                                 ->label('Conseils')
                                 ->simple(
-                                    Forms\Components\TextInput::make('text')
+                                    Forms\Components\TextInput::make('text'),
                                 )
                                 ->columnSpanFull(),
                             Forms\Components\Repeater::make('tools')
@@ -552,6 +552,7 @@ class EditPageContent extends EditRecord
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $data['updated_by'] = auth()->id();
+
         return $data;
     }
 }

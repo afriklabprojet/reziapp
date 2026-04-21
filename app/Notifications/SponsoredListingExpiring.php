@@ -34,7 +34,7 @@ class SponsoredListingExpiring extends Notification implements ShouldQueue
             ->subject("⭐ Mise en avant bientôt terminée — {$residenceName}")
             ->greeting("Bonjour {$notifiable->name},")
             ->line("Votre mise en avant **{$typeLabel}** pour **{$residenceName}** se termine le **{$expiresAt}**.")
-            ->line("**Performance :**")
+            ->line('**Performance :**')
             ->line("• Impressions : {$impressions}")
             ->line("• Clics : {$clicks}")
             ->line("• Contacts générés : {$this->sponsoredListing->contacts_generated}")
@@ -51,7 +51,7 @@ class SponsoredListingExpiring extends Notification implements ShouldQueue
             'residence_id' => $this->sponsoredListing->residence_id,
             'residence_name' => $this->sponsoredListing->residence?->name,
             'expires_at' => $this->sponsoredListing->ends_at->toDateTimeString(),
-            'message' => 'Mise en avant de ' . ($this->sponsoredListing->residence?->name ?? 'résidence') . ' expire bientôt',
+            'message' => 'Mise en avant de '.($this->sponsoredListing->residence?->name ?? 'résidence').' expire bientôt',
         ];
     }
 }

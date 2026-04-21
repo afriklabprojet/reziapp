@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Country;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 
 class CurrencyService
 {
@@ -30,10 +29,10 @@ class CurrencyService
         }
 
         $rates = $this->getExchangeRates();
-        
+
         // Convertir en EUR d'abord
         $eurAmount = $amount / ($rates[$fromCurrency] ?? 1);
-        
+
         // Puis convertir dans la devise cible
         return round($eurAmount * ($rates[$toCurrency] ?? 1), 2);
     }
@@ -66,7 +65,7 @@ class CurrencyService
         ];
 
         $symbol = $symbols[$currencyCode] ?? $currencyCode;
-        
+
         if ($compact) {
             $amount = $this->compactNumber($amount);
         } else {
@@ -77,7 +76,7 @@ class CurrencyService
         if (in_array($currencyCode, ['XOF', 'XAF', 'GNF'])) {
             return "{$amount} {$symbol}";
         }
-        
+
         return "{$symbol}{$amount}";
     }
 
@@ -88,13 +87,13 @@ class CurrencyService
     {
         $suffixes = ['', 'K', 'M', 'B'];
         $suffixIndex = 0;
-        
+
         while ($number >= 1000 && $suffixIndex < count($suffixes) - 1) {
             $number /= 1000;
             $suffixIndex++;
         }
-        
-        return round($number, 1) . $suffixes[$suffixIndex];
+
+        return round($number, 1).$suffixes[$suffixIndex];
     }
 
     /**
@@ -153,7 +152,7 @@ class CurrencyService
     {
         // Nettoyer le numéro
         $phone = preg_replace('/[^0-9]/', '', $phone);
-        
+
         $patterns = [
             'CI' => '/^(225)?[0-9]{10}$/',           // Côte d'Ivoire: 10 chiffres
             'SN' => '/^(221)?[0-9]{9}$/',            // Sénégal: 9 chiffres
@@ -165,7 +164,7 @@ class CurrencyService
         ];
 
         $pattern = $patterns[$countryCode] ?? '/^[0-9]{8,15}$/';
-        
+
         return (bool) preg_match($pattern, $phone);
     }
 
@@ -177,23 +176,23 @@ class CurrencyService
         $phone = preg_replace('/[^0-9]/', '', $phone);
         $country = Country::where('code', $countryCode)->first();
         $phoneCode = $country->phone_code ?? '+225';
-        
+
         // Supprimer l'indicatif s'il est déjà présent
         $codeDigits = preg_replace('/[^0-9]/', '', $phoneCode);
         if (str_starts_with($phone, $codeDigits)) {
             $phone = substr($phone, strlen($codeDigits));
         }
-        
+
         // Formater selon le pays
         $formats = [
-            'CI' => fn($p) => preg_replace('/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/', '$1 $2 $3 $4 $5', $p),
-            'SN' => fn($p) => preg_replace('/(\d{2})(\d{3})(\d{2})(\d{2})/', '$1 $2 $3 $4', $p),
-            'GH' => fn($p) => preg_replace('/(\d{3})(\d{3})(\d{4})/', '$1 $2 $3', $p),
-            'NG' => fn($p) => preg_replace('/(\d{3})(\d{3})(\d{4})/', '$1 $2 $3', $p),
+            'CI' => fn ($p) => preg_replace('/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/', '$1 $2 $3 $4 $5', $p),
+            'SN' => fn ($p) => preg_replace('/(\d{2})(\d{3})(\d{2})(\d{2})/', '$1 $2 $3 $4', $p),
+            'GH' => fn ($p) => preg_replace('/(\d{3})(\d{3})(\d{4})/', '$1 $2 $3', $p),
+            'NG' => fn ($p) => preg_replace('/(\d{3})(\d{3})(\d{4})/', '$1 $2 $3', $p),
         ];
 
-        $formatter = $formats[$countryCode] ?? fn($p) => $p;
-        
-        return "{$phoneCode} " . $formatter($phone);
+        $formatter = $formats[$countryCode] ?? fn ($p) => $p;
+
+        return "{$phoneCode} ".$formatter($phone);
     }
 }

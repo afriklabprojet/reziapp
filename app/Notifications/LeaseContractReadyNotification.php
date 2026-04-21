@@ -20,7 +20,8 @@ class LeaseContractReadyNotification extends Notification implements ShouldQueue
     public function __construct(
         protected LeaseContract $contract,
         protected string $recipientRole = 'tenant', // 'owner' | 'tenant'
-    ) {}
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -54,8 +55,8 @@ class LeaseContractReadyNotification extends Notification implements ShouldQueue
             ->line($intro)
             ->line('**Détails du contrat :')
             ->line("Référence : {$this->contract->reference}")
-            ->line("Période : " . $this->contract->start_date->format('d/m/Y') . ' → ' . ($this->contract->end_date?->format('d/m/Y') ?? 'Indéterminée'))
-            ->line("Loyer : " . number_format($this->contract->monthly_rent, 0, ',', ' ') . ' ' . $this->contract->currency)
+            ->line('Période : '.$this->contract->start_date->format('d/m/Y').' → '.($this->contract->end_date?->format('d/m/Y') ?? 'Indéterminée'))
+            ->line('Loyer : '.number_format($this->contract->monthly_rent, 0, ',', ' ').' '.$this->contract->currency)
             ->action($actionLabel, $signUrl)
             ->line('Ce contrat est disponible en ligne sur REZI.')
             ->salutation('L\'équipe REZI');

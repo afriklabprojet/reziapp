@@ -22,7 +22,10 @@ use Illuminate\Support\Facades\Log;
  */
 class VerifyPaymentStatus implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public int $tries = 3;
     public array $backoff = [60, 120, 240];
@@ -30,7 +33,8 @@ class VerifyPaymentStatus implements ShouldQueue
 
     public function __construct(
         public Payment $payment,
-    ) {}
+    ) {
+    }
 
     /**
      * Prevent concurrent status checks on the same payment.
@@ -38,7 +42,7 @@ class VerifyPaymentStatus implements ShouldQueue
     public function middleware(): array
     {
         return [
-            (new WithoutOverlapping('payment-verify-' . $this->payment->id))
+            (new WithoutOverlapping('payment-verify-'.$this->payment->id))
                 ->dontRelease()
                 ->expireAfter(120),
         ];
@@ -54,6 +58,7 @@ class VerifyPaymentStatus implements ShouldQueue
                 'payment_id' => $payment?->id,
                 'status' => $payment?->status,
             ]);
+
             return;
         }
 
@@ -64,6 +69,7 @@ class VerifyPaymentStatus implements ShouldQueue
                 'payment_id' => $payment->id,
                 'expires_at' => $payment->expires_at->toIso8601String(),
             ]);
+
             return;
         }
 

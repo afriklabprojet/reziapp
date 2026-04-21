@@ -15,7 +15,7 @@ export default function pushNotifications() {
         async init() {
             // Vérifier le support des notifications
             if (!('Notification' in window) || !('serviceWorker' in navigator)) {
-                console.log('Push notifications not supported');
+                console.warn('Push notifications not supported');
                 return;
             }
 

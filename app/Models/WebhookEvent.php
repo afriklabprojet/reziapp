@@ -31,7 +31,7 @@ class WebhookEvent extends Model
      *
      * Uses INSERT IGNORE / unique constraint to handle race conditions.
      */
-    public static function acquireLock(string $provider, string $eventId, string $eventType = null, array $payload = []): bool
+    public static function acquireLock(string $provider, string $eventId, ?string $eventType = null, array $payload = []): bool
     {
         try {
             static::create([

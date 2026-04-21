@@ -226,7 +226,7 @@ class MarketPriceDataResource extends Resource
                     ->action(function () {
                         try {
                             Artisan::call('rezi:calculate-market-prices', ['--country' => 'CI']);
-                            
+
                             Notification::make()
                                 ->title('Prix recalculés')
                                 ->body('Les prix du marché ont été recalculés avec succès.')
@@ -235,7 +235,7 @@ class MarketPriceDataResource extends Resource
                         } catch (\Exception $e) {
                             Notification::make()
                                 ->title('Erreur')
-                                ->body('Erreur lors du recalcul: ' . $e->getMessage())
+                                ->body('Erreur lors du recalcul: '.$e->getMessage())
                                 ->danger()
                                 ->send();
                         }

@@ -17,7 +17,8 @@ class MessageSequenceController extends Controller
 {
     public function __construct(
         private MessageSequenceService $sequenceService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {
@@ -131,6 +132,7 @@ class MessageSequenceController extends Controller
         $sequence->update(['is_active' => !$sequence->is_active]);
 
         $status = $sequence->is_active ? 'activée' : 'désactivée';
+
         return back()->with('success', "Séquence $status.");
     }
 }

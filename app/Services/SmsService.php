@@ -58,7 +58,7 @@ class SmsService
                         'To' => $phone,
                         'From' => $from,
                         'Body' => $message,
-                    ]
+                    ],
                 );
 
             if ($response->successful()) {
@@ -192,17 +192,17 @@ class SmsService
         }
 
         if (str_starts_with($phone, '225')) {
-            return '+' . $phone;
+            return '+'.$phone;
         }
 
         // Numéro local ivoirien (commence par 0)
         if (str_starts_with($phone, '0') && strlen($phone) === 10) {
-            return '+225' . substr($phone, 1);
+            return '+225'.substr($phone, 1);
         }
 
         // Numéro sans préfixe (9 chiffres)
         if (strlen($phone) === 9) {
-            return '+225' . $phone;
+            return '+225'.$phone;
         }
 
         // Retourner tel quel si format inconnu

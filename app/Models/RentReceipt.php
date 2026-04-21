@@ -7,7 +7,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 
 class RentReceipt extends Model
 {
@@ -75,7 +74,7 @@ class RentReceipt extends Model
             return $this->period_start->translatedFormat('F Y');
         }
 
-        return $this->period_start->translatedFormat('d/m/Y') . ' – ' . $this->period_end->translatedFormat('d/m/Y');
+        return $this->period_start->translatedFormat('d/m/Y').' – '.$this->period_end->translatedFormat('d/m/Y');
     }
 
     public function getHasPdfAttribute(): bool

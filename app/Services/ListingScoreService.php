@@ -100,9 +100,15 @@ class ListingScoreService
         $descLen  = mb_strlen($residence->description ?? '');
 
         $score = 0;
-        if ($titleLen >= 30)  { $score += 5; }
-        if ($descLen >= 300)  { $score += 10; }
-        if ($descLen >= 600)  { $score += 5; }
+        if ($titleLen >= 30) {
+            $score += 5;
+        }
+        if ($descLen >= 300) {
+            $score += 10;
+        }
+        if ($descLen >= 600) {
+            $score += 5;
+        }
 
         return [
             'score'  => min(20, $score),
@@ -116,16 +122,24 @@ class ListingScoreService
     private function scoreInformation(Residence $residence): array
     {
         $score = 0;
-        if ($residence->price_per_night > 0) { $score += 5; }
-        if ($residence->surface > 0)          { $score += 5; }
-        if ($residence->bedrooms > 0)         { $score += 5; }
-        if ($residence->type)                  { $score += 5; }
+        if ($residence->price_per_night > 0) {
+            $score += 5;
+        }
+        if ($residence->surface > 0) {
+            $score += 5;
+        }
+        if ($residence->bedrooms > 0) {
+            $score += 5;
+        }
+        if ($residence->type) {
+            $score += 5;
+        }
 
         return [
             'score'  => $score,
             'max'    => 20,
             'label'  => 'Informations',
-            'detail' => "Prix, surface, chambres, type",
+            'detail' => 'Prix, surface, chambres, type',
             'ok'     => $score >= 15,
         ];
     }
@@ -133,15 +147,21 @@ class ListingScoreService
     private function scoreLocation(Residence $residence): array
     {
         $score = 0;
-        if (! empty($residence->address))   { $score += 5; }
-        if ($residence->latitude && $residence->longitude) { $score += 5; }
-        if (! empty($residence->commune))   { $score += 5; }
+        if (! empty($residence->address)) {
+            $score += 5;
+        }
+        if ($residence->latitude && $residence->longitude) {
+            $score += 5;
+        }
+        if (! empty($residence->commune)) {
+            $score += 5;
+        }
 
         return [
             'score'  => $score,
             'max'    => 15,
             'label'  => 'Localisation',
-            'detail' => $residence->commune . ', Abidjan',
+            'detail' => $residence->commune.', Abidjan',
             'ok'     => $score >= 10,
         ];
     }
@@ -171,14 +191,18 @@ class ListingScoreService
         $avgRating   = $residence->reviews->avg('rating') ?? 0;
 
         $score = 0;
-        if ($reviewCount >= 5) { $score += 5; }
-        if ($avgRating >= 4.0) { $score += 5; }
+        if ($reviewCount >= 5) {
+            $score += 5;
+        }
+        if ($avgRating >= 4.0) {
+            $score += 5;
+        }
 
         return [
             'score'  => $score,
             'max'    => 10,
             'label'  => 'Réputation',
-            'detail' => "{$reviewCount} avis | Note: " . number_format($avgRating, 1),
+            'detail' => "{$reviewCount} avis | Note: ".number_format($avgRating, 1),
             'ok'     => $score >= 5,
         ];
     }

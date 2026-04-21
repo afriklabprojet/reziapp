@@ -12,14 +12,14 @@ class OwnerDocument extends Model
 {
     use SoftDeletes;
 
-    const CAT_TITLE_DEED = 'title_deed';
-    const CAT_PERMIT     = 'permit';
-    const CAT_INSURANCE  = 'insurance';
-    const CAT_TAX        = 'tax';
-    const CAT_CONTRACT   = 'contract';
-    const CAT_OTHER      = 'other';
+    public const CAT_TITLE_DEED = 'title_deed';
+    public const CAT_PERMIT     = 'permit';
+    public const CAT_INSURANCE  = 'insurance';
+    public const CAT_TAX        = 'tax';
+    public const CAT_CONTRACT   = 'contract';
+    public const CAT_OTHER      = 'other';
 
-    const CATEGORIES = [
+    public const CATEGORIES = [
         self::CAT_TITLE_DEED => 'Titre foncier',
         self::CAT_PERMIT     => 'Permis / Autorisation',
         self::CAT_INSURANCE  => 'Assurance',
@@ -62,10 +62,17 @@ class OwnerDocument extends Model
 
     public function getFileSizeFormattedAttribute(): string
     {
-        if (!$this->file_size) return '—';
-        if ($this->file_size < 1024) return $this->file_size . ' o';
-        if ($this->file_size < 1048576) return round($this->file_size / 1024, 1) . ' Ko';
-        return round($this->file_size / 1048576, 1) . ' Mo';
+        if (!$this->file_size) {
+            return '—';
+        }
+        if ($this->file_size < 1024) {
+            return $this->file_size.' o';
+        }
+        if ($this->file_size < 1048576) {
+            return round($this->file_size / 1024, 1).' Ko';
+        }
+
+        return round($this->file_size / 1048576, 1).' Mo';
     }
 
     public function isExpiringSoon(int $days = 30): bool

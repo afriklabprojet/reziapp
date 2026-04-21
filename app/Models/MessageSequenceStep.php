@@ -9,24 +9,24 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MessageSequenceStep extends Model
 {
-    const CHANNEL_EMAIL    = 'email';
-    const CHANNEL_SMS      = 'sms';
-    const CHANNEL_WHATSAPP = 'whatsapp';
-    const CHANNEL_IN_APP   = 'in_app';
+    public const CHANNEL_EMAIL    = 'email';
+    public const CHANNEL_SMS      = 'sms';
+    public const CHANNEL_WHATSAPP = 'whatsapp';
+    public const CHANNEL_IN_APP   = 'in_app';
 
-    const CHANNELS = [
+    public const CHANNELS = [
         self::CHANNEL_EMAIL    => 'Email',
         self::CHANNEL_SMS      => 'SMS',
         self::CHANNEL_WHATSAPP => 'WhatsApp',
         self::CHANNEL_IN_APP   => 'Notification',
     ];
 
-    const DELAY_AFTER_TRIGGER   = 'after_trigger';
-    const DELAY_BEFORE_CHECKIN  = 'before_checkin';
-    const DELAY_AFTER_CHECKOUT  = 'after_checkout';
-    const DELAY_BEFORE_CHECKOUT = 'before_checkout';
+    public const DELAY_AFTER_TRIGGER   = 'after_trigger';
+    public const DELAY_BEFORE_CHECKIN  = 'before_checkin';
+    public const DELAY_AFTER_CHECKOUT  = 'after_checkout';
+    public const DELAY_BEFORE_CHECKOUT = 'before_checkout';
 
-    const DELAY_REFERENCES = [
+    public const DELAY_REFERENCES = [
         self::DELAY_AFTER_TRIGGER   => 'Après le déclencheur',
         self::DELAY_BEFORE_CHECKIN  => 'Avant l\'arrivée',
         self::DELAY_AFTER_CHECKOUT  => 'Après le départ',
@@ -65,8 +65,9 @@ class MessageSequenceStep extends Model
     {
         $message = $this->message;
         foreach ($data as $key => $value) {
-            $message = str_replace('{' . $key . '}', (string) $value, $message);
+            $message = str_replace('{'.$key.'}', (string) $value, $message);
         }
+
         return $message;
     }
 }

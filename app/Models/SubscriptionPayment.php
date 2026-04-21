@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -46,7 +48,7 @@ class SubscriptionPayment extends Model
 
         static::creating(function ($payment) {
             if (empty($payment->reference)) {
-                $payment->reference = 'SUB-' . strtoupper(Str::random(12));
+                $payment->reference = 'SUB-'.strtoupper(Str::random(12));
             }
         });
     }
@@ -99,7 +101,7 @@ class SubscriptionPayment extends Model
         $subscription = $this->subscription;
         if ($subscription && in_array($subscription->status, ['pending', 'past_due'])) {
             $subscription->update(['status' => 'active']);
-            
+
             // Si c'était un upgrade, appliquer le changement de plan
             $pendingPlanId = $subscription->metadata['pending_plan_change'] ?? null;
             if ($pendingPlanId) {

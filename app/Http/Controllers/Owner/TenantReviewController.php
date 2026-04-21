@@ -16,7 +16,8 @@ class TenantReviewController extends Controller
 {
     public function __construct(
         private TenantReviewService $reviewService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {

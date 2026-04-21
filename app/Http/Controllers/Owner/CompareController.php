@@ -29,9 +29,9 @@ class CompareController extends Controller
         // Toutes les résidences du propriétaire (actives + en attente)
         $residences = Residence::where('owner_id', $user->id)
             ->whereIn('status', ['approved', 'pending'])
-            ->with(['photos' => fn($q) => $q->orderBy('order')->limit(1), 'amenities', 'category'])
+            ->with(['photos' => fn ($q) => $q->orderBy('order')->limit(1), 'amenities', 'category'])
             ->withCount(['bookings as total_bookings_count', 'reviews', 'contacts'])
-            ->withCount(['bookings as completed_bookings_count' => fn($q) => $q->where('status', 'completed')])
+            ->withCount(['bookings as completed_bookings_count' => fn ($q) => $q->where('status', 'completed')])
             ->orderBy('name')
             ->get();
 

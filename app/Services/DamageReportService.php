@@ -34,7 +34,7 @@ class DamageReportService
     public function create(User $reporter, array $data): DamageReport
     {
         $data['reported_by'] = $reporter->id;
-        $data['reference']   = 'DMG-' . date('Y') . '-' . strtoupper(Str::random(8));
+        $data['reference']   = 'DMG-'.date('Y').'-'.strtoupper(Str::random(8));
 
         return DamageReport::create($data);
     }
@@ -51,6 +51,7 @@ class DamageReportService
         }
 
         $report->update(array_merge($data, $extra));
+
         return $report->fresh();
     }
 }

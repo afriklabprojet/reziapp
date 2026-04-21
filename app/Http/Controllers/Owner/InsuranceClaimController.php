@@ -9,14 +9,14 @@ use App\Models\InsuranceClaim;
 use App\Services\InsuranceClaimService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class InsuranceClaimController extends Controller
 {
     public function __construct(
         private InsuranceClaimService $claimService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {
@@ -59,7 +59,7 @@ class InsuranceClaimController extends Controller
         $claim = $this->claimService->create($request->user(), $validated);
 
         return redirect()->route('owner.insurance-claims.index')
-            ->with('success', 'Réclamation soumise (réf: ' . $claim->claim_number . ').');
+            ->with('success', 'Réclamation soumise (réf: '.$claim->claim_number.').');
     }
 
     public function show(InsuranceClaim $claim): View

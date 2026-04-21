@@ -22,7 +22,8 @@ class SecurityDepositService
 {
     public function __construct(
         private readonly NotificationService $notifications,
-    ) {}
+    ) {
+    }
 
     // ===== CRÉATION =====
 

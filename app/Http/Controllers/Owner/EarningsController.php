@@ -170,10 +170,11 @@ class EarningsController extends Controller
         }
 
         // Rate limit: max 5 changements de PIN par jour
-        $rateLimitKey = 'pin-setup:' . $user->id;
+        $rateLimitKey = 'pin-setup:'.$user->id;
         if (RateLimiter::tooManyAttempts($rateLimitKey, 5)) {
             $seconds = RateLimiter::availableIn($rateLimitKey);
-            return back()->withErrors(['withdrawal_pin' => "Trop de tentatives. Réessayez dans " . ceil($seconds / 60) . " min."])->withInput();
+
+            return back()->withErrors(['withdrawal_pin' => 'Trop de tentatives. Réessayez dans '.ceil($seconds / 60).' min.'])->withInput();
         }
         RateLimiter::hit($rateLimitKey, 86400); // 24h
 
@@ -186,7 +187,7 @@ class EarningsController extends Controller
         ]);
 
         return redirect()->route('owner.earnings.index')
-            ->with('success', 'Votre PIN de retrait a été ' . ($user->wasRecentlyCreated ? 'configuré' : 'mis à jour') . ' avec succès.');
+            ->with('success', 'Votre PIN de retrait a été '.($user->wasRecentlyCreated ? 'configuré' : 'mis à jour').' avec succès.');
     }
 
     /**
@@ -212,18 +213,20 @@ class EarningsController extends Controller
         // ──── 2. Vérifier que le PIN n'est pas verrouillé ────
         if ($user->isWithdrawalPinLocked()) {
             $minutes = $user->withdrawalPinLockRemainingMinutes();
+
             return back()->withErrors(['withdrawal_pin' => "Retraits verrouillés suite à trop de tentatives. Réessayez dans {$minutes} min."])->withInput();
         }
 
         // ──── 3. Rate limiting (3 demandes par heure) ────
-        $rateLimitKey = 'payout-request:' . $user->id;
+        $rateLimitKey = 'payout-request:'.$user->id;
         if (RateLimiter::tooManyAttempts($rateLimitKey, 3)) {
             $seconds = RateLimiter::availableIn($rateLimitKey);
             Log::warning('Payout rate limit exceeded', [
                 'user_id' => $user->id,
                 'ip' => $request->ip(),
             ]);
-            return back()->withErrors(['amount' => "Trop de demandes de retrait. Réessayez dans " . ceil($seconds / 60) . " min."])->withInput();
+
+            return back()->withErrors(['amount' => 'Trop de demandes de retrait. Réessayez dans '.ceil($seconds / 60).' min.'])->withInput();
         }
 
         // ──── 4. Validation des champs ────
@@ -268,13 +271,13 @@ class EarningsController extends Controller
         $minWithdrawal = config('rezi.pricing.min_withdrawal', 5000);
 
         if ($amount < $minWithdrawal) {
-            return back()->withErrors(['amount' => "Le montant minimum de retrait est de " . number_format($minWithdrawal, 0, ',', ' ') . " FCFA."])->withInput();
+            return back()->withErrors(['amount' => 'Le montant minimum de retrait est de '.number_format($minWithdrawal, 0, ',', ' ').' FCFA.'])->withInput();
         }
 
         $balance = OwnerBalance::getOrCreateForUser($user->id);
 
         if (! $balance->canWithdraw($amount)) {
-            return back()->withErrors(['amount' => 'Solde insuffisant. Vous avez ' . $balance->formatted_available . ' disponible.'])->withInput();
+            return back()->withErrors(['amount' => 'Solde insuffisant. Vous avez '.$balance->formatted_available.' disponible.'])->withInput();
         }
 
         // Vérifier qu'il n'y a pas déjà une demande en cours
@@ -294,6 +297,7 @@ class EarningsController extends Controller
 
         if ($lastCompletedPayout && $lastCompletedPayout->completed_at?->diffInMinutes(now()) < 60) {
             $waitMinutes = 60 - $lastCompletedPayout->completed_at->diffInMinutes(now());
+
             return back()->withErrors(['amount' => "Veuillez patienter encore {$waitMinutes} min avant un nouveau retrait."])->withInput();
         }
 
@@ -355,6 +359,6 @@ class EarningsController extends Controller
         }
 
         return redirect()->route('owner.earnings.index')
-            ->with('success', 'Votre demande de retrait de ' . number_format($amount, 0, ',', ' ') . ' FCFA a été envoyée. Le versement sera traité automatiquement. Un email de confirmation vous a été envoyé.');
+            ->with('success', 'Votre demande de retrait de '.number_format($amount, 0, ',', ' ').' FCFA a été envoyée. Le versement sera traité automatiquement. Un email de confirmation vous a été envoyé.');
     }
 }

@@ -10,13 +10,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SmartLock extends Model
 {
-    const PROVIDER_TTLOCK    = 'ttlock';
-    const PROVIDER_NUKI      = 'nuki';
-    const PROVIDER_AUGUST    = 'august';
-    const PROVIDER_IGLOOHOME = 'igloohome';
-    const PROVIDER_OTHER     = 'other';
+    public const PROVIDER_TTLOCK    = 'ttlock';
+    public const PROVIDER_NUKI      = 'nuki';
+    public const PROVIDER_AUGUST    = 'august';
+    public const PROVIDER_IGLOOHOME = 'igloohome';
+    public const PROVIDER_OTHER     = 'other';
 
-    const PROVIDERS = [
+    public const PROVIDERS = [
         self::PROVIDER_TTLOCK    => 'TTLock',
         self::PROVIDER_NUKI      => 'Nuki',
         self::PROVIDER_AUGUST    => 'August',
@@ -24,10 +24,10 @@ class SmartLock extends Model
         self::PROVIDER_OTHER     => 'Autre',
     ];
 
-    const STATUS_ACTIVE   = 'active';
-    const STATUS_INACTIVE = 'inactive';
-    const STATUS_OFFLINE  = 'offline';
-    const STATUS_ERROR    = 'error';
+    public const STATUS_ACTIVE   = 'active';
+    public const STATUS_INACTIVE = 'inactive';
+    public const STATUS_OFFLINE  = 'offline';
+    public const STATUS_ERROR    = 'error';
 
     protected $fillable = [
         'residence_id', 'user_id', 'provider', 'device_id',

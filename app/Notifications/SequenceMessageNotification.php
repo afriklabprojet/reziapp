@@ -17,7 +17,8 @@ class SequenceMessageNotification extends Notification implements ShouldQueue
         private string $subject,
         private string $messageContent,
         private string $channel = 'mail',
-    ) {}
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -29,9 +30,9 @@ class SequenceMessageNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject($this->subject)
-            ->greeting('Bonjour ' . ($notifiable->name ?? '') . ',')
+            ->greeting('Bonjour '.($notifiable->name ?? '').',')
             ->line($this->messageContent)
             ->salutation('L\'équipe REZI');
     }

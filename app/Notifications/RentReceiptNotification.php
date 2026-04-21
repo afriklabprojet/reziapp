@@ -19,7 +19,8 @@ class RentReceiptNotification extends Notification implements ShouldQueue
 
     public function __construct(
         protected RentReceipt $receipt,
-    ) {}
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -41,12 +42,12 @@ class RentReceiptNotification extends Notification implements ShouldQueue
             ->line('**Récapitulatif :')
             ->line("Résidence : {$residence->title}")
             ->line("Période : {$period}")
-            ->line("Loyer : " . number_format($this->receipt->rent_amount, 0, ',', ' ') . " {$currency}")
+            ->line('Loyer : '.number_format($this->receipt->rent_amount, 0, ',', ' ')." {$currency}")
             ->when($this->receipt->charges_amount > 0, function (MailMessage $mail) use ($currency) {
-                return $mail->line("Charges : " . number_format($this->receipt->charges_amount, 0, ',', ' ') . " {$currency}");
+                return $mail->line('Charges : '.number_format($this->receipt->charges_amount, 0, ',', ' ')." {$currency}");
             })
             ->line("**Total payé : {$amount} {$currency}**")
-            ->line("Mode de paiement : " . ($this->receipt->payment_method ?? 'Non renseigné'))
+            ->line('Mode de paiement : '.($this->receipt->payment_method ?? 'Non renseigné'))
             ->action('Télécharger la quittance PDF', $downloadUrl)
             ->line('Conservez ce document pour vos démarches administratives.')
             ->salutation('L\'équipe REZI');

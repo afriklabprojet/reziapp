@@ -42,6 +42,7 @@ class CleaningTaskService
     public function update(CleaningTask $task, array $data): CleaningTask
     {
         $task->update($data);
+
         return $task->fresh();
     }
 

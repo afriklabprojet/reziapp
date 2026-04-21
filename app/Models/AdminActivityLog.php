@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,19 +33,19 @@ class AdminActivityLog extends Model
     ];
 
     // Actions possibles
-    const ACTION_CREATED = 'created';
-    const ACTION_UPDATED = 'updated';
-    const ACTION_DELETED = 'deleted';
-    const ACTION_APPROVED = 'approved';
-    const ACTION_REJECTED = 'rejected';
-    const ACTION_SUSPENDED = 'suspended';
-    const ACTION_RESTORED = 'restored';
-    const ACTION_EXPORTED = 'exported';
-    const ACTION_LOGIN = 'login';
-    const ACTION_LOGOUT = 'logout';
-    const ACTION_SETTINGS_CHANGED = 'settings_changed';
-    const ACTION_BULK_ACTION = 'bulk_action';
-    const ACTION_NOTIFICATION_SENT = 'notification_sent';
+    public const ACTION_CREATED = 'created';
+    public const ACTION_UPDATED = 'updated';
+    public const ACTION_DELETED = 'deleted';
+    public const ACTION_APPROVED = 'approved';
+    public const ACTION_REJECTED = 'rejected';
+    public const ACTION_SUSPENDED = 'suspended';
+    public const ACTION_RESTORED = 'restored';
+    public const ACTION_EXPORTED = 'exported';
+    public const ACTION_LOGIN = 'login';
+    public const ACTION_LOGOUT = 'logout';
+    public const ACTION_SETTINGS_CHANGED = 'settings_changed';
+    public const ACTION_BULK_ACTION = 'bulk_action';
+    public const ACTION_NOTIFICATION_SENT = 'notification_sent';
 
     public function admin(): BelongsTo
     {
@@ -63,7 +65,7 @@ class AdminActivityLog extends Model
         string $description,
         ?Model $model = null,
         ?array $oldValues = null,
-        ?array $newValues = null
+        ?array $newValues = null,
     ): self {
         return self::create([
             'admin_id' => Auth::id(),

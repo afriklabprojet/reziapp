@@ -54,7 +54,7 @@ class AvailabilityManager extends Component
         abort_unless(
             auth()->check() && auth()->id() === $residence->owner_id,
             403,
-            'Vous n\'êtes pas autorisé à gérer cette résidence.'
+            'Vous n\'êtes pas autorisé à gérer cette résidence.',
         );
 
         $this->residence = $residence;
@@ -71,13 +71,13 @@ class AvailabilityManager extends Component
         $this->calendar = AvailabilityCalendar::getCalendar(
             $this->residence->id,
             $startDate,
-            $endDate
+            $endDate,
         )->toArray();
 
         $this->blockedDates = AvailabilityCalendar::getBlockedDates(
             $this->residence->id,
             $startDate,
-            $endDate
+            $endDate,
         )->toArray();
     }
 
@@ -114,7 +114,7 @@ class AvailabilityManager extends Component
             $this->residence->id,
             Carbon::parse($this->blockStartDate),
             Carbon::parse($this->blockEndDate),
-            $this->blockNote
+            $this->blockNote,
         );
 
         $this->reset(['blockStartDate', 'blockEndDate', 'blockNote']);
@@ -142,7 +142,7 @@ class AvailabilityManager extends Component
             $this->residence->id,
             Carbon::parse($this->priceStartDate),
             Carbon::parse($this->priceEndDate),
-            $this->customPrice
+            $this->customPrice,
         );
 
         $this->reset(['priceStartDate', 'priceEndDate', 'customPrice']);
@@ -183,7 +183,7 @@ class AvailabilityManager extends Component
         SeasonalPricing::where('id', $id)
             ->where('residence_id', $this->residence->id)
             ->delete();
-        
+
         $this->loadSeasonalPricing();
         $this->dispatch('notify', type: 'success', message: 'Tarif saisonnier supprimé');
     }
@@ -192,10 +192,10 @@ class AvailabilityManager extends Component
     {
         $year = (int) Carbon::parse($this->currentMonth)->format('Y');
         $seasonal = SeasonalPricing::createFromTemplate($this->residence->id, $templateKey, $year);
-        
+
         if ($seasonal) {
             $this->loadSeasonalPricing();
-            $this->dispatch('notify', type: 'success', message: 'Template importé: ' . $seasonal->name);
+            $this->dispatch('notify', type: 'success', message: 'Template importé: '.$seasonal->name);
         }
     }
 

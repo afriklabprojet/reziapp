@@ -13,8 +13,9 @@ class IdentityVerificationApproved extends Notification implements ShouldQueue
     use Queueable;
 
     public function __construct(
-        protected IdentityVerification $verification
-    ) {}
+        protected IdentityVerification $verification,
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -23,7 +24,7 @@ class IdentityVerificationApproved extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('✅ Identité vérifiée — REZI')
             ->greeting("Bonjour {$notifiable->name} !")
             ->line('Votre vérification d\'identité a été **approuvée** avec succès.')

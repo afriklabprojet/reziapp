@@ -48,7 +48,7 @@ export default function paymentForm(config = {}) {
                 } else {
                     this.error = data.message;
                 }
-            } catch (e) {
+            } catch (_e) {
                 this.error = 'Une erreur est survenue. Veuillez réessayer.';
             } finally {
                 this.loading = false;
@@ -86,7 +86,7 @@ export default function paymentForm(config = {}) {
                         this.otpError += ` (${data.attempts_remaining} tentative(s) restante(s))`;
                     }
                 }
-            } catch (e) {
+            } catch (_e) {
                 this.otpError = 'Erreur de vérification. Veuillez réessayer.';
             } finally {
                 this.loading = false;

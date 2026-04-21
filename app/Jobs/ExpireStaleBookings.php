@@ -7,7 +7,6 @@ namespace App\Jobs;
 use App\Models\Booking;
 use App\Models\Payment;
 use App\Services\BookingService;
-use App\Services\PaymentService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -24,7 +23,10 @@ use Illuminate\Support\Facades\Log;
  */
 class ExpireStaleBookings implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public int $tries = 1;
 

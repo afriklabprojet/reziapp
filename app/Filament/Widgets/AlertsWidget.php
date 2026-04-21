@@ -3,12 +3,9 @@
 namespace App\Filament\Widgets;
 
 use App\Models\FraudReport;
-use App\Models\Review;
-use App\Models\Residence;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Illuminate\Database\Eloquent\Builder;
 
 class AlertsWidget extends BaseWidget
 {
@@ -26,7 +23,7 @@ class AlertsWidget extends BaseWidget
                     ->with(['reporter:id,name', 'targetUser:id,name'])
                     ->where('status', 'pending')
                     ->latest()
-                    ->limit(10)
+                    ->limit(10),
             )
             ->columns([
                 Tables\Columns\TextColumn::make('fraud_type')

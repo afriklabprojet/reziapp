@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -30,19 +32,19 @@ class OwnerBadge extends Model
     ];
 
     // Status constants
-    const STATUS_ACTIVE = 'active';
-    const STATUS_PENDING = 'pending';
-    const STATUS_SUSPENDED = 'suspended';
-    const STATUS_REVOKED = 'revoked';
+    public const STATUS_ACTIVE = 'active';
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_SUSPENDED = 'suspended';
+    public const STATUS_REVOKED = 'revoked';
 
     // Badge types
-    const TYPE_VERIFIED_IDENTITY = 'verified_identity';
-    const TYPE_VERIFIED_PHONE = 'verified_phone';
-    const TYPE_VERIFIED_RESIDENCE = 'verified_residence';
-    const TYPE_SUPERHOST = 'superhost';
-    const TYPE_TRUSTED = 'trusted';
-    const TYPE_RESPONSIVE = 'responsive';
-    const TYPE_TOP_RATED = 'top_rated';
+    public const TYPE_VERIFIED_IDENTITY = 'verified_identity';
+    public const TYPE_VERIFIED_PHONE = 'verified_phone';
+    public const TYPE_VERIFIED_RESIDENCE = 'verified_residence';
+    public const TYPE_SUPERHOST = 'superhost';
+    public const TYPE_TRUSTED = 'trusted';
+    public const TYPE_RESPONSIVE = 'responsive';
+    public const TYPE_TOP_RATED = 'top_rated';
 
     // Available badges
     public static array $badges = [
@@ -150,7 +152,7 @@ class OwnerBadge extends Model
     public static function award(User $user, string $badgeType, ?int $expiresInDays = null): self
     {
         $badgeInfo = self::$badges[$badgeType] ?? null;
-        
+
         if (!$badgeInfo) {
             throw new \InvalidArgumentException("Badge type '{$badgeType}' does not exist");
         }
@@ -167,7 +169,7 @@ class OwnerBadge extends Model
                 'earned_at' => now(),
                 'expires_at' => $expiresInDays ? now()->addDays($expiresInDays) : null,
                 'is_visible' => true,
-            ]
+            ],
         );
     }
 
@@ -210,7 +212,7 @@ class OwnerBadge extends Model
 
         // Badge réponse rapide (temps de réponse moyen < 60 min)
         // Nécessite le calcul du temps de réponse moyen
-        
+
         return $awarded;
     }
 }

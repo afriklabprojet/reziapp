@@ -233,7 +233,7 @@
                                         d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                 </svg>
                             </div>
-                            <input id="password" name="password" :type="showPassword ? 'text' : 'password'" required
+                            <input id="password" name="password" type="password" :type="showPassword ? 'text' : 'password'" required
                                 autocomplete="current-password" placeholder="••••••••"
                                 class="w-full pl-12 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-400 focus:bg-white transition-all">
                             <button type="button" @click="showPassword = !showPassword"

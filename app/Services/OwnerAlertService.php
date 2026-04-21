@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\OwnerAlert;
-use App\Models\Booking;
 use App\Models\Residence;
 use App\Models\User;
-use Carbon\Carbon;
 
 class OwnerAlertService
 {
@@ -45,7 +43,7 @@ class OwnerAlertService
                     'alert_type'   => OwnerAlert::TYPE_RESPONSE_TIME_SLA,
                     'severity'     => 'warning',
                     'title'        => 'Demande en attente de réponse',
-                    'message'      => "Une demande de réservation attend votre réponse depuis plus de 4h. Un temps de réponse rapide améliore votre classement.",
+                    'message'      => 'Une demande de réservation attend votre réponse depuis plus de 4h. Un temps de réponse rapide améliore votre classement.',
                     'metadata'     => ['booking_request_id' => $request->id],
                     'action_url'   => route('owner.bookings.requests'),
                 ]);
@@ -84,7 +82,7 @@ class OwnerAlertService
                         'residence_id' => $residence->id,
                         'alert_type'   => OwnerAlert::TYPE_BOOKING_GAP,
                         'severity'     => 'info',
-                        'title'        => $gap['gap_days'] . ' nuit(s) orpheline(s) détectée(s)',
+                        'title'        => $gap['gap_days'].' nuit(s) orpheline(s) détectée(s)',
                         'message'      => "Il y a {$gap['gap_days']} nuit(s) libre(s) entre deux réservations ({$gap['dates'][0]}). Activez le gap-night pricing pour maximiser votre occupation.",
                         'metadata'     => ['dates' => $gap['dates']],
                     ]);
@@ -127,7 +125,7 @@ class OwnerAlertService
                     'alert_type'   => OwnerAlert::TYPE_REVIEW_PENDING,
                     'severity'     => 'info',
                     'title'        => 'Avis en attente de réponse',
-                    'message'      => "Un avis de {$review->user->name} attend votre réponse depuis " . $review->created_at->diffForHumans() . ".",
+                    'message'      => "Un avis de {$review->user->name} attend votre réponse depuis ".$review->created_at->diffForHumans().'.',
                     'metadata'     => ['review_id' => $review->id],
                 ]);
                 $alerts++;

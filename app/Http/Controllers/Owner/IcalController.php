@@ -17,7 +17,8 @@ class IcalController extends Controller
 {
     public function __construct(
         private IcalService $icalService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {
@@ -71,7 +72,7 @@ class IcalController extends Controller
 
         return response($content, 200, [
             'Content-Type'        => 'text/calendar; charset=utf-8',
-            'Content-Disposition' => 'attachment; filename="' . str_replace(' ', '-', $residence->name) . '.ics"',
+            'Content-Disposition' => 'attachment; filename="'.str_replace(' ', '-', $residence->name).'.ics"',
         ]);
     }
 }

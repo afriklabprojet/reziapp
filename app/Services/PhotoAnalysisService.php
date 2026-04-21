@@ -6,7 +6,6 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * Service d'analyse de photos via Google Cloud Vision API.
@@ -527,7 +526,7 @@ class PhotoAnalysisService
 
         // Convertir en hexadécimal (16 chars = 64 bits)
         return str_pad(base_convert(substr($hash, 0, 32), 2, 16), 8, '0', STR_PAD_LEFT)
-            . str_pad(base_convert(substr($hash, 32, 32), 2, 16), 8, '0', STR_PAD_LEFT);
+            .str_pad(base_convert(substr($hash, 32, 32), 2, 16), 8, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -542,9 +541,9 @@ class PhotoAnalysisService
         }
 
         $bin1 = str_pad(base_convert(substr($hash1, 0, 8), 16, 2), 32, '0', STR_PAD_LEFT)
-            . str_pad(base_convert(substr($hash1, 8, 8), 16, 2), 32, '0', STR_PAD_LEFT);
+            .str_pad(base_convert(substr($hash1, 8, 8), 16, 2), 32, '0', STR_PAD_LEFT);
         $bin2 = str_pad(base_convert(substr($hash2, 0, 8), 16, 2), 32, '0', STR_PAD_LEFT)
-            . str_pad(base_convert(substr($hash2, 8, 8), 16, 2), 32, '0', STR_PAD_LEFT);
+            .str_pad(base_convert(substr($hash2, 8, 8), 16, 2), 32, '0', STR_PAD_LEFT);
 
         $distance = 0;
         for ($i = 0; $i < strlen($bin1); $i++) {
@@ -616,7 +615,7 @@ class PhotoAnalysisService
 
         // Avertissement qualité
         if ($quality['score'] < 30) {
-            return ['approved' => false, 'status' => 'review', 'reason' => 'Qualité photo insuffisante: ' . implode(', ', $quality['issues'])];
+            return ['approved' => false, 'status' => 'review', 'reason' => 'Qualité photo insuffisante: '.implode(', ', $quality['issues'])];
         }
 
         // Avertissement non-immobilier

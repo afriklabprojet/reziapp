@@ -194,7 +194,7 @@ export default function chatApp(config) {
                         'Accept': 'application/json',
                     },
                 });
-            } catch (e) {}
+            } catch (_e) {}
         },
 
         async loadMoreMessages() {

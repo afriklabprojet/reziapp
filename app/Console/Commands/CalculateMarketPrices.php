@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Models\MarketPriceData;
 use App\Models\Residence;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class CalculateMarketPrices extends Command
 {
@@ -16,7 +15,7 @@ class CalculateMarketPrices extends Command
     public function handle(): int
     {
         $countryCode = $this->option('country');
-        
+
         $this->info("Calculating market prices for {$countryCode}...");
 
         $periodStart = now()->startOfMonth();
@@ -56,8 +55,8 @@ class CalculateMarketPrices extends Command
                 ->sort()
                 ->values();
 
-            $median = $prices->count() > 0 
-                ? $prices->median() 
+            $median = $prices->count() > 0
+                ? $prices->median()
                 : $combo->avg_price;
 
             $data = [

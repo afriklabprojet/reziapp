@@ -27,7 +27,7 @@ class DisputeResponseRequested extends Notification implements ShouldQueue
         $deadline = $this->dispute->response_deadline?->format('d/m/Y à H:i') ?? '48 heures';
 
         return (new MailMessage())
-            ->subject('⚠️ Réponse requise — Litige #' . $this->dispute->id)
+            ->subject('⚠️ Réponse requise — Litige #'.$this->dispute->id)
             ->greeting("Bonjour {$notifiable->name},")
             ->line("Votre réponse est requise concernant le litige **#{$this->dispute->id}** ({$this->dispute->type_label}).")
             ->line("**Date limite de réponse :** {$deadline}")

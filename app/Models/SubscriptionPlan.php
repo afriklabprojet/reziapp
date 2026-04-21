@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -85,6 +87,7 @@ class SubscriptionPlan extends Model
     {
         $monthlyTotal = $this->price_monthly * 12;
         $yearlyPrice = $this->price_yearly ?? ($monthlyTotal * 0.8);
+
         return $monthlyTotal - $yearlyPrice;
     }
 

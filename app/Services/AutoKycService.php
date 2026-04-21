@@ -77,7 +77,7 @@ class AutoKycService
                 'trace' => Str::limit($e->getTraceAsString(), 500),
             ]);
 
-            return $this->fallbackToManualReview($verification, 'Erreur technique : ' . Str::limit($e->getMessage(), 100));
+            return $this->fallbackToManualReview($verification, 'Erreur technique : '.Str::limit($e->getMessage(), 100));
         }
     }
 
@@ -130,9 +130,9 @@ class AutoKycService
 
                 // Texte complet détecté
                 if (isset($responseData['fullTextAnnotation']['text'])) {
-                    $allText .= ' ' . $responseData['fullTextAnnotation']['text'];
+                    $allText .= ' '.$responseData['fullTextAnnotation']['text'];
                 } elseif (isset($responseData['textAnnotations'][0]['description'])) {
-                    $allText .= ' ' . $responseData['textAnnotations'][0]['description'];
+                    $allText .= ' '.$responseData['textAnnotations'][0]['description'];
                 }
             }
         }
@@ -239,12 +239,24 @@ class AutoKycService
 
         // Calculer un score de confiance OCR
         $scoreFactors = 0;
-        if (!empty($parsed['document_number'])) $scoreFactors += 30;
-        if (!empty($parsed['names'])) $scoreFactors += 20;
-        if (!empty($parsed['birth_date'])) $scoreFactors += 15;
-        if (!empty($parsed['expiry_date'])) $scoreFactors += 15;
-        if ($parsed['nationality'] === 'CI') $scoreFactors += 10;
-        if ($isDocument) $scoreFactors += 10;
+        if (!empty($parsed['document_number'])) {
+            $scoreFactors += 30;
+        }
+        if (!empty($parsed['names'])) {
+            $scoreFactors += 20;
+        }
+        if (!empty($parsed['birth_date'])) {
+            $scoreFactors += 15;
+        }
+        if (!empty($parsed['expiry_date'])) {
+            $scoreFactors += 15;
+        }
+        if ($parsed['nationality'] === 'CI') {
+            $scoreFactors += 10;
+        }
+        if ($isDocument) {
+            $scoreFactors += 10;
+        }
 
         $parsed['confidence'] = min(100, $scoreFactors);
 
@@ -403,7 +415,7 @@ class AutoKycService
             if ($documentFaceResult['face_count'] === 1) {
                 $docFaceScore += 5; // Un seul visage (attendu)
             } else {
-                $issues[] = 'Plusieurs visages détectés sur le document (' . $documentFaceResult['face_count'] . ')';
+                $issues[] = 'Plusieurs visages détectés sur le document ('.$documentFaceResult['face_count'].')';
             }
             if (($documentFaceResult['confidence'] ?? 0) >= 80) {
                 $docFaceScore += 5;
@@ -427,7 +439,7 @@ class AutoKycService
             if ($selfieFaceResult['face_count'] === 1) {
                 $selfieScore += 5; // Un seul visage
             } else {
-                $issues[] = 'Plusieurs visages détectés dans le selfie (' . $selfieFaceResult['face_count'] . ')';
+                $issues[] = 'Plusieurs visages détectés dans le selfie ('.$selfieFaceResult['face_count'].')';
             }
             if (($selfieFaceResult['confidence'] ?? 0) >= 85) {
                 $selfieScore += 5;
@@ -514,18 +526,18 @@ class AutoKycService
 
             $verification->approve(
                 reviewerId: 0, // Système
-                notes: $reason . "\n\nDétails: " . json_encode($analysis['scores'], JSON_PRETTY_PRINT),
+                notes: $reason."\n\nDétails: ".json_encode($analysis['scores'], JSON_PRETTY_PRINT),
             );
 
         } elseif ($score >= $autoApproveThreshold && !empty($analysis['issues'])) {
             // Bon score mais des problèmes → revue manuelle
             $decision = 'manual_review';
-            $reason = "Score: {$score}/100 mais problèmes détectés: " . implode(', ', $analysis['issues']);
+            $reason = "Score: {$score}/100 mais problèmes détectés: ".implode(', ', $analysis['issues']);
 
             $verification->update([
                 'status' => 'manual_review',
                 'admin_notes' => "🤖 KYC Auto — Score: {$score}/100\n"
-                    . "Problèmes: " . implode("\n- ", $analysis['issues']),
+                    .'Problèmes: '.implode("\n- ", $analysis['issues']),
             ]);
 
         } elseif ($score <= $autoRejectThreshold) {
@@ -537,7 +549,7 @@ class AutoKycService
                 reviewerId: 0,
                 reason: 'Documents illisibles ou insuffisants. Veuillez soumettre des photos plus nettes.',
                 notes: "🤖 KYC Auto — Score: {$score}/100\n"
-                    . "Problèmes: " . implode("\n- ", $analysis['issues']),
+                    .'Problèmes: '.implode("\n- ", $analysis['issues']),
             );
 
         } else {
@@ -546,13 +558,13 @@ class AutoKycService
             $reason = "Score: {$score}/100 — Revue manuelle requise";
 
             $issuesSummary = !empty($analysis['issues'])
-                ? "\nProblèmes: " . implode("\n- ", $analysis['issues'])
+                ? "\nProblèmes: ".implode("\n- ", $analysis['issues'])
                 : '';
 
             $verification->update([
                 'status' => 'manual_review',
                 'admin_notes' => "🤖 KYC Auto — Score: {$score}/100{$issuesSummary}\n"
-                    . "Détails OCR: " . json_encode($analysis['scores'], JSON_PRETTY_PRINT),
+                    .'Détails OCR: '.json_encode($analysis['scores'], JSON_PRETTY_PRINT),
             ]);
         }
 
@@ -641,6 +653,7 @@ class AutoKycService
             Log::error('AutoKYC: Exception appel API', [
                 'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
@@ -658,12 +671,13 @@ class AutoKycService
         }
 
         // Essayer le chemin direct dans storage
-        $fullPath = storage_path('app/' . $path);
+        $fullPath = storage_path('app/'.$path);
         if (file_exists($fullPath)) {
             return file_get_contents($fullPath);
         }
 
         Log::warning('AutoKYC: Image introuvable sur tous les disques', ['path' => $path]);
+
         return null;
     }
 

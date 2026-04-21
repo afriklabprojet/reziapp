@@ -9,19 +9,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CleaningTask extends Model
 {
-    const STATUS_PENDING     = 'pending';
-    const STATUS_IN_PROGRESS = 'in_progress';
-    const STATUS_COMPLETED   = 'completed';
-    const STATUS_VERIFIED    = 'verified';
+    public const STATUS_PENDING     = 'pending';
+    public const STATUS_IN_PROGRESS = 'in_progress';
+    public const STATUS_COMPLETED   = 'completed';
+    public const STATUS_VERIFIED    = 'verified';
 
-    const STATUSES = [
+    public const STATUSES = [
         self::STATUS_PENDING     => 'En attente',
         self::STATUS_IN_PROGRESS => 'En cours',
         self::STATUS_COMPLETED   => 'Terminé',
         self::STATUS_VERIFIED    => 'Vérifié',
     ];
 
-    const STATUS_COLORS = [
+    public const STATUS_COLORS = [
         self::STATUS_PENDING     => 'yellow',
         self::STATUS_IN_PROGRESS => 'blue',
         self::STATUS_COMPLETED   => 'green',

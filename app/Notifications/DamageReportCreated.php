@@ -16,7 +16,8 @@ class DamageReportCreated extends Notification implements ShouldQueue
 
     public function __construct(
         private DamageReport $report,
-    ) {}
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -25,12 +26,12 @@ class DamageReportCreated extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
-            ->subject('Nouveau rapport de dommage — ' . $this->report->reference)
+        return (new MailMessage())
+            ->subject('Nouveau rapport de dommage — '.$this->report->reference)
             ->greeting('Bonjour,')
             ->line("Un rapport de dommage a été créé pour {$this->report->residence->name}.")
-            ->line("Catégorie : " . (DamageReport::CATEGORIES[$this->report->category] ?? $this->report->category))
-            ->line("Gravité : " . (DamageReport::SEVERITIES[$this->report->severity] ?? $this->report->severity))
+            ->line('Catégorie : '.(DamageReport::CATEGORIES[$this->report->category] ?? $this->report->category))
+            ->line('Gravité : '.(DamageReport::SEVERITIES[$this->report->severity] ?? $this->report->severity))
             ->action('Voir le rapport', route('owner.damages.show', $this->report))
             ->salutation('L\'équipe REZI');
     }
@@ -38,7 +39,7 @@ class DamageReportCreated extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'title'   => 'Rapport de dommage: ' . $this->report->reference,
+            'title'   => 'Rapport de dommage: '.$this->report->reference,
             'message' => "Dommage signalé sur {$this->report->residence->name}",
             'type'    => 'damage_report',
             'url'     => route('owner.damages.show', $this->report),

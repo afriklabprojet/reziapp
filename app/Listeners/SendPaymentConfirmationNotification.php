@@ -39,7 +39,7 @@ class SendPaymentConfirmationNotification implements ShouldQueue
                 $residence->owner,
                 'booking',
                 'Nouvelle réservation confirmée',
-                ($payment->user?->name ?? 'Un client') . ' a réservé ' . $residence->name,
+                ($payment->user?->name ?? 'Un client').' a réservé '.$residence->name,
                 route('owner.bookings.show', $booking),
                 ['booking_id' => $booking->id],
             );

@@ -1,5 +1,7 @@
 *.log
 .DS_Store
+cookie.txt
+*.cookies.txt
 .env
 .env.backup
 .env.production
@@ -27,3 +29,9 @@ Homestead.yaml
 Thumbs.db
 npm-debug.log*
 yarn-error.log*
+
+# Playwright E2E
+tests/e2e/.auth/
+tests/e2e/reports/
+playwright-report/
+test-results/

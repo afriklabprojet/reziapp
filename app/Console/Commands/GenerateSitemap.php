@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Services\SeoService;
+use Illuminate\Console\Command;
 
 class GenerateSitemap extends Command
 {
@@ -24,15 +24,16 @@ class GenerateSitemap extends Command
 
             return Command::SUCCESS;
         } catch (\Exception $e) {
-            $this->error('Erreur lors de la génération: ' . $e->getMessage());
+            $this->error('Erreur lors de la génération: '.$e->getMessage());
+
             return Command::FAILURE;
         }
     }
 
     protected function pingSearchEngines(): void
     {
-        $sitemapUrl = urlencode(config('app.url') . '/sitemap.xml');
-        
+        $sitemapUrl = urlencode(config('app.url').'/sitemap.xml');
+
         $engines = [
             'Google' => "https://www.google.com/ping?sitemap={$sitemapUrl}",
             'Bing' => "https://www.bing.com/ping?sitemap={$sitemapUrl}",
@@ -47,7 +48,7 @@ class GenerateSitemap extends Command
                     $this->warn("⚠ {$name}: réponse {$response->status()}");
                 }
             } catch (\Exception $e) {
-                $this->warn("⚠ {$name}: " . $e->getMessage());
+                $this->warn("⚠ {$name}: ".$e->getMessage());
             }
         }
     }

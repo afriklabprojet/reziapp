@@ -23,7 +23,7 @@ class PaymentResource extends JsonResource
             // Montant
             'amount' => (float) $this->amount,
             'currency' => $this->currency ?? 'XOF',
-            'formatted_amount' => number_format((float) $this->amount, 0, ',', ' ') . ' FCFA',
+            'formatted_amount' => number_format((float) $this->amount, 0, ',', ' ').' FCFA',
 
             // Status
             'status' => $this->status,

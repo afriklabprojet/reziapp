@@ -71,12 +71,12 @@ class SponsoredStatsWidget extends BaseWidget
 
         return [
             Stat::make('Campagnes actives', $activeCount)
-                ->description($pendingCount > 0 ? $pendingCount . ' en attente' : 'Tout est à jour')
+                ->description($pendingCount > 0 ? $pendingCount.' en attente' : 'Tout est à jour')
                 ->descriptionIcon($pendingCount > 0 ? 'heroicon-m-clock' : 'heroicon-m-check-circle')
                 ->color($pendingCount > 0 ? 'warning' : 'success')
                 ->chart($chartData),
 
-            Stat::make('Revenus ce mois', number_format($revenueThisMonth, 0, ',', ' ') . ' F')
+            Stat::make('Revenus ce mois', number_format($revenueThisMonth, 0, ',', ' ').' F')
                 ->description($growthPercent >= 0 ? "+{$growthPercent}% vs mois dernier" : "{$growthPercent}% vs mois dernier")
                 ->descriptionIcon($growthPercent >= 0 ? 'heroicon-m-arrow-trending-up' : 'heroicon-m-arrow-trending-down')
                 ->color($growthPercent >= 0 ? 'success' : 'danger'),
@@ -87,7 +87,7 @@ class SponsoredStatsWidget extends BaseWidget
                 ->color('info'),
 
             Stat::make('Clics', number_format($totalClicks))
-                ->description('CTR global : ' . $globalCtr . '%')
+                ->description('CTR global : '.$globalCtr.'%')
                 ->descriptionIcon('heroicon-m-cursor-arrow-rays')
                 ->color($globalCtr >= 2 ? 'success' : 'warning'),
 

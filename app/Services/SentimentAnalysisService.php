@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -47,6 +46,7 @@ class SentimentAnalysisService
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);
+
                 return $this->defaultResult();
             }
 
@@ -68,6 +68,7 @@ class SentimentAnalysisService
             ];
         } catch (\Exception $e) {
             Log::error('Google NLP Sentiment exception', ['error' => $e->getMessage()]);
+
             return $this->defaultResult();
         }
     }
@@ -114,6 +115,7 @@ class SentimentAnalysisService
                 ->toArray();
         } catch (\Exception $e) {
             Log::error('Google NLP Entities exception', ['error' => $e->getMessage()]);
+
             return [];
         }
     }

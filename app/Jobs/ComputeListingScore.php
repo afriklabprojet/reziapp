@@ -31,7 +31,8 @@ class ComputeListingScore implements ShouldQueue
 
     public function __construct(
         public readonly Residence $residence,
-    ) {}
+    ) {
+    }
 
     public function handle(ListingScoreService $scoreService): void
     {

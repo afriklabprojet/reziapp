@@ -23,7 +23,7 @@ export default function residenceEditForm(config = {}) {
         initMap() {
             const mapContainer = this.$refs.map || document.getElementById('location-map');
             if (!mapContainer || typeof google === 'undefined') {
-                console.log('Google Maps not available');
+                console.warn('Google Maps not available');
                 return;
             }
 

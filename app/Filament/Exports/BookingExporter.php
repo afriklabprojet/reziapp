@@ -74,10 +74,10 @@ class BookingExporter extends Exporter
 
     public static function getCompletedNotificationBody(Export $export): string
     {
-        $body = 'L\'export de ' . number_format($export->successful_rows) . ' réservation(s) est terminé !';
+        $body = 'L\'export de '.number_format($export->successful_rows).' réservation(s) est terminé !';
 
         if ($failedRowsCount = $export->getFailedRowsCount()) {
-            $body .= ' ' . number_format($failedRowsCount) . ' ligne(s) ont échoué.';
+            $body .= ' '.number_format($failedRowsCount).' ligne(s) ont échoué.';
         }
 
         return $body;

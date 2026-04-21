@@ -17,7 +17,8 @@ class OwnerDocumentController extends Controller
 {
     public function __construct(
         private OwnerDocumentService $documentService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {
@@ -42,7 +43,7 @@ class OwnerDocumentController extends Controller
     {
         $data = $request->validate([
             'residence_id' => ['nullable', 'integer', 'exists:residences,id'],
-            'category'     => ['required', 'in:' . implode(',', array_keys(OwnerDocument::CATEGORIES))],
+            'category'     => ['required', 'in:'.implode(',', array_keys(OwnerDocument::CATEGORIES))],
             'name'         => ['required', 'string', 'max:200'],
             'file'         => ['required', 'file', 'mimes:pdf,jpg,jpeg,png,doc,docx', 'max:10240'],
             'expiry_date'  => ['nullable', 'date'],
@@ -61,7 +62,7 @@ class OwnerDocumentController extends Controller
 
         return Storage::disk('private')->download(
             $document->file_path,
-            $document->name . '.' . pathinfo($document->file_path, PATHINFO_EXTENSION)
+            $document->name.'.'.pathinfo($document->file_path, PATHINFO_EXTENSION),
         );
     }
 

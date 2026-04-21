@@ -20,7 +20,8 @@ class SecurityDepositController extends Controller
 {
     public function __construct(
         private readonly SecurityDepositService $depositService,
-    ) {}
+    ) {
+    }
 
     // ===== INDEX =====
 

@@ -14,7 +14,8 @@ class GuestScreeningController extends Controller
 {
     public function __construct(
         private GuestScreeningService $screeningService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {
@@ -36,6 +37,7 @@ class GuestScreeningController extends Controller
     public function show(GuestScore $score): View
     {
         $score->load('user');
+
         return view('owner.screening.show', compact('score'));
     }
 

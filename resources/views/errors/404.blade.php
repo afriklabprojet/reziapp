@@ -4,8 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Page non trouvée - REZI</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css'])
 </head>
 <body class="font-sans antialiased bg-gray-50">
@@ -14,7 +15,7 @@
         <a href="{{ route('home') }}" class="mb-8">
             <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="REZI" class="h-12 w-auto">
         </a>
-        
+
         {{-- Error illustration --}}
         <div class="relative mb-8">
             <div class="text-[150px] sm:text-[200px] font-black text-gray-100 leading-none select-none">
@@ -27,16 +28,16 @@
                 </svg>
             </div>
         </div>
-        
+
         {{-- Message --}}
         <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-3">
             Page introuvable
         </h1>
         <p class="text-gray-600 text-center max-w-md mb-8">
-            Oups ! La page que vous recherchez semble avoir déménagé ou n'existe plus. 
+            Oups ! La page que vous recherchez semble avoir déménagé ou n'existe plus.
             Peut-être cherchez-vous une résidence ?
         </p>
-        
+
         {{-- Actions --}}
         <div class="flex flex-col sm:flex-row gap-4">
             <a href="{{ route('home') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/30">
@@ -52,7 +53,7 @@
                 Chercher une résidence
             </a>
         </div>
-        
+
         {{-- Suggestions --}}
         <div class="mt-12 text-center">
             <p class="text-sm text-gray-500 mb-4">Liens utiles :</p>

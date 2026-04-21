@@ -24,6 +24,7 @@ class GuidebookService
     public function update(Guidebook $guidebook, array $data): Guidebook
     {
         $guidebook->update($data);
+
         return $guidebook->fresh();
     }
 

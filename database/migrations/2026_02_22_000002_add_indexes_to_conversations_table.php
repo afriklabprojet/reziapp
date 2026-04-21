@@ -9,8 +9,7 @@ use Illuminate\Support\Facades\Schema;
  * la requête WHERE user_id = ? OR owner_id = ? ORDER BY last_message_at DESC
  * utilisée sur chaque chargement de la page de messagerie.
  */
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         Schema::table('conversations', function (Blueprint $table) {

@@ -39,10 +39,10 @@
         </div>
     @endif
 
-    {{-- Content --}}
+    {{-- Content — strip dangerous tags, keep formatting --}}
     <div class="p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg">
         <div class="prose prose-sm dark:prose-invert max-w-none">
-            {!! $campaign->content !!}
+            {!! strip_tags($campaign->content, '<p><br><b><strong><i><em><ul><ol><li><h1><h2><h3><h4><a><span><div>') !!}
         </div>
     </div>
 

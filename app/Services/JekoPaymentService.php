@@ -60,7 +60,7 @@ class JekoPaymentService
         }
 
         // Generate a unique reference (1–100 chars)
-        $reference = 'REZI-SP-' . $sponsored->id . '-' . Str::random(8);
+        $reference = 'REZI-SP-'.$sponsored->id.'-'.Str::random(8);
 
         // Amount in cents (minimum 100 centimes = 1 XOF — Jeko requires amountCents)
         $amountCents = (int) round($sponsored->total_budget * 100);
@@ -72,8 +72,8 @@ class JekoPaymentService
             ];
         }
 
-        $successUrl = $this->callbackBaseUrl . '/payment/jeko/success?sponsored_id=' . $sponsored->id;
-        $errorUrl = $this->callbackBaseUrl . '/payment/jeko/error?sponsored_id=' . $sponsored->id;
+        $successUrl = $this->callbackBaseUrl.'/payment/jeko/success?sponsored_id='.$sponsored->id;
+        $errorUrl = $this->callbackBaseUrl.'/payment/jeko/error?sponsored_id='.$sponsored->id;
 
         $payload = [
             'storeId' => $this->storeId,
@@ -95,7 +95,7 @@ class JekoPaymentService
                 'X-API-KEY' => $this->apiKey,
                 'X-API-KEY-ID' => $this->apiKeyId,
                 'Content-Type' => 'application/json',
-            ])->post($this->baseUrl . '/partner_api/payment_requests', $payload);
+            ])->post($this->baseUrl.'/partner_api/payment_requests', $payload);
 
             if ($response->successful()) {
                 $data = $response->json();
@@ -124,7 +124,7 @@ class JekoPaymentService
 
             return [
                 'success' => false,
-                'error' => 'Erreur lors de la création du paiement : ' . ($response->json('message') ?? 'Erreur inconnue'),
+                'error' => 'Erreur lors de la création du paiement : '.($response->json('message') ?? 'Erreur inconnue'),
             ];
         } catch (RequestException $e) {
             Log::error('Jeko payment request exception', [
@@ -165,7 +165,7 @@ class JekoPaymentService
             ];
         }
 
-        $reference = 'REZI-BK-' . $booking->id . '-' . Str::random(8);
+        $reference = 'REZI-BK-'.$booking->id.'-'.Str::random(8);
         $amountCents = (int) round($booking->total_amount * 100);
 
         if ($amountCents < 100) {
@@ -175,8 +175,8 @@ class JekoPaymentService
             ];
         }
 
-        $successUrl = $this->callbackBaseUrl . '/bookings/payment/success?booking=' . $booking->uuid;
-        $errorUrl = $this->callbackBaseUrl . '/bookings/payment/error?booking=' . $booking->uuid;
+        $successUrl = $this->callbackBaseUrl.'/bookings/payment/success?booking='.$booking->uuid;
+        $errorUrl = $this->callbackBaseUrl.'/bookings/payment/error?booking='.$booking->uuid;
 
         $payload = [
             'storeId' => $this->storeId,
@@ -198,7 +198,7 @@ class JekoPaymentService
                 'X-API-KEY' => $this->apiKey,
                 'X-API-KEY-ID' => $this->apiKeyId,
                 'Content-Type' => 'application/json',
-            ])->post($this->baseUrl . '/partner_api/payment_requests', $payload);
+            ])->post($this->baseUrl.'/partner_api/payment_requests', $payload);
 
             if ($response->successful()) {
                 $data = $response->json();
@@ -233,7 +233,7 @@ class JekoPaymentService
 
             return [
                 'success' => false,
-                'error' => 'Erreur lors de la création du paiement : ' . ($response->json('message') ?? 'Erreur inconnue'),
+                'error' => 'Erreur lors de la création du paiement : '.($response->json('message') ?? 'Erreur inconnue'),
             ];
         } catch (RequestException $e) {
             Log::error('Jeko booking payment request exception', [
@@ -271,7 +271,7 @@ class JekoPaymentService
                 'X-API-KEY' => $this->apiKey,
                 'X-API-KEY-ID' => $this->apiKeyId,
                 'Content-Type' => 'application/json',
-            ])->get($this->baseUrl . '/partner_api/payment_requests/' . $paymentRequestId);
+            ])->get($this->baseUrl.'/partner_api/payment_requests/'.$paymentRequestId);
 
             if ($response->successful()) {
                 $data = $response->json();
@@ -311,6 +311,7 @@ class JekoPaymentService
     {
         if (! $this->webhookSecret) {
             Log::warning('Jeko webhook secret not configured');
+
             return false;
         }
 
@@ -345,8 +346,8 @@ class JekoPaymentService
             ];
         }
 
-        $successUrl = $this->callbackBaseUrl . '/owner/subscriptions/payment/success?reference=' . $payment->reference;
-        $errorUrl = $this->callbackBaseUrl . '/owner/subscriptions/payment/error?reference=' . $payment->reference;
+        $successUrl = $this->callbackBaseUrl.'/owner/subscriptions/payment/success?reference='.$payment->reference;
+        $errorUrl = $this->callbackBaseUrl.'/owner/subscriptions/payment/error?reference='.$payment->reference;
 
         $payload = [
             'storeId' => $this->storeId,
@@ -368,7 +369,7 @@ class JekoPaymentService
                 'X-API-KEY' => $this->apiKey,
                 'X-API-KEY-ID' => $this->apiKeyId,
                 'Content-Type' => 'application/json',
-            ])->post($this->baseUrl . '/partner_api/payment_requests', $payload);
+            ])->post($this->baseUrl.'/partner_api/payment_requests', $payload);
 
             if ($response->successful()) {
                 $data = $response->json();
@@ -434,11 +435,11 @@ class JekoPaymentService
             ];
         }
 
-        $reference = 'REZI-INS-' . $insurance->id . '-' . \Illuminate\Support\Str::random(8);
+        $reference = 'REZI-INS-'.$insurance->id.'-'.\Illuminate\Support\Str::random(8);
         $amountCents = (int) round($insurance->premium_amount * 100);
 
-        $successUrl = $this->callbackBaseUrl . '/insurance/payment/success?reference=' . $reference;
-        $errorUrl = $this->callbackBaseUrl . '/insurance/payment/error?reference=' . $reference;
+        $successUrl = $this->callbackBaseUrl.'/insurance/payment/success?reference='.$reference;
+        $errorUrl = $this->callbackBaseUrl.'/insurance/payment/error?reference='.$reference;
 
         $payload = [
             'storeId' => $this->storeId,
@@ -460,7 +461,7 @@ class JekoPaymentService
                 'X-API-KEY' => $this->apiKey,
                 'X-API-KEY-ID' => $this->apiKeyId,
                 'Content-Type' => 'application/json',
-            ])->post($this->baseUrl . '/partner_api/payment_requests', $payload);
+            ])->post($this->baseUrl.'/partner_api/payment_requests', $payload);
 
             if ($response->successful()) {
                 $data = $response->json();
@@ -571,7 +572,7 @@ class JekoPaymentService
                 'X-API-KEY' => $this->apiKey,
                 'X-API-KEY-ID' => $this->apiKeyId,
                 'Content-Type' => 'application/json',
-            ])->post($this->baseUrl . '/partner_api/contacts', $payload);
+            ])->post($this->baseUrl.'/partner_api/contacts', $payload);
 
             if ($response->successful()) {
                 $data = $response->json();
@@ -602,7 +603,7 @@ class JekoPaymentService
 
             return [
                 'success' => false,
-                'error' => 'Impossible de créer le contact bénéficiaire : ' . ($response->json('message') ?? 'Erreur inconnue'),
+                'error' => 'Impossible de créer le contact bénéficiaire : '.($response->json('message') ?? 'Erreur inconnue'),
             ];
         } catch (\Throwable $e) {
             Log::error('Jeko create contact exception', [
@@ -628,7 +629,7 @@ class JekoPaymentService
             $response = Http::withHeaders([
                 'X-API-KEY' => $this->apiKey,
                 'X-API-KEY-ID' => $this->apiKeyId,
-            ])->get($this->baseUrl . '/partner_api/stores/' . $this->storeId . '/balance');
+            ])->get($this->baseUrl.'/partner_api/stores/'.$this->storeId.'/balance');
 
             if ($response->successful()) {
                 $data = $response->json();
@@ -701,7 +702,7 @@ class JekoPaymentService
             'contactId' => $contactId,
             'amountCents' => $amountCents,
             'currency' => $this->currency,
-            'description' => 'Versement REZI — ' . $payout->reference,
+            'description' => 'Versement REZI — '.$payout->reference,
         ];
 
         try {
@@ -711,7 +712,7 @@ class JekoPaymentService
                 'X-API-KEY' => $this->apiKey,
                 'X-API-KEY-ID' => $this->apiKeyId,
                 'Content-Type' => 'application/json',
-            ])->timeout(30)->post($this->baseUrl . '/partner_api/transfers', $payload);
+            ])->timeout(30)->post($this->baseUrl.'/partner_api/transfers', $payload);
 
             $data = $response->json();
 
@@ -766,7 +767,7 @@ class JekoPaymentService
                 'error' => $errorMsg,
             ];
         } catch (\Throwable $e) {
-            $payout->markAsFailed('Erreur de connexion : ' . $e->getMessage());
+            $payout->markAsFailed('Erreur de connexion : '.$e->getMessage());
 
             Log::error('Jeko transfer exception', [
                 'payout_id' => $payout->id,
@@ -799,7 +800,7 @@ class JekoPaymentService
         // Mobile Money — formater le numéro au format international CI
         $phone = $payout->phone_number;
         if (! str_starts_with($phone, '+')) {
-            $phone = '+225' . ltrim($phone, '0');
+            $phone = '+225'.ltrim($phone, '0');
         }
 
         return ['number' => $phone];

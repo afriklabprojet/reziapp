@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -128,18 +130,18 @@ class SeasonalPricing extends Model
     public static function createFromTemplate(int $residenceId, string $templateKey, int $year): ?self
     {
         $templates = self::getSeasonTemplates();
-        
+
         if (!isset($templates[$templateKey])) {
             return null;
         }
 
         $template = $templates[$templateKey];
-        
+
         $startDate = Carbon::create($year, $template['start_month'], $template['start_day']);
         $endDate = Carbon::create(
             $template['end_month'] < $template['start_month'] ? $year + 1 : $year,
-            $template['end_month'], 
-            $template['end_day']
+            $template['end_month'],
+            $template['end_day'],
         );
 
         return self::create([
@@ -177,9 +179,9 @@ class SeasonalPricing extends Model
      */
     public function getLabel(): string
     {
-        $priceInfo = $this->price_multiplier != 1.0 
-            ? ($this->price_multiplier > 1 ? '+' : '') . round(($this->price_multiplier - 1) * 100) . '%'
-            : number_format($this->price_per_day) . ' FCFA';
+        $priceInfo = $this->price_multiplier != 1.0
+            ? ($this->price_multiplier > 1 ? '+' : '').round(($this->price_multiplier - 1) * 100).'%'
+            : number_format($this->price_per_day).' FCFA';
 
         return "{$this->name} ({$this->start_date->format('d/m')} - {$this->end_date->format('d/m')}) - {$priceInfo}";
     }

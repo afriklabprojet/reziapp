@@ -256,7 +256,7 @@ class ResidenceService
                 'Résidence approuvée',
                 "Votre résidence « {$residence->name} » a été approuvée et est maintenant visible.",
                 route('residences.show', $residence),
-                ['residence_id' => $residence->id]
+                ['residence_id' => $residence->id],
             );
         }
 
@@ -287,9 +287,9 @@ class ResidenceService
                 $owner,
                 'residence',
                 'Résidence non approuvée',
-                "Votre résidence « {$residence->name} » n'a pas été approuvée." . ($reason ? " Motif : {$reason}" : ''),
+                "Votre résidence « {$residence->name} » n'a pas été approuvée.".($reason ? " Motif : {$reason}" : ''),
                 route('owner.residences.edit', $residence),
-                ['residence_id' => $residence->id, 'reason' => $reason]
+                ['residence_id' => $residence->id, 'reason' => $reason],
             );
         }
 

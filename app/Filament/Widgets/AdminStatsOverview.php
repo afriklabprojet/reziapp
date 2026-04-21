@@ -2,10 +2,10 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\User;
-use App\Models\Residence;
 use App\Models\Booking;
 use App\Models\Payment;
+use App\Models\Residence;
+use App\Models\User;
 use App\Services\IdentityVerificationService;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -44,7 +44,7 @@ class AdminStatsOverview extends BaseWidget
                 ->color('success'),
 
             Stat::make('Identités vérifiées', number_format($verifiedUsers))
-                ->description(round(($verifiedUsers / max(1, $totalUsers)) * 100) . '% des utilisateurs')
+                ->description(round(($verifiedUsers / max(1, $totalUsers)) * 100).'% des utilisateurs')
                 ->descriptionIcon('heroicon-m-shield-check')
                 ->color('info'),
 
@@ -63,7 +63,7 @@ class AdminStatsOverview extends BaseWidget
                 ->descriptionIcon('heroicon-m-calendar')
                 ->color('success'),
 
-            Stat::make('Revenus du mois', number_format($revenueThisMonth) . ' FCFA')
+            Stat::make('Revenus du mois', number_format($revenueThisMonth).' FCFA')
                 ->description('Total des réservations terminées')
                 ->descriptionIcon('heroicon-m-currency-dollar')
                 ->color('warning'),

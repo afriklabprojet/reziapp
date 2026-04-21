@@ -10,8 +10,6 @@ use App\Models\Coupon;
 use App\Models\PromoCode;
 use App\Models\Residence;
 use App\Models\User;
-use App\Services\CacheInvalidationService;
-use App\Services\CouponService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -182,12 +180,12 @@ class BookingService
         }
 
         // Vérifier que la résidence est disponible
-        if (!$residence->is_available || $residence->status !== 'approved') {
+        if (!$residence->is_available || !in_array($residence->status, ['approved', 'active'])) {
             throw new \Exception('Cette résidence n\'est pas disponible à la réservation.');
         }
 
         // ─── Idempotency: detect duplicate submissions ───
-        $idempotencyKey = 'bk_' . $residence->id . '_' . $user->id . '_' . $checkIn->format('Ymd') . '_' . $checkOut->format('Ymd');
+        $idempotencyKey = 'bk_'.$residence->id.'_'.$user->id.'_'.$checkIn->format('Ymd').'_'.$checkOut->format('Ymd');
         $existing = Booking::where('idempotency_key', $idempotencyKey)
             ->whereIn('status', ['pending_payment', 'pending', 'confirmed'])
             ->first();
@@ -197,6 +195,7 @@ class BookingService
                 'booking_id' => $existing->id,
                 'idempotency_key' => $idempotencyKey,
             ]);
+
             return $existing;
         }
 
@@ -395,7 +394,7 @@ class BookingService
             $residence->owner,
             'booking',
             'Nouvelle demande de réservation',
-            ($request->user?->name ?? 'Un client') . ' souhaite réserver ' . $residence->name,
+            ($request->user?->name ?? 'Un client').' souhaite réserver '.$residence->name,
             route('owner.bookings.requests'),
             ['booking_request_id' => $request->id, 'residence_id' => $residence->id],
         );
@@ -483,6 +482,13 @@ class BookingService
 
         // Bloquer définitivement les dates
         $this->blockDatesForBooking($booking);
+
+        // Créditer la fidélité du locataire
+        try {
+            (new LoyaltyService())->recordBooking($booking->user, $booking);
+        } catch (\Throwable $e) {
+            Log::warning('LoyaltyService::recordBooking failed', ['booking' => $booking->id, 'error' => $e->getMessage()]);
+        }
 
         // Envoyer les confirmations
         // $booking->user->notify(new BookingConfirmation($booking));
@@ -588,7 +594,7 @@ class BookingService
         // Invalidate caches (availability re-opens, stats change)
         CacheInvalidationService::invalidateBooking(
             $booking->residence_id,
-            $booking->user_id
+            $booking->user_id,
         );
 
         return [

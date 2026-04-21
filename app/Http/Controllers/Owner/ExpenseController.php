@@ -16,7 +16,8 @@ class ExpenseController extends Controller
 {
     public function __construct(
         private ExpenseService $expenseService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {
@@ -42,7 +43,7 @@ class ExpenseController extends Controller
 
         if ($request->hasFile('receipt_path')) {
             $data['receipt_path'] = $request->file('receipt_path')
-                ->store('receipts/' . $request->user()->id, 'public');
+                ->store('receipts/'.$request->user()->id, 'public');
         }
 
         $this->expenseService->create($request->user(), $data);
@@ -67,7 +68,7 @@ class ExpenseController extends Controller
 
         if ($request->hasFile('receipt_path')) {
             $data['receipt_path'] = $request->file('receipt_path')
-                ->store('receipts/' . $request->user()->id, 'public');
+                ->store('receipts/'.$request->user()->id, 'public');
         }
 
         $this->expenseService->update($expense, $data);

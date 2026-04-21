@@ -32,6 +32,7 @@ class TenantReviewService
     public function update(TenantReview $review, array $data): TenantReview
     {
         $review->update($data);
+
         return $review->fresh();
     }
 

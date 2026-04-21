@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Notifications\IdentityVerificationApproved;
@@ -171,7 +173,7 @@ class IdentityVerification extends Model
             '✅ Identité vérifiée',
             'Votre vérification d\'identité a été approuvée. Profitez de toutes les fonctionnalités REZI !',
             route('verification.dashboard'),
-            ['verification_id' => $this->id]
+            ['verification_id' => $this->id],
         );
     }
 
@@ -198,7 +200,7 @@ class IdentityVerification extends Model
             '❌ Vérification rejetée',
             "Votre vérification a été rejetée. Motif : {$reason}",
             route('verification.identity.start'),
-            ['verification_id' => $this->id, 'reason' => $reason]
+            ['verification_id' => $this->id, 'reason' => $reason],
         );
     }
 

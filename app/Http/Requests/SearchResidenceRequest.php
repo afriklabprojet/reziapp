@@ -56,6 +56,14 @@ class SearchResidenceRequest extends FormRequest
             'has_promotion' => ['nullable', 'boolean'],
             'is_accessible' => ['nullable', 'boolean'],
             'available_now' => ['nullable', 'boolean'],
+            'is_work_travel_ready' => ['nullable', 'boolean'],
+            'is_eco' => ['nullable', 'boolean'],
+
+            // Dates de séjour
+            'check_in' => ['nullable', 'date', 'after_or_equal:today'],
+            'check_out' => ['nullable', 'date', 'after:check_in'],
+            'flex_dates' => ['nullable', 'boolean'],
+            'flex_type' => ['nullable', 'string', 'in:weekend,week,month,flexible_3,flexible_7'],
 
             // Tri et pagination
             'sort' => ['nullable', 'string', 'in:price_asc,price_desc,rating,newest,distance'],

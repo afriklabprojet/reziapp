@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\DailyPrice;
 use App\Models\Booking;
+use App\Models\DailyPrice;
 use App\Models\Residence;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -81,7 +81,7 @@ class YieldManagementService
 
                 DailyPrice::updateOrCreate(
                     ['residence_id' => $residence->id, 'date' => $date],
-                    ['price' => $finalPrice, 'note' => 'Auto-yield: ' . ($suggestion['reason'] ?? 'dynamic')]
+                    ['price' => $finalPrice, 'note' => 'Auto-yield: '.($suggestion['reason'] ?? 'dynamic')],
                 );
 
                 $updated++;
@@ -114,7 +114,7 @@ class YieldManagementService
                 foreach ($gap['dates'] as $date) {
                     DailyPrice::updateOrCreate(
                         ['residence_id' => $residence->id, 'date' => $date],
-                        ['price' => $discountedPrice, 'note' => "Gap-night -$discountPct%"]
+                        ['price' => $discountedPrice, 'note' => "Gap-night -$discountPct%"],
                     );
                 }
             }

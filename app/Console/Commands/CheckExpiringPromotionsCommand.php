@@ -43,7 +43,7 @@ class CheckExpiringPromotionsCommand extends Command
                     $owner,
                     'system',
                     'Promotion bientôt expirée',
-                    'Votre promotion "' . $promotion->title . '" expire bientôt.',
+                    'Votre promotion "'.$promotion->title.'" expire bientôt.',
                     route('owner.marketing.promotions.index'),
                     ['promotion_id' => $promotion->id],
                 );
@@ -70,7 +70,7 @@ class CheckExpiringPromotionsCommand extends Command
                     $owner,
                     'system',
                     'Mise en avant bientôt terminée',
-                    'La mise en avant de ' . ($listing->residence?->name ?? 'votre résidence') . ' expire bientôt.',
+                    'La mise en avant de '.($listing->residence?->name ?? 'votre résidence').' expire bientôt.',
                     route('owner.marketing.sponsored.index'),
                     ['sponsored_listing_id' => $listing->id],
                 );

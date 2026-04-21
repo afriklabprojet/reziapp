@@ -12,15 +12,15 @@ class Expense extends Model
 {
     use SoftDeletes;
 
-    const CAT_WATER       = 'water';
-    const CAT_ELECTRICITY = 'electricity';
-    const CAT_MAINTENANCE = 'maintenance';
-    const CAT_TAX         = 'tax';
-    const CAT_INSURANCE   = 'insurance';
-    const CAT_CLEANING    = 'cleaning';
-    const CAT_OTHER       = 'other';
+    public const CAT_WATER       = 'water';
+    public const CAT_ELECTRICITY = 'electricity';
+    public const CAT_MAINTENANCE = 'maintenance';
+    public const CAT_TAX         = 'tax';
+    public const CAT_INSURANCE   = 'insurance';
+    public const CAT_CLEANING    = 'cleaning';
+    public const CAT_OTHER       = 'other';
 
-    const CATEGORIES = [
+    public const CATEGORIES = [
         self::CAT_WATER       => 'Eau',
         self::CAT_ELECTRICITY => 'Électricité',
         self::CAT_MAINTENANCE => 'Entretien',
@@ -30,7 +30,7 @@ class Expense extends Model
         self::CAT_OTHER       => 'Autre',
     ];
 
-    const FREQUENCIES = [
+    public const FREQUENCIES = [
         'monthly'   => 'Mensuel',
         'quarterly' => 'Trimestriel',
         'yearly'    => 'Annuel',
@@ -69,7 +69,7 @@ class Expense extends Model
 
     public function getFormattedAmountAttribute(): string
     {
-        return number_format($this->amount, 0, ',', ' ') . ' FCFA';
+        return number_format($this->amount, 0, ',', ' ').' FCFA';
     }
 
     // ===== SCOPES =====

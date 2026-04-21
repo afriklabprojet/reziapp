@@ -1594,6 +1594,10 @@
 
 @push('scripts')
     @if ($residence->latitude && $residence->longitude)
+        {{-- Mapbox GL for isochrone/maps widgets --}}
+        <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet" />
+        <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
+
         @vite('resources/js/leaflet.js')
         <script>
             document.addEventListener('DOMContentLoaded', function() {

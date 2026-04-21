@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\LongStayDiscount;
 use App\Models\PlatformSetting;
 use App\Models\PromoCode;
-use App\Services\CouponService;
 use App\Models\Residence;
 use App\Models\SpecialPrice;
 use App\Models\User;

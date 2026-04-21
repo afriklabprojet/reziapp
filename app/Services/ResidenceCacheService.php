@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\Residence;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class ResidenceCacheService
 {
@@ -29,11 +29,11 @@ class ResidenceCacheService
     public function getById(int $id): ?Residence
     {
         return Cache::remember(
-            $this->prefix . "single:{$id}",
+            $this->prefix."single:{$id}",
             $this->ttl,
-            fn() => Residence::with(['owner', 'photos', 'amenities'])
+            fn () => Residence::with(['owner', 'photos', 'amenities'])
                 ->listable()
-                ->find($id)
+                ->find($id),
         );
     }
 
@@ -43,13 +43,13 @@ class ResidenceCacheService
     public function getFeatured(int $limit = 8): Collection
     {
         return Cache::remember(
-            $this->prefix . "featured:{$limit}",
+            $this->prefix."featured:{$limit}",
             $this->ttl,
-            fn() => Residence::with(['photos'])
+            fn () => Residence::with(['photos'])
                 ->listable()
                 ->orderByDesc('average_rating')
                 ->limit($limit)
-                ->get()
+                ->get(),
         );
     }
 
@@ -58,8 +58,8 @@ class ResidenceCacheService
      */
     public function getByCommune(string $commune, int $page = 1, int $perPage = 12): array
     {
-        $cacheKey = $this->prefix . "commune:" . md5($commune) . ":page:{$page}:per:{$perPage}";
-        
+        $cacheKey = $this->prefix.'commune:'.md5($commune).":page:{$page}:per:{$perPage}";
+
         return Cache::remember($cacheKey, $this->ttl, function () use ($commune, $perPage) {
             $paginator = Residence::with(['photos'])
                 ->listable()
@@ -80,13 +80,13 @@ class ResidenceCacheService
     public function getPopular(int $limit = 8): Collection
     {
         return Cache::remember(
-            $this->prefix . "popular:{$limit}",
+            $this->prefix."popular:{$limit}",
             $this->ttl,
-            fn() => Residence::with(['photos'])
+            fn () => Residence::with(['photos'])
                 ->listable()
                 ->orderByDesc('views_count')
                 ->limit($limit)
-                ->get()
+                ->get(),
         );
     }
 
@@ -96,13 +96,13 @@ class ResidenceCacheService
     public function getLatest(int $limit = 8): Collection
     {
         return Cache::remember(
-            $this->prefix . "latest:{$limit}",
+            $this->prefix."latest:{$limit}",
             $this->ttl / 2, // Shorter TTL for latest
-            fn() => Residence::with(['photos'])
+            fn () => Residence::with(['photos'])
                 ->listable()
                 ->latest()
                 ->limit($limit)
-                ->get()
+                ->get(),
         );
     }
 
@@ -114,14 +114,15 @@ class ResidenceCacheService
         // Round coordinates to cache effectively
         $roundedLat = round($lat, 3);
         $roundedLng = round($lng, 3);
-        $cacheKey = $this->prefix . "nearby:{$roundedLat}:{$roundedLng}:{$radiusKm}:{$limit}";
+        $cacheKey = $this->prefix."nearby:{$roundedLat}:{$roundedLng}:{$radiusKm}:{$limit}";
 
         return Cache::remember($cacheKey, $this->ttl, function () use ($lat, $lng, $radiusKm, $limit) {
             return Residence::with(['photos'])
                 ->listable()
-                ->selectRaw('*, 
+                ->selectRaw(
+                    '*, 
                     (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance',
-                    [$lat, $lng, $lat]
+                    [$lat, $lng, $lat],
                 )
                 ->having('distance', '<', $radiusKm)
                 ->orderBy('distance')
@@ -135,8 +136,8 @@ class ResidenceCacheService
      */
     public function searchWithCache(array $filters, int $page = 1): array
     {
-        $filterHash = md5(json_encode($filters) . "page:{$page}");
-        $cacheKey = $this->prefix . "search:{$filterHash}";
+        $filterHash = md5(json_encode($filters)."page:{$page}");
+        $cacheKey = $this->prefix."search:{$filterHash}";
 
         return Cache::remember($cacheKey, 300, function () use ($filters) {
             $query = Residence::with(['photos'])->listable();
@@ -198,8 +199,8 @@ class ResidenceCacheService
      */
     public function invalidateResidence(int $id): void
     {
-        Cache::forget($this->prefix . "single:{$id}");
-        
+        Cache::forget($this->prefix."single:{$id}");
+
         // Also invalidate list caches
         $this->invalidateListCaches();
     }
@@ -212,7 +213,7 @@ class ResidenceCacheService
         // Clear pattern-matched keys (requires Redis)
         if (config('cache.default') === 'redis') {
             $redis = Cache::getRedis();
-            $keys = $redis->keys($this->prefix . '*');
+            $keys = $redis->keys($this->prefix.'*');
             foreach ($keys as $key) {
                 // Remove the prefix that Redis adds
                 $cacheKey = str_replace(config('cache.prefix'), '', $key);

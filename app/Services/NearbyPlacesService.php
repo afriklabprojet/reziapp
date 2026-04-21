@@ -49,6 +49,7 @@ class NearbyPlacesService
     {
         if (!$residence->latitude || !$residence->longitude) {
             Log::info("NearbyPlaces: Résidence #{$residence->id} sans coordonnées, skip");
+
             return 0;
         }
 
@@ -59,6 +60,7 @@ class NearbyPlacesService
 
             if ($existingCount > 0 && $lastUpdate && now()->diffInDays($lastUpdate) < 30) {
                 Log::info("NearbyPlaces: Résidence #{$residence->id} a déjà {$existingCount} POIs récents, skip");
+
                 return 0;
             }
         }
@@ -68,11 +70,12 @@ class NearbyPlacesService
                 $residence->latitude,
                 $residence->longitude,
                 1500, // Rayon 1.5 km
-                self::SEARCH_TYPES
+                self::SEARCH_TYPES,
             );
 
             if (empty($places)) {
                 Log::info("NearbyPlaces: Aucun POI trouvé pour résidence #{$residence->id}");
+
                 return 0;
             }
 
@@ -114,6 +117,7 @@ class NearbyPlacesService
             Log::error("NearbyPlaces: Erreur pour résidence #{$residence->id}", [
                 'error' => $e->getMessage(),
             ]);
+
             return 0;
         }
     }

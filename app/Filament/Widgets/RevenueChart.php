@@ -4,7 +4,6 @@ namespace App\Filament\Widgets;
 
 use App\Models\Booking;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class RevenueChart extends ChartWidget
@@ -19,7 +18,7 @@ class RevenueChart extends ChartWidget
             ->select(
                 DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
                 DB::raw('SUM(total_amount) as revenue'),
-                DB::raw('COUNT(*) as count')
+                DB::raw('COUNT(*) as count'),
             )
             ->where('status', 'completed')
             ->where('created_at', '>=', now()->subMonths(12))
@@ -31,12 +30,12 @@ class RevenueChart extends ChartWidget
         $months = [];
         $revenues = [];
         $counts = [];
-        
+
         for ($i = 11; $i >= 0; $i--) {
             $month = now()->subMonths($i)->format('Y-m');
             $monthLabel = now()->subMonths($i)->translatedFormat('M Y');
             $months[] = $monthLabel;
-            
+
             $found = $data->firstWhere('month', $month);
             $revenues[] = $found ? $found->revenue : 0;
             $counts[] = $found ? $found->count : 0;

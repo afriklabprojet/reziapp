@@ -25,7 +25,7 @@ class ResidenceApproved extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage())
-            ->subject('✅ Votre résidence a été approuvée — ' . $this->residence->name)
+            ->subject('✅ Votre résidence a été approuvée — '.$this->residence->name)
             ->greeting("Bonjour {$notifiable->name},")
             ->line("Bonne nouvelle ! Votre résidence **{$this->residence->name}** a été approuvée par notre équipe de modération.")
             ->line('Elle est désormais visible par tous les utilisateurs sur REZI.')

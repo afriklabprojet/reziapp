@@ -221,20 +221,20 @@ class SponsoredListingResource extends Resource
 
                 Tables\Columns\TextColumn::make('total_budget')
                     ->label('Budget')
-                    ->formatStateUsing(fn ($state) => number_format($state, 0, ',', ' ') . ' F')
+                    ->formatStateUsing(fn ($state) => number_format($state, 0, ',', ' ').' F')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('amount_spent')
                     ->label('Dépensé')
                     ->formatStateUsing(fn ($record) => $record->total_budget > 0
-                        ? number_format($record->amount_spent, 0, ',', ' ') . ' F (' . round(($record->amount_spent / $record->total_budget) * 100) . '%)'
-                        : number_format($record->amount_spent, 0, ',', ' ') . ' F')
+                        ? number_format($record->amount_spent, 0, ',', ' ').' F ('.round(($record->amount_spent / $record->total_budget) * 100).'%)'
+                        : number_format($record->amount_spent, 0, ',', ' ').' F')
                     ->color(fn ($record) => $record->total_budget > 0 && ($record->amount_spent / $record->total_budget) >= 0.9 ? 'danger' : null)
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('starts_at')
                     ->label('Période')
-                    ->formatStateUsing(fn ($record) => $record->starts_at->format('d/m') . ' → ' . $record->ends_at->format('d/m/y'))
+                    ->formatStateUsing(fn ($record) => $record->starts_at->format('d/m').' → '.$record->ends_at->format('d/m/y'))
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('impressions')
@@ -249,14 +249,14 @@ class SponsoredListingResource extends Resource
 
                 Tables\Columns\TextColumn::make('click_rate')
                     ->label('CTR')
-                    ->getStateUsing(fn ($record) => $record->click_rate . '%')
+                    ->getStateUsing(fn ($record) => $record->click_rate.'%')
                     ->badge()
                     ->color(fn ($record) => $record->click_rate >= 3 ? 'success' : ($record->click_rate >= 1 ? 'warning' : 'gray'))
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('days_remaining')
                     ->label('Jours')
-                    ->getStateUsing(fn ($record) => $record->days_remaining > 0 ? $record->days_remaining . 'j' : 'Expiré')
+                    ->getStateUsing(fn ($record) => $record->days_remaining > 0 ? $record->days_remaining.'j' : 'Expiré')
                     ->badge()
                     ->color(fn ($record) => $record->days_remaining > 7 ? 'success' : ($record->days_remaining > 0 ? 'warning' : 'danger'))
                     ->toggleable(),
@@ -460,7 +460,7 @@ class SponsoredListingResource extends Resource
                                 'is_paid' => true,
                                 'payment_reference' => $data['payment_reference'],
                             ]);
-                            Notification::make()->success()->title('Paiement confirmé')->body('Référence : ' . $data['payment_reference'])->send();
+                            Notification::make()->success()->title('Paiement confirmé')->body('Référence : '.$data['payment_reference'])->send();
                         }),
 
                     Tables\Actions\EditAction::make()
@@ -494,7 +494,7 @@ class SponsoredListingResource extends Resource
                                     $count++;
                                 }
                             }
-                            Notification::make()->success()->title($count . ' campagne(s) activée(s)')->send();
+                            Notification::make()->success()->title($count.' campagne(s) activée(s)')->send();
                         }),
 
                     Tables\Actions\BulkAction::make('bulk_pause')
@@ -511,7 +511,7 @@ class SponsoredListingResource extends Resource
                                     $count++;
                                 }
                             }
-                            Notification::make()->success()->title($count . ' campagne(s) en pause')->send();
+                            Notification::make()->success()->title($count.' campagne(s) en pause')->send();
                         }),
 
                     Tables\Actions\BulkAction::make('bulk_cancel')
@@ -530,7 +530,7 @@ class SponsoredListingResource extends Resource
                                     $count++;
                                 }
                             }
-                            Notification::make()->success()->title($count . ' campagne(s) annulée(s)')->send();
+                            Notification::make()->success()->title($count.' campagne(s) annulée(s)')->send();
                         }),
 
                     Tables\Actions\DeleteBulkAction::make()

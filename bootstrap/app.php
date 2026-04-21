@@ -58,12 +58,12 @@ return Application::configure(basePath: dirname(__DIR__))
             ->description('Traitement des alertes de prix');
 
         // ── Bulletproof : Expire stale bookings & orphaned payments ──
-        $schedule->job(new \App\Jobs\ExpireStaleBookings)
+        $schedule->job(new \App\Jobs\ExpireStaleBookings())
             ->everyFiveMinutes()
             ->description('Expire les réservations en attente de paiement (>30min)');
 
         // ── Bulletproof : System health check ──
-        $schedule->job(new \App\Jobs\SystemHealthCheck)
+        $schedule->job(new \App\Jobs\SystemHealthCheck())
             ->everyFiveMinutes()
             ->description('Vérification santé système (DB, cache, stockage, Jeko)');
 
@@ -147,7 +147,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 $response['debug'] = [
                     'exception' => get_class($e),
                     'message' => $e->getMessage(),
-                    'file' => $e->getFile() . ':' . $e->getLine(),
+                    'file' => $e->getFile().':'.$e->getLine(),
                 ];
             }
 
@@ -160,7 +160,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     'ip' => $request->ip(),
                     'exception' => get_class($e),
                     'message' => $e->getMessage(),
-                    'file' => $e->getFile() . ':' . $e->getLine(),
+                    'file' => $e->getFile().':'.$e->getLine(),
                 ]);
             }
 

@@ -42,7 +42,7 @@ class SponsoredListingCompleted extends Notification implements ShouldQueue
             ->line("Votre campagne **{$typeLabel}** pour **{$residenceName}** est terminée.")
             ->line("**Période :** du {$startDate} au {$endDate}")
             ->line('')
-            ->line("**📊 Rapport de performance :**")
+            ->line('**📊 Rapport de performance :**')
             ->line("• Impressions : **{$impressions}**")
             ->line("• Clics : **{$clicks}**")
             ->line("• Taux de clic (CTR) : **{$ctr}%**")
@@ -65,7 +65,7 @@ class SponsoredListingCompleted extends Notification implements ShouldQueue
             'clicks' => $this->sponsoredListing->clicks,
             'contacts' => $this->sponsoredListing->contacts_generated,
             'amount_spent' => $this->sponsoredListing->amount_spent,
-            'message' => 'Campagne "' . $this->sponsoredListing->type_label . '" terminée pour ' . ($this->sponsoredListing->residence?->name ?? 'résidence'),
+            'message' => 'Campagne "'.$this->sponsoredListing->type_label.'" terminée pour '.($this->sponsoredListing->residence?->name ?? 'résidence'),
         ];
     }
 }

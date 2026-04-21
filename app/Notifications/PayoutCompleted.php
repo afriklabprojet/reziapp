@@ -37,7 +37,7 @@ class PayoutCompleted extends Notification implements ShouldQueue
             ->subject("💰 Paiement effectué — {$formattedAmount} FCFA")
             ->greeting("Bonjour {$notifiable->name},")
             ->line("Votre paiement de **{$formattedAmount} FCFA** a été effectué avec succès.")
-            ->line("**Détails :**")
+            ->line('**Détails :**')
             ->line("• Montant : {$formattedAmount} FCFA")
             ->line("• Méthode : {$methodLabel}")
             ->line("• Référence : {$this->reference}")
@@ -53,7 +53,7 @@ class PayoutCompleted extends Notification implements ShouldQueue
             'amount' => $this->amount,
             'payment_method' => $this->paymentMethod,
             'reference' => $this->reference,
-            'message' => 'Paiement de ' . number_format($this->amount, 0, ',', ' ') . ' FCFA effectué',
+            'message' => 'Paiement de '.number_format($this->amount, 0, ',', ' ').' FCFA effectué',
         ];
     }
 }

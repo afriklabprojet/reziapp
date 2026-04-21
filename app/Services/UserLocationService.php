@@ -79,7 +79,7 @@ class UserLocationService
      */
     public static function detectFromCoordinates(float $latitude, float $longitude): array
     {
-        $cacheKey = 'location_detect_' . round($latitude, 2) . '_' . round($longitude, 2);
+        $cacheKey = 'location_detect_'.round($latitude, 2).'_'.round($longitude, 2);
 
         $location = Cache::remember($cacheKey, 3600, function () use ($latitude, $longitude) {
             // Trouver la ville la plus proche (formule Haversine simplifiée)

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -54,7 +56,7 @@ class ViewedResidence extends Model
             ['user_id' => $userId, 'residence_id' => $residenceId],
             [
                 'last_viewed_at' => now(),
-            ]
+            ],
         );
 
         $view->increment('view_count');
@@ -85,7 +87,7 @@ class ViewedResidence extends Model
             ->orderByDesc('last_viewed_at')
             ->limit($limit)
             ->get()
-            ->map(fn($view) => $view->residence)
+            ->map(fn ($view) => $view->residence)
             ->filter();
     }
 
@@ -105,7 +107,7 @@ class ViewedResidence extends Model
             ->orderByDesc('view_count')
             ->limit($limit)
             ->get()
-            ->map(fn($view) => $view->residence)
+            ->map(fn ($view) => $view->residence)
             ->filter();
     }
 

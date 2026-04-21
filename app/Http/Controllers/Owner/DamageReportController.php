@@ -17,7 +17,8 @@ class DamageReportController extends Controller
 {
     public function __construct(
         private DamageReportService $damageService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {
@@ -60,6 +61,7 @@ class DamageReportController extends Controller
     public function show(DamageReport $damage): View
     {
         $damage->load('residence', 'booking', 'reporter');
+
         return view('owner.damages.show', compact('damage'));
     }
 

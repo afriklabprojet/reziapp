@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Correction: la migration 2026_01_30_240002 créait booking_requests comme une table de log
      * (booking_id, action, action_by...) alors que le modèle BookingRequest attend une vraie

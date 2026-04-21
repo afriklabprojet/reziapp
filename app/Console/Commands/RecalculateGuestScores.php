@@ -29,7 +29,7 @@ class RecalculateGuestScores extends Command
 
         $bar->finish();
         $this->newLine();
-        $this->info($users->count() . ' score(s) recalculé(s).');
+        $this->info($users->count().' score(s) recalculé(s).');
 
         return self::SUCCESS;
     }

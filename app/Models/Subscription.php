@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Carbon\Carbon;
 
 class Subscription extends Model
 {
@@ -85,7 +86,7 @@ class Subscription extends Model
      */
     public function isActive(): bool
     {
-        return in_array($this->status, ['active', 'trialing']) && 
+        return in_array($this->status, ['active', 'trialing']) &&
                $this->current_period_end > now();
     }
 
@@ -94,8 +95,8 @@ class Subscription extends Model
      */
     public function onTrial(): bool
     {
-        return $this->status === 'trialing' && 
-               $this->trial_ends_at && 
+        return $this->status === 'trialing' &&
+               $this->trial_ends_at &&
                $this->trial_ends_at->isFuture();
     }
 
@@ -123,6 +124,7 @@ class Subscription extends Model
         if ($this->onTrial()) {
             return max(0, now()->diffInDays($this->trial_ends_at, false));
         }
+
         return max(0, now()->diffInDays($this->current_period_end, false));
     }
 
@@ -181,8 +183,8 @@ class Subscription extends Model
     public function renew(): bool
     {
         $newPeriodStart = $this->current_period_end;
-        $newPeriodEnd = $this->billing_cycle === 'yearly' 
-            ? $newPeriodStart->addYear() 
+        $newPeriodEnd = $this->billing_cycle === 'yearly'
+            ? $newPeriodStart->addYear()
             : $newPeriodStart->addMonth();
 
         $this->update([
@@ -198,7 +200,7 @@ class Subscription extends Model
     /**
      * Changer de plan
      */
-    public function changePlan(SubscriptionPlan $newPlan, string $cycle = null): bool
+    public function changePlan(SubscriptionPlan $newPlan, ?string $cycle = null): bool
     {
         $cycle = $cycle ?? $this->billing_cycle;
 

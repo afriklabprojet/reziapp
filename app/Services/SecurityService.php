@@ -2,31 +2,31 @@
 
 namespace App\Services;
 
-use App\Models\User;
-use App\Models\Residence;
 use App\Models\Booking;
 use App\Models\FraudReport;
 use App\Models\MarketPriceData;
+use App\Models\Residence;
+use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class SecurityService
 {
     // Niveaux de risque
-    const RISK_LOW = 'low';
-    const RISK_MEDIUM = 'medium';
-    const RISK_HIGH = 'high';
-    const RISK_CRITICAL = 'critical';
+    public const RISK_LOW = 'low';
+    public const RISK_MEDIUM = 'medium';
+    public const RISK_HIGH = 'high';
+    public const RISK_CRITICAL = 'critical';
 
     // Indicateurs de fraude
-    const FLAG_NEW_ACCOUNT = 'new_account';
-    const FLAG_UNVERIFIED_PHONE = 'unverified_phone';
-    const FLAG_UNVERIFIED_EMAIL = 'unverified_email';
-    const FLAG_SUSPICIOUS_PRICE = 'suspicious_price';
-    const FLAG_DUPLICATE_PHOTOS = 'duplicate_photos';
-    const FLAG_REPORTED_USER = 'reported_user';
-    const FLAG_IP_FLAGGED = 'ip_flagged';
-    const FLAG_MULTIPLE_ACCOUNTS = 'multiple_accounts';
+    public const FLAG_NEW_ACCOUNT = 'new_account';
+    public const FLAG_UNVERIFIED_PHONE = 'unverified_phone';
+    public const FLAG_UNVERIFIED_EMAIL = 'unverified_email';
+    public const FLAG_SUSPICIOUS_PRICE = 'suspicious_price';
+    public const FLAG_DUPLICATE_PHOTOS = 'duplicate_photos';
+    public const FLAG_REPORTED_USER = 'reported_user';
+    public const FLAG_IP_FLAGGED = 'ip_flagged';
+    public const FLAG_MULTIPLE_ACCOUNTS = 'multiple_accounts';
 
     /**
      * Analyser le score de confiance d'un utilisateur
@@ -38,7 +38,7 @@ class SecurityService
         $positives = [];
 
         // Facteurs négatifs
-        
+
         // Compte récent (moins de 7 jours)
         if ($user->created_at->diffInDays(now()) < 7) {
             $score -= 15;
@@ -81,7 +81,7 @@ class SecurityService
         }
 
         // Facteurs positifs
-        
+
         // Identité vérifiée
         if ($user->identity_verified) {
             $score += 15;
@@ -144,9 +144,9 @@ class SecurityService
         $marketPrice = MarketPriceData::getMarketPrice(
             $residence->commune ?? $residence->city,
             $residence->type,
-            $residence->bedrooms ?? 1
+            $residence->bedrooms ?? 1,
         );
-        
+
         if ($marketPrice && $residence->price < $marketPrice['min'] * 0.5) {
             $riskScore += 30;
             $flags[] = [
@@ -318,7 +318,7 @@ class SecurityService
         if ($years >= 1) {
             $indicators[] = [
                 'icon' => 'heroicon-o-calendar',
-                'label' => "Membre depuis {$years} an" . ($years > 1 ? 's' : ''),
+                'label' => "Membre depuis {$years} an".($years > 1 ? 's' : ''),
                 'color' => 'blue',
                 'verified' => true,
             ];
@@ -329,7 +329,7 @@ class SecurityService
         if ($avgRating) {
             $indicators[] = [
                 'icon' => 'heroicon-o-star',
-                'label' => round($avgRating, 1) . '/5 (' . $user->receivedReviews()->count() . ' avis)',
+                'label' => round($avgRating, 1).'/5 ('.$user->receivedReviews()->count().' avis)',
                 'color' => $avgRating >= 4 ? 'yellow' : 'gray',
                 'verified' => true,
             ];

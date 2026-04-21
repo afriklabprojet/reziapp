@@ -7,8 +7,7 @@ use Illuminate\Support\Facades\Schema;
 /**
  * Adds idempotency keys for payments/bookings and webhook event tracking.
  */
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         // Idempotency key on payments to prevent double charges

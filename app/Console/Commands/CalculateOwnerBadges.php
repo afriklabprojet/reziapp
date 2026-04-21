@@ -2,15 +2,13 @@
 
 namespace App\Console\Commands;
 
-use App\Models\OwnerBadge;
-use App\Models\Residence;
-use App\Models\Review;
-use App\Models\User;
 use App\Models\Booking;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\OwnerBadge;
+use App\Models\Review;
+use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class CalculateOwnerBadges extends Command
 {
@@ -58,7 +56,7 @@ class CalculateOwnerBadges extends Command
     public function handle(): int
     {
         $userId = $this->option('user');
-        
+
         if ($userId) {
             $owners = User::where('id', $userId)->where('role', 'owner')->get();
         } else {
@@ -66,7 +64,7 @@ class CalculateOwnerBadges extends Command
         }
 
         $this->info("Analyse de {$owners->count()} propriétaires...");
-        
+
         $stats = [
             'analyzed' => 0,
             'badges_awarded' => 0,
@@ -86,7 +84,7 @@ class CalculateOwnerBadges extends Command
         $bar->finish();
         $this->newLine(2);
 
-        $this->info("✅ Analyse terminée:");
+        $this->info('✅ Analyse terminée:');
         $this->line("   - {$stats['analyzed']} propriétaires analysés");
         $this->line("   - {$stats['badges_awarded']} badges attribués");
         $this->line("   - {$stats['badges_revoked']} badges révoqués");
@@ -187,25 +185,25 @@ class CalculateOwnerBadges extends Command
         // Statistiques de base
         $residences = $owner->residences()->where('status', 'active')->count();
         $verifiedResidences = $owner->residences()->whereNotNull('verified_at')->count();
-        
+
         // Statistiques des réservations
-        $completedBookings = Booking::whereHas('residence', fn($q) => $q->where('owner_id', $owner->id))
+        $completedBookings = Booking::whereHas('residence', fn ($q) => $q->where('owner_id', $owner->id))
             ->where('status', 'completed')
             ->count();
-        
-        $cancelledBookings = Booking::whereHas('residence', fn($q) => $q->where('owner_id', $owner->id))
+
+        $cancelledBookings = Booking::whereHas('residence', fn ($q) => $q->where('owner_id', $owner->id))
             ->where('status', 'cancelled')
             ->where('cancelled_by', 'owner')
             ->count();
-        
-        $totalBookings = Booking::whereHas('residence', fn($q) => $q->where('owner_id', $owner->id))
+
+        $totalBookings = Booking::whereHas('residence', fn ($q) => $q->where('owner_id', $owner->id))
             ->whereIn('status', ['completed', 'cancelled'])
             ->count();
-        
+
         $cancellationRate = $totalBookings > 0 ? $cancelledBookings / $totalBookings : 0;
 
         // Statistiques des avis
-        $reviews = Review::whereHas('residence', fn($q) => $q->where('owner_id', $owner->id))->get();
+        $reviews = Review::whereHas('residence', fn ($q) => $q->where('owner_id', $owner->id))->get();
         $avgRating = $reviews->avg('rating') ?? 0;
         $reviewsCount = $reviews->count();
 
@@ -282,12 +280,12 @@ class CalculateOwnerBadges extends Command
             }
         }
 
-        $avgResponseTime = count($responseTimes) > 0 
-            ? array_sum($responseTimes) / count($responseTimes) 
+        $avgResponseTime = count($responseTimes) > 0
+            ? array_sum($responseTimes) / count($responseTimes)
             : 1440; // 24h par défaut si pas de données
 
-        $responseRate = $messagesReceived->count() > 0 
-            ? $responded / $messagesReceived->count() 
+        $responseRate = $messagesReceived->count() > 0
+            ? $responded / $messagesReceived->count()
             : 0;
 
         return [
@@ -301,31 +299,31 @@ class CalculateOwnerBadges extends Command
     {
         return match ($badgeKey) {
             'verified_identity' => $metrics['identity_verified'],
-            
+
             'verified_phone' => $metrics['phone_verified'],
-            
+
             'verified_residence' => $metrics['verified_residences'] >= 1,
-            
-            'superhost' => 
+
+            'superhost' =>
                 $metrics['avg_rating'] >= $this->criteria['superhost']['min_rating'] &&
                 $metrics['reviews_count'] >= $this->criteria['superhost']['min_reviews'] &&
                 $metrics['completed_bookings'] >= $this->criteria['superhost']['min_bookings'] &&
                 $metrics['cancellation_rate'] <= $this->criteria['superhost']['max_cancellation_rate'],
-            
-            'trusted' => 
+
+            'trusted' =>
                 $metrics['account_age_months'] >= $this->criteria['trusted']['min_account_age_months'] &&
                 $metrics['active_listings'] >= $this->criteria['trusted']['min_active_listings'] &&
                 $metrics['completed_bookings'] >= $this->criteria['trusted']['min_completed_bookings'],
-            
-            'responsive' => 
+
+            'responsive' =>
                 $metrics['total_messages_received'] >= $this->criteria['responsive']['min_messages'] &&
                 $metrics['response_time_minutes'] <= $this->criteria['responsive']['max_response_time_minutes'] &&
                 $metrics['response_rate'] >= $this->criteria['responsive']['min_response_rate'],
-            
-            'top_rated' => 
+
+            'top_rated' =>
                 $metrics['avg_rating'] >= $this->criteria['top_rated']['min_rating'] &&
                 $metrics['reviews_count'] >= $this->criteria['top_rated']['min_reviews'],
-            
+
             default => false,
         };
     }
@@ -341,6 +339,7 @@ class CalculateOwnerBadges extends Command
         if ($existing && (!$existing->expires_at || $existing->expires_at->isFuture())) {
             // Mettre à jour les métadonnées
             $existing->update(['metadata' => $metrics]);
+
             return false;
         }
 
@@ -364,7 +363,7 @@ class CalculateOwnerBadges extends Command
                 'expires_at' => $expiresInDays ? now()->addDays($expiresInDays) : null,
                 'is_visible' => true,
                 'metadata' => $metrics,
-            ]
+            ],
         );
 
         return true;

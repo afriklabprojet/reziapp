@@ -10,12 +10,12 @@ use Illuminate\Support\Str;
 
 class DigitalCheckin extends Model
 {
-    const TYPE_CHECK_IN  = 'check_in';
-    const TYPE_CHECK_OUT = 'check_out';
+    public const TYPE_CHECK_IN  = 'check_in';
+    public const TYPE_CHECK_OUT = 'check_out';
 
-    const STATUS_PENDING   = 'pending';
-    const STATUS_CONFIRMED = 'confirmed';
-    const STATUS_COMPLETED = 'completed';
+    public const STATUS_PENDING   = 'pending';
+    public const STATUS_CONFIRMED = 'confirmed';
+    public const STATUS_COMPLETED = 'completed';
 
     protected $fillable = [
         'booking_id', 'residence_id', 'guest_id', 'type',

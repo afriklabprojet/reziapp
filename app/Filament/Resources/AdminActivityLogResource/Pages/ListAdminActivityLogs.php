@@ -19,7 +19,7 @@ class ListAdminActivityLogs extends ListRecords
                 ->color('success')
                 ->action(function () {
                     $logs = $this->getFilteredTableQuery()->get();
-                    
+
                     $csv = "Date,Admin,Action,Description,Modele,ID,IP\n";
                     foreach ($logs as $log) {
                         $csv .= sprintf(
@@ -30,13 +30,13 @@ class ListAdminActivityLogs extends ListRecords
                             str_replace(',', ' ', $log->description),
                             class_basename($log->model_type ?? ''),
                             $log->model_id ?? '',
-                            $log->ip_address ?? ''
+                            $log->ip_address ?? '',
                         );
                     }
-                    
+
                     return response()->streamDownload(function () use ($csv) {
                         echo $csv;
-                    }, 'activity_log_' . now()->format('Y-m-d') . '.csv');
+                    }, 'activity_log_'.now()->format('Y-m-d').'.csv');
                 }),
         ];
     }

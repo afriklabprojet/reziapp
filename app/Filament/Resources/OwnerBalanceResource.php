@@ -37,7 +37,7 @@ class OwnerBalanceResource extends Resource
                             ->relationship(
                                 name: 'user',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: fn ($query) => $query->where('role', 'owner')
+                                modifyQueryUsing: fn ($query) => $query->where('role', 'owner'),
                             )
                             ->searchable()
                             ->preload()

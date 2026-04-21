@@ -140,7 +140,7 @@ export function bookingForm(config) {
         },
 
         get guestLabel() {
-            let parts = [];
+            const parts = [];
             const total = this.adults + this.children;
             parts.push(`${total} voyageur${total > 1 ? 's' : ''}`);
             if (this.infants > 0) parts.push(`${this.infants} bébé${this.infants > 1 ? 's' : ''}`);
@@ -269,7 +269,7 @@ export function bookingForm(config) {
                 if (this.available) {
                     await this.fetchPrice();
                 }
-            } catch (e) {
+            } catch (_e) {
                 this.available = true; // Assume available on error
             } finally {
                 this.checking = false;
@@ -297,7 +297,7 @@ export function bookingForm(config) {
                 if (data.success && data.price) {
                     this.serverPrice = data.price;
                 }
-            } catch (e) {
+            } catch (_e) {
                 // Use client-side calculation as fallback
             } finally {
                 this.loading = false;

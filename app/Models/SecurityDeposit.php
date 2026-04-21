@@ -14,12 +14,12 @@ class SecurityDeposit extends Model
     use SoftDeletes;
 
     // ===== STATUTS =====
-    const STATUS_PENDING        = 'pending';
-    const STATUS_HELD           = 'held';
-    const STATUS_PARTIAL_RETURN = 'partial_return';
-    const STATUS_RETURNED       = 'returned';
-    const STATUS_FORFEITED      = 'forfeited';
-    const STATUS_DISPUTED       = 'disputed';
+    public const STATUS_PENDING        = 'pending';
+    public const STATUS_HELD           = 'held';
+    public const STATUS_PARTIAL_RETURN = 'partial_return';
+    public const STATUS_RETURNED       = 'returned';
+    public const STATUS_FORFEITED      = 'forfeited';
+    public const STATUS_DISPUTED       = 'disputed';
 
     protected $fillable = [
         'reference',
@@ -163,7 +163,7 @@ class SecurityDeposit extends Model
     public static function generateReference(): string
     {
         do {
-            $ref = 'SD-' . now()->format('Y') . '-' . strtoupper(Str::random(6));
+            $ref = 'SD-'.now()->format('Y').'-'.strtoupper(Str::random(6));
         } while (self::where('reference', $ref)->exists());
 
         return $ref;

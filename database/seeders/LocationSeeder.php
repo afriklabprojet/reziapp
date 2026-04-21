@@ -54,7 +54,7 @@ class LocationSeeder extends Seeder
         foreach ($ciCities as $cityData) {
             City::updateOrCreate(
                 ['country_id' => $ci->id, 'slug' => \Str::slug($cityData['name'])],
-                array_merge($cityData, ['country_id' => $ci->id, 'is_active' => $cityData['is_active'] ?? true])
+                array_merge($cityData, ['country_id' => $ci->id, 'is_active' => $cityData['is_active'] ?? true]),
             );
         }
 
@@ -80,7 +80,7 @@ class LocationSeeder extends Seeder
         foreach ($abidjanCommunes as $communeData) {
             CommuneList::updateOrCreate(
                 ['city_id' => $abidjan->id, 'slug' => \Str::slug($communeData['name'])],
-                array_merge($communeData, ['city_id' => $abidjan->id, 'is_active' => true])
+                array_merge($communeData, ['city_id' => $abidjan->id, 'is_active' => true]),
             );
         }
 
@@ -93,7 +93,7 @@ class LocationSeeder extends Seeder
         foreach ($yamoussoukroCommunes as $communeData) {
             CommuneList::updateOrCreate(
                 ['city_id' => $yamoussoukro->id, 'slug' => \Str::slug($communeData['name'])],
-                array_merge($communeData, ['city_id' => $yamoussoukro->id, 'is_active' => true])
+                array_merge($communeData, ['city_id' => $yamoussoukro->id, 'is_active' => true]),
             );
         }
 
@@ -107,7 +107,7 @@ class LocationSeeder extends Seeder
         foreach ($bouakeCommunes as $communeData) {
             CommuneList::updateOrCreate(
                 ['city_id' => $bouake->id, 'slug' => \Str::slug($communeData['name'])],
-                array_merge($communeData, ['city_id' => $bouake->id, 'is_active' => true])
+                array_merge($communeData, ['city_id' => $bouake->id, 'is_active' => true]),
             );
         }
 
@@ -144,7 +144,7 @@ class LocationSeeder extends Seeder
         foreach ($bfCities as $cityData) {
             City::updateOrCreate(
                 ['country_id' => $bf->id, 'slug' => \Str::slug($cityData['name'])],
-                array_merge($cityData, ['country_id' => $bf->id, 'is_active' => true])
+                array_merge($cityData, ['country_id' => $bf->id, 'is_active' => true]),
             );
         }
 
@@ -163,7 +163,7 @@ class LocationSeeder extends Seeder
         foreach ($ouagaCommunes as $communeData) {
             CommuneList::updateOrCreate(
                 ['city_id' => $ouaga->id, 'slug' => \Str::slug($communeData['name'])],
-                array_merge($communeData, ['city_id' => $ouaga->id, 'is_active' => true])
+                array_merge($communeData, ['city_id' => $ouaga->id, 'is_active' => true]),
             );
         }
 
@@ -177,7 +177,7 @@ class LocationSeeder extends Seeder
         foreach ($boboCommunes as $communeData) {
             CommuneList::updateOrCreate(
                 ['city_id' => $bobo->id, 'slug' => \Str::slug($communeData['name'])],
-                array_merge($communeData, ['city_id' => $bobo->id, 'is_active' => true])
+                array_merge($communeData, ['city_id' => $bobo->id, 'is_active' => true]),
             );
         }
     }

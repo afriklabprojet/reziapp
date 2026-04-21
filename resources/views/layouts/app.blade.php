@@ -38,9 +38,10 @@
     <meta name="msapplication-TileColor" content="#F7931E">
     <meta name="msapplication-config" content="/browserconfig.xml">
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+    <!-- Fonts: DM Serif Display (titres) + Outfit (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Additional Styles -->
     @stack('styles')
@@ -99,6 +100,35 @@
 
     <!-- Additional Scripts -->
     @stack('scripts')
+
+    <!-- Fallback global pour les images manquantes -->
+    <script>
+    (function () {
+        var PLACEHOLDER = '/images/placeholder-residence.jpg';
+        var AVATAR_PLACEHOLDER = '/images/placeholder.jpg';
+        function handleImgError(img) {
+            if (img.dataset.fallback) return; // déjà en fallback, évite boucle infinie
+            img.dataset.fallback = '1';
+            var src = img.getAttribute('src') || '';
+            // Ne pas remplacer les logos/icônes (SVG inline ou data URI)
+            if (src.startsWith('data:') || src.endsWith('.svg')) return;
+            // Choisir le bon placeholder selon le contexte
+            var isAvatar = img.classList.contains('rounded-full') || img.closest('[data-avatar]');
+            img.src = isAvatar ? AVATAR_PLACEHOLDER : PLACEHOLDER;
+        }
+        // Intercepte les images déjà chargées et celles futures
+        document.addEventListener('error', function (e) {
+            if (e.target && e.target.tagName === 'IMG') {
+                handleImgError(e.target);
+            }
+        }, true);
+    })();
+    </script>
+
+    {{-- Chatbot IA REZI — widget flottant 24/7 --}}
+    <x-chatbot
+        :commune="request()->query('commune') ?: null"
+    />
 
     <!-- Service Worker Registration -->
     <script>

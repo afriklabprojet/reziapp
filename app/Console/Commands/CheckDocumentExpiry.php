@@ -42,8 +42,8 @@ class CheckDocumentExpiry extends Command
                 'type' => 'App\Notifications\DocumentExpiryNotification',
                 'data' => [
                     'title' => 'Documents expirant bientôt',
-                    'message' => $documents->count() . ' document(s) expirent dans les 30 prochains jours.',
-                    'documents' => $documents->map(fn($d) => [
+                    'message' => $documents->count().' document(s) expirent dans les 30 prochains jours.',
+                    'documents' => $documents->map(fn ($d) => [
                         'name' => $d->name,
                         'expiry_date' => $d->expiry_date->format('d/m/Y'),
                     ])->toArray(),

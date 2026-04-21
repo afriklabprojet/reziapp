@@ -45,7 +45,7 @@ class StoreResidenceRequest extends FormRequest
                 $duplicate = Residence::where('owner_id', $user->id)
                     ->whereRaw(
                         '(6371000 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) < 100',
-                        [$lat, $lng, $lat]
+                        [$lat, $lng, $lat],
                     )
                     ->where(function ($q) use ($name) {
                         // Nom identique ou très proche (SOUNDEX sur MySQL uniquement)
@@ -59,7 +59,7 @@ class StoreResidenceRequest extends FormRequest
                 if ($duplicate) {
                     $validator->errors()->add(
                         'name',
-                        'Vous avez déjà une annonce similaire à proximité (< 100 m). Veuillez modifier l\'annonce existante au lieu d\'en créer une nouvelle.'
+                        'Vous avez déjà une annonce similaire à proximité (< 100 m). Veuillez modifier l\'annonce existante au lieu d\'en créer une nouvelle.',
                     );
                 }
             },
@@ -78,7 +78,7 @@ class StoreResidenceRequest extends FormRequest
                         ];
                         $validator->errors()->add(
                             'price_period',
-                            "Pour le type \"$type\", la période de prix doit être \"" . ($labels[$expected] ?? $expected) . '".',
+                            "Pour le type \"$type\", la période de prix doit être \"".($labels[$expected] ?? $expected).'".',
                         );
                     }
                 }

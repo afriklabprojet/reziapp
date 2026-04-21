@@ -15,7 +15,8 @@ class UtilityController extends Controller
 {
     public function __construct(
         private UtilityService $utilityService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {

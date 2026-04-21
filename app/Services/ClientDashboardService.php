@@ -19,6 +19,11 @@ class ClientDashboardService
      */
     private const GEO_CACHE_TTL = 600; // 10 minutes
 
+    public function __construct(
+        private readonly ResidenceMatchingService $matching,
+    ) {
+    }
+
     /**
      * Assembler toutes les données nécessaires au dashboard client.
      */
@@ -115,53 +120,11 @@ class ClientDashboardService
             ->get();
     }
 
-    // ─── Recommendations (cached by commune) ─────────────────
+    // ─── Recommendations (moteur IA — délégué à ResidenceMatchingService) ─────
 
     public function getRecommendations(User $user, int $limit = 6): Collection
     {
-        $cacheKey = "client_recommendations_{$user->id}";
-
-        return Cache::remember($cacheKey, self::GEO_CACHE_TTL, function () use ($user, $limit) {
-            $favoriteCommunes = $user->favorites()
-                ->join('residences', 'favorites.residence_id', '=', 'residences.id')
-                ->pluck('residences.commune')
-                ->unique()
-                ->toArray();
-
-            $favoriteTypes = $user->favorites()
-                ->join('residences', 'favorites.residence_id', '=', 'residences.id')
-                ->pluck('residences.type')
-                ->unique()
-                ->toArray();
-
-            $searchedCommunes = $user->searchHistories()
-                ->whereNotNull('commune')
-                ->latest()
-                ->take(5)
-                ->pluck('commune')
-                ->toArray();
-
-            $allCommunes = array_unique(array_merge($favoriteCommunes, $searchedCommunes));
-
-            $excludeIds = $user->favorites()->pluck('residence_id')
-                ->merge($user->residenceViews()->pluck('residence_id'))
-                ->unique()
-                ->toArray();
-
-            return Residence::query()
-                ->where('status', 'active')
-                ->where('is_available', true)
-                ->where('owner_id', '!=', $user->id)
-                ->whereNotIn('id', $excludeIds)
-                ->where(function ($query) use ($allCommunes, $favoriteTypes) {
-                    $query->when(!empty($allCommunes), fn ($q) => $q->whereIn('commune', $allCommunes))
-                          ->when(!empty($favoriteTypes), fn ($q) => $q->orWhereIn('type', $favoriteTypes));
-                })
-                ->with(['photos'])
-                ->inRandomOrder()
-                ->take($limit)
-                ->get();
-        });
+        return $this->matching->recommend($user, $limit);
     }
 
     // ─── Price alerts (real, based on PriceAlert model) ──────

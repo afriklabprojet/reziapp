@@ -6,9 +6,7 @@ namespace App\Services;
 
 use App\Models\Expense;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Carbon\Carbon;
 
 class ExpenseService
 {
@@ -41,6 +39,7 @@ class ExpenseService
     public function update(Expense $expense, array $data): Expense
     {
         $expense->update($data);
+
         return $expense->fresh();
     }
 
@@ -68,7 +67,7 @@ class ExpenseService
 
         $byMonth = [];
         for ($m = 1; $m <= 12; $m++) {
-            $byMonth[$m] = $expenses->filter(fn($e) => $e->expense_date->month === $m)->sum('amount');
+            $byMonth[$m] = $expenses->filter(fn ($e) => $e->expense_date->month === $m)->sum('amount');
         }
 
         return [

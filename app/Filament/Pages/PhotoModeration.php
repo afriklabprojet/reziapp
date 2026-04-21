@@ -46,7 +46,7 @@ class PhotoModeration extends Page implements HasTable
                 Photo::query()
                     ->with('residence.owner')
                     ->whereIn('moderation_status', ['review', 'rejected'])
-                    ->latest()
+                    ->latest(),
             )
             ->columns([
                 Tables\Columns\ImageColumn::make('path')
@@ -127,7 +127,7 @@ class PhotoModeration extends Page implements HasTable
                         Photo::whereNotNull('room_type')
                             ->distinct()
                             ->pluck('room_type', 'room_type')
-                            ->toArray()
+                            ->toArray(),
                     ),
                 Tables\Filters\TernaryFilter::make('is_property_photo')
                     ->label('Photo immobilière'),
@@ -161,7 +161,7 @@ class PhotoModeration extends Page implements HasTable
                     ->action(function (Photo $record) {
                         $record->update([
                             'moderation_status' => 'rejected',
-                            'moderation_reason' => ($record->moderation_reason ?? '') . ' | Rejeté manuellement par admin',
+                            'moderation_reason' => ($record->moderation_reason ?? '').' | Rejeté manuellement par admin',
                         ]);
 
                         // Si c'était la photo primaire, promouvoir une autre
@@ -227,7 +227,7 @@ class PhotoModeration extends Page implements HasTable
                         ]));
 
                         Notification::make()
-                            ->title($records->count() . ' photos approuvées')
+                            ->title($records->count().' photos approuvées')
                             ->success()
                             ->send();
                     }),
@@ -244,7 +244,7 @@ class PhotoModeration extends Page implements HasTable
                         ]));
 
                         Notification::make()
-                            ->title($records->count() . ' photos rejetées')
+                            ->title($records->count().' photos rejetées')
                             ->danger()
                             ->send();
                     }),

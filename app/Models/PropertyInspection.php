@@ -15,15 +15,15 @@ class PropertyInspection extends Model
     use SoftDeletes;
 
     // ===== TYPES =====
-    const TYPE_CHECK_IN  = 'check_in';
-    const TYPE_CHECK_OUT = 'check_out';
-    const TYPE_PERIODIC  = 'periodic';
+    public const TYPE_CHECK_IN  = 'check_in';
+    public const TYPE_CHECK_OUT = 'check_out';
+    public const TYPE_PERIODIC  = 'periodic';
 
     // ===== STATUTS =====
-    const STATUS_DRAFT       = 'draft';
-    const STATUS_IN_PROGRESS = 'in_progress';
-    const STATUS_COMPLETED   = 'completed';
-    const STATUS_SIGNED      = 'signed';
+    public const STATUS_DRAFT       = 'draft';
+    public const STATUS_IN_PROGRESS = 'in_progress';
+    public const STATUS_COMPLETED   = 'completed';
+    public const STATUS_SIGNED      = 'signed';
 
     protected $fillable = [
         'reference',
@@ -177,7 +177,7 @@ class PropertyInspection extends Model
         };
 
         do {
-            $ref = $prefix . '-' . now()->format('Y') . '-' . strtoupper(Str::random(5));
+            $ref = $prefix.'-'.now()->format('Y').'-'.strtoupper(Str::random(5));
         } while (self::where('reference', $ref)->exists());
 
         return $ref;

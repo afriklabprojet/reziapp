@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\OwnerBadgeResource\Pages;
 use App\Models\OwnerBadge;
-use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -86,7 +85,7 @@ class OwnerBadgeResource extends Resource
                                 if (!$record || !$record->metadata) {
                                     return 'Aucune métrique disponible';
                                 }
-                                
+
                                 $html = '<div class="grid grid-cols-2 gap-4">';
                                 $labels = [
                                     'avg_rating' => '⭐ Note moyenne',
@@ -100,17 +99,17 @@ class OwnerBadgeResource extends Resource
                                     'identity_verified' => '🪪 Identité vérifiée',
                                     'phone_verified' => '📱 Téléphone vérifié',
                                 ];
-                                
+
                                 foreach ($record->metadata as $key => $value) {
                                     $label = $labels[$key] ?? $key;
                                     $displayValue = is_bool($value) ? ($value ? 'Oui' : 'Non') : $value;
                                     if ($key === 'cancellation_rate' || $key === 'response_rate') {
-                                        $displayValue = round($value * 100) . '%';
+                                        $displayValue = round($value * 100).'%';
                                     }
                                     $html .= "<div><strong>{$label}:</strong> {$displayValue}</div>";
                                 }
                                 $html .= '</div>';
-                                
+
                                 return new HtmlString($html);
                             }),
                     ])->collapsed(),
@@ -172,7 +171,7 @@ class OwnerBadgeResource extends Resource
 
                 Tables\Columns\TextColumn::make('metadata.avg_rating')
                     ->label('Note')
-                    ->formatStateUsing(fn ($state) => $state ? number_format($state, 1) . ' ⭐' : '-')
+                    ->formatStateUsing(fn ($state) => $state ? number_format($state, 1).' ⭐' : '-')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('earned_at')
@@ -229,7 +228,7 @@ class OwnerBadgeResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()->label('Modifier'),
-                
+
                 Tables\Actions\Action::make('recalculate_user')
                     ->label('Recalculer')
                     ->icon('heroicon-o-arrow-path')
@@ -239,7 +238,7 @@ class OwnerBadgeResource extends Resource
                     ->modalDescription('Recalculer tous les badges de ce propriétaire selon les critères actuels?')
                     ->action(function (OwnerBadge $record) {
                         Artisan::call('rezi:calculate-owner-badges', ['--user' => $record->user_id]);
-                        
+
                         Notification::make()
                             ->title('Badges recalculés')
                             ->body("Les badges de {$record->owner->name} ont été recalculés.")
@@ -261,9 +260,9 @@ class OwnerBadgeResource extends Resource
                     ->action(function (OwnerBadge $record, array $data) {
                         $record->update([
                             'status' => 'revoked',
-                            'reason' => 'Révoqué manuellement: ' . $data['revoke_reason'],
+                            'reason' => 'Révoqué manuellement: '.$data['revoke_reason'],
                         ]);
-                        
+
                         Notification::make()
                             ->title('Badge révoqué')
                             ->success()
@@ -283,7 +282,7 @@ class OwnerBadgeResource extends Resource
                         try {
                             Artisan::call('rezi:calculate-owner-badges');
                             $output = Artisan::output();
-                            
+
                             Notification::make()
                                 ->title('Badges recalculés')
                                 ->body('Tous les badges ont été recalculés avec succès.')
@@ -292,7 +291,7 @@ class OwnerBadgeResource extends Resource
                         } catch (\Exception $e) {
                             Notification::make()
                                 ->title('Erreur')
-                                ->body('Erreur lors du recalcul: ' . $e->getMessage())
+                                ->body('Erreur lors du recalcul: '.$e->getMessage())
                                 ->danger()
                                 ->send();
                         }
@@ -318,7 +317,7 @@ class OwnerBadgeResource extends Resource
                                     $count++;
                                 }
                             }
-                            
+
                             Notification::make()
                                 ->title("{$count} badges révoqués")
                                 ->success()
@@ -352,7 +351,7 @@ class OwnerBadgeResource extends Resource
             ->where('expires_at', '<=', now()->addDays(7))
             ->where('expires_at', '>', now())
             ->count();
-        
+
         return $expiring > 0 ? "{$expiring} expire" : null;
     }
 

@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Events\LeaseContractSigned;
 use App\Models\Booking;
 use App\Models\LeaseContract;
-use App\Models\Residence;
 use App\Models\User;
 use App\Notifications\LeaseContractReadyNotification;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -26,7 +25,8 @@ class LeaseContractService
 {
     public function __construct(
         private readonly NotificationService $notifications,
-    ) {}
+    ) {
+    }
 
     // ===== CRÉATION =====
 

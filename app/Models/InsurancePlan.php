@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -61,6 +63,7 @@ class InsurancePlan extends Model
     public function calculatePremium(float $bookingAmount): float
     {
         $premium = $bookingAmount * ($this->rate / 100);
+
         return max($premium, $this->min_amount);
     }
 

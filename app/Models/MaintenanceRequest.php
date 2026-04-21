@@ -13,14 +13,14 @@ class MaintenanceRequest extends Model
 {
     use SoftDeletes;
 
-    const CAT_PLUMBING    = 'plumbing';
-    const CAT_ELECTRICAL  = 'electrical';
-    const CAT_APPLIANCE   = 'appliance';
-    const CAT_STRUCTURAL  = 'structural';
-    const CAT_CLEANING    = 'cleaning';
-    const CAT_OTHER       = 'other';
+    public const CAT_PLUMBING    = 'plumbing';
+    public const CAT_ELECTRICAL  = 'electrical';
+    public const CAT_APPLIANCE   = 'appliance';
+    public const CAT_STRUCTURAL  = 'structural';
+    public const CAT_CLEANING    = 'cleaning';
+    public const CAT_OTHER       = 'other';
 
-    const CATEGORIES = [
+    public const CATEGORIES = [
         self::CAT_PLUMBING   => 'Plomberie',
         self::CAT_ELECTRICAL => 'Électricité',
         self::CAT_APPLIANCE  => 'Électroménager',
@@ -29,25 +29,25 @@ class MaintenanceRequest extends Model
         self::CAT_OTHER      => 'Autre',
     ];
 
-    const PRIORITY_LOW    = 'low';
-    const PRIORITY_MEDIUM = 'medium';
-    const PRIORITY_HIGH   = 'high';
-    const PRIORITY_URGENT = 'urgent';
+    public const PRIORITY_LOW    = 'low';
+    public const PRIORITY_MEDIUM = 'medium';
+    public const PRIORITY_HIGH   = 'high';
+    public const PRIORITY_URGENT = 'urgent';
 
-    const PRIORITIES = [
+    public const PRIORITIES = [
         self::PRIORITY_LOW    => 'Basse',
         self::PRIORITY_MEDIUM => 'Moyenne',
         self::PRIORITY_HIGH   => 'Haute',
         self::PRIORITY_URGENT => 'Urgente',
     ];
 
-    const STATUS_REPORTED     = 'reported';
-    const STATUS_ACKNOWLEDGED = 'acknowledged';
-    const STATUS_IN_PROGRESS  = 'in_progress';
-    const STATUS_RESOLVED     = 'resolved';
-    const STATUS_CLOSED       = 'closed';
+    public const STATUS_REPORTED     = 'reported';
+    public const STATUS_ACKNOWLEDGED = 'acknowledged';
+    public const STATUS_IN_PROGRESS  = 'in_progress';
+    public const STATUS_RESOLVED     = 'resolved';
+    public const STATUS_CLOSED       = 'closed';
 
-    const STATUSES = [
+    public const STATUSES = [
         self::STATUS_REPORTED     => 'Signalé',
         self::STATUS_ACKNOWLEDGED => 'Pris en compte',
         self::STATUS_IN_PROGRESS  => 'En cours',
@@ -78,7 +78,7 @@ class MaintenanceRequest extends Model
 
         static::creating(function (self $model) {
             if (!$model->reference) {
-                $model->reference = 'MNT-' . strtoupper(Str::random(8));
+                $model->reference = 'MNT-'.strtoupper(Str::random(8));
             }
         });
     }

@@ -15,7 +15,8 @@ class VacationModeController extends Controller
 {
     public function __construct(
         private VacationModeService $vacationService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {

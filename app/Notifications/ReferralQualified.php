@@ -27,7 +27,7 @@ class ReferralQualified extends Notification implements ShouldQueue
         $referredName = $this->referral->referred->name ?? 'Votre filleul';
         $reward = number_format($this->referral->referrer_reward ?? config('rezi.referral.referrer_reward', 5000), 0, ',', ' ');
 
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('✅ Parrainage qualifié – Réclamez votre récompense !')
             ->greeting("Bonjour {$notifiable->name} !")
             ->line("**{$referredName}** a effectué sa première réservation confirmée sur REZI.")
@@ -45,7 +45,7 @@ class ReferralQualified extends Notification implements ShouldQueue
             'referral_id' => $this->referral->id,
             'referred_name' => $this->referral->referred->name ?? 'Utilisateur',
             'reward_amount' => $this->referral->referrer_reward,
-            'message' => 'Votre parrainage de ' . ($this->referral->referred->name ?? 'un utilisateur') . " est qualifié ! Réclamez vos {$reward} FCFA.",
+            'message' => 'Votre parrainage de '.($this->referral->referred->name ?? 'un utilisateur')." est qualifié ! Réclamez vos {$reward} FCFA.",
             'url' => route('owner.marketing.referrals.index'),
         ];
     }

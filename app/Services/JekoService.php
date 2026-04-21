@@ -63,6 +63,7 @@ class JekoService
                 'payment_id' => $payment->id,
                 'amount' => $payment->total_amount,
             ]);
+
             return [
                 'success' => false,
                 'message' => 'Montant invalide.',
@@ -73,6 +74,7 @@ class JekoService
         // Guard: validate API configuration
         if (! $this->apiKey || ! $this->storeId) {
             Log::channel('critical')->error('initiateMobileMoneyPayment: API not configured');
+
             return [
                 'success' => false,
                 'message' => 'Service de paiement non configuré.',

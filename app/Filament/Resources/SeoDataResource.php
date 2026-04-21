@@ -63,13 +63,13 @@ class SeoDataResource extends Resource
                             ->maxLength(70)
                             ->helperText('Max 70 caractères recommandés')
                             ->live()
-                            ->afterStateUpdated(fn ($state, Forms\Set $set) => 
+                            ->afterStateUpdated(fn ($state, Forms\Set $set) =>
                                 $set('title_length', strlen($state ?? ''))),
 
                         Forms\Components\Placeholder::make('title_length')
                             ->label('Longueur du titre')
-                            ->content(fn (Forms\Get $get): string => 
-                                strlen($get('title') ?? '') . '/70 caractères'),
+                            ->content(fn (Forms\Get $get): string =>
+                                strlen($get('title') ?? '').'/70 caractères'),
 
                         Forms\Components\Textarea::make('description')
                             ->label('Méta description')
@@ -187,7 +187,7 @@ class SeoDataResource extends Resource
 
                 Tables\Columns\TextColumn::make('title')
                     ->label('Long.')
-                    ->formatStateUsing(fn (?string $state): string => strlen($state ?? '') . '/70'),
+                    ->formatStateUsing(fn (?string $state): string => strlen($state ?? '').'/70'),
 
                 Tables\Columns\IconColumn::make('is_noindex')
                     ->label('NoIndex')

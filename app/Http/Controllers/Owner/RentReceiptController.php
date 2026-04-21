@@ -21,7 +21,8 @@ class RentReceiptController extends Controller
 {
     public function __construct(
         private readonly RentReceiptService $receiptService,
-    ) {}
+    ) {
+    }
 
     // ===== INDEX =====
 

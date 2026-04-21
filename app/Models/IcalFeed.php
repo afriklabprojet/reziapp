@@ -11,22 +11,22 @@ use Illuminate\Support\Str;
 
 class IcalFeed extends Model
 {
-    const PLATFORM_AIRBNB   = 'airbnb';
-    const PLATFORM_BOOKING  = 'booking';
-    const PLATFORM_EXPEDIA  = 'expedia';
-    const PLATFORM_OTHER    = 'other';
+    public const PLATFORM_AIRBNB   = 'airbnb';
+    public const PLATFORM_BOOKING  = 'booking';
+    public const PLATFORM_EXPEDIA  = 'expedia';
+    public const PLATFORM_OTHER    = 'other';
 
-    const PLATFORMS = [
+    public const PLATFORMS = [
         self::PLATFORM_AIRBNB  => 'Airbnb',
         self::PLATFORM_BOOKING => 'Booking.com',
         self::PLATFORM_EXPEDIA => 'Expedia',
         self::PLATFORM_OTHER   => 'Autre',
     ];
 
-    const SYNC_STATUS_PENDING = 'pending';
-    const SYNC_STATUS_SYNCING = 'syncing';
-    const SYNC_STATUS_SYNCED  = 'synced';
-    const SYNC_STATUS_ERROR   = 'error';
+    public const SYNC_STATUS_PENDING = 'pending';
+    public const SYNC_STATUS_SYNCING = 'syncing';
+    public const SYNC_STATUS_SYNCED  = 'synced';
+    public const SYNC_STATUS_ERROR   = 'error';
 
     protected $fillable = [
         'residence_id', 'user_id', 'name', 'platform', 'import_url',

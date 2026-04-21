@@ -18,7 +18,7 @@ class IdentityVerifiedNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('✅ Votre identité a été vérifiée - REZI')
             ->greeting("Bonjour {$notifiable->name} !")
             ->line('Bonne nouvelle ! Votre identité a été vérifiée avec succès.')

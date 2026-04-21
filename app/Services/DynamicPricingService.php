@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Booking;
 use App\Models\DailyPrice;
 use App\Models\Residence;
 use App\Models\SeasonalPrice;
@@ -198,6 +197,7 @@ class DynamicPricingService
             ->sum(function ($booking) {
                 $start = Carbon::parse($booking->check_in)->max(now()->subDays(30));
                 $end = Carbon::parse($booking->check_out)->min(now());
+
                 return max(0, $start->diffInDays($end));
             });
         $occupancyRate = $occupiedDays / 30;
@@ -215,6 +215,7 @@ class DynamicPricingService
                     $dates[] = $current->format('Y-m-d');
                     $current->addDay();
                 }
+
                 return $dates;
             })
             ->toArray();

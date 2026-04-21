@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -108,7 +110,7 @@ class EmergencyAlert extends Model
             // Envoyer SMS via SmsService
             $sent = \App\Services\SmsService::send(
                 $contact->phone,
-                $this->getAlertMessage($contact)
+                $this->getAlertMessage($contact),
             );
 
             $notifications[] = [

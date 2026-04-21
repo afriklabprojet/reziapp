@@ -45,7 +45,7 @@ class PromotionExpiring extends Notification implements ShouldQueue
             'promotion_title' => $this->promotion->title,
             'residence_name' => $this->promotion->residence?->name,
             'expires_at' => $this->promotion->ends_at->toDateTimeString(),
-            'message' => 'Promotion "' . $this->promotion->title . '" expire bientôt',
+            'message' => 'Promotion "'.$this->promotion->title.'" expire bientôt',
         ];
     }
 }

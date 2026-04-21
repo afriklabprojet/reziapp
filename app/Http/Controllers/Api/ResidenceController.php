@@ -51,8 +51,8 @@ class ResidenceController extends Controller
         $filters = $request->validated();
 
         $result = $this->geolocationService->search(
-            latitude: $filters['latitude'],
-            longitude: $filters['longitude'],
+            latitude: $filters['latitude'] ?? null,
+            longitude: $filters['longitude'] ?? null,
             radius: $filters['radius'] ?? 300,
             filters: $filters,
             sort: $filters['sort'] ?? 'distance',
@@ -240,7 +240,7 @@ class ResidenceController extends Controller
     public function quartiers(string $commune): JsonResponse
     {
         $safeCom = substr($commune, 0, 100);
-        $quartiers = Cache::remember('api:quartiers:' . md5($safeCom), 3600, function () use ($safeCom) {
+        $quartiers = Cache::remember('api:quartiers:'.md5($safeCom), 3600, function () use ($safeCom) {
             return Residence::approved()
                 ->where('commune', $safeCom)
                 ->distinct()
@@ -302,7 +302,7 @@ class ResidenceController extends Controller
 
         $uploaded = [];
         foreach ($request->file('photos') as $photo) {
-            $path = $photo->store('residences/' . $residence->id, 'public');
+            $path = $photo->store('residences/'.$residence->id, 'public');
             $uploaded[] = $residence->photos()->create([
                 'path' => $path,
                 'is_primary' => $residence->photos()->count() === 0,
@@ -310,7 +310,7 @@ class ResidenceController extends Controller
         }
 
         return response()->json([
-            'message' => count($uploaded) . ' photo(s) ajoutée(s).',
+            'message' => count($uploaded).' photo(s) ajoutée(s).',
             'data' => $uploaded,
         ], 201);
     }

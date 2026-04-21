@@ -9,10 +9,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class InspectionItem extends Model
 {
-    const CONDITION_GOOD    = 'good';
-    const CONDITION_FAIR    = 'fair';
-    const CONDITION_DAMAGED = 'damaged';
-    const CONDITION_MISSING = 'missing';
+    public const CONDITION_GOOD    = 'good';
+    public const CONDITION_FAIR    = 'fair';
+    public const CONDITION_DAMAGED = 'damaged';
+    public const CONDITION_MISSING = 'missing';
 
     protected $fillable = [
         'property_inspection_id',

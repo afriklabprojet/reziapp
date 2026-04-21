@@ -15,17 +15,17 @@ class LeaseContract extends Model
     use SoftDeletes;
 
     // ===== STATUTS =====
-    const STATUS_DRAFT           = 'draft';
-    const STATUS_PENDING_TENANT  = 'pending_tenant';
-    const STATUS_PENDING_OWNER   = 'pending_owner';
-    const STATUS_ACTIVE          = 'active';
-    const STATUS_TERMINATED      = 'terminated';
-    const STATUS_EXPIRED         = 'expired';
+    public const STATUS_DRAFT           = 'draft';
+    public const STATUS_PENDING_TENANT  = 'pending_tenant';
+    public const STATUS_PENDING_OWNER   = 'pending_owner';
+    public const STATUS_ACTIVE          = 'active';
+    public const STATUS_TERMINATED      = 'terminated';
+    public const STATUS_EXPIRED         = 'expired';
 
     // ===== TYPES =====
-    const TYPE_SHORT_TERM = 'short_term';
-    const TYPE_MONTHLY    = 'monthly';
-    const TYPE_FIXED_TERM = 'fixed_term';
+    public const TYPE_SHORT_TERM = 'short_term';
+    public const TYPE_MONTHLY    = 'monthly';
+    public const TYPE_FIXED_TERM = 'fixed_term';
 
     protected $fillable = [
         'reference',
@@ -192,7 +192,7 @@ class LeaseContract extends Model
     public static function generateReference(): string
     {
         do {
-            $ref = 'LC-' . now()->format('Y') . '-' . strtoupper(Str::random(6));
+            $ref = 'LC-'.now()->format('Y').'-'.strtoupper(Str::random(6));
         } while (self::where('reference', $ref)->exists());
 
         return $ref;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -45,7 +47,7 @@ class BookingInsurance extends Model
 
         static::creating(function ($insurance) {
             if (empty($insurance->policy_number)) {
-                $insurance->policy_number = 'POL-' . date('Y') . '-' . strtoupper(Str::random(8));
+                $insurance->policy_number = 'POL-'.date('Y').'-'.strtoupper(Str::random(8));
             }
         });
     }
@@ -104,7 +106,7 @@ class BookingInsurance extends Model
      */
     public function canFileClaim(): bool
     {
-        return $this->isActive() || 
+        return $this->isActive() ||
                ($this->status === 'active' && $this->coverage_end->addDays(30) > now());
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Observers\ResidenceObserver;
@@ -118,6 +120,14 @@ class Residence extends Model
         'performance_score',
         'listing_score',
         'listing_quality_score',
+        // Nouvelles fonctionnalités Airbnb/Booking
+        'cleaning_fee',
+        'sustainability_score',
+        'is_work_travel_ready',
+        'bookings_this_month',
+        'active_viewers_24h',
+        'response_rate',
+        'avg_response_time_hours',
     ];
 
     protected $casts = [
@@ -162,6 +172,14 @@ class Residence extends Model
         'is_suspended' => 'boolean',
         'suspended_at' => 'datetime',
         'resume_at' => 'datetime',
+        // Nouvelles fonctionnalités
+        'cleaning_fee' => 'decimal:2',
+        'sustainability_score' => 'integer',
+        'is_work_travel_ready' => 'boolean',
+        'bookings_this_month' => 'integer',
+        'active_viewers_24h' => 'integer',
+        'response_rate' => 'decimal:1',
+        'avg_response_time_hours' => 'integer',
     ];
 
     // ===== ACCESSORS (compatibilité avec les vues) =====

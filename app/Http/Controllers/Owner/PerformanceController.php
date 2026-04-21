@@ -15,7 +15,8 @@ class PerformanceController extends Controller
 {
     public function __construct(
         private PerformanceDashboardService $performanceService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {

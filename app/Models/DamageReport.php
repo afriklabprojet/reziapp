@@ -13,15 +13,15 @@ class DamageReport extends Model
 {
     use SoftDeletes;
 
-    const CATEGORY_FURNITURE   = 'furniture';
-    const CATEGORY_APPLIANCE   = 'appliance';
-    const CATEGORY_PLUMBING    = 'plumbing';
-    const CATEGORY_ELECTRICAL  = 'electrical';
-    const CATEGORY_STRUCTURAL  = 'structural';
-    const CATEGORY_COSMETIC    = 'cosmetic';
-    const CATEGORY_OTHER       = 'other';
+    public const CATEGORY_FURNITURE   = 'furniture';
+    public const CATEGORY_APPLIANCE   = 'appliance';
+    public const CATEGORY_PLUMBING    = 'plumbing';
+    public const CATEGORY_ELECTRICAL  = 'electrical';
+    public const CATEGORY_STRUCTURAL  = 'structural';
+    public const CATEGORY_COSMETIC    = 'cosmetic';
+    public const CATEGORY_OTHER       = 'other';
 
-    const CATEGORIES = [
+    public const CATEGORIES = [
         self::CATEGORY_FURNITURE  => 'Mobilier',
         self::CATEGORY_APPLIANCE  => 'Électroménager',
         self::CATEGORY_PLUMBING   => 'Plomberie',
@@ -31,26 +31,26 @@ class DamageReport extends Model
         self::CATEGORY_OTHER      => 'Autre',
     ];
 
-    const SEVERITY_MINOR    = 'minor';
-    const SEVERITY_MODERATE = 'moderate';
-    const SEVERITY_MAJOR    = 'major';
-    const SEVERITY_CRITICAL = 'critical';
+    public const SEVERITY_MINOR    = 'minor';
+    public const SEVERITY_MODERATE = 'moderate';
+    public const SEVERITY_MAJOR    = 'major';
+    public const SEVERITY_CRITICAL = 'critical';
 
-    const SEVERITIES = [
+    public const SEVERITIES = [
         self::SEVERITY_MINOR    => 'Mineur',
         self::SEVERITY_MODERATE => 'Modéré',
         self::SEVERITY_MAJOR    => 'Majeur',
         self::SEVERITY_CRITICAL => 'Critique',
     ];
 
-    const STATUS_REPORTED         = 'reported';
-    const STATUS_ASSESSED         = 'assessed';
-    const STATUS_REPAIR_SCHEDULED = 'repair_scheduled';
-    const STATUS_REPAIRED         = 'repaired';
-    const STATUS_DEDUCTED         = 'deducted';
-    const STATUS_CLOSED           = 'closed';
+    public const STATUS_REPORTED         = 'reported';
+    public const STATUS_ASSESSED         = 'assessed';
+    public const STATUS_REPAIR_SCHEDULED = 'repair_scheduled';
+    public const STATUS_REPAIRED         = 'repaired';
+    public const STATUS_DEDUCTED         = 'deducted';
+    public const STATUS_CLOSED           = 'closed';
 
-    const STATUSES = [
+    public const STATUSES = [
         self::STATUS_REPORTED         => 'Signalé',
         self::STATUS_ASSESSED         => 'Évalué',
         self::STATUS_REPAIR_SCHEDULED => 'Réparation planifiée',
@@ -59,7 +59,7 @@ class DamageReport extends Model
         self::STATUS_CLOSED           => 'Clôturé',
     ];
 
-    const SEVERITY_COLORS = [
+    public const SEVERITY_COLORS = [
         self::SEVERITY_MINOR    => 'green',
         self::SEVERITY_MODERATE => 'yellow',
         self::SEVERITY_MAJOR    => 'orange',
@@ -88,7 +88,7 @@ class DamageReport extends Model
 
         static::creating(function ($report) {
             if (empty($report->reference)) {
-                $report->reference = 'DMG-' . date('Y') . '-' . strtoupper(Str::random(8));
+                $report->reference = 'DMG-'.date('Y').'-'.strtoupper(Str::random(8));
             }
         });
     }

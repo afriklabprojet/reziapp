@@ -141,7 +141,7 @@ class CancellationService
                         $booking,
                         $booking->residence,
                         $cancelledBy === 'user' ? 'guest' : $cancelledBy,
-                    )
+                    ),
                 );
 
                 // Notification in-app
@@ -149,7 +149,7 @@ class CancellationService
                     $owner,
                     'booking',
                     'Réservation annulée',
-                    'La réservation pour ' . $booking->residence->name . ' a été annulée.',
+                    'La réservation pour '.$booking->residence->name.' a été annulée.',
                     route('owner.bookings.show', $booking),
                     ['booking_id' => $booking->id],
                 );

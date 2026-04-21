@@ -46,7 +46,7 @@ class NewContactReceived extends Notification implements ShouldQueue
             'residence_id' => $this->residence->id,
             'residence_name' => $this->residence->name,
             'guest_name' => $this->contact->user?->name ?? 'Visiteur',
-            'message' => 'Nouveau contact pour ' . $this->residence->name,
+            'message' => 'Nouveau contact pour '.$this->residence->name,
         ];
     }
 }

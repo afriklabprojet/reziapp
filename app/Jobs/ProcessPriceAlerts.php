@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\PriceAlert;
-use App\Models\Residence;
 use App\Services\NotificationService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,7 +13,10 @@ use Illuminate\Support\Facades\Log;
 
 class ProcessPriceAlerts implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public int $tries = 3;
     public int $timeout = 300;
@@ -38,7 +40,7 @@ class ProcessPriceAlerts implements ShouldQueue
         foreach ($alerts as $alert) {
             try {
                 $residence = $alert->residence;
-                
+
                 if (!$residence || !in_array($residence->status, ['active', 'approved'])) {
                     // Deactivate alerts for unpublished/deleted residences
                     $alert->update(['is_active' => false]);
@@ -49,14 +51,14 @@ class ProcessPriceAlerts implements ShouldQueue
 
                 // Check if price changed and should notify
                 $newPrice = $residence->price_per_night;
-                
+
                 if ($alert->shouldNotify($alert->current_price ?? $alert->original_price, $newPrice)) {
                     // Update alert
                     $alert->updatePrice($newPrice);
-                    
+
                     // Send notification
                     $this->sendPriceAlertNotification($notificationService, $alert, $newPrice);
-                    
+
                     $notified++;
                 } else {
                     // Just update price tracking
@@ -78,14 +80,14 @@ class ProcessPriceAlerts implements ShouldQueue
         $residence = $alert->residence;
         $priceChange = $newPrice - $alert->original_price;
         $changePercent = round(($priceChange / $alert->original_price) * 100, 1);
-        
+
         $emoji = $priceChange < 0 ? '📉' : '📈';
-        $changeText = $priceChange < 0 
-            ? number_format(abs($priceChange), 0, ',', ' ') . ' FCFA de moins'
-            : number_format($priceChange, 0, ',', ' ') . ' FCFA de plus';
+        $changeText = $priceChange < 0
+            ? number_format(abs($priceChange), 0, ',', ' ').' FCFA de moins'
+            : number_format($priceChange, 0, ',', ' ').' FCFA de plus';
 
         $title = "{$emoji} Alerte de prix - {$residence->name}";
-        $body = "Le prix est passé à " . number_format($newPrice, 0, ',', ' ') . " FCFA/nuit ({$changeText}, {$changePercent}%)";
+        $body = 'Le prix est passé à '.number_format($newPrice, 0, ',', ' ')." FCFA/nuit ({$changeText}, {$changePercent}%)";
 
         $notificationService->sendSystemNotification(
             recipient: $alert->user,

@@ -162,7 +162,7 @@ class BusinessEventService
     {
         try {
             return DB::table('business_events')
-                ->selectRaw("event, COUNT(*) as count, DATE(created_at) as day")
+                ->selectRaw('event, COUNT(*) as count, DATE(created_at) as day')
                 ->whereBetween('created_at', [$from, $to])
                 ->groupBy('event', 'day')
                 ->orderBy('day', 'desc')

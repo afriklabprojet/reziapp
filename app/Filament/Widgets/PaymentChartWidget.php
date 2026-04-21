@@ -32,7 +32,8 @@ class PaymentChartWidget extends ChartWidget
 
     protected function getData(): array
     {
-        $cacheKey = 'admin.payment_chart.' . $this->filter;
+        $cacheKey = 'admin.payment_chart.'.$this->filter;
+
         return Cache::remember($cacheKey, 300, fn () => $this->computeData());
     }
 

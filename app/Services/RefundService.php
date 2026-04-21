@@ -199,7 +199,7 @@ class RefundService
 
         return [
             'success' => true,
-            'transaction_id' => 'BANK-' . Refund::generateTransactionId(),
+            'transaction_id' => 'BANK-'.Refund::generateTransactionId(),
         ];
     }
 
@@ -237,7 +237,7 @@ class RefundService
 
         if ($result['success']) {
             $refund->update([
-                'transaction_id' => $result['payout_reference'] ?? 'MOMO-' . Refund::generateTransactionId(),
+                'transaction_id' => $result['payout_reference'] ?? 'MOMO-'.Refund::generateTransactionId(),
                 'payment_gateway_response' => $result,
             ]);
 

@@ -6,8 +6,6 @@ namespace App\Services;
 
 use App\Models\Booking;
 use App\Models\CleaningTask;
-use App\Models\Residence;
-use App\Models\User;
 use Carbon\Carbon;
 
 class AutoCleaningService
@@ -45,7 +43,7 @@ class AutoCleaningService
             'booking_id'     => $booking->id,
             'scheduled_date' => $scheduledDate->format('Y-m-d'),
             'scheduled_time' => '10:00',
-            'notes'          => "Ménage avant arrivée — Réservation #{$booking->reference} (" . ($booking->user->name ?? 'Voyageur') . ")",
+            'notes'          => "Ménage avant arrivée — Réservation #{$booking->reference} (".($booking->user->name ?? 'Voyageur').')',
         ]);
     }
 

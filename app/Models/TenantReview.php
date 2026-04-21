@@ -25,7 +25,7 @@ class TenantReview extends Model
         'is_public'       => 'boolean',
     ];
 
-    const RATING_DIMENSIONS = [
+    public const RATING_DIMENSIONS = [
         'cleanliness_rating'   => 'Propreté',
         'respect_rules_rating' => 'Respect des règles',
         'communication_rating' => 'Communication',
@@ -70,7 +70,7 @@ class TenantReview extends Model
         $half   = ($rating - $full) >= 0.5 ? 1 : 0;
         $empty  = 5 - $full - $half;
 
-        return str_repeat('★', $full) . str_repeat('½', $half) . str_repeat('☆', $empty);
+        return str_repeat('★', $full).str_repeat('½', $half).str_repeat('☆', $empty);
     }
 
     // ===== SCOPES =====

@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Jobs\RecordSponsoredImpressions;
 use App\Models\Category;
-use App\Models\Country;
 use App\Models\Residence;
 use App\Models\SponsoredListing;
 use App\Services\UserLocationService;
@@ -62,7 +64,7 @@ class HomeController extends Controller
 
         // Featured residences — filtrées par localisation utilisateur (pays + ville)
         $location = UserLocationService::current();
-        $locationKey = strtolower($location['country_code'] . '_' . ($location['city'] ?? 'all'));
+        $locationKey = strtolower($location['country_code'].'_'.($location['city'] ?? 'all'));
         $cacheTtl = config('rezi.cache_ttl');
 
         $featuredResidences = Cache::remember("featured_residences_{$locationKey}", $cacheTtl, function () use ($location) {
@@ -106,11 +108,14 @@ class HomeController extends Controller
         });
 
         // Enregistrer les impressions sponsorisées HORS du cache (à chaque page view)
+        // Dispatch en asynchrone pour éviter le N+1 bloquant (3–5 requêtes / annonce)
         $sponsoredResidenceIds = $featuredResidences->pluck('id')->toArray();
         if (!empty($sponsoredResidenceIds)) {
-            SponsoredListing::featuredHome()
-                ->whereIn('residence_id', $sponsoredResidenceIds)
-                ->each(fn ($sl) => $sl->recordImpression());
+            RecordSponsoredImpressions::dispatch(
+                $sponsoredResidenceIds,
+                $request->ip(),
+                $request->user()?->id,
+            )->onQueue('default');
         }
 
         // Popular zones — filtrées par localisation utilisateur (résidences meublées uniquement)
@@ -211,4 +216,3 @@ class HomeController extends Controller
         ));
     }
 }
-

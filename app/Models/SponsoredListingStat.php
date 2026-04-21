@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -41,7 +43,7 @@ class SponsoredListingStat extends Model
                 'clicks' => 0,
                 'contacts' => 0,
                 'amount_spent' => 0,
-            ]
+            ],
         );
     }
 }

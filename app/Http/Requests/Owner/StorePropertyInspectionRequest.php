@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Owner;
 
-use App\Models\PropertyInspection;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StorePropertyInspectionRequest extends FormRequest

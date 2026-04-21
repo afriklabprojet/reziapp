@@ -2,10 +2,9 @@
 
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Carbon\Carbon;
 
 class BackupDatabase extends Command
 {
@@ -55,22 +54,23 @@ class BackupDatabase extends Command
                 $this->backupSqlite($database, $backupPath);
             } else {
                 $this->error("Unsupported database connection: {$connection}");
+
                 return Command::FAILURE;
             }
 
             // Compress if requested
             if ($this->option('compress') && file_exists($backupPath)) {
-                $compressedPath = $backupPath . '.gz';
+                $compressedPath = $backupPath.'.gz';
                 $this->compressFile($backupPath, $compressedPath);
                 unlink($backupPath);
-                $filename = $filename . '.gz';
+                $filename = $filename.'.gz';
                 $backupPath = $compressedPath;
             }
 
             // Get file size
             $fileSize = $this->formatBytes(filesize($backupPath));
 
-            $this->info("Backup created successfully!");
+            $this->info('Backup created successfully!');
             $this->info("Location: {$backupPath}");
             $this->info("Size: {$fileSize}");
 
@@ -85,6 +85,7 @@ class BackupDatabase extends Command
 
         } catch (\Exception $e) {
             $this->error("Backup failed: {$e->getMessage()}");
+
             return Command::FAILURE;
         }
     }
@@ -94,31 +95,37 @@ class BackupDatabase extends Command
      */
     protected function backupMysql(string $host, string $port, string $username, string $password, string $database, string $outputPath): void
     {
-        // Check if mysqldump is available
         $mysqldump = $this->findMysqldump();
-        
+
         if (!$mysqldump) {
             throw new \RuntimeException('mysqldump command not found');
         }
 
-        // Build mysqldump command
-        $command = sprintf(
-            '%s --host=%s --port=%s --user=%s --password=%s --single-transaction --routines --triggers --events %s > %s',
-            escapeshellarg($mysqldump),
-            escapeshellarg($host),
-            escapeshellarg($port),
-            escapeshellarg($username),
-            escapeshellarg($password),
-            escapeshellarg($database),
-            escapeshellarg($outputPath)
-        );
+        // Write credentials to a temp file so the password never appears in ps/proc args
+        $configFile = tempnam(sys_get_temp_dir(), 'rezi_bk_');
+        file_put_contents($configFile, "[mysqldump]\npassword=".str_replace('"', '\\"', $password)."\n");
+        chmod($configFile, 0600);
 
-        // Execute command
-        $this->line("Executing mysqldump...");
-        exec($command . ' 2>&1', $output, $returnCode);
+        try {
+            $command = sprintf(
+                '%s --defaults-extra-file=%s --host=%s --port=%s --user=%s --single-transaction --routines --triggers --events %s > %s',
+                escapeshellarg($mysqldump),
+                escapeshellarg($configFile),
+                escapeshellarg($host),
+                escapeshellarg($port),
+                escapeshellarg($username),
+                escapeshellarg($database),
+                escapeshellarg($outputPath),
+            );
 
-        if ($returnCode !== 0) {
-            throw new \RuntimeException('mysqldump failed: ' . implode("\n", $output));
+            $this->line('Executing mysqldump...');
+            exec($command.' 2>&1', $output, $returnCode);
+
+            if ($returnCode !== 0) {
+                throw new \RuntimeException('mysqldump failed: '.implode("\n", $output));
+            }
+        } finally {
+            unlink($configFile);
         }
     }
 
@@ -148,8 +155,12 @@ class BackupDatabase extends Command
         ];
 
         foreach ($possiblePaths as $path) {
-            if (is_executable($path) || (shell_exec("which {$path}") !== null)) {
+            if (is_executable($path)) {
                 return $path;
+            }
+            $found = shell_exec('which '.escapeshellarg($path).' 2>/dev/null');
+            if ($found !== null && trim($found) !== '') {
+                return trim($found);
             }
         }
 
@@ -161,8 +172,8 @@ class BackupDatabase extends Command
      */
     protected function compressFile(string $sourcePath, string $destPath): void
     {
-        $this->line("Compressing backup...");
-        
+        $this->line('Compressing backup...');
+
         $input = fopen($sourcePath, 'rb');
         $output = gzopen($destPath, 'wb9');
 
@@ -233,6 +244,7 @@ class BackupDatabase extends Command
             $bytes /= 1024;
             $i++;
         }
-        return round($bytes, 2) . ' ' . $units[$i];
+
+        return round($bytes, 2).' '.$units[$i];
     }
 }

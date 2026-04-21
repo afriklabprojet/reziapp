@@ -18,7 +18,8 @@ class ListingScoreController extends Controller
 {
     public function __construct(
         private readonly ListingScoreService $scoreService,
-    ) {}
+    ) {
+    }
 
     /**
      * Recalculer manuellement le score d'une résidence (via AJAX ou POST).

@@ -5,7 +5,6 @@ namespace App\Notifications;
 use App\Models\Booking;
 use App\Models\BookingRequest;
 use App\Models\Residence;
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -44,20 +43,20 @@ class GuestBookingConfirmation extends Notification implements ShouldQueue
         $isPaid = $this->bookingRequest instanceof Booking && $this->bookingRequest->payment_status === 'paid';
 
         return (new MailMessage())
-            ->subject(($isPaid ? '✅ Réservation confirmée' : '✅ Demande de réservation envoyée') . " — {$this->residence->name}")
+            ->subject(($isPaid ? '✅ Réservation confirmée' : '✅ Demande de réservation envoyée')." — {$this->residence->name}")
             ->greeting("Bonjour {$notifiable->name},")
             ->when($isPaid, fn ($mail) => $mail->line("Votre réservation a été confirmée et payée pour **{$this->residence->name}**."))
             ->when(!$isPaid, fn ($mail) => $mail->line("Votre demande de réservation a bien été envoyée pour **{$this->residence->name}**."))
-            ->line("**Récapitulatif :**")
+            ->line('**Récapitulatif :**')
             ->line("• Arrivée : {$checkIn}")
             ->line("• Départ : {$checkOut}")
             ->line("• Voyageurs : {$guests}")
-            ->when(!$isPaid, fn ($mail) => $mail->line("Le propriétaire a 48h pour accepter ou refuser votre demande."))
-            ->line("---")
-            ->line("**Un compte temporaire a été créé pour vous.**")
-            ->line("Pour suivre votre réservation et accéder à toutes les fonctionnalités, créez votre mot de passe :")
+            ->when(!$isPaid, fn ($mail) => $mail->line('Le propriétaire a 48h pour accepter ou refuser votre demande.'))
+            ->line('---')
+            ->line('**Un compte temporaire a été créé pour vous.**')
+            ->line('Pour suivre votre réservation et accéder à toutes les fonctionnalités, créez votre mot de passe :')
             ->action('Créer mon mot de passe', $setPasswordUrl)
-            ->line("Ce lien est valable 7 jours.")
+            ->line('Ce lien est valable 7 jours.')
             ->salutation('L\'équipe REZI');
     }
 

@@ -23,8 +23,8 @@ class EditCampaign extends EditRecord
                 ->requiresConfirmation()
                 ->modalHeading('Envoyer la campagne')
                 ->modalDescription(fn () => 'Êtes-vous sûr de vouloir envoyer cette campagne à '
-                    . number_format(app(MarketingService::class)->getCampaignRecipients($this->record)->count(), 0, ',', ' ')
-                    . ' destinataires ? Cette action est irréversible.')
+                    .number_format(app(MarketingService::class)->getCampaignRecipients($this->record)->count(), 0, ',', ' ')
+                    .' destinataires ? Cette action est irréversible.')
                 ->modalSubmitActionLabel('Oui, envoyer')
                 ->visible(fn () => in_array($this->record->status, ['draft', 'scheduled']))
                 ->action(function () {
@@ -69,13 +69,13 @@ class EditCampaign extends EditRecord
                         if ($this->record->type === 'email') {
                             Mail::raw($content, function ($message) use ($user) {
                                 $message->to($user->email)
-                                    ->subject('[TEST] ' . ($this->record->subject ?? $this->record->name));
+                                    ->subject('[TEST] '.($this->record->subject ?? $this->record->name));
                             });
                         }
 
                         Notification::make()
                             ->title('Test envoyé !')
-                            ->body('Message de test envoyé à ' . $user->email)
+                            ->body('Message de test envoyé à '.$user->email)
                             ->success()
                             ->send();
                     } catch (\Exception $e) {

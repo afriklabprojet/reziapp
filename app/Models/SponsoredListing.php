@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -212,7 +214,7 @@ class SponsoredListing extends Model
     public function recordImpression(?string $ip = null, ?int $userId = null): void
     {
         // Anti-fraud: dedup by IP+user — max 1 impression per hour per visitor
-        $dedupKey = "sponsored:{$this->id}:imp:" . ($ip ?? 'unknown') . ':' . ($userId ?? 'anon');
+        $dedupKey = "sponsored:{$this->id}:imp:".($ip ?? 'unknown').':'.($userId ?? 'anon');
         if (Cache::has($dedupKey)) {
             return; // Already counted this hour
         }
@@ -234,7 +236,7 @@ class SponsoredListing extends Model
     public function recordClick(?string $ip = null, ?int $userId = null): void
     {
         // Anti-fraud: dedup by IP+user — max 1 click per hour per visitor
-        $dedupKey = "sponsored:{$this->id}:click:" . ($ip ?? 'unknown') . ':' . ($userId ?? 'anon');
+        $dedupKey = "sponsored:{$this->id}:click:".($ip ?? 'unknown').':'.($userId ?? 'anon');
         if (Cache::has($dedupKey)) {
             return; // Already counted this hour
         }
@@ -256,7 +258,7 @@ class SponsoredListing extends Model
     public function recordContact(?string $ip = null, ?int $userId = null): void
     {
         // Anti-fraud: dedup by IP+user — max 1 contact per day per visitor
-        $dedupKey = "sponsored:{$this->id}:contact:" . ($ip ?? 'unknown') . ':' . ($userId ?? 'anon');
+        $dedupKey = "sponsored:{$this->id}:contact:".($ip ?? 'unknown').':'.($userId ?? 'anon');
         if (Cache::has($dedupKey)) {
             return;
         }

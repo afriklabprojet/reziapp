@@ -9,17 +9,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GuestScore extends Model
 {
-    const RISK_LOW    = 'low';
-    const RISK_MEDIUM = 'medium';
-    const RISK_HIGH   = 'high';
+    public const RISK_LOW    = 'low';
+    public const RISK_MEDIUM = 'medium';
+    public const RISK_HIGH   = 'high';
 
-    const RISK_LEVELS = [
+    public const RISK_LEVELS = [
         self::RISK_LOW    => 'Faible risque',
         self::RISK_MEDIUM => 'Risque moyen',
         self::RISK_HIGH   => 'Risque élevé',
     ];
 
-    const RISK_COLORS = [
+    public const RISK_COLORS = [
         self::RISK_LOW    => 'green',
         self::RISK_MEDIUM => 'yellow',
         self::RISK_HIGH   => 'red',

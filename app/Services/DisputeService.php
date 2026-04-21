@@ -63,7 +63,7 @@ class DisputeService
         $priority = $this->determinePriority($type, $booking ?? null);
 
         $dispute = Dispute::create([
-            'reference' => 'DSP-' . strtoupper(\Illuminate\Support\Str::random(8)),
+            'reference' => 'DSP-'.strtoupper(\Illuminate\Support\Str::random(8)),
             'booking_id' => $bookingId,
             'opened_by' => $initiatorId,
             'against_user_id' => $againstUserId,
@@ -217,7 +217,7 @@ class DisputeService
                     'Réponse requise — Litige',
                     "Votre réponse est requise pour le litige #{$dispute->id}. Vous avez {$hours}h pour répondre.",
                     route('disputes.show', $dispute),
-                    ['dispute_id' => $dispute->id]
+                    ['dispute_id' => $dispute->id],
                 );
             }
         }

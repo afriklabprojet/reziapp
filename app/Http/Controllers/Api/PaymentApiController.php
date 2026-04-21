@@ -35,7 +35,8 @@ class PaymentApiController extends Controller
     public function __construct(
         protected PaymentService $paymentService,
         protected JekoService $jekoService,
-    ) {}
+    ) {
+    }
 
     /**
      * Initiate a Mobile Money payment for a booking.
@@ -79,6 +80,7 @@ class PaymentApiController extends Controller
                 'booking_id' => $booking->id,
                 'amount' => $booking->total_amount,
             ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Montant invalide.',
@@ -125,7 +127,7 @@ class PaymentApiController extends Controller
                         'requires_otp' => $result['requires_otp'] ?? true,
                         'expires_at' => $result['expires_at'] ?? null,
                         'amount' => (float) $payment->total_amount,
-                        'formatted_amount' => number_format((float) $payment->total_amount, 0, ',', ' ') . ' FCFA',
+                        'formatted_amount' => number_format((float) $payment->total_amount, 0, ',', ' ').' FCFA',
                     ],
                 ]);
             }
@@ -184,8 +186,11 @@ class PaymentApiController extends Controller
             $payment->markAsFailed('Paiement expiré');
 
             BusinessEventService::paymentFailed(
-                Auth::id(), $payment->id, (float) $payment->total_amount,
-                'expired', ['channel' => 'api'],
+                Auth::id(),
+                $payment->id,
+                (float) $payment->total_amount,
+                'expired',
+                ['channel' => 'api'],
             );
 
             return response()->json([
@@ -206,7 +211,9 @@ class PaymentApiController extends Controller
                 ]);
 
                 BusinessEventService::paymentCompleted(
-                    Auth::id(), $payment->id, (float) $payment->total_amount,
+                    Auth::id(),
+                    $payment->id,
+                    (float) $payment->total_amount,
                     ['channel' => 'api'],
                 );
 
@@ -228,6 +235,7 @@ class PaymentApiController extends Controller
             ], $result['pending'] ?? false ? 202 : 400);
         } catch (\Exception $e) {
             report($e);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur de vérification. Réessayez.',
@@ -268,7 +276,7 @@ class PaymentApiController extends Controller
                 'is_pending' => in_array($payment->status, [Payment::STATUS_PROCESSING, Payment::STATUS_PENDING]),
                 'can_retry' => $payment->isFailed(),
                 'amount' => (float) $payment->total_amount,
-                'formatted_amount' => number_format((float) $payment->total_amount, 0, ',', ' ') . ' FCFA',
+                'formatted_amount' => number_format((float) $payment->total_amount, 0, ',', ' ').' FCFA',
             ],
         ]);
     }

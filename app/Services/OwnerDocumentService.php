@@ -25,7 +25,7 @@ class OwnerDocumentService
         }
 
         if (!empty($filters['search'])) {
-            $query->where('name', 'like', '%' . $filters['search'] . '%');
+            $query->where('name', 'like', '%'.$filters['search'].'%');
         }
 
         return $query->orderByDesc('created_at')->paginate(20);
@@ -51,6 +51,7 @@ class OwnerDocumentService
     public function update(OwnerDocument $document, array $data): OwnerDocument
     {
         $document->update($data);
+
         return $document->fresh();
     }
 

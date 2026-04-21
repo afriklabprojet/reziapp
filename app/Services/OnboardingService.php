@@ -8,7 +8,7 @@ use App\Models\User;
 
 class OnboardingService
 {
-    const STEPS = [
+    public const STEPS = [
         'profile_completed'    => ['label' => 'Profil complété', 'description' => 'Photo, bio et coordonnées'],
         'identity_verified'    => ['label' => 'Identité vérifiée', 'description' => 'Document d\'identité et selfie'],
         'first_listing'        => ['label' => 'Première annonce', 'description' => 'Publiez votre première résidence'],

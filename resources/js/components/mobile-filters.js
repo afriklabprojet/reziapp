@@ -70,7 +70,7 @@ export default function filterModal() {
                 const response = await fetch(`/api/v1/residences/count?${params}`);
                 const data = await response.json();
                 this.resultsCount = data.count ?? '0';
-            } catch (e) {
+            } catch (_e) {
                 this.resultsCount = '0';
             }
         },

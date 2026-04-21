@@ -389,7 +389,7 @@ class ResidenceController extends Controller
             'rejection_details',
         ]);
 
-        $clone->name = $residence->name . ' (copie)';
+        $clone->name = $residence->name.' (copie)';
         $clone->status = 'pending';
         $clone->is_available = false;
         $clone->save();

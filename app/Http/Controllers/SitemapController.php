@@ -53,7 +53,7 @@ class SitemapController extends Controller
 
         foreach ($staticPages as $page) {
             $urls[] = $this->buildUrlEntry(
-                $baseUrl . $page['loc'],
+                $baseUrl.$page['loc'],
                 $now,
                 $page['changefreq'],
                 $page['priority'],
@@ -67,7 +67,7 @@ class SitemapController extends Controller
             ->chunk(200, function ($residences) use (&$urls, $baseUrl) {
                 foreach ($residences as $residence) {
                     $urls[] = $this->buildUrlEntry(
-                        $baseUrl . '/residences/' . $residence->id,
+                        $baseUrl.'/residences/'.$residence->id,
                         $residence->updated_at->toW3cString(),
                         'weekly',
                         '0.8',
@@ -79,17 +79,17 @@ class SitemapController extends Controller
         $cities = City::active()->ordered()->get();
         foreach ($cities as $city) {
             $urls[] = $this->buildUrlEntry(
-                $baseUrl . '/residences?city=' . urlencode($city->name),
+                $baseUrl.'/residences?city='.urlencode($city->name),
                 $now,
                 'daily',
                 '0.7',
             );
         }
 
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
         $xml .= implode("\n", $urls);
-        $xml .= "\n" . '</urlset>' . "\n";
+        $xml .= "\n".'</urlset>'."\n";
 
         return $xml;
     }

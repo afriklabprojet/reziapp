@@ -15,7 +15,8 @@ class RentReminderController extends Controller
 {
     public function __construct(
         private RentReminderService $reminderService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {

@@ -204,7 +204,7 @@ class VerificationService
             app(SmsService::class)->send($phone, $message);
         } catch (\Throwable $e) {
             Log::warning('[KYC SMS] Failed to send OTP', [
-                'phone' => substr($phone, 0, -4) . '****',
+                'phone' => substr($phone, 0, -4).'****',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -351,7 +351,7 @@ class VerificationService
         $admins = User::where('role', 'admin')->get();
         \Illuminate\Support\Facades\Notification::send(
             $admins,
-            new \App\Notifications\CriticalFraudAlert($report)
+            new \App\Notifications\CriticalFraudAlert($report),
         );
 
         // Notification in-app pour chaque admin
@@ -361,8 +361,8 @@ class VerificationService
                 'system',
                 '🚨 Fraude critique détectée',
                 "Signalement #{$report->id} — Type: {$report->fraud_type}, Score: {$report->risk_score}/100",
-                url('/admin/fraud-reports/' . $report->id),
-                ['fraud_report_id' => $report->id, 'risk_score' => $report->risk_score]
+                url('/admin/fraud-reports/'.$report->id),
+                ['fraud_report_id' => $report->id, 'risk_score' => $report->risk_score],
             );
         }
     }
@@ -547,7 +547,7 @@ class VerificationService
 
         \Illuminate\Support\Facades\Notification::send(
             $admins,
-            new \App\Notifications\EmergencyAlertTriggered($alert)
+            new \App\Notifications\EmergencyAlertTriggered($alert),
         );
 
         foreach ($admins as $admin) {
@@ -557,7 +557,7 @@ class VerificationService
                 '🆘 Alerte urgence déclenchée',
                 "L'utilisateur {$alert->user->name} a déclenché une alerte {$alert->alert_type}.",
                 route('filament.admin.resources.emergency-alerts.index'),
-                ['alert_id' => $alert->id, 'type' => $alert->alert_type]
+                ['alert_id' => $alert->id, 'type' => $alert->alert_type],
             );
         }
 

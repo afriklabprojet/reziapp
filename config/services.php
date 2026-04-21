@@ -142,11 +142,11 @@ return [
     'whatsapp' => [
         'enabled' => env('WHATSAPP_ENABLED', false),
         'api_url' => env('WHATSAPP_API_URL', 'https://graph.facebook.com/v18.0'),
-        'token' => env('WHATSAPP_API_TOKEN'),
-        'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
-        'business_account_id' => env('WHATSAPP_BUSINESS_ACCOUNT_ID'),
+        'token' => env('WHATSAPP_API_TOKEN', ''),
+        'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID', ''),
+        'business_account_id' => env('WHATSAPP_BUSINESS_ACCOUNT_ID', ''),
         'verify_token' => env('WHATSAPP_VERIFY_TOKEN', 'rezi_whatsapp_verify'),
-        'webhook_secret' => env('WHATSAPP_WEBHOOK_SECRET'),
+        'webhook_secret' => env('WHATSAPP_WEBHOOK_SECRET', ''),
     ],
 
     /*

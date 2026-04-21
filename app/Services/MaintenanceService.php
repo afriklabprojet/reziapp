@@ -42,6 +42,7 @@ class MaintenanceService
     public function update(MaintenanceRequest $request, array $data): MaintenanceRequest
     {
         $request->update($data);
+
         return $request->fresh();
     }
 

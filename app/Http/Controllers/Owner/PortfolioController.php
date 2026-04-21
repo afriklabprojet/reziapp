@@ -6,9 +6,9 @@ namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\CleaningTask;
 use App\Models\Expense;
 use App\Models\MaintenanceRequest;
-use App\Models\CleaningTask;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -21,7 +21,7 @@ class PortfolioController extends Controller
     {
         $user = $request->user();
         $residences = $user->residences()
-            ->with(['photos', 'bookings' => fn($q) => $q->where('status', 'completed')])
+            ->with(['photos', 'bookings' => fn ($q) => $q->where('status', 'completed')])
             ->withCount(['bookings', 'reviews'])
             ->withAvg('reviews', 'rating')
             ->get();

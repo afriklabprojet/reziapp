@@ -7,7 +7,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Residence;
 use App\Services\GoogleMapsService;
-use App\Services\NearbyPlacesService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -43,13 +42,10 @@ class MapsController extends Controller
             ->orderBy('distance_meters')
             ->get();
 
-        // Si aucun POI en BDD, tenter un fetch en temps réel
+        // Si aucun POI en BDD, dispatcher un job asynchrone pour les récupérer.
+        // On ne bloque pas la requête HTTP pour 12 appels Google séquentiels.
         if ($pois->isEmpty() && $residence->latitude && $residence->longitude) {
-            $service = app(NearbyPlacesService::class);
-            $service->fetchAndSave($residence);
-            $pois = $residence->pointsOfInterest()
-                ->orderBy('distance_meters')
-                ->get();
+            \App\Jobs\FetchNearbyPlaces::dispatch($residence);
         }
 
         // Regrouper par type
@@ -96,7 +92,7 @@ class MapsController extends Controller
 
         $result = $this->maps->reverseGeocode(
             (float) $request->lat,
-            (float) $request->lng
+            (float) $request->lng,
         );
 
         if (!$result) {

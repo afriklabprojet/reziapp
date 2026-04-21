@@ -16,7 +16,8 @@ class MaintenanceController extends Controller
 {
     public function __construct(
         private MaintenanceService $maintenanceService,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {
@@ -44,7 +45,7 @@ class MaintenanceController extends Controller
         if ($request->hasFile('photos')) {
             $photos = [];
             foreach ($request->file('photos') as $photo) {
-                $photos[] = $photo->store('maintenance/' . $request->user()->id, 'public');
+                $photos[] = $photo->store('maintenance/'.$request->user()->id, 'public');
             }
             $data['photos'] = $photos;
         }
@@ -65,7 +66,7 @@ class MaintenanceController extends Controller
     public function updateStatus(Request $request, MaintenanceRequest $maintenance): RedirectResponse
     {
         $data = $request->validate([
-            'status' => ['required', 'in:' . implode(',', array_keys(MaintenanceRequest::STATUSES))],
+            'status' => ['required', 'in:'.implode(',', array_keys(MaintenanceRequest::STATUSES))],
         ]);
 
         $this->maintenanceService->updateStatus($maintenance, $data['status']);

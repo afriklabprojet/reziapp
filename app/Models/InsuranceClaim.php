@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -46,7 +48,7 @@ class InsuranceClaim extends Model
 
         static::creating(function ($claim) {
             if (empty($claim->claim_number)) {
-                $claim->claim_number = 'CLM-' . date('Y') . '-' . strtoupper(Str::random(8));
+                $claim->claim_number = 'CLM-'.date('Y').'-'.strtoupper(Str::random(8));
             }
         });
     }

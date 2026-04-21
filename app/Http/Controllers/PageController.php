@@ -31,7 +31,7 @@ class PageController extends Controller
         $page = PageContent::getBySlug('confidentialite');
         $content = $page ? $page->data : PageContent::defaultConfidentialiteData();
         $metaTitle = $page?->meta_title ?? 'Politique de Confidentialité – REZI';
-        $metaDescription = $page?->meta_description ?? "Découvrez comment REZI collecte et protège vos données personnelles.";
+        $metaDescription = $page?->meta_description ?? 'Découvrez comment REZI collecte et protège vos données personnelles.';
 
         return view('pages.confidentialite', compact('content', 'metaTitle', 'metaDescription'));
     }
@@ -44,7 +44,7 @@ class PageController extends Controller
         $page = PageContent::getBySlug('mentions-legales');
         $content = $page ? $page->data : PageContent::defaultMentionsLegalesData();
         $metaTitle = $page?->meta_title ?? 'Mentions Légales – REZI';
-        $metaDescription = $page?->meta_description ?? "Mentions légales de la plateforme REZI.";
+        $metaDescription = $page?->meta_description ?? 'Mentions légales de la plateforme REZI.';
 
         return view('pages.mentions-legales', compact('content', 'metaTitle', 'metaDescription'));
     }
@@ -57,7 +57,7 @@ class PageController extends Controller
         $page = PageContent::getBySlug('faq');
         $content = $page ? $page->data : PageContent::defaultFaqData();
         $metaTitle = $page?->meta_title ?? 'FAQ – Questions Fréquentes – REZI';
-        $metaDescription = $page?->meta_description ?? "Trouvez les réponses à vos questions sur REZI.";
+        $metaDescription = $page?->meta_description ?? 'Trouvez les réponses à vos questions sur REZI.';
 
         return view('pages.faq', compact('content', 'metaTitle', 'metaDescription'));
     }
@@ -94,7 +94,7 @@ class PageController extends Controller
         $page = PageContent::getBySlug('guide-proprietaire');
         $content = $page ? $page->data : PageContent::defaultGuideProprietaireData();
         $metaTitle = $page?->meta_title ?? 'Guide Propriétaire – REZI';
-        $metaDescription = $page?->meta_description ?? "Guide complet pour publier et gérer votre résidence sur REZI.";
+        $metaDescription = $page?->meta_description ?? 'Guide complet pour publier et gérer votre résidence sur REZI.';
 
         return view('pages.guide-proprietaire', compact('content', 'metaTitle', 'metaDescription'));
     }

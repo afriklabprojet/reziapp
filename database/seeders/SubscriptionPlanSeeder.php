@@ -17,7 +17,7 @@ class SubscriptionPlanSeeder extends Seeder
         foreach ($plans as $planData) {
             SubscriptionPlan::updateOrCreate(
                 ['slug' => $planData['slug']],
-                $planData
+                $planData,
             );
         }
 
