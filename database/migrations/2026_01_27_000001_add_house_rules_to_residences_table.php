@@ -8,12 +8,26 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (!Schema::hasTable('residences')) {
+            return;
+        }
+
         Schema::table('residences', function (Blueprint $table) {
-            $table->boolean('pets_allowed')->default(false)->after('house_rules');
-            $table->boolean('smoking_allowed')->default(false)->after('pets_allowed');
-            $table->boolean('parties_allowed')->default(false)->after('smoking_allowed');
-            $table->integer('floor')->nullable()->after('parties_allowed');
-            $table->boolean('has_elevator')->default(false)->after('floor');
+            if (!Schema::hasColumn('residences', 'pets_allowed')) {
+                $table->boolean('pets_allowed')->default(false);
+            }
+            if (!Schema::hasColumn('residences', 'smoking_allowed')) {
+                $table->boolean('smoking_allowed')->default(false);
+            }
+            if (!Schema::hasColumn('residences', 'parties_allowed')) {
+                $table->boolean('parties_allowed')->default(false);
+            }
+            if (!Schema::hasColumn('residences', 'floor')) {
+                $table->integer('floor')->nullable();
+            }
+            if (!Schema::hasColumn('residences', 'has_elevator')) {
+                $table->boolean('has_elevator')->default(false);
+            }
         });
     }
 
