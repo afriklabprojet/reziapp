@@ -36,12 +36,20 @@ class JekoService
     protected function loadConfiguration(): void
     {
         $this->isSandbox = (bool) config('services.jeko.sandbox', false);
-        $this->baseUrl = config('services.jeko.base_url', 'https://api.jeko.africa');
-        $this->apiKey = config('services.jeko.api_key');
-        $this->apiKeyId = config('services.jeko.api_key_id');
-        $this->storeId = config('services.jeko.store_id');
+
+        if ($this->isSandbox) {
+            $this->baseUrl   = config('services.jeko.sandbox_url', 'https://sandbox-api.jeko.ci/v1');
+            $this->apiKey    = config('services.jeko.sandbox_key');
+            $this->storeId   = config('services.jeko.merchant_id');
+        } else {
+            $this->baseUrl   = config('services.jeko.base_url', 'https://api.jeko.africa');
+            $this->apiKey    = config('services.jeko.api_key');
+            $this->storeId   = config('services.jeko.store_id');
+        }
+
+        $this->apiKeyId      = config('services.jeko.api_key_id');
         $this->webhookSecret = config('services.jeko.webhook_secret');
-        $this->currency = config('services.jeko.currency', 'XOF');
+        $this->currency      = config('services.jeko.currency', 'XOF');
     }
 
     /**
