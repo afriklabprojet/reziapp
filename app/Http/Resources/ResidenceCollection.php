@@ -31,4 +31,13 @@ class ResidenceCollection extends ResourceCollection
             ],
         ];
     }
+
+    /**
+     * Disable the default Laravel pagination wrapper to avoid duplicate meta/links.
+     * Our toArray() already provides meta and links.
+     */
+    public function paginationInformation(Request $request, array $paginated, array $default): array
+    {
+        return [];
+    }
 }
