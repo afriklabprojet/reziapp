@@ -17,6 +17,7 @@ class ResidenceSearchTest extends TestCase
         // Créer des résidences à différentes distances
         // Centre: Cocody (5.3600, -4.0083)
         $nearResidence = Residence::factory()->create([
+            'name' => 'XNearResidenceUnique',
             'latitude' => 5.3650, // ~500m
             'longitude' => -4.0100,
             'status' => 'approved',
@@ -24,6 +25,7 @@ class ResidenceSearchTest extends TestCase
         ]);
 
         $farResidence = Residence::factory()->create([
+            'name' => 'XFarResidenceUnique',
             'latitude' => 5.5000, // ~15km
             'longitude' => -4.2000,
             'status' => 'approved',
@@ -207,7 +209,7 @@ class ResidenceSearchTest extends TestCase
         $response = $this->getJson(route('api.residences.search', [
             'latitude' => 5.3600,
             'longitude' => -4.0083,
-            'radius' => 5, // 5 km (API utilise km, pas mètres)
+            'radius' => 5000, // 5000 mètres (min:100)
         ]));
 
         $response->assertStatus(200);
