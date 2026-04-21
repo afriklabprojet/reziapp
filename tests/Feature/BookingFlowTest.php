@@ -145,10 +145,10 @@ class BookingFlowTest extends TestCase
                 'check_out' => now()->addDays(8)->format('Y-m-d'),
                 'guests' => 2,
                 'adults' => 2,
-                // message manquant
+                // payment_method manquant
             ]);
 
-        $response->assertSessionHasErrors(['message']);
+        $response->assertSessionHasErrors(['payment_method']);
     }
 
     // ========================================
