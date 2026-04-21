@@ -32,6 +32,13 @@ return new class () extends Migration {
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->boolean('is_available')->default(true);
 
+            // House rules
+            $table->boolean('pets_allowed')->default(false);
+            $table->boolean('smoking_allowed')->default(false);
+            $table->boolean('parties_allowed')->default(false);
+            $table->integer('floor')->nullable();
+            $table->boolean('has_elevator')->default(false);
+
             // Statistics
             $table->integer('views_count')->default(0);
             $table->integer('contacts_count')->default(0);
