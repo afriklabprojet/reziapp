@@ -20,6 +20,11 @@ return new class extends Migration
                 'price_period' => 'month',
             ]);
 
+        // SQLite ne supporte pas MODIFY COLUMN / ENUM — on skip silencieusement
+        if (config('database.default') === 'sqlite') {
+            return;
+        }
+
         // Retirer 'location_maison' de l'enum
         DB::statement("ALTER TABLE residences MODIFY COLUMN type_location ENUM('apartment', 'residence_meublee', 'hotel') DEFAULT 'residence_meublee'");
     }
@@ -29,6 +34,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (config('database.default') === 'sqlite') {
+            return;
+        }
+
         DB::statement("ALTER TABLE residences MODIFY COLUMN type_location ENUM('apartment', 'residence_meublee', 'hotel', 'location_maison') DEFAULT 'residence_meublee'");
     }
 };

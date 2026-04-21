@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         // SQLite ne supporte pas MODIFY COLUMN / ENUM — on skip silencieusement
-        if (DB::getDriverName() === 'sqlite') {
+        if (config('database.default') === 'sqlite') {
             return;
         }
 
@@ -33,7 +33,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (DB::getDriverName() === 'sqlite') {
+        if (config('database.default') === 'sqlite') {
             return;
         }
 

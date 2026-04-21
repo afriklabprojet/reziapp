@@ -16,7 +16,7 @@ return new class extends Migration
     public function up(): void
     {
         // FULLTEXT n'est pas supporté par SQLite
-        if (DB::getDriverName() === 'sqlite') {
+        if (config('database.default') === 'sqlite') {
             return;
         }
 
@@ -27,7 +27,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (DB::getDriverName() === 'sqlite') {
+        if (config('database.default') === 'sqlite') {
             return;
         }
 
