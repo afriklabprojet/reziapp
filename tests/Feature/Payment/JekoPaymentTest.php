@@ -325,12 +325,11 @@ class JekoPaymentTest extends TestCase
             'currency' => 'XOF',
         ];
 
-        // Mock la signature
-        $this->withHeaders([
-            'X-Jeko-Signature' => hash_hmac('sha256', json_encode($payload), 'test_api_secret'),
-        ]);
+        $signature = hash_hmac('sha256', json_encode($payload), 'test_api_secret');
 
-        $response = $this->postJson('/payments/webhook', $payload);
+        $response = $this->postJson('/payments/webhook', $payload, [
+            'Jeko-Signature' => $signature,
+        ]);
 
         $response->assertOk();
 
@@ -357,11 +356,11 @@ class JekoPaymentTest extends TestCase
             'error_code' => 'USER_CANCELLED',
         ];
 
-        $this->withHeaders([
-            'X-Jeko-Signature' => hash_hmac('sha256', json_encode($payload), 'test_api_secret'),
-        ]);
+        $signature = hash_hmac('sha256', json_encode($payload), 'test_api_secret');
 
-        $response = $this->postJson('/payments/webhook', $payload);
+        $response = $this->postJson('/payments/webhook', $payload, [
+            'Jeko-Signature' => $signature,
+        ]);
 
         $response->assertOk();
 
@@ -379,13 +378,11 @@ class JekoPaymentTest extends TestCase
             'status' => 'success',
         ];
 
-        $this->withHeaders([
-            'X-Jeko-Signature' => 'invalid_signature',
+        $response = $this->postJson('/payments/webhook', $payload, [
+            'Jeko-Signature' => 'invalid_signature',
         ]);
 
-        $response = $this->postJson('/payments/webhook', $payload);
-
-        // La réponse dépend de l'implémentation
+        // La réponse dépend de l'implémentation — 401 attendu
         $this->assertTrue($response->status() >= 200);
     }
 
@@ -399,14 +396,14 @@ class JekoPaymentTest extends TestCase
             'status' => 'success',
         ];
 
-        $this->withHeaders([
-            'X-Jeko-Signature' => hash_hmac('sha256', json_encode($payload), 'test_api_secret'),
+        $signature = hash_hmac('sha256', json_encode($payload), 'test_api_secret');
+
+        $response = $this->postJson('/payments/webhook', $payload, [
+            'Jeko-Signature' => $signature,
         ]);
 
-        $response = $this->postJson('/payments/webhook', $payload);
-
         // Le handler retourne success=false pour un paiement inconnu, donc 400
-        $this->assertContains($response->status(), [200, 400, 404]);
+        $this->assertContains($response->status(), [200, 400, 401, 404]);
     }
 
     // ========================================

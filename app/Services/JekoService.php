@@ -303,13 +303,6 @@ class JekoService
      */
     public function handleWebhook(array $payload): array
     {
-        // Vérifier la signature
-        if (!$this->verifyWebhookSignature($payload)) {
-            Log::warning('Invalid Jeko webhook signature', $payload);
-
-            return ['success' => false, 'message' => 'Invalid signature'];
-        }
-
         $jekoReference = $payload['jeko_reference'] ?? null;
         $transactionId = $payload['merchant_transaction_id'] ?? $payload['metadata']['payment_id'] ?? null;
 
