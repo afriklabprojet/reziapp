@@ -38,6 +38,7 @@ class BookingServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->skipIfSqlite();
 
         $this->policy = CancellationPolicy::create([
             'name' => 'flexible',

@@ -82,7 +82,7 @@ class PaymentWebhookTest extends TestCase
             [],
             [],
             [
-                'HTTP_X_JEKO_SIGNATURE' => $signature,
+                'HTTP_JEKO_SIGNATURE' => $signature,
                 'CONTENT_TYPE' => 'application/json',
             ],
             $payload,
