@@ -25,6 +25,7 @@ Route::get('/faq', [PageController::class, 'faq'])->name('pages.faq');
 Route::get('/a-propos', [PageController::class, 'about'])->name('pages.about');
 Route::get('/guide-proprietaire', [PageController::class, 'guideProprietaire'])->name('pages.guide-proprietaire');
 Route::get('/nous-contacter', [PageController::class, 'contact'])->name('pages.contact');
+Route::redirect('/contact', '/nous-contacter', 301);
 
 // Newsletter
 Route::post('/newsletter/subscribe', [App\Http\Controllers\NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
