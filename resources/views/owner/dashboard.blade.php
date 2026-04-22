@@ -362,6 +362,37 @@
                     </div>
                 @endif
 
+                {{-- ============================== BANNIÈRE ONBOARDING (nouveaux proprio) ============================== --}}
+                @if(auth()->user()->residences()->count() === 0)
+                <div class="mb-6 bg-linear-to-r from-orange-500 to-amber-500 rounded-2xl p-5 text-white shadow-lg shadow-orange-500/20" x-data="{ closed: false }" x-show="!closed" x-transition>
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0 text-xl">🚀</div>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-bold text-white text-base">Publiez votre première résidence en 5 minutes</p>
+                            <p class="text-orange-100 text-sm mt-0.5">Rejoignez {{ number_format(\App\Models\User::role('owner')->count()) }}+ propriétaires actifs sur REZI. Gratuit, sans commission.</p>
+                        </div>
+                        <div class="flex items-center gap-3 shrink-0">
+                            <a href="{{ route('owner.residences.create') }}"
+                                class="bg-white text-orange-600 font-bold text-sm px-4 py-2 rounded-xl hover:bg-orange-50 transition-colors whitespace-nowrap">
+                                Publier maintenant
+                            </a>
+                            <button @click="closed = true" class="text-white/60 hover:text-white transition-colors" aria-label="Fermer">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                    {{-- Progress steps mini --}}
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        @foreach(['Créer un compte ✅', 'Publier ma résidence', 'Recevoir mon premier contact'] as $step)
+                        <div class="flex items-center gap-1.5 text-xs {{ $loop->first ? 'text-white' : 'text-orange-200' }}">
+                            @if(!$loop->first)<span class="text-orange-300">→</span>@endif
+                            {{ $step }}
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
                 {{-- ============================== KPI CARDS ============================== --}}
                 <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
                     {{-- Revenus ce mois --}}

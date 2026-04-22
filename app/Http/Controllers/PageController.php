@@ -111,4 +111,15 @@ class PageController extends Controller
 
         return view('pages.contact', compact('content', 'metaTitle', 'metaDescription'));
     }
+
+    /**
+     * Tarifs & Modèle économique REZI
+     */
+    public function tarifs(): View
+    {
+        $metaTitle = 'Tarifs REZI – Publication gratuite, 0 commission';
+        $metaDescription = 'Publiez votre résidence meublée gratuitement sur REZI. Aucune commission sur la mise en location, options de visibilité disponibles.';
+
+        return view('pages.tarifs', compact('metaTitle', 'metaDescription'));
+    }
 }
