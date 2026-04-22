@@ -23,13 +23,13 @@ class JekoPaymentService
 
     public function __construct()
     {
-        $this->baseUrl = config('services.jeko.base_url', 'https://api.jeko.africa');
-        $this->apiKey = config('services.jeko.api_key');
-        $this->apiKeyId = config('services.jeko.api_key_id');
-        $this->storeId = config('services.jeko.store_id');
-        $this->currency = config('services.jeko.currency', 'XOF');
-        $this->webhookSecret = config('services.jeko.webhook_secret');
-        $this->callbackBaseUrl = config('services.jeko.callback_base_url') ?: config('app.url');
+        $this->baseUrl = config('services.jeko.base_url') ?? 'https://api.jeko.africa';
+        $this->apiKey = config('services.jeko.api_key') ?? '';
+        $this->apiKeyId = config('services.jeko.api_key_id') ?? '';
+        $this->storeId = config('services.jeko.store_id') ?? '';
+        $this->currency = config('services.jeko.currency') ?? 'XOF';
+        $this->webhookSecret = config('services.jeko.webhook_secret') ?? '';
+        $this->callbackBaseUrl = config('services.jeko.callback_base_url') ?? config('app.url') ?? '';
     }
 
     /**

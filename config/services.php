@@ -42,7 +42,7 @@ return [
     */
 
     'google_maps' => [
-        'key' => env('GOOGLE_MAPS_API_KEY'),
+        'key' => env('GOOGLE_MAPS_API_KEY', ''),
     ],
 
     /*
@@ -55,16 +55,16 @@ return [
     */
 
     'google_cloud_vision' => [
-        'api_key' => env('GOOGLE_CLOUD_VISION_API_KEY'),
+        'api_key' => env('GOOGLE_CLOUD_VISION_API_KEY', ''),
     ],
 
     'mapbox' => [
-        'access_token' => env('MAPBOX_ACCESS_TOKEN'),
+        'access_token' => env('MAPBOX_ACCESS_TOKEN', ''),
         'style' => env('MAPBOX_STYLE', 'mapbox://styles/mapbox/streets-v12'),
     ],
 
     'tenor' => [
-        'key' => env('TENOR_API_KEY'),
+        'key' => env('TENOR_API_KEY', ''),
     ],
 
     'rezi' => [
@@ -87,8 +87,8 @@ return [
     */
 
     'webpush' => [
-        'public_key' => env('VAPID_PUBLIC_KEY'),
-        'private_key' => env('VAPID_PRIVATE_KEY'),
+        'public_key' => env('VAPID_PUBLIC_KEY', ''),
+        'private_key' => env('VAPID_PRIVATE_KEY', ''),
     ],
 
     /*
@@ -102,9 +102,9 @@ return [
     ],
 
     'twilio' => [
-        'sid' => env('TWILIO_SID'),
-        'token' => env('TWILIO_AUTH_TOKEN'),
-        'from' => env('TWILIO_FROM_NUMBER'),
+        'sid' => env('TWILIO_SID', ''),
+        'token' => env('TWILIO_AUTH_TOKEN', ''),
+        'from' => env('TWILIO_FROM_NUMBER', ''),
     ],
 
     'orange_sms' => [
@@ -122,14 +122,14 @@ return [
 
     'jeko' => [
         'enabled' => env('JEKO_ENABLED', false),
-        'api_key' => env('JEKO_API_KEY'),
-        'api_key_id' => env('JEKO_API_KEY_ID'),
-        'store_id' => env('JEKO_STORE_ID'),
+        'api_key' => env('JEKO_API_KEY', ''),
+        'api_key_id' => env('JEKO_API_KEY_ID', ''),
+        'store_id' => env('JEKO_STORE_ID', ''),
         'base_url' => env('JEKO_BASE_URL', 'https://api.jeko.africa'),
         'currency' => env('JEKO_CURRENCY', 'XOF'),
-        'webhook_secret' => env('JEKO_WEBHOOK_SECRET'),
+        'webhook_secret' => env('JEKO_WEBHOOK_SECRET', ''),
         'sandbox' => env('JEKO_SANDBOX', false),
-        'callback_base_url' => env('JEKO_CALLBACK_BASE_URL'),
+        'callback_base_url' => env('JEKO_CALLBACK_BASE_URL', ''),
     ],
 
     /*

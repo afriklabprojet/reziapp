@@ -28,7 +28,7 @@ class AutoKycService
 
     public function __construct()
     {
-        $this->apiKey = config('services.google_cloud_vision.api_key', '');
+        $this->apiKey = config('services.google_cloud_vision.api_key') ?? '';
         $this->config = config('rezi.kyc.auto_verification', []);
     }
 
