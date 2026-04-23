@@ -976,7 +976,7 @@ export default function chatShow(config = {}) {
                 const html = `<div class="flex justify-end group msg-row" id="msg-${tempId}">
                     <div class="flex items-end gap-2 max-w-[85%] sm:max-w-[75%] lg:max-w-[65%]">
                         <div class="space-y-0.5 items-end">
-                            <div class="bg-orange-500 text-white rounded-2xl rounded-br-md px-3 py-2.5 flex items-center gap-3 min-w-[200px]">
+                            <div class="bg-orange-500 text-white rounded-2xl rounded-br-md px-3 py-2.5 flex items-center gap-3 min-w-50">
                                 <div class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center shrink-0">
                                     <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z"/></svg>
                                 </div>

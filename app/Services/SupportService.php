@@ -25,7 +25,7 @@ class SupportService
         $ticket = SupportTicket::create([
             'user_id' => $userId,
             'booking_id' => $bookingId,
-            'dispute_id' => $disputeId,
+            'description' => $message,
             'category' => $category,
             'subject' => $subject,
             'priority' => $priority,

@@ -409,6 +409,24 @@
 
                     <!-- Estimation de revenus -->
                     <div class="bg-orange-50 rounded-xl p-4" x-show="formData.price_per_day">
+
+                    <!-- Frais de ménage -->
+                    <div class="border-t border-gray-100 pt-4 mt-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Frais de ménage
+                            <span class="text-gray-400 font-normal">(optionnel)</span>
+                        </label>
+                        <div class="relative">
+                            <input type="number" x-model="formData.cleaning_fee" min="0" step="500"
+                                placeholder="0"
+                                class="w-full px-4 py-3 pr-16 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm">FCFA</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Facturés une seule fois par séjour, en sus du loyer.</p>
+                    </div>
+
+                    <!-- Estimation de revenus -->
+                    <div class="bg-orange-50 rounded-xl p-4 mt-4" x-show="formData.price_per_day">
                         <h4 class="font-medium text-orange-700 mb-2">💰 Estimation de revenus</h4>
                         <div class="grid grid-cols-3 gap-4 text-center">
                             <div>

@@ -7,7 +7,7 @@ use App\Models\CancellationPolicy;
 use App\Models\Dispute;
 use App\Models\Residence;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\RequiresMysql;
@@ -19,7 +19,7 @@ use Tests\TestCase;
  */
 class DisputeTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
     use WithFaker;
     use RequiresMysql;
 
@@ -50,7 +50,7 @@ class DisputeTest extends TestCase
         $this->residence = Residence::factory()->create([
             'owner_id' => $this->owner->id,
             'cancellation_policy_id' => $policy->id,
-            'status' => 'approved',
+            'status' => 'active',
         ]);
         $this->booking = Booking::factory()->create([
             'user_id' => $this->guest->id,
@@ -113,8 +113,8 @@ class DisputeTest extends TestCase
         $response->assertRedirect();
         $this->assertDatabaseHas('disputes', [
             'booking_id' => $this->booking->id,
-            'initiator_id' => $this->guest->id,
-            'type' => $type,
+            'opened_by' => $this->guest->id,
+            'category' => $type,
         ]);
     }
 
@@ -134,12 +134,13 @@ class DisputeTest extends TestCase
 
         // Create first dispute
         Dispute::create([
+            'reference' => 'DSP-TEST0001',
             'booking_id' => $this->booking->id,
-            'initiated_by' => 'user',
-            'initiator_id' => $this->guest->id,
-            'type' => $type,
-            'reason' => 'Test',
-            'detailed_description' => 'Description du litige existant',
+            'opened_by' => $this->guest->id,
+            'against_user_id' => $this->owner->id,
+            'category' => $type,
+            'title' => 'Test',
+            'description' => 'Description du litige existant',
             'status' => 'open',
             'priority' => 'medium',
         ]);
@@ -164,12 +165,13 @@ class DisputeTest extends TestCase
     public function initiator_can_view_dispute_details(): void
     {
         $dispute = Dispute::create([
+            'reference' => 'DSP-TEST0002',
             'booking_id' => $this->booking->id,
-            'initiated_by' => 'user',
-            'initiator_id' => $this->guest->id,
-            'type' => array_key_first(Dispute::getTypes()),
-            'reason' => 'Test',
-            'detailed_description' => 'Détails du litige.',
+            'opened_by' => $this->guest->id,
+            'against_user_id' => $this->owner->id,
+            'category' => array_key_first(Dispute::getTypes()),
+            'title' => 'Test',
+            'description' => 'Détails du litige.',
             'status' => 'open',
             'priority' => 'medium',
         ]);
@@ -186,12 +188,13 @@ class DisputeTest extends TestCase
     public function owner_can_view_dispute_on_their_booking(): void
     {
         $dispute = Dispute::create([
+            'reference' => 'DSP-TEST0003',
             'booking_id' => $this->booking->id,
-            'initiated_by' => 'user',
-            'initiator_id' => $this->guest->id,
-            'type' => array_key_first(Dispute::getTypes()),
-            'reason' => 'Test',
-            'detailed_description' => 'Description.',
+            'opened_by' => $this->guest->id,
+            'against_user_id' => $this->owner->id,
+            'category' => array_key_first(Dispute::getTypes()),
+            'title' => 'Test',
+            'description' => 'Description.',
             'status' => 'open',
             'priority' => 'medium',
         ]);
@@ -207,12 +210,13 @@ class DisputeTest extends TestCase
     {
         $other = User::factory()->create(['role' => 'user']);
         $dispute = Dispute::create([
+            'reference' => 'DSP-TEST0004',
             'booking_id' => $this->booking->id,
-            'initiated_by' => 'user',
-            'initiator_id' => $this->guest->id,
-            'type' => array_key_first(Dispute::getTypes()),
-            'reason' => 'Test',
-            'detailed_description' => 'Description.',
+            'opened_by' => $this->guest->id,
+            'against_user_id' => $this->owner->id,
+            'category' => array_key_first(Dispute::getTypes()),
+            'title' => 'Test',
+            'description' => 'Description.',
             'status' => 'open',
             'priority' => 'medium',
         ]);
@@ -234,6 +238,6 @@ class DisputeTest extends TestCase
             ->getJson(route('api.v1.disputes.types'));
 
         $response->assertStatus(200);
-        $response->assertJsonStructure(['types']);
+        $response->assertJsonStructure(['success', 'data']);
     }
 }

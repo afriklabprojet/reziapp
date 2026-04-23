@@ -53,12 +53,38 @@ class PendingApprovalsWidget extends BaseWidget
             ->actions([
                 Tables\Actions\Action::make('approve')
                     ->label('Approuver')
-                    ->icon('heroicon-o-check')
+                    ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->action(fn ($record) => $record->update(['status' => 'active'])),
+                    ->requiresConfirmation()
+                    ->modalHeading('Approuver cette résidence ?')
+                    ->modalDescription(fn ($record) => "Valider \"" . $record->name . "\" et la rendre visible aux locataires.")
+                    ->action(function ($record) {
+                        $record->update(['status' => 'active']);
+                        \Filament\Notifications\Notification::make()
+                            ->title('Résidence approuvée')
+                            ->body($record->name . ' est maintenant active.')
+                            ->success()
+                            ->send();
+                    }),
+                Tables\Actions\Action::make('reject')
+                    ->label('Rejeter')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Rejeter cette résidence ?')
+                    ->modalDescription(fn ($record) => "Rejeter \"" . $record->name . "\" et notifier le propriétaire.")
+                    ->action(function ($record) {
+                        $record->update(['status' => 'rejected']);
+                        \Filament\Notifications\Notification::make()
+                            ->title('Résidence rejetée')
+                            ->body($record->name . ' a été rejetée.')
+                            ->danger()
+                            ->send();
+                    }),
                 Tables\Actions\Action::make('view')
                     ->label('Voir')
                     ->icon('heroicon-o-eye')
+                    ->color('gray')
                     ->url(fn ($record) => route('filament.admin.resources.residences.edit', $record)),
             ])
             ->paginated(false);

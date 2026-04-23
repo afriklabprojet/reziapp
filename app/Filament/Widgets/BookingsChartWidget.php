@@ -15,6 +15,8 @@ class BookingsChartWidget extends ChartWidget
 
     protected int | string | array $columnSpan = 1;
 
+    protected static ?string $maxHeight = '300px';
+
     protected function getData(): array
     {
         return Cache::remember('admin.bookings_chart', 300, fn () => $this->computeData());

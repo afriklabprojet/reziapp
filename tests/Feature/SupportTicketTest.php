@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Models\SupportTicket;
 use App\Models\User;
 use App\Services\SupportService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\RequiresMysql;
@@ -17,7 +17,7 @@ use Tests\TestCase;
  */
 class SupportTicketTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
     use WithFaker;
     use RequiresMysql;
 

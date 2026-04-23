@@ -584,6 +584,7 @@ Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
         // ============================================
         Route::prefix('utilities')->name('utilities.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Owner\UtilityController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Owner\UtilityController::class, 'create'])->name('create');
             Route::post('/', [\App\Http\Controllers\Owner\UtilityController::class, 'store'])->name('store');
             Route::patch('/alerts/{alert}/dismiss', [\App\Http\Controllers\Owner\UtilityController::class, 'acknowledgeAlert'])->name('dismiss-alert');
         });
@@ -604,6 +605,8 @@ Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
             Route::post('/toggle-auto-pricing', [\App\Http\Controllers\Owner\YieldController::class, 'toggleAutoPricing'])->name('toggle-auto-pricing');
             Route::post('/toggle-gap-night', [\App\Http\Controllers\Owner\YieldController::class, 'toggleGapNight'])->name('toggle-gap-night');
             Route::get('/gaps', [\App\Http\Controllers\Owner\YieldController::class, 'gaps'])->name('gaps');
+            Route::patch('/update-settings', [\App\Http\Controllers\Owner\YieldController::class, 'updateSettings'])->name('update-settings');
+            Route::post('/apply-gap-discount', [\App\Http\Controllers\Owner\YieldController::class, 'applyGapDiscount'])->name('apply-gap-discount');
         });
 
         // ============================================
@@ -623,6 +626,8 @@ Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
             Route::patch('/{alert}/acknowledge', [\App\Http\Controllers\Owner\OwnerAlertController::class, 'acknowledge'])->name('acknowledge');
             Route::patch('/{alert}/resolve', [\App\Http\Controllers\Owner\OwnerAlertController::class, 'resolve'])->name('resolve');
             Route::patch('/{alert}/dismiss', [\App\Http\Controllers\Owner\OwnerAlertController::class, 'dismiss'])->name('dismiss');
+            Route::patch('/{alert}/mark-read', [\App\Http\Controllers\Owner\OwnerAlertController::class, 'markRead'])->name('mark-read');
+            Route::patch('/update-settings', [\App\Http\Controllers\Owner\OwnerAlertController::class, 'updateSettings'])->name('update-settings');
         });
 
         // ============================================

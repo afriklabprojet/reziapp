@@ -11,7 +11,7 @@ class RecentPaymentsWidget extends BaseWidget
 {
     protected static ?int $sort = 4;
 
-    protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = 1;
 
     protected static ?string $heading = 'Paiements récents';
 
@@ -22,7 +22,7 @@ class RecentPaymentsWidget extends BaseWidget
                 Payment::query()
                     ->with(['user', 'booking.residence', 'paymentMethod'])
                     ->latest()
-                    ->limit(10),
+                    ->limit(5),
             )
             ->columns([
                 Tables\Columns\TextColumn::make('reference')
@@ -102,6 +102,9 @@ class RecentPaymentsWidget extends BaseWidget
 
     public static function canView(): bool
     {
-        return auth()->user()?->role === 'admin';
+        /** @var \App\Models\User|null $user */
+        $user = auth()->user();
+
+        return $user?->role === 'admin';
     }
 }

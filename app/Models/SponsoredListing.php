@@ -141,11 +141,11 @@ class SponsoredListing extends Model
 
     public function getDaysRemainingAttribute(): int
     {
-        if ($this->ends_at < now()) {
+        if (!$this->ends_at || $this->ends_at < now()) {
             return 0;
         }
 
-        return now()->diffInDays($this->ends_at);
+        return (int) now()->diffInDays($this->ends_at);
     }
 
     public function getClickRateAttribute(): float

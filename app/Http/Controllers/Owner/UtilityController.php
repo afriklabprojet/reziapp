@@ -39,6 +39,13 @@ class UtilityController extends Controller
         return view('owner.utilities.index', compact('readings', 'residences', 'summary', 'alerts'));
     }
 
+    public function create(Request $request): View
+    {
+        $residences = $request->user()->residences()->orderBy('name')->get();
+
+        return view('owner.utilities.create', compact('residences'));
+    }
+
     public function store(StoreUtilityReadingRequest $request): RedirectResponse
     {
         $this->utilityService->create($request->user(), $request->validated());

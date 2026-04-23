@@ -349,7 +349,7 @@
                 </tr>
                 @if ($invoice->tax_amount > 0)
                     <tr>
-                        <td class="label">TVA ({{ $invoice->tax_rate }}%)</td>
+                        <td class="label">Taxe d'État</td>
                         <td class="value">{{ number_format($invoice->tax_amount, 0, ',', ' ') }}
                             {{ $invoice->currency }}</td>
                     </tr>

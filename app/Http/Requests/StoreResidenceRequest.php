@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Residence;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Validator;
 
 class StoreResidenceRequest extends FormRequest
@@ -50,7 +51,7 @@ class StoreResidenceRequest extends FormRequest
                     ->where(function ($q) use ($name) {
                         // Nom identique ou très proche (SOUNDEX sur MySQL uniquement)
                         $q->where('name', $name);
-                        if (\DB::connection()->getDriverName() === 'mysql') {
+                        if (DB::connection()->getDriverName() === 'mysql') {
                             $q->orWhereRaw('SOUNDEX(name) = SOUNDEX(?)', [$name]);
                         }
                     })
@@ -96,7 +97,7 @@ class StoreResidenceRequest extends FormRequest
         return [
             // Informations générales
             'name' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string', 'min:50', 'max:5000'],
+            'description' => ['required', 'string', 'min:10', 'max:5000'],
             'type' => ['required', 'string', 'in:studio,apartment,house,villa,duplex,other'],
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'rental_type' => ['nullable', 'string', 'in:standard,short_term,colocation,corporate,seasonal'],
@@ -116,6 +117,7 @@ class StoreResidenceRequest extends FormRequest
             'price_per_day' => ['nullable', 'numeric', 'min:0', 'required_if:type_location,residence_meublee,hotel'],
             'price_per_week' => ['nullable', 'numeric', 'min:0'],
             'price_per_month' => ['nullable', 'numeric', 'min:10000', 'required_if:type_location,apartment'],
+            'cleaning_fee' => ['nullable', 'numeric', 'min:0'],
             'deposit_negotiable' => ['boolean'],
             'deposit_terms' => ['nullable', 'string', 'max:1000'],
 
@@ -206,6 +208,8 @@ class StoreResidenceRequest extends FormRequest
             'price_per_day.min' => 'Le prix journalier doit être positif.',
             'price_per_day.required_if' => 'Le prix journalier est obligatoire pour ce type de location.',
             'price_per_week.min' => 'Le prix hebdomadaire doit être positif.',
+            'cleaning_fee.numeric' => 'Les frais de ménage doivent être un nombre.',
+            'cleaning_fee.min' => 'Les frais de ménage ne peuvent pas être négatifs.',
             'deposit_terms.max' => 'Les conditions de caution ne peuvent pas dépasser 1000 caractères.',
 
             // Caractéristiques
@@ -283,6 +287,7 @@ class StoreResidenceRequest extends FormRequest
             'price_per_day' => 'prix journalier',
             'price_per_week' => 'prix hebdomadaire',
             'price_per_month' => 'prix mensuel',
+            'cleaning_fee' => 'frais de ménage',
             'deposit_negotiable' => 'caution négociable',
             'deposit_terms' => 'conditions de caution',
             'bedrooms' => 'chambres',

@@ -1042,11 +1042,10 @@
                                         </div>
                                     @endif
                                     <div class="text-center">
-                                        <p class="text-lg font-bold text-gray-900">
-                                            {{ $residence->owner->created_at?->diffInYears(now()) ?: 1 }}</p>
+                                        @php $yearsOnRezi = (int) ($residence->owner->created_at?->diffInYears(now()) ?? 0) ?: 1; @endphp
+                                        <p class="text-lg font-bold text-gray-900">{{ $yearsOnRezi }}</p>
                                         <p class="text-xs text-gray-500">
-                                            An{{ ($residence->owner->created_at?->diffInYears(now()) ?: 1) > 1 ? 's' : '' }}
-                                            sur REZI</p>
+                                            An{{ $yearsOnRezi > 1 ? 's' : '' }} sur REZI</p>
                                     </div>
                                 </div>
                             </div>

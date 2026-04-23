@@ -14,17 +14,19 @@ class SupportTicket extends Model
     protected $fillable = [
         'user_id',
         'booking_id',
+        'residence_id',
         'dispute_id',
-        'ticket_number',
+        'reference',
         'category',
         'subject',
+        'description',
         'priority',
         'status',
         'assigned_to',
         'first_response_at',
         'resolved_at',
         'satisfaction_rating',
-        'satisfaction_comment',
+        'satisfaction_feedback',
     ];
 
     protected $casts = [
@@ -40,13 +42,21 @@ class SupportTicket extends Model
         parent::boot();
 
         static::creating(function ($ticket) {
-            if (!$ticket->ticket_number) {
-                $ticket->ticket_number = static::generateTicketNumber();
+            if (!$ticket->reference) {
+                $ticket->reference = static::generateTicketNumber();
             }
         });
     }
 
     // ===== RELATIONSHIPS =====
+
+    /**
+     * Alias for reference — backward compatibility with controllers and tests
+     */
+    public function getTicketNumberAttribute(): ?string
+    {
+        return $this->reference;
+    }
 
     /**
      * User who created the ticket
@@ -85,7 +95,7 @@ class SupportTicket extends Model
      */
     public function messages()
     {
-        return $this->hasMany(SupportMessage::class, 'ticket_id');
+        return $this->hasMany(SupportMessage::class, 'support_ticket_id');
     }
 
     /**
@@ -93,7 +103,7 @@ class SupportTicket extends Model
      */
     public function latestMessage()
     {
-        return $this->hasOne(SupportMessage::class, 'ticket_id')->latest();
+        return $this->hasOne(SupportMessage::class, 'support_ticket_id')->latest();
     }
 
     // ===== SCOPES =====
@@ -419,10 +429,18 @@ class SupportTicket extends Model
     {
         $this->update([
             'satisfaction_rating' => $rating,
-            'satisfaction_comment' => $comment,
+            'satisfaction_feedback' => $comment,
         ]);
 
         return $this;
+    }
+
+    /**
+     * Alias for satisfaction_feedback — backward compatibility
+     */
+    public function getSatisfactionCommentAttribute(): ?string
+    {
+        return $this->satisfaction_feedback;
     }
 
     /**
@@ -434,7 +452,7 @@ class SupportTicket extends Model
             'user_id' => $userId,
             'message' => $message,
             'attachments' => $attachments,
-            'is_internal_note' => $isInternal,
+            'is_internal' => $isInternal,
         ]);
 
         // Update ticket status if customer replied

@@ -632,6 +632,7 @@ class AutoKycService
     protected function callVisionApi(array $requests): ?array
     {
         try {
+            /** @var \Illuminate\Http\Client\Response $response */
             $response = Http::timeout(30)
                 ->retry(2, 1000)
                 ->post("{$this->apiUrl}?key={$this->apiKey}", [

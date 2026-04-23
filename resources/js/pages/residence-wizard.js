@@ -53,6 +53,7 @@ export default function residenceWizard(config) {
             price_per_day: null,
             price_per_week: null,
             price_per_month: null,
+            cleaning_fee: null,
             is_available: true,
             accept_terms: false
         },

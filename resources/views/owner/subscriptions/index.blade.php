@@ -53,17 +53,17 @@
                     </p>
                 </div>
                 <div class="flex gap-3">
-                    <a href="{{ route('owner.subscriptions.history') }}" class="btn-secondary">
+                    <a href="{{ route('owner.marketing.subscriptions.history') }}" class="btn-secondary">
                         Historique
                     </a>
                     @if($currentSubscription->status === 'active')
-                        <form action="{{ route('owner.subscriptions.cancel') }}" method="POST" class="inline"
+                        <form action="{{ route('owner.marketing.subscriptions.cancel') }}" method="POST" class="inline"
                               onsubmit="return confirm('Êtes-vous sûr de vouloir annuler votre abonnement ?')">
                             @csrf
                             <button type="submit" class="btn-danger">Annuler</button>
                         </form>
                     @elseif($currentSubscription->status === 'cancelled')
-                        <form action="{{ route('owner.subscriptions.resume') }}" method="POST" class="inline">
+                        <form action="{{ route('owner.marketing.subscriptions.resume') }}" method="POST" class="inline">
                             @csrf
                             <button type="submit" class="btn-primary">Réactiver</button>
                         </form>
@@ -157,7 +157,7 @@
                             Plan actuel
                         </button>
                     @else
-                        <button type="button" 
+                        <button type="button"
                                 onclick="openPaymentModal({{ $plan->id }}, '{{ $plan->name }}', {{ $plan->monthly_price }}, {{ $plan->yearly_price ?? 0 }})"
                                 class="w-full py-3 px-4 rounded-lg {{ $plan->is_featured ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-gray-900 hover:bg-gray-800' }} text-white font-semibold transition-colors">
                             @if($currentSubscription)
@@ -293,7 +293,7 @@
         currentPlanId = planId;
         document.getElementById('modalPlanName').textContent = planName;
         document.getElementById('monthlyPrice').textContent = new Intl.NumberFormat('fr-FR').format(monthlyPrice) + ' FCFA';
-        
+
         const yearlyOption = document.getElementById('yearlyOption');
         if (yearlyPrice > 0) {
             yearlyOption.classList.remove('hidden');
@@ -306,7 +306,7 @@
 
         // Set form action based on current subscription
         const hasSubscription = {{ $currentSubscription ? 'true' : 'false' }};
-        const formAction = hasSubscription 
+        const formAction = hasSubscription
             ? '{{ route("owner.subscriptions.change-plan", ":id") }}'.replace(':id', planId)
             : '{{ route("owner.subscriptions.subscribe", ":id") }}'.replace(':id', planId);
         document.getElementById('subscribeForm').action = formAction;

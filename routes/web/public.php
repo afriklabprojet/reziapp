@@ -25,7 +25,7 @@ Route::get('/faq', [PageController::class, 'faq'])->name('pages.faq');
 Route::get('/a-propos', [PageController::class, 'about'])->name('pages.about');
 Route::get('/guide-proprietaire', [PageController::class, 'guideProprietaire'])->name('pages.guide-proprietaire');
 Route::get('/nous-contacter', [PageController::class, 'contact'])->name('pages.contact');
-Route::redirect('/contact', '/nous-contacter', 301);
+Route::redirect('/contact', '/nous-contacter', 301)->name('pages.contact.legacy');
 Route::get('/tarifs', [PageController::class, 'tarifs'])->name('pages.tarifs');
 
 // Newsletter

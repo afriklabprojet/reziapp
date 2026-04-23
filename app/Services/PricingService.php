@@ -96,13 +96,10 @@ class PricingService
         // Pas de frais de service côté locataire — la commission est prélevée sur le propriétaire
         $serviceFee = 0;
 
-        // Base pour taxes (sous-total + ménage)
-        $taxableAmount = $subtotalAfterDiscount + $cleaningFee;
+        // Taxe d'État fixe : 1 000 FCFA par réservation (locataire uniquement)
+        $taxes = (int) config('rezi.pricing.state_tax', 1000);
 
-        // Taxes
-        $taxes = round($taxableAmount * config('rezi.pricing.tax_rate'), 0);
-
-        // Total final (locataire ne paie pas de commission)
+        // Total final
         $totalAmount = $subtotalAfterDiscount + $cleaningFee + $taxes;
 
         // Construire le détail complet
@@ -132,9 +129,9 @@ class PricingService
             'coupon' => $appliedCoupon,
             'total_discount' => $totalDiscount,
 
-            // Taxes
+            // Taxe d'État
             'taxes' => $taxes,
-            'tax_rate' => config('rezi.pricing.tax_rate') * 100,
+            'tax_rate' => 0,
 
             // Total
             'total_amount' => $totalAmount,
@@ -147,6 +144,7 @@ class PricingService
             'summary' => [
                 ['label' => $avgPricePerNight.' FCFA x '.$nights.' nuits', 'amount' => $subtotal],
                 ['label' => 'Frais de ménage', 'amount' => $cleaningFee],
+                ['label' => 'Taxe d\'État', 'amount' => $taxes],
             ],
 
             // Validité du calcul
@@ -327,10 +325,10 @@ class PricingService
     public function getFeeSummary(): array
     {
         return [
-            'taxes' => [
-                'rate' => config('rezi.pricing.tax_rate') * 100,
-                'label' => 'Taxes',
-                'description' => 'TVA applicable selon la réglementation ivoirienne.',
+            'state_tax' => [
+                'amount' => config('rezi.pricing.state_tax', 1000),
+                'label' => 'Taxe d\'État',
+                'description' => 'Taxe d\'État fixe de 1 000 FCFA par réservation.',
             ],
         ];
     }

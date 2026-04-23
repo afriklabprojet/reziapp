@@ -341,7 +341,7 @@ class VerificationService
      */
     protected function alertCriticalFraud(FraudReport $report): void
     {
-        \Log::alert('Critical fraud detected', [
+        Log::alert('Critical fraud detected', [
             'report_id' => $report->id,
             'fraud_type' => $report->fraud_type,
             'risk_score' => $report->risk_score,
@@ -467,12 +467,12 @@ class VerificationService
         bool $permanent = true,
         ?\DateTime $expiresAt = null,
     ): Blacklist {
-        // Suspendre l'utilisateur
-        $user->update([
+        // Suspendre l'utilisateur (forceFill car is_suspended est protégé dans $fillable)
+        $user->forceFill([
             'is_suspended' => true,
             'suspended_until' => $permanent ? null : $expiresAt,
             'suspension_reason' => $description,
-        ]);
+        ])->save();
 
         // Désactiver ses annonces
         $user->residences()->update(['status' => 'suspended']);
@@ -561,7 +561,7 @@ class VerificationService
             );
         }
 
-        \Log::alert('Emergency alert triggered', [
+        Log::alert('Emergency alert triggered', [
             'alert_id' => $alert->id,
             'user_id' => $alert->user_id,
             'type' => $alert->alert_type,

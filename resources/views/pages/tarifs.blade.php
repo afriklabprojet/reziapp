@@ -20,7 +20,7 @@
             </h1>
             <p class="text-gray-300 text-lg max-w-2xl mx-auto">
                 Chez REZI, locataires et propriétaires ne paient aucune commission. La mise en relation est 100% gratuite.
-                Nous proposons des options optionnelles pour aller plus vite.
+                Nous proposons des options premium pour aller plus vite.
             </p>
         </div>
     </section>
@@ -126,7 +126,7 @@
                     <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                     </svg>
-                    Options optionnelles
+                    Options premium
                 </div>
                 <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-gray-900">
                     Boostez votre visibilité

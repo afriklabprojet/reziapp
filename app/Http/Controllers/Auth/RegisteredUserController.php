@@ -34,6 +34,7 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['nullable', 'string', 'in:user,owner'],
             'ref' => ['nullable', 'string', 'max:20'],
         ]);
 
@@ -53,8 +54,8 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             'referred_by' => $referrerId,
         ]);
-        // SECURITE : role toujours 'user' à l'inscription web
-        $user->role = 'user';
+        // SECURITE : seuls 'user' et 'owner' sont autorisés à l'inscription (jamais 'admin')
+        $user->role = in_array($request->input('role'), ['user', 'owner']) ? $request->input('role') : 'user';
         $user->save();
 
         // Créer le parrainage si code valide

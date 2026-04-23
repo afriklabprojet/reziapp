@@ -16,6 +16,8 @@ class RevenueChartWidget extends ChartWidget
 
     protected int | string | array $columnSpan = 1;
 
+    protected static ?string $maxHeight = '300px';
+
     protected function getData(): array
     {
         return Cache::remember('admin.revenue_chart', 300, fn () => $this->computeData());
@@ -56,6 +58,6 @@ class RevenueChartWidget extends ChartWidget
 
     protected function getType(): string
     {
-        return 'bar';
+        return 'line';
     }
 }

@@ -10,7 +10,7 @@ use App\Models\Residence;
 use App\Models\User;
 use App\Services\BookingService;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\RequiresMysql;
@@ -23,7 +23,7 @@ use Tests\TestCase;
 #[Group('critical')]
 class BookingServiceTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
     use RequiresMysql;
 
     protected User $guest;
@@ -50,10 +50,8 @@ class BookingServiceTest extends TestCase
         $this->guest = User::factory()->create(['role' => 'user']);
         $this->residence = Residence::factory()->create([
             'owner_id' => $this->owner->id,
-            'status' => 'approved',
+            'status' => 'active',
             'cancellation_policy_id' => $this->policy->id,
-            'price_per_night' => 25000,
-            'instant_book' => true,
             'is_available' => true,
         ]);
 

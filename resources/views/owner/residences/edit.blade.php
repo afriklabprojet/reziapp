@@ -96,14 +96,24 @@
                                 return city ? city.communes : [];
                             }
                         }">
-                            <div>
+                            <div x-data="addressAutocomplete()">
                                 <label for="address" class="block text-sm font-medium text-gray-700 mb-1">
                                     Adresse complète *
                                 </label>
-                                <input type="text" id="address" name="address" required
-                                    class="input-field @error('address') border-red-500 @enderror"
-                                    value="{{ old('address', $residence->address) }}"
-                                    placeholder="Ex: Rue des Jardins, près du supermarché">
+                                <div class="relative">
+                                    <input type="text" id="address" name="address" required
+                                        x-ref="addressInput"
+                                        class="input-field @error('address') border-red-500 @enderror"
+                                        value="{{ old('address', $residence->address) }}"
+                                        placeholder="Ex: Rue des Jardins, Cocody, Abidjan"
+                                        autocomplete="new-password">
+                                    <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        </svg>
+                                    </div>
+                                </div>
                                 @error('address')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror

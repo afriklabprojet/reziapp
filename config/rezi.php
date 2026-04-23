@@ -20,11 +20,11 @@ return [
 
     'company' => [
         'name' => env('REZI_COMPANY_NAME', 'REZI SAS'),
-        'email' => env('REZI_COMPANY_EMAIL', 'contact@rezi.ci'),
+        'email' => env('REZI_COMPANY_EMAIL', 'contact@reziapp.ci'),
         'phone' => env('REZI_COMPANY_PHONE', '+225 07 00 00 00 00'),
         'phone_raw' => env('REZI_COMPANY_PHONE_RAW', '+2250700000000'),
         'address' => env('REZI_COMPANY_ADDRESS', "Abidjan, Cocody\nCôte d'Ivoire"),
-        'website' => env('REZI_COMPANY_WEBSITE', 'www.rezi.ci'),
+        'website' => env('REZI_COMPANY_WEBSITE', 'www.reziapp.ci'),
         'tax_id' => env('REZI_COMPANY_TAX_ID', 'CI-000000000'),
         'city' => env('REZI_COMPANY_CITY', 'Abidjan'),
     ],
@@ -36,9 +36,9 @@ return [
     */
 
     'social' => [
-        'facebook' => env('REZI_SOCIAL_FACEBOOK', 'https://facebook.com/rezi.ci'),
-        'instagram' => env('REZI_SOCIAL_INSTAGRAM', 'https://instagram.com/rezi.ci'),
-        'tiktok' => env('REZI_SOCIAL_TIKTOK', 'https://tiktok.com/@rezi.ci'),
+        'facebook' => env('REZI_SOCIAL_FACEBOOK', 'https://facebook.com/reziapp.ci'),
+        'instagram' => env('REZI_SOCIAL_INSTAGRAM', 'https://instagram.com/reziapp.ci'),
+        'tiktok' => env('REZI_SOCIAL_TIKTOK', 'https://tiktok.com/@reziapp.ci'),
         'twitter' => env('REZI_SOCIAL_TWITTER', ''),
     ],
 
@@ -49,8 +49,7 @@ return [
     */
 
     'pricing' => [
-        'service_fee_rate' => env('REZI_SERVICE_FEE_RATE', 0.10),       // 10% client
-        'tax_rate' => env('REZI_TAX_RATE', 0.18),                       // 18% TVA
+        'state_tax' => env('REZI_STATE_TAX', 1000),                        // 1 000 FCFA taxe d'État fixe (locataire uniquement)
         'owner_commission_rate' => env('REZI_OWNER_COMMISSION_RATE', 0.10), // 10% propriétaire (fallback, PlatformSetting a priorité)
         'min_withdrawal' => env('REZI_MIN_WITHDRAWAL', 5000),            // 5 000 FCFA minimum
     ],

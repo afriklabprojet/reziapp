@@ -10,7 +10,7 @@
             <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Historique des paiements</h1>
             <p class="mt-2 text-gray-600">Consultez tous vos paiements d'abonnement</p>
         </div>
-        <a href="{{ route('owner.subscriptions.index') }}" class="btn-secondary">
+        <a href="{{ route('owner.marketing.subscriptions.index') }}" class="btn-secondary">
             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
             </svg>
@@ -95,7 +95,7 @@
                 </svg>
                 <h3 class="mt-4 text-lg font-medium text-gray-900">Aucun paiement</h3>
                 <p class="mt-2 text-gray-500">Vous n'avez pas encore effectué de paiement d'abonnement.</p>
-                <a href="{{ route('owner.subscriptions.index') }}" class="mt-4 inline-flex items-center btn-primary">
+                <a href="{{ route('owner.marketing.subscriptions.index') }}" class="mt-4 inline-flex items-center btn-primary">
                     Voir les plans
                 </a>
             </div>

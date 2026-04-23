@@ -4,7 +4,7 @@ namespace Tests\Unit;
 
 use App\Models\User;
 use App\Services\VerificationService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\RequiresMysql;
 use Tests\TestCase;
@@ -15,7 +15,7 @@ use Tests\TestCase;
  */
 class VerificationServiceTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
     use RequiresMysql;
 
     protected VerificationService $service;
@@ -92,8 +92,8 @@ class VerificationServiceTest extends TestCase
     {
         $user = User::factory()->create([
             'email_verified_at' => now(),
-            'phone_verified_at' => null,
-            'identity_verified_at' => null,
+            'phone_verified' => false,
+            'identity_verified' => false,
         ]);
 
         $score = $this->service->calculateTrustScore($user);
@@ -108,14 +108,14 @@ class VerificationServiceTest extends TestCase
     {
         $unverified = User::factory()->create([
             'email_verified_at' => now(),
-            'phone_verified_at' => null,
-            'identity_verified_at' => null,
+            'phone_verified' => false,
+            'identity_verified' => false,
         ]);
 
         $verified = User::factory()->create([
             'email_verified_at' => now(),
-            'phone_verified_at' => now(),
-            'identity_verified_at' => now(),
+            'phone_verified' => true,
+            'identity_verified' => true,
         ]);
 
         $scoreU = $this->service->calculateTrustScore($unverified);
@@ -179,7 +179,7 @@ class VerificationServiceTest extends TestCase
             'fraud',
             'Activité frauduleuse détectée',
             $admin->id,
-            'full',
+            'banned',
             true,
         );
 

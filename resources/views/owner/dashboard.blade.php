@@ -369,7 +369,7 @@
                         <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0 text-xl">🚀</div>
                         <div class="flex-1 min-w-0">
                             <p class="font-bold text-white text-base">Publiez votre première résidence en 5 minutes</p>
-                            <p class="text-orange-100 text-sm mt-0.5">Rejoignez {{ number_format(\App\Models\User::role('owner')->count()) }}+ propriétaires actifs sur REZI. Gratuit, sans commission.</p>
+                            <p class="text-orange-100 text-sm mt-0.5">Rejoignez {{ number_format(\App\Models\User::where('role', 'owner')->count()) }}+ propriétaires actifs sur REZI. Gratuit, sans commission.</p>
                         </div>
                         <div class="flex items-center gap-3 shrink-0">
                             <a href="{{ route('owner.residences.create') }}"

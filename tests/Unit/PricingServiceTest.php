@@ -28,9 +28,8 @@ class PricingServiceTest extends TestCase
 
         // Fixer les taux pour des tests déterministes
         config([
-            'rezi.pricing.service_fee_rate' => 0.10,
-            'rezi.pricing.tax_rate' => 0.18,
-            'rezi.pricing.owner_commission_rate' => 0.03,
+            'rezi.pricing.state_tax' => 1000,
+            'rezi.pricing.owner_commission_rate' => 0.10,
         ]);
     }
 
@@ -116,17 +115,15 @@ class PricingServiceTest extends TestCase
         $result = $this->service->calculatePrice($residence, $checkIn, $checkOut);
 
         $subtotal = 100000; // 2 × 50000
-        $cleaningFee = 0; // pas de colonne cleaning_fee sur residences
+        $cleaningFee = 0;
         $serviceFee = 0; // commission prélevée sur le propriétaire, pas sur le locataire
-        $taxableAmount = $subtotal + $cleaningFee; // 100000
-        $taxes = round($taxableAmount * 0.18); // 18000
-        $total = $subtotal + $cleaningFee + $serviceFee + $taxes; // 118000
+        $taxes = 1000; // taxe d'État fixe
+        $total = $subtotal + $cleaningFee + $taxes; // 101000
 
         $this->assertEquals($subtotal, $result['subtotal']);
         $this->assertEquals($serviceFee, $result['service_fee']);
-        $this->assertEquals(10, $result['service_fee_rate']);
         $this->assertEquals($taxes, $result['taxes']);
-        $this->assertEquals(18, $result['tax_rate']);
+        $this->assertEquals(0, $result['tax_rate']);
         $this->assertEquals($total, $result['total_amount']);
     }
 

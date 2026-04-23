@@ -641,7 +641,7 @@
 
                                         <div class="flex justify-between">
                                             <span class="underline decoration-dotted text-gray-600 cursor-help"
-                                                title="TVA réglementation ivoirienne">Taxes</span>
+                                                title="Taxe d'État fixe">Taxe d'État</span>
                                             <span x-text="formatCurrency(price?.taxes)"></span>
                                         </div>
 

@@ -91,6 +91,7 @@ class JekoPaymentService
         ];
 
         try {
+            /** @var \Illuminate\Http\Client\Response $response */
             $response = Http::withHeaders([
                 'X-API-KEY' => $this->apiKey,
                 'X-API-KEY-ID' => $this->apiKeyId,
@@ -194,6 +195,7 @@ class JekoPaymentService
         ];
 
         try {
+            /** @var \Illuminate\Http\Client\Response $response */
             $response = Http::withHeaders([
                 'X-API-KEY' => $this->apiKey,
                 'X-API-KEY-ID' => $this->apiKeyId,
@@ -267,6 +269,7 @@ class JekoPaymentService
     public function getPaymentStatus(string $paymentRequestId): array
     {
         try {
+            /** @var \Illuminate\Http\Client\Response $response */
             $response = Http::withHeaders([
                 'X-API-KEY' => $this->apiKey,
                 'X-API-KEY-ID' => $this->apiKeyId,
@@ -365,6 +368,7 @@ class JekoPaymentService
         ];
 
         try {
+            /** @var \Illuminate\Http\Client\Response $response */
             $response = Http::withHeaders([
                 'X-API-KEY' => $this->apiKey,
                 'X-API-KEY-ID' => $this->apiKeyId,
@@ -457,6 +461,7 @@ class JekoPaymentService
         ];
 
         try {
+            /** @var \Illuminate\Http\Client\Response $response */
             $response = Http::withHeaders([
                 'X-API-KEY' => $this->apiKey,
                 'X-API-KEY-ID' => $this->apiKeyId,
@@ -568,6 +573,7 @@ class JekoPaymentService
         ];
 
         try {
+            /** @var \Illuminate\Http\Client\Response $response */
             $response = Http::withHeaders([
                 'X-API-KEY' => $this->apiKey,
                 'X-API-KEY-ID' => $this->apiKeyId,
@@ -626,6 +632,7 @@ class JekoPaymentService
     public function getStoreBalance(): array
     {
         try {
+            /** @var \Illuminate\Http\Client\Response $response */
             $response = Http::withHeaders([
                 'X-API-KEY' => $this->apiKey,
                 'X-API-KEY-ID' => $this->apiKeyId,
@@ -708,6 +715,7 @@ class JekoPaymentService
         try {
             $payout->markAsProcessing();
 
+            /** @var \Illuminate\Http\Client\Response $response */
             $response = Http::withHeaders([
                 'X-API-KEY' => $this->apiKey,
                 'X-API-KEY-ID' => $this->apiKeyId,

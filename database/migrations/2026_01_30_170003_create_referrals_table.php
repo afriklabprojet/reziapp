@@ -12,41 +12,44 @@ return new class () extends Migration {
     {
         // Ajout du code de parrainage aux utilisateurs
         Schema::table('users', function (Blueprint $table) {
-            $table->string('referral_code', 20)->nullable()->unique()->after('remember_token');
-            $table->foreignId('referred_by')->nullable()->constrained('users')->onDelete('set null')->after('referral_code');
-            $table->decimal('referral_balance', 10, 2)->default(0)->after('referred_by'); // Solde de récompenses
+            if (! Schema::hasColumn('users', 'referral_code')) {
+                $table->string('referral_code', 20)->nullable()->unique()->after('remember_token');
+            }
+            if (! Schema::hasColumn('users', 'referred_by')) {
+                $table->foreignId('referred_by')->nullable()->constrained('users')->onDelete('set null')->after('referral_code');
+            }
+            if (! Schema::hasColumn('users', 'referral_balance')) {
+                $table->decimal('referral_balance', 10, 2)->default(0)->after('referred_by');
+            }
         });
 
         // Table des parrainages
-        Schema::create('referrals', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('referrer_id')->constrained('users')->onDelete('cascade'); // Parrain
-            $table->foreignId('referred_id')->constrained('users')->onDelete('cascade'); // Filleul
-
-            $table->enum('status', ['pending', 'qualified', 'rewarded', 'cancelled'])->default('pending');
-            // pending = inscrit, qualified = a fait une action qualifiante, rewarded = récompenses attribuées
-
-            $table->datetime('qualified_at')->nullable(); // Date de qualification
-            $table->datetime('rewarded_at')->nullable();
-
-            // Récompenses
-            $table->decimal('referrer_reward', 10, 2)->nullable(); // Récompense parrain
-            $table->decimal('referred_reward', 10, 2)->nullable(); // Récompense filleul
-            $table->string('reward_type')->default('credit'); // credit, coupon, discount
-
-            $table->text('notes')->nullable();
-            $table->timestamps();
-
-            $table->unique(['referrer_id', 'referred_id']);
-        });
+        if (! Schema::hasTable('referrals')) {
+            Schema::create('referrals', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('referrer_id')->constrained('users')->onDelete('cascade');
+                $table->foreignId('referred_id')->constrained('users')->onDelete('cascade');
+                $table->enum('status', ['pending', 'qualified', 'rewarded', 'cancelled'])->default('pending');
+                $table->datetime('qualified_at')->nullable();
+                $table->datetime('rewarded_at')->nullable();
+                $table->decimal('referrer_reward', 10, 2)->nullable();
+                $table->decimal('referred_reward', 10, 2)->nullable();
+                $table->string('reward_type')->default('credit');
+                $table->text('notes')->nullable();
+                $table->timestamps();
+                $table->unique(['referrer_id', 'referred_id']);
+            });
+        }
 
         // Configuration du programme de parrainage
-        Schema::create('referral_settings', function (Blueprint $table) {
-            $table->id();
-            $table->string('key')->unique();
-            $table->text('value');
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('referral_settings')) {
+            Schema::create('referral_settings', function (Blueprint $table) {
+                $table->id();
+                $table->string('key')->unique();
+                $table->text('value');
+                $table->timestamps();
+            });
+        }
     }
 
     public function down(): void

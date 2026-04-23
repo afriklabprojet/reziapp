@@ -30,7 +30,8 @@ Route::post('/webhooks/jeko', [JekoWebhookController::class, 'handle'])
     ->name('webhooks.jeko');
 
 // Alias pour URL webhook configurée dans Jeko dashboard
-Route::post('/webhooks', [JekoWebhookController::class, 'handle']);
+Route::post('/webhooks', [JekoWebhookController::class, 'handle'])
+    ->name('webhooks.jeko.legacy');
 
 // WhatsApp Business API Webhook
 Route::prefix('webhooks/whatsapp')->group(function () {
@@ -46,10 +47,14 @@ Route::prefix('webhooks/whatsapp')->group(function () {
 | Source : appels anciens, app mobile ou crawlers
 |--------------------------------------------------------------------------
 */
-Route::get('/communes', fn () => redirect('/api/v1/communes', 301));
-Route::get('/cities', fn () => redirect('/api/v1/locations/countries/ci/cities', 301));
-Route::get('/amenities', fn () => redirect('/api/v1/amenities', 301));
-Route::get('/residence-types', fn () => redirect('/api/v1/residences', 301));
+Route::get('/communes', fn () => redirect('/api/v1/communes', 301))
+    ->name('api.compat.communes');
+Route::get('/cities', fn () => redirect('/api/v1/locations/countries/ci/cities', 301))
+    ->name('api.compat.cities');
+Route::get('/amenities', fn () => redirect('/api/v1/amenities', 301))
+    ->name('api.compat.amenities');
+Route::get('/residence-types', fn () => redirect('/api/v1/residences', 301))
+    ->name('api.compat.residence-types');
 
 Route::prefix('v1')->group(function () {
 

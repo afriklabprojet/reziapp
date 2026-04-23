@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Notifications\LoyaltyTierUpgraded;
+use App\Notifications\ResetPasswordFr;
+use App\Notifications\VerifyEmailFr;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -23,10 +25,11 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
     /**
      * Determine if the user can access the Filament panel.
+     * Super admin et admin ont accès au panel.
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->role === 'admin';
+        return in_array($this->role, ['admin', 'super_admin'], true);
     }
 
     /**
@@ -175,11 +178,19 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     }
 
     /**
-     * Check if user is admin
+     * Check if user is admin (inclut super_admin qui hérite de tous les droits admin)
      */
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return in_array($this->role, ['admin', 'super_admin'], true);
+    }
+
+    /**
+     * Check if user is super admin (accès total, peut gérer les admins)
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
     }
 
     /**
@@ -938,5 +949,15 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         }
 
         return (int) now()->diffInMinutes($this->withdrawal_pin_locked_until, false);
+    }
+
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyEmailFr());
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordFr($token));
     }
 }

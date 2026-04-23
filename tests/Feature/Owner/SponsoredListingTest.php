@@ -6,7 +6,7 @@ use App\Models\CancellationPolicy;
 use App\Models\Residence;
 use App\Models\SponsoredListing;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\RequiresMysql;
@@ -18,7 +18,7 @@ use Tests\TestCase;
  */
 class SponsoredListingTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
     use WithFaker;
     use RequiresMysql;
 
@@ -44,7 +44,7 @@ class SponsoredListingTest extends TestCase
         $this->residence = Residence::factory()->create([
             'owner_id' => $this->owner->id,
             'cancellation_policy_id' => $policy->id,
-            'status' => 'approved',
+            'status' => 'active',
         ]);
     }
 
@@ -131,18 +131,15 @@ class SponsoredListingTest extends TestCase
                 'duration' => 7,
             ]);
 
-        $response->assertSessionHasErrors(['residence_id']);
+        $response->assertStatus(404);
     }
-
-    // ========================================
-    // GESTION
-    // ========================================
 
     #[Test]
     public function owner_can_view_sponsored_details(): void
     {
         $sponsored = SponsoredListing::create([
             'residence_id' => $this->residence->id,
+            'user_id' => $this->owner->id,
             'type' => 'featured_home',
             'duration_days' => 7,
             'amount' => 25000,
@@ -162,16 +159,18 @@ class SponsoredListingTest extends TestCase
     {
         $sponsored = SponsoredListing::create([
             'residence_id' => $this->residence->id,
+            'user_id' => $this->owner->id,
             'type' => 'top_search',
             'duration_days' => 14,
             'amount' => 30000,
             'status' => 'active',
-            'starts_at' => now(),
+            'is_paid' => true,
+            'starts_at' => now()->subMinute(),
             'ends_at' => now()->addDays(14),
         ]);
 
         $response = $this->actingAs($this->owner)
-            ->post(route('owner.marketing.sponsored.pause', $sponsored));
+            ->patch(route('owner.marketing.sponsored.pause', $sponsored));
 
         $response->assertRedirect();
         $sponsored->refresh();
@@ -183,17 +182,18 @@ class SponsoredListingTest extends TestCase
     {
         $sponsored = SponsoredListing::create([
             'residence_id' => $this->residence->id,
+            'user_id' => $this->owner->id,
             'type' => 'highlighted',
             'duration_days' => 7,
             'amount' => 7500,
             'status' => 'paused',
-            'payment_status' => 'paid',
-            'starts_at' => now(),
+            'is_paid' => true,
+            'starts_at' => now()->subMinute(),
             'ends_at' => now()->addDays(7),
         ]);
 
         $response = $this->actingAs($this->owner)
-            ->post(route('owner.marketing.sponsored.resume', $sponsored));
+            ->patch(route('owner.marketing.sponsored.resume', $sponsored));
 
         $response->assertRedirect();
         $sponsored->refresh();
@@ -205,6 +205,7 @@ class SponsoredListingTest extends TestCase
     {
         $sponsored = SponsoredListing::create([
             'residence_id' => $this->residence->id,
+            'user_id' => $this->owner->id,
             'type' => 'premium_listing',
             'duration_days' => 30,
             'amount' => 105000,
@@ -212,7 +213,7 @@ class SponsoredListingTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->owner)
-            ->post(route('owner.marketing.sponsored.cancel', $sponsored));
+            ->patch(route('owner.marketing.sponsored.cancel', $sponsored));
 
         $response->assertRedirect();
         $sponsored->refresh();
@@ -225,6 +226,7 @@ class SponsoredListingTest extends TestCase
         $otherOwner = User::factory()->create(['role' => 'owner']);
         $sponsored = SponsoredListing::create([
             'residence_id' => $this->residence->id,
+            'user_id' => $this->owner->id,
             'type' => 'featured_home',
             'duration_days' => 7,
             'amount' => 25000,

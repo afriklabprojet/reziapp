@@ -25,7 +25,36 @@ class YieldController extends Controller
             ->withCount(['bookings' => fn ($q) => $q->where('check_in', '>=', now())])
             ->get();
 
-        return view('owner.yield.index', compact('residences'));
+        $yieldData = [];
+        foreach ($residences as $residence) {
+            $suggestions = $this->yieldService->applyForResidence($residence, 7);
+            if ($suggestions > 0) {
+                $basePrice = $residence->price_per_day ?? 0;
+                $yieldData[$residence->id] = [
+                    'suggested_price' => $basePrice,
+                    'multiplier'      => 1,
+                    'reason'          => 'Prix de base',
+                ];
+            }
+        }
+
+        $settings = $user->yield_settings ?? [];
+        $gaps     = [];
+
+        foreach ($residences as $residence) {
+            foreach ($this->yieldService->findGapNights($residence) as $gap) {
+                foreach ($gap['dates'] as $date) {
+                    $gaps[] = [
+                        'residence'    => $residence->name,
+                        'residence_id' => $residence->id,
+                        'date'         => \Carbon\Carbon::parse($date),
+                        'nights'       => $gap['gap_days'],
+                    ];
+                }
+            }
+        }
+
+        return view('owner.yield.index', compact('residences', 'yieldData', 'settings', 'gaps'));
     }
 
     public function toggleAutoPricing(Request $request): RedirectResponse
@@ -85,5 +114,43 @@ class YieldController extends Controller
         }
 
         return view('owner.yield.gaps', compact('allGaps'));
+    }
+
+    public function updateSettings(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'max_increase'        => 'nullable|integer|min:0|max:200',
+            'max_decrease'        => 'nullable|integer|min:0|max:50',
+            'weekend_premium'     => 'nullable|integer|min:0|max:100',
+            'high_season_premium' => 'nullable|integer|min:0|max:100',
+            'auto_apply'          => 'nullable|boolean',
+        ]);
+
+        $request->user()->update([
+            'yield_settings' => $validated,
+        ]);
+
+        return back()->with('success', 'Paramètres de tarification sauvegardés.');
+    }
+
+    public function applyGapDiscount(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'residence_id' => 'required|exists:residences,id',
+            'date'         => 'required|date',
+        ]);
+
+        $residence = $request->user()->residences()->findOrFail($validated['residence_id']);
+
+        $basePrice    = $residence->price_per_day ?? 0;
+        $discountPct  = $residence->gap_night_discount_percent ?? 20;
+        $discounted   = (int) round($basePrice * (1 - $discountPct / 100));
+
+        \App\Models\DailyPrice::updateOrCreate(
+            ['residence_id' => $residence->id, 'date' => $validated['date']],
+            ['price' => $discounted, 'note' => "Gap-night -{$discountPct}%"],
+        );
+
+        return back()->with('success', 'Réduction appliquée sur la nuit isolée.');
     }
 }

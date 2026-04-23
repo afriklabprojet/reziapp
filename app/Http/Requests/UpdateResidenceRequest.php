@@ -63,7 +63,7 @@ class UpdateResidenceRequest extends FormRequest
         return [
             // Informations générales
             'name' => ['sometimes', 'string', 'max:255'],
-            'description' => ['sometimes', 'string', 'min:50', 'max:5000'],
+            'description' => ['sometimes', 'string', 'min:10', 'max:5000'],
             'type' => ['sometimes', 'string', 'in:studio,apartment,house,villa,duplex,other'],
             'rental_type' => ['nullable', 'string', 'in:standard,short_term,colocation,corporate,seasonal'],
             'type_location' => ['sometimes', 'string', 'in:apartment,residence_meublee,hotel'],
