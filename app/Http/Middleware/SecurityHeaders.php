@@ -71,8 +71,8 @@ class SecurityHeaders
             "img-src 'self' data: blob: https:",
             // Polices locales, data URIs et fonts.bunny.net + Google Fonts
             "font-src 'self' data: {$externalFontHosts} https://fonts.gstatic.com",
-            // WebSockets Pusher + API Jeko + Mapbox + Google APIs
-            "connect-src 'self' wss://*.pusher.com https://*.pusher.com https://*.pusherapp.com https://soketi.app https://api.jeko.africa https://api.mapbox.com https://events.mapbox.com https://maps.googleapis.com https://maps.gstatic.com https://www.clarity.ms",
+            // WebSockets Pusher + API Jeko + Mapbox + Google APIs + Microsoft Clarity collect
+            "connect-src 'self' wss://*.pusher.com https://*.pusher.com https://*.pusherapp.com https://soketi.app https://api.jeko.africa https://api.mapbox.com https://events.mapbox.com https://maps.googleapis.com https://maps.gstatic.com https://www.clarity.ms https://o.clarity.ms",
             // Aucun embed/iframe autorisé
             "frame-src 'none'",
             // Bloquer les plugins (Flash, etc.)
@@ -141,7 +141,7 @@ class SecurityHeaders
         }
 
         // La page selfie nécessite l'accès caméra — on lève la restriction
-        if ($request->routeIs('verification.identity.selfie*') || $request->routeIs('verification.identity.selfie')) {
+        if ($request->routeIs('verification.identity.selfie.form') || $request->routeIs('verification.identity.selfie')) {
             $response->headers->set('Permissions-Policy', 'camera=(self), microphone=(), geolocation=(self)');
         }
 
