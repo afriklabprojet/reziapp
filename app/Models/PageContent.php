@@ -442,47 +442,101 @@ class PageContent extends Model
     public static function defaultGuideProprietaireData(): array
     {
         return [
-            'title' => 'Guide Propriétaire',
-            'subtitle' => 'Tout ce que vous devez savoir pour publier et gérer vos résidences sur REZI',
+            'title'        => 'Guide Propriétaire',
+            'subtitle'     => 'Tout ce que vous devez savoir pour publier et gérer vos résidences sur REZI',
+            'introduction' => 'REZI est la plateforme de référence pour la location meublée à Abidjan. Que vous ayez un studio ou plusieurs appartements, ce guide vous accompagne pas à pas pour publier, optimiser et rentabiliser vos biens.',
             'steps' => [
                 [
-                    'number' => 1,
-                    'title' => 'Créer votre compte propriétaire',
-                    'content' => 'Inscrivez-vous sur REZI et sélectionnez le rôle « Propriétaire ». Complétez votre profil avec vos informations de contact et une photo. Un profil complet inspire confiance aux locataires potentiels.',
-                    'tip' => 'Un profil vérifié avec photo obtient en moyenne 3x plus de contacts.',
+                    'number'      => 1,
+                    'title'       => 'Créer votre compte propriétaire',
+                    'description' => 'Inscrivez-vous sur REZI et sélectionnez le rôle « Propriétaire ». Complétez votre profil avec vos informations de contact et une photo.',
+                    'substeps'    => [
+                        'Cliquez sur « S\'inscrire » et choisissez « Je suis propriétaire ».',
+                        'Renseignez votre nom, numéro de téléphone et email.',
+                        'Ajoutez une photo de profil pour inspirer confiance.',
+                        'Vérifiez votre email pour activer votre compte.',
+                    ],
+                    'tips' => [
+                        'Un profil vérifié avec photo obtient en moyenne 3× plus de contacts.',
+                        'Ajoutez votre numéro WhatsApp pour faciliter la communication.',
+                    ],
                 ],
                 [
-                    'number' => 2,
-                    'title' => 'Publier votre première résidence',
-                    'content' => "Depuis votre tableau de bord, cliquez sur « Ajouter une résidence ». L'assistant de publication vous guide en 5 étapes simples.",
-                    'substeps' => [
+                    'number'      => 2,
+                    'title'       => 'Publier votre première résidence',
+                    'description' => "Depuis votre tableau de bord, cliquez sur « Ajouter une résidence ». L'assistant de publication vous guide en 5 étapes simples.",
+                    'substeps'    => [
                         'Informations générales — Nom, catégorie, description, nombre de pièces.',
                         'Localisation — Commune, quartier et position exacte sur la carte.',
                         'Photos — Ajoutez jusqu\'à 10 photos de qualité.',
-                        'Tarification — Prix par jour, semaine et mois.',
-                        'Confirmation — Vérifiez et soumettez.',
+                        'Tarification — Prix par nuit, par semaine et par mois.',
+                        'Confirmation — Vérifiez et soumettez pour modération.',
                     ],
-                ],
-                [
-                    'number' => 3,
-                    'title' => 'Optimiser votre annonce',
-                    'content' => 'Pour maximiser vos contacts et votre visibilité :',
                     'tips' => [
-                        'Photos de qualité — Des photos lumineuses augmentent les contacts de 70%.',
-                        'Description détaillée — Décrivez les équipements, le quartier, les commodités.',
-                        'Prix compétitif — Consultez les résidences similaires.',
-                        'Réactivité — Répondez rapidement aux contacts.',
+                        'Les annonces avec au moins 5 photos reçoivent 2× plus de vues.',
+                        'La modération prend généralement moins de 24 heures ouvrées.',
                     ],
                 ],
                 [
-                    'number' => 4,
-                    'title' => 'Utiliser les outils marketing',
-                    'content' => 'REZI propose plusieurs outils pour booster votre visibilité.',
-                    'tools' => [
-                        ['icon' => '🚀', 'name' => 'Sponsoring', 'description' => 'Mettez votre résidence en avant dans les résultats de recherche.'],
-                        ['icon' => '🎁', 'name' => 'Promotions', 'description' => 'Créez des offres spéciales pour attirer plus de locataires.'],
-                        ['icon' => '📊', 'name' => 'Statistiques', 'description' => 'Suivez les performances de vos annonces en temps réel.'],
+                    'number'      => 3,
+                    'title'       => 'Optimiser votre annonce',
+                    'description' => 'Une annonce optimisée se démarque et génère plus de contacts. Voici les leviers essentiels :',
+                    'tips' => [
+                        'Photos lumineuses — Prenez vos photos en journée, fenêtres ouvertes.',
+                        'Description complète — Mentionnez les équipements, le quartier, les transports proches.',
+                        'Prix compétitif — Consultez les résidences similaires dans votre zone.',
+                        'Réactivité — Répondez aux messages dans les 2 heures pour remonter dans les résultats.',
+                        'Disponibilité à jour — Mettez à jour votre calendrier régulièrement.',
                     ],
+                ],
+                [
+                    'number'      => 4,
+                    'title'       => 'Utiliser les outils marketing',
+                    'description' => 'REZI propose des outils puissants pour maximiser votre visibilité et remplir vos résidences toute l\'année.',
+                    'tools' => [
+                        [
+                            'icon'        => '🚀',
+                            'name'        => 'Listings Sponsorisés',
+                            'description' => 'Mettez votre résidence en tête des résultats de recherche et sur la carte. Visibilité maximale auprès des locataires actifs.',
+                        ],
+                        [
+                            'icon'        => '🎁',
+                            'name'        => 'Promotions Flash',
+                            'description' => 'Créez des offres temporaires (remise %, nuit offerte...) pour booster les réservations en période creuse.',
+                        ],
+                        [
+                            'icon'        => '📊',
+                            'name'        => 'Statistiques & Insights',
+                            'description' => 'Suivez vos vues, contacts et taux de conversion en temps réel pour ajuster votre stratégie.',
+                        ],
+                        [
+                            'icon'        => '💬',
+                            'name'        => 'Réponses Automatiques',
+                            'description' => 'Configurez des réponses automatiques pour les questions fréquentes et restez réactif 24h/24.',
+                        ],
+                    ],
+                ],
+            ],
+            'faq' => [
+                [
+                    'question' => 'La publication est-elle gratuite ?',
+                    'answer'   => 'Oui, la publication d\'une résidence sur REZI est entièrement gratuite. Nous proposons des options payantes pour booster votre visibilité (sponsoring, mise en avant).',
+                ],
+                [
+                    'question' => 'Combien de temps prend la modération ?',
+                    'answer'   => 'La modération prend généralement moins de 24 heures ouvrées. Vous recevrez une notification par email dès que votre annonce est approuvée.',
+                ],
+                [
+                    'question' => 'Puis-je publier plusieurs résidences ?',
+                    'answer'   => 'Oui, il n\'y a pas de limite au nombre de résidences que vous pouvez publier. Chaque résidence dispose de sa propre page et de ses propres statistiques.',
+                ],
+                [
+                    'question' => 'Comment sont gérés les paiements ?',
+                    'answer'   => 'REZI est une plateforme de mise en relation. Les modalités de paiement sont convenues directement entre vous et le locataire. Nous n\'intervenons pas dans les transactions financières.',
+                ],
+                [
+                    'question' => 'Que faire si j\'ai un problème avec une annonce ?',
+                    'answer'   => 'Contactez notre équipe support via la page Contact ou par email à support@reziapp.ci. Nous répondons sous 24h.',
                 ],
             ],
         ];

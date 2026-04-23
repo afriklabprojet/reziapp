@@ -288,8 +288,10 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
     /**
      * Residences owned by this user
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Residence>
      */
-    public function residences()
+    public function residences(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Residence::class, 'owner_id');
     }
