@@ -73,6 +73,11 @@ return Application::configure(basePath: dirname(__DIR__))
             ->sundays()
             ->at('04:00')
             ->description('Nettoyage anciensévénements webhook');
+
+        // ── Newsletter hebdomadaire (Option C) ──
+        $schedule->command('newsletter:weekly')
+            ->weeklyOn(1, '09:00')
+            ->description('Newsletter hebdomadaire — meilleures résidences récentes');
     })
     ->withMiddleware(function (Middleware $middleware): void {
         // Middleware aliases pour les routes

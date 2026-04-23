@@ -6,6 +6,7 @@ namespace App\Observers;
 
 use App\Jobs\ComputeListingScore;
 use App\Jobs\FetchNearbyPlaces;
+use App\Jobs\SendNewsletterCampaign;
 use App\Models\Residence;
 use Illuminate\Support\Facades\Cache;
 
@@ -123,6 +124,17 @@ class ResidenceObserver
         }
 
         $this->invalidateSimilarCache($residence);
+
+        // Option B : nouvelle approbation → notifier les abonnés newsletter
+        // Délai de 2 min pour laisser les photos/score se traiter d'abord
+        if ($residence->isDirty('status')
+            && $residence->status === 'approved'
+            && $residence->getOriginal('status') !== 'approved'
+        ) {
+            SendNewsletterCampaign::dispatch([$residence->id], 'new_residence')
+                ->onQueue('default')
+                ->delay(now()->addMinutes(2));
+        }
     }
 
     /**
