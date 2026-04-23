@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -14,19 +15,34 @@ class SeoData extends Model
     protected $fillable = [
         'seoable_type',
         'seoable_id',
+        'route_name',
+        'url_pattern',
+        'page_type',
+        'locale',
         'meta_title',
         'meta_description',
         'keywords',
         'og_data',
         'structured_data',
         'canonical_url',
-        'locale',
+        'is_noindex',
+        'is_nofollow',
+        'priority',
+        // virtual (handled via og_data / structured_data)
+        'og_title',
+        'og_description',
+        'og_image',
+        'og_type',
+        'schema_json',
     ];
 
     protected $casts = [
-        'keywords' => 'array',
-        'og_data' => 'array',
-        'structured_data' => 'array',
+        'keywords'         => 'array',
+        'og_data'          => 'array',
+        'structured_data'  => 'array',
+        'is_noindex'       => 'boolean',
+        'is_nofollow'      => 'boolean',
+        'priority'         => 'decimal:1',
     ];
 
     // ===== RELATIONSHIPS =====
@@ -43,35 +59,79 @@ class SeoData extends Model
         return $query->where('locale', $locale);
     }
 
-    // ===== ACCESSORS =====
-
-    /**
-     * Get OG title from og_data JSON.
-     */
-    public function getOgTitleAttribute(): ?string
+    public function scopeForRoute($query, string $routeName)
     {
-        return $this->og_data['title'] ?? null;
+        return $query->where('route_name', $routeName);
     }
 
-    /**
-     * Get OG description from og_data JSON.
-     */
-    public function getOgDescriptionAttribute(): ?string
+    // ===== VIRTUAL ATTRIBUTES (og_data sub-fields) =====
+
+    protected function ogTitle(): Attribute
     {
-        return $this->og_data['description'] ?? null;
+        return Attribute::make(
+            get: fn () => ($this->og_data ?? [])['title'] ?? ($this->og_data ?? [])['og:title'] ?? null,
+            set: function (?string $value) {
+                $data = $this->og_data ?? [];
+                $data['title'] = $value;
+                return ['og_data' => $data];
+            },
+        );
     }
 
-    /**
-     * Get OG image from og_data JSON.
-     */
-    public function getOgImageAttribute(): ?string
+    protected function ogDescription(): Attribute
     {
-        return $this->og_data['image'] ?? null;
+        return Attribute::make(
+            get: fn () => ($this->og_data ?? [])['description'] ?? ($this->og_data ?? [])['og:description'] ?? null,
+            set: function (?string $value) {
+                $data = $this->og_data ?? [];
+                $data['description'] = $value;
+                return ['og_data' => $data];
+            },
+        );
     }
 
-    /**
-     * Obtenir ou créer les données SEO pour un modèle
-     */
+    protected function ogImage(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => ($this->og_data ?? [])['image'] ?? ($this->og_data ?? [])['og:image'] ?? null,
+            set: function (?string $value) {
+                $data = $this->og_data ?? [];
+                $data['image'] = $value;
+                return ['og_data' => $data];
+            },
+        );
+    }
+
+    protected function ogType(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => ($this->og_data ?? [])['og:type'] ?? ($this->og_data ?? [])['type'] ?? 'website',
+            set: function (?string $value) {
+                $data = $this->og_data ?? [];
+                $data['og:type'] = $value ?? 'website';
+                return ['og_data' => $data];
+            },
+        );
+    }
+
+    protected function schemaJson(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->structured_data
+                ? json_encode($this->structured_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+                : null,
+            set: function (?string $value) {
+                if (blank($value)) {
+                    return ['structured_data' => null];
+                }
+                $decoded = json_decode($value, true);
+                return ['structured_data' => $decoded ?: null];
+            },
+        );
+    }
+
+    // ===== STATIC HELPERS =====
+
     public static function forModel(Model $model, string $locale = 'fr'): ?self
     {
         return self::where('seoable_type', get_class($model))
@@ -80,9 +140,15 @@ class SeoData extends Model
             ->first();
     }
 
-    /**
-     * Générer les balises meta HTML
-     */
+    public static function forPage(string $routeName, string $locale = 'fr'): ?self
+    {
+        return self::where('route_name', $routeName)
+            ->where('locale', $locale)
+            ->first();
+    }
+
+    // ===== OUTPUT HELPERS =====
+
     public function toMetaTags(): string
     {
         $tags = [];
@@ -96,12 +162,16 @@ class SeoData extends Model
             $tags[] = '<meta name="description" content="'.e($this->meta_description).'">';
         }
 
-        if ($this->meta_keywords && count($this->meta_keywords) > 0) {
-            $tags[] = '<meta name="keywords" content="'.e(implode(', ', $this->meta_keywords)).'">';
+        if ($this->keywords && count($this->keywords) > 0) {
+            $tags[] = '<meta name="keywords" content="'.e(implode(', ', $this->keywords)).'">';
         }
 
-        if ($this->robots) {
-            $tags[] = '<meta name="robots" content="'.e($this->robots).'">';
+        // Robots
+        $robots = [];
+        if ($this->is_noindex) $robots[] = 'noindex';
+        if ($this->is_nofollow) $robots[] = 'nofollow';
+        if ($robots) {
+            $tags[] = '<meta name="robots" content="'.e(implode(', ', $robots)).'">';
         }
 
         if ($this->canonical_url) {
@@ -112,17 +182,14 @@ class SeoData extends Model
         if ($this->og_title) {
             $tags[] = '<meta property="og:title" content="'.e($this->og_title).'">';
         }
-
         if ($this->og_description) {
             $tags[] = '<meta property="og:description" content="'.e($this->og_description).'">';
         }
-
         if ($this->og_image) {
             $tags[] = '<meta property="og:image" content="'.e($this->og_image).'">';
         }
-
-        $tags[] = '<meta property="og:type" content="website">';
-        $tags[] = '<meta property="og:locale" content="'.e($this->locale ?? 'fr_FR').'">';
+        $tags[] = '<meta property="og:type" content="'.e($this->og_type).'">';
+        $tags[] = '<meta property="og:locale" content="'.e($this->locale ?? 'fr_CI').'">';
 
         // Twitter Card
         $tags[] = '<meta name="twitter:card" content="summary_large_image">';
@@ -139,37 +206,16 @@ class SeoData extends Model
         return implode("\n    ", $tags);
     }
 
-    /**
-     * Générer le JSON-LD structuré
-     */
     public function toJsonLd(): string
     {
-        if (!$this->structured_data) {
+        if (! $this->structured_data) {
             return '';
         }
 
-        return '<script type="application/ld+json">'.json_encode($this->structured_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES).'</script>';
-    }
-
-    /**
-     * Obtenir toutes les données SEO formatées pour la vue
-     */
-    public function toArray(): array
-    {
-        return [
-            'title' => $this->meta_title,
-            'description' => $this->meta_description,
-            'keywords' => $this->meta_keywords,
-            'og' => [
-                'title' => $this->og_title,
-                'description' => $this->og_description,
-                'image' => $this->og_image,
-            ],
-            'canonical' => $this->canonical_url,
-            'robots' => $this->robots,
-            'structured_data' => $this->structured_data,
-            'meta_tags' => $this->toMetaTags(),
-            'json_ld' => $this->toJsonLd(),
-        ];
+        return '<script type="application/ld+json">'.json_encode(
+            $this->structured_data,
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        ).'</script>';
     }
 }
+

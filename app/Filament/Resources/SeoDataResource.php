@@ -36,116 +36,107 @@ class SeoDataResource extends Resource
                             ->label('Nom de la route')
                             ->required()
                             ->unique(ignoreRecord: true)
-                            ->placeholder('residences.show'),
+                            ->placeholder('home, residences.index, pages.about…'),
 
                         Forms\Components\TextInput::make('url_pattern')
-                            ->label('Pattern d\'URL')
+                            ->label("Pattern d'URL")
                             ->placeholder('/residences/{slug}'),
 
                         Forms\Components\Select::make('page_type')
                             ->label('Type de page')
                             ->options([
-                                'home' => 'Page d\'accueil',
-                                'listing' => 'Liste',
-                                'detail' => 'Détail',
-                                'static' => 'Page statique',
-                                'search' => 'Recherche',
+                                'home'     => "Page d'accueil",
+                                'listing'  => 'Liste',
+                                'detail'   => 'Détail',
+                                'static'   => 'Page statique',
+                                'search'   => 'Recherche',
                                 'category' => 'Catégorie',
                             ])
                             ->required(),
-                    ])->columns(3),
+
+                        Forms\Components\Select::make('locale')
+                            ->label('Langue')
+                            ->options(['fr' => 'Français', 'en' => 'Anglais'])
+                            ->default('fr')
+                            ->required(),
+                    ])->columns(4),
 
                 Forms\Components\Section::make('Méta-données')
                     ->schema([
-                        Forms\Components\TextInput::make('title')
+                        Forms\Components\TextInput::make('meta_title')
                             ->label('Titre SEO')
                             ->required()
                             ->maxLength(70)
-                            ->helperText('Max 70 caractères recommandés')
+                            ->helperText('Max 70 caractères')
                             ->live()
                             ->afterStateUpdated(fn ($state, Forms\Set $set) =>
-                                $set('title_length', strlen($state ?? ''))),
+                                $set('_title_len', strlen($state ?? ''))),
 
-                        Forms\Components\Placeholder::make('title_length')
-                            ->label('Longueur du titre')
+                        Forms\Components\Placeholder::make('_title_len')
+                            ->label('Longueur')
                             ->content(fn (Forms\Get $get): string =>
-                                strlen($get('title') ?? '').'/70 caractères'),
+                                strlen($get('meta_title') ?? '').'/70'),
 
-                        Forms\Components\Textarea::make('description')
+                        Forms\Components\Textarea::make('meta_description')
                             ->label('Méta description')
                             ->required()
                             ->rows(3)
                             ->maxLength(160)
-                            ->helperText('Max 160 caractères recommandés'),
+                            ->helperText('Max 160 caractères')
+                            ->columnSpanFull(),
 
                         Forms\Components\TagsInput::make('keywords')
                             ->label('Mots-clés')
                             ->separator(',')
-                            ->placeholder('Ajouter un mot-clé'),
-                    ]),
+                            ->placeholder('Ajouter un mot-clé')
+                            ->columnSpanFull(),
+                    ])->columns(2),
 
                 Forms\Components\Section::make('Open Graph (Réseaux sociaux)')
                     ->schema([
                         Forms\Components\TextInput::make('og_title')
                             ->label('Titre OG')
                             ->maxLength(95)
-                            ->placeholder('Utilise le titre SEO si vide'),
-
-                        Forms\Components\Textarea::make('og_description')
-                            ->label('Description OG')
-                            ->rows(2)
-                            ->maxLength(200),
-
-                        Forms\Components\FileUpload::make('og_image')
-                            ->label('Image OG')
-                            ->image()
-                            ->directory('seo/og')
-                            ->helperText('1200x630px recommandé'),
+                            ->placeholder('Même que le titre SEO si vide'),
 
                         Forms\Components\Select::make('og_type')
                             ->label('Type OG')
                             ->options([
                                 'website' => 'Website',
                                 'article' => 'Article',
-                                'place' => 'Place',
-                                'product' => 'Product',
+                                'place'   => 'Place',
                             ])
                             ->default('website'),
-                    ])->columns(2),
 
-                Forms\Components\Section::make('Schema.org (Données structurées)')
+                        Forms\Components\Textarea::make('og_description')
+                            ->label('Description OG')
+                            ->rows(2)
+                            ->maxLength(200)
+                            ->columnSpanFull(),
+
+                        Forms\Components\TextInput::make('og_image')
+                            ->label('URL image OG')
+                            ->url()
+                            ->placeholder('https://… (1200×630px recommandé)')
+                            ->columnSpanFull(),
+                    ])->columns(2)->collapsed(),
+
+                Forms\Components\Section::make('Données structurées (JSON-LD)')
                     ->schema([
-                        Forms\Components\Select::make('schema_type')
-                            ->label('Type de schema')
-                            ->options([
-                                'WebSite' => 'WebSite',
-                                'WebPage' => 'WebPage',
-                                'RealEstateListing' => 'RealEstateListing',
-                                'Place' => 'Place',
-                                'LocalBusiness' => 'LocalBusiness',
-                                'FAQPage' => 'FAQPage',
-                            ]),
-
                         Forms\Components\Textarea::make('schema_json')
-                            ->label('JSON-LD personnalisé')
-                            ->rows(6)
-                            ->helperText('Laissez vide pour générer automatiquement'),
+                            ->label('JSON-LD')
+                            ->rows(8)
+                            ->helperText('Laissez vide pour générer automatiquement via SeoService')
+                            ->columnSpanFull(),
                     ])->collapsed(),
 
-                Forms\Components\Section::make('Options')
+                Forms\Components\Section::make('Options avancées')
                     ->schema([
-                        Forms\Components\Toggle::make('is_noindex')
-                            ->label('NoIndex (ne pas indexer)')
-                            ->helperText('Empêche les moteurs de recherche d\'indexer cette page'),
-
-                        Forms\Components\Toggle::make('is_nofollow')
-                            ->label('NoFollow')
-                            ->helperText('Empêche de suivre les liens de cette page'),
-
                         Forms\Components\TextInput::make('canonical_url')
                             ->label('URL canonique')
                             ->url()
-                            ->placeholder('Laissez vide pour URL automatique'),
+                            ->placeholder('Laissez vide = URL automatique')
+                            ->columnSpan(2),
 
                         Forms\Components\TextInput::make('priority')
                             ->label('Priorité sitemap')
@@ -154,7 +145,15 @@ class SeoDataResource extends Resource
                             ->minValue(0)
                             ->maxValue(1)
                             ->step(0.1),
-                    ])->columns(2),
+
+                        Forms\Components\Toggle::make('is_noindex')
+                            ->label('NoIndex')
+                            ->helperText('Ne pas indexer cette page'),
+
+                        Forms\Components\Toggle::make('is_nofollow')
+                            ->label('NoFollow')
+                            ->helperText('Ne pas suivre les liens'),
+                    ])->columns(5)->collapsed(),
             ]);
     }
 
@@ -165,35 +164,49 @@ class SeoDataResource extends Resource
                 Tables\Columns\TextColumn::make('route_name')
                     ->label('Route')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->weight('bold'),
 
                 Tables\Columns\TextColumn::make('page_type')
                     ->label('Type')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'home' => 'Accueil',
-                        'listing' => 'Liste',
-                        'detail' => 'Détail',
-                        'static' => 'Statique',
-                        'search' => 'Recherche',
+                    ->color(fn (?string $state): string => match ($state) {
+                        'home'    => 'success',
+                        'listing' => 'info',
+                        'detail'  => 'primary',
+                        'static'  => 'gray',
+                        'search'  => 'warning',
+                        default   => 'gray',
+                    })
+                    ->formatStateUsing(fn (?string $state): string => match ($state) {
+                        'home'     => 'Accueil',
+                        'listing'  => 'Liste',
+                        'detail'   => 'Détail',
+                        'static'   => 'Statique',
+                        'search'   => 'Recherche',
                         'category' => 'Catégorie',
-                        default => $state,
+                        default    => $state ?? '—',
                     }),
 
-                Tables\Columns\TextColumn::make('title')
-                    ->label('Titre')
-                    ->limit(40)
+                Tables\Columns\TextColumn::make('meta_title')
+                    ->label('Titre SEO')
+                    ->limit(45)
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('title')
+                Tables\Columns\TextColumn::make('meta_title')
                     ->label('Long.')
-                    ->formatStateUsing(fn (?string $state): string => strlen($state ?? '').'/70'),
+                    ->formatStateUsing(fn (?string $state): string =>
+                        strlen($state ?? '').'/70 '.((strlen($state ?? '') > 70) ? '⚠️' : '✓')),
 
                 Tables\Columns\IconColumn::make('is_noindex')
                     ->label('NoIndex')
                     ->boolean()
                     ->trueIcon('heroicon-o-eye-slash')
                     ->falseIcon('heroicon-o-eye'),
+
+                Tables\Columns\TextColumn::make('locale')
+                    ->label('Lang')
+                    ->badge(),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Modifié')
@@ -204,18 +217,23 @@ class SeoDataResource extends Resource
                 Tables\Filters\SelectFilter::make('page_type')
                     ->label('Type de page')
                     ->options([
-                        'home' => 'Accueil',
+                        'home'    => 'Accueil',
                         'listing' => 'Liste',
-                        'detail' => 'Détail',
-                        'static' => 'Statique',
-                        'search' => 'Recherche',
+                        'detail'  => 'Détail',
+                        'static'  => 'Statique',
+                        'search'  => 'Recherche',
                     ]),
 
                 Tables\Filters\TernaryFilter::make('is_noindex')
                     ->label('NoIndex'),
+
+                Tables\Filters\SelectFilter::make('locale')
+                    ->label('Langue')
+                    ->options(['fr' => 'Français', 'en' => 'Anglais']),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -227,17 +245,15 @@ class SeoDataResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSeoData::route('/'),
+            'index'  => Pages\ListSeoData::route('/'),
             'create' => Pages\CreateSeoData::route('/create'),
-            'edit' => Pages\EditSeoData::route('/{record}/edit'),
+            'edit'   => Pages\EditSeoData::route('/{record}/edit'),
         ];
     }
 }
