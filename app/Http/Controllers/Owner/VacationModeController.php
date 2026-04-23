@@ -9,6 +9,7 @@ use App\Models\VacationMode;
 use App\Services\VacationModeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class VacationModeController extends Controller
@@ -20,12 +21,12 @@ class VacationModeController extends Controller
 
     public function index(Request $request): View
     {
-        $user      = $request->user();
-        $active    = $this->vacationService->getActiveMode($user);
-        $history   = VacationMode::forOwner($user->id)->orderByDesc('created_at')->paginate(10);
+        $user       = $request->user();
+        $activeMode = $this->vacationService->getActiveMode($user);
+        $history    = VacationMode::forOwner($user->id)->orderByDesc('created_at')->paginate(10);
         $residences = $user->residences()->orderBy('name')->get();
 
-        return view('owner.vacation-mode.index', compact('active', 'history', 'residences'));
+        return view('owner.vacation-mode.index', compact('activeMode', 'history', 'residences'));
     }
 
     public function activate(Request $request): RedirectResponse
@@ -46,7 +47,7 @@ class VacationModeController extends Controller
 
     public function deactivate(VacationMode $vacationMode): RedirectResponse
     {
-        abort_unless($vacationMode->owner_id === auth()->id(), 403);
+        abort_unless($vacationMode->owner_id === Auth::id(), 403);
         $this->vacationService->deactivate($vacationMode);
 
         return redirect()->route('owner.vacation-mode.index')
