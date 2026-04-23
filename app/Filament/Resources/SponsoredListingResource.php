@@ -456,11 +456,17 @@ class SponsoredListingResource extends Resource
                         ])
                         ->visible(fn ($record) => ! $record->is_paid)
                         ->action(function ($record, array $data) {
+                            $duration = $record->duration_days ?? 7;
                             $record->update([
                                 'is_paid' => true,
+                                'status' => 'active',
                                 'payment_reference' => $data['payment_reference'],
+                                'payment_status' => 'success',
+                                'paid_at' => now(),
+                                'starts_at' => $record->starts_at ?? now(),
+                                'ends_at' => $record->ends_at ?? now()->addDays($duration),
                             ]);
-                            Notification::make()->success()->title('Paiement confirmé')->body('Référence : '.$data['payment_reference'])->send();
+                            Notification::make()->success()->title('Paiement confirmé → Campagne activée')->body('Référence : '.$data['payment_reference'])->send();
                         }),
 
                     Tables\Actions\EditAction::make()

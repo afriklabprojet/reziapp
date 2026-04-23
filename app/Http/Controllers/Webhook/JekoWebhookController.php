@@ -158,6 +158,7 @@ class JekoWebhookController extends Controller
         }
 
         if ($status === 'success') {
+            $duration = $sponsored->duration_days ?? 7;
             $sponsored->update([
                 'is_paid' => true,
                 'status' => 'active',
@@ -165,6 +166,8 @@ class JekoWebhookController extends Controller
                 'payment_reference' => $transactionId,
                 'payment_method' => $paymentMethod,
                 'paid_at' => $executedAt ? \Carbon\Carbon::parse($executedAt) : now(),
+                'starts_at' => $sponsored->starts_at ?? now(),
+                'ends_at' => $sponsored->ends_at ?? now()->addDays($duration),
             ]);
 
             Log::info('Jeko webhook: Sponsored listing payment confirmed', [

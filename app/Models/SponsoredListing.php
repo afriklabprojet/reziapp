@@ -280,7 +280,12 @@ class SponsoredListing extends Model
 
     public function activate(): void
     {
-        $this->update(['status' => 'active']);
+        $duration = $this->duration_days ?? 7;
+        $this->update(array_filter([
+            'status' => 'active',
+            'starts_at' => $this->starts_at ?? now(),
+            'ends_at' => $this->ends_at ?? now()->addDays($duration),
+        ], fn ($v) => $v !== null));
     }
 
     public function pause(): void
