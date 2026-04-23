@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Jobs\OptimizeResidencePhoto;
 use App\Models\Photo;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -45,7 +46,7 @@ class PhotoModeration extends Page implements HasTable
             ->query(
                 Photo::query()
                     ->with('residence.owner')
-                    ->whereIn('moderation_status', ['review', 'rejected'])
+                    ->where('moderation_status', '!=', 'approved')
                     ->latest(),
             )
             ->columns([
@@ -71,14 +72,14 @@ class PhotoModeration extends Page implements HasTable
                         'warning' => 'review',
                         'danger'  => 'rejected',
                         'success' => 'approved',
-                        'gray'    => 'pending',
+                        'gray'    => ['pending', 'skipped'],
                     ])
                     ->formatStateUsing(fn (string $state) => match ($state) {
                         'review'   => '🔍 À vérifier',
                         'rejected' => '❌ Rejeté',
                         'approved' => '✅ Approuvé',
-                        'pending'  => '⏳ En attente',
-                        'skipped'  => '⏭ Non analysé',
+                        'pending'  => '⏳ Non traité',
+                        'skipped'  => '⏭ Ignoré (Vision OFF)',
                         default    => $state,
                     }),
 
@@ -116,10 +117,11 @@ class PhotoModeration extends Page implements HasTable
                 Tables\Filters\SelectFilter::make('moderation_status')
                     ->label('Statut')
                     ->options([
-                        'review'   => 'À vérifier',
-                        'rejected' => 'Rejeté',
-                        'approved' => 'Approuvé',
-                        'pending'  => 'En attente',
+                        'pending'  => '⏳ Non traité',
+                        'review'   => '🔍 À vérifier',
+                        'rejected' => '❌ Rejeté',
+                        'skipped'  => '⏭ Ignoré (Vision OFF)',
+                        'approved' => '✅ Approuvé',
                     ]),
                 Tables\Filters\SelectFilter::make('room_type')
                     ->label('Type de pièce')
@@ -133,6 +135,25 @@ class PhotoModeration extends Page implements HasTable
                     ->label('Photo immobilière'),
             ])
             ->actions([
+                Tables\Actions\Action::make('reanalyze')
+                    ->label('Ré-analyser')
+                    ->icon('heroicon-o-cpu-chip')
+                    ->color('gray')
+                    ->action(function (Photo $record) {
+                        $record->update([
+                            'moderation_status' => 'pending',
+                            'is_optimized'      => false,
+                        ]);
+                        OptimizeResidencePhoto::dispatch($record);
+
+                        Notification::make()
+                            ->title('Analyse IA relancée')
+                            ->body('La photo sera retraitée par Cloud Vision.')
+                            ->info()
+                            ->send();
+                    })
+                    ->visible(fn (Photo $record) => in_array($record->moderation_status, ['pending', 'skipped', 'review'])),
+
                 Tables\Actions\Action::make('approve')
                     ->label('Approuver')
                     ->icon('heroicon-o-check-circle')
@@ -215,6 +236,23 @@ class PhotoModeration extends Page implements HasTable
                     ->modalSubmitAction(false),
             ])
             ->bulkActions([
+                Tables\Actions\BulkAction::make('bulk_reanalyze')
+                    ->label('Ré-analyser la sélection')
+                    ->icon('heroicon-o-cpu-chip')
+                    ->color('gray')
+                    ->requiresConfirmation()
+                    ->action(function ($records) {
+                        $records->each(function ($r) {
+                            $r->update(['moderation_status' => 'pending', 'is_optimized' => false]);
+                            OptimizeResidencePhoto::dispatch($r);
+                        });
+
+                        Notification::make()
+                            ->title($records->count().' analyses IA relancées')
+                            ->info()
+                            ->send();
+                    }),
+
                 Tables\Actions\BulkAction::make('bulk_approve')
                     ->label('Approuver la sélection')
                     ->icon('heroicon-o-check-circle')
