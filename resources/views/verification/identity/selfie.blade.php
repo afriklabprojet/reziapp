@@ -17,7 +17,13 @@
                 this.$refs.video.srcObject = this.stream;
                 this.useCamera = true;
             } catch (err) {
-                alert('Impossible d\'accéder à la caméra: ' + err.message);
+                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                    alert('Accès à la caméra refusé. Vérifiez les permissions de votre navigateur pour ce site, ou utilisez l\'option "Choisir une photo" ci-dessous.');
+                } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                    alert('Aucune caméra détectée. Veuillez utiliser l\'option "Choisir une photo" ci-dessous.');
+                } else {
+                    alert('Impossible d\'accéder à la caméra: ' + err.message);
+                }
             }
         },
     

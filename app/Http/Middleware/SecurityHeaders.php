@@ -32,6 +32,7 @@ class SecurityHeaders
         'Referrer-Policy' => 'strict-origin-when-cross-origin',
 
         // Permissions Policy (désactiver caméra/micro non nécessaires)
+        // Note: camera=(self) est surchargé sur les pages de vérification d'identité
         'Permissions-Policy' => 'camera=(), microphone=(), geolocation=(self)',
     ];
 
@@ -137,6 +138,11 @@ class SecurityHeaders
         // Headers fixes
         foreach ($this->securityHeaders as $header => $value) {
             $response->headers->set($header, $value);
+        }
+
+        // La page selfie nécessite l'accès caméra — on lève la restriction
+        if ($request->routeIs('verification.identity.selfie*') || $request->routeIs('verification.identity.selfie')) {
+            $response->headers->set('Permissions-Policy', 'camera=(self), microphone=(), geolocation=(self)');
         }
 
         // Content Security Policy
