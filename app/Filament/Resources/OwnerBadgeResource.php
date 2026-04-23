@@ -124,7 +124,7 @@ class OwnerBadgeResource extends Resource
                     ->label('Propriétaire')
                     ->sortable()
                     ->searchable()
-                    ->url(fn ($record) => route('filament.admin.resources.users.edit', $record->user_id)),
+                    ->url(fn ($record) => route('filament.admin.resources.proprietaires.edit', $record->user_id)),
 
                 Tables\Columns\TextColumn::make('badge_type')
                     ->label('Badge')
