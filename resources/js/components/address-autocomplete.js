@@ -25,22 +25,77 @@ export default function addressAutocomplete() {
             // Récupérer les valeurs initiales des champs cachés
             const latInput = document.getElementById('latitude');
             const lngInput = document.getElementById('longitude');
-            if (latInput && latInput.value) this.mapLatitude = parseFloat(latInput.value);
-            if (lngInput && lngInput.value) this.mapLongitude = parseFloat(lngInput.value);
+            const hasCustomCoords = latInput && lngInput &&
+                latInput.value && lngInput.value &&
+                !(parseFloat(latInput.value) === 5.36 && parseFloat(lngInput.value) === -4.0083);
+
+            if (hasCustomCoords) {
+                this.mapLatitude = parseFloat(latInput.value);
+                this.mapLongitude = parseFloat(lngInput.value);
+            }
+
+            const doInit = () => {
+                this.setupAutocomplete();
+                this.initMap();
+            };
 
             if (
                 typeof google !== 'undefined' &&
                 google.maps &&
                 google.maps.places
             ) {
-                this.setupAutocomplete();
-                this.initMap();
+                if (!hasCustomCoords) {
+                    this._detectIpLocation().then(doInit);
+                } else {
+                    doInit();
+                }
             } else {
                 // Sera appelé par le callback de chargement de l'API Maps
                 window.__addressAutocompleteInit = () => {
-                    this.setupAutocomplete();
-                    this.initMap();
+                    if (!hasCustomCoords) {
+                        this._detectIpLocation().then(doInit);
+                    } else {
+                        doInit();
+                    }
                 };
+            }
+        },
+
+        /**
+         * Détecte la localisation approximative via l'IP du visiteur.
+         * Utilise ipapi.co (gratuit, pas de clé requise).
+         * Ne modifie les coordonnées que si la détection réussit.
+         */
+        async _detectIpLocation() {
+            try {
+                const res = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(4000) });
+                if (!res.ok) return;
+                const data = await res.json();
+                if (data.latitude && data.longitude) {
+                    this.mapLatitude = parseFloat(data.latitude);
+                    this.mapLongitude = parseFloat(data.longitude);
+                    // Mise à jour des inputs cachés
+                    const latInput = document.getElementById('latitude');
+                    const lngInput = document.getElementById('longitude');
+                    if (latInput) latInput.value = this.mapLatitude;
+                    if (lngInput) lngInput.value = this.mapLongitude;
+
+                    // Auto-sélectionner le pays détecté
+                    if (data.country_code) {
+                        const countrySelect = document.getElementById('country_code');
+                        if (countrySelect) {
+                            const opt = Array.from(countrySelect.options).find(
+                                o => o.value.toLowerCase() === data.country_code.toLowerCase()
+                            );
+                            if (opt) {
+                                countrySelect.value = opt.value;
+                                countrySelect.dispatchEvent(new Event('change'));
+                            }
+                        }
+                    }
+                }
+            } catch {
+                // Silencieux : fallback sur Abidjan par défaut
             }
         },
 

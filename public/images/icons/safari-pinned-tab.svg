@@ -1,4 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="92" fill="#F7931E"/>
-  <text x="256" y="380" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-size="380" fill="white">R</text>
+  <!-- Arc extérieur -->
+  <path d="M256 60 A148 148 0 0 1 404 208" stroke="#000" stroke-width="36" fill="none" stroke-linecap="round"/>
+  <path d="M108 208 A148 148 0 0 1 256 60" stroke="#000" stroke-width="36" fill="none" stroke-linecap="round"/>
+  <!-- Arc intérieur -->
+  <path d="M256 110 A100 100 0 0 1 356 210" stroke="#000" stroke-width="28" fill="none" stroke-linecap="round"/>
+  <path d="M156 210 A100 100 0 0 1 256 110" stroke="#000" stroke-width="28" fill="none" stroke-linecap="round"/>
+  <!-- Toit principal -->
+  <polyline points="80,270 256,128 432,270" stroke="#000" stroke-width="32" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- Fenêtre centrale -->
+  <rect x="222" y="210" width="68" height="68" rx="6" fill="#000"/>
+  <!-- Toit secondaire -->
+  <polyline points="128,335 256,220 384,335" stroke="#000" stroke-width="26" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- Losange gauche -->
+  <rect x="148" y="340" width="44" height="44" rx="4" fill="#000" transform="rotate(45 170 362)"/>
+  <!-- Losange droit -->
+  <rect x="320" y="340" width="44" height="44" rx="4" fill="#000" transform="rotate(45 342 362)"/>
+  <!-- Losange bas -->
+  <rect x="234" y="400" width="44" height="44" rx="4" fill="#000" transform="rotate(45 256 422)"/>
 </svg>

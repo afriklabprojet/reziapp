@@ -215,7 +215,7 @@
                             <div class="flex items-center justify-between mb-2">
                                 <label for="description" class="block text-sm font-medium text-gray-700">
                                     Description <span class="text-red-500">*</span>
-                                    <span class="text-gray-400">(min. 50 caractères)</span>
+                                    <span class="text-gray-400">(min. 10 caractères)</span>
                                 </label>
                                 <div class="flex items-center gap-2">
                                     <button type="button" @click="generateDescription()" :disabled="aiLoading"
@@ -531,6 +531,7 @@
                                 <input type="text" id="address" name="address" value="{{ old('address') }}"
                                     x-ref="addressInput"
                                     placeholder="Commencez à taper une adresse..."
+                                    autocomplete="off"
                                     required
                                     class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
                                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -875,7 +876,7 @@
                         handlePhotos(fileList) {
                             const maxFiles = 10;
                             const maxSize = 5 * 1024 * 1024;
-                            
+
                             for (let i = 0; i < fileList.length && this.files.length < maxFiles; i++) {
                                 const file = fileList[i];
                                 if (!file.type.startsWith('image/')) continue;
@@ -883,7 +884,7 @@
                                     alert('L\'image ' + file.name + ' dépasse 5 Mo');
                                     continue;
                                 }
-                                
+
                                 this.files.push(file);
                                 const reader = new FileReader();
                                 reader.onload = (e) => {
@@ -891,7 +892,7 @@
                                 };
                                 reader.readAsDataURL(file);
                             }
-                            
+
                             this.updateFileInput();
                         },
                         removePhoto(index) {

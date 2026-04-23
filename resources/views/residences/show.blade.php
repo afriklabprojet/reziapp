@@ -549,17 +549,21 @@
                     <div id="calendrier" class="py-8 border-b border-gray-200" x-data="{
                         cm: new Date().getMonth(),
                         cy: new Date().getFullYear(),
+                        checkIn: '',
+                        checkOut: '',
+                        hoverDate: '',
+                        selecting: 'checkin',
+                        unavailable: @js($unavailableDates ?? []),
                         next() {
-                            if (this.cm === 11) {
-                                this.cm = 0;
-                                this.cy++;
-                            } else { this.cm++; }
+                            if (this.cm === 11) { this.cm = 0; this.cy++; }
+                            else { this.cm++; }
                         },
                         prev() {
-                            if (this.cm === 0) {
-                                this.cm = 11;
-                                this.cy--;
-                            } else { this.cm--; }
+                            const t = new Date(); t.setHours(0,0,0,0);
+                            const first = new Date(this.cy, this.cm, 1);
+                            if (first <= t) return;
+                            if (this.cm === 0) { this.cm = 11; this.cy--; }
+                            else { this.cm--; }
                         },
                         dim(m, y) { return new Date(y, m + 1, 0).getDate(); },
                         fdm(m, y) { return new Date(y, m, 1).getDay(); },
@@ -567,88 +571,154 @@
                         dn: ['Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa'],
                         get m2() { return this.cm === 11 ? 0 : this.cm + 1; },
                         get y2() { return this.cm === 11 ? this.cy + 1 : this.cy; },
+                        fmt(d, m, y) { return y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0'); },
                         isT(d, m, y) { const t = new Date(); return d === t.getDate() && m === t.getMonth() && y === t.getFullYear(); },
                         isP(d, m, y) {
-                            const t = new Date();
-                            t.setHours(0, 0, 0, 0);
+                            const t = new Date(); t.setHours(0,0,0,0);
                             return new Date(y, m, d) < t;
+                        },
+                        isUnavailable(d, m, y) {
+                            return this.unavailable.includes(this.fmt(d, m, y));
+                        },
+                        isBlocked(d, m, y) { return this.isP(d, m, y) || this.isUnavailable(d, m, y); },
+                        isCheckIn(d, m, y) { return this.checkIn === this.fmt(d, m, y); },
+                        isCheckOut(d, m, y) { return this.checkOut === this.fmt(d, m, y); },
+                        inRange(d, m, y) {
+                            if (!this.checkIn) return false;
+                            const end = this.checkOut || this.hoverDate;
+                            if (!end) return false;
+                            const dt = new Date(y, m, d);
+                            const s = new Date(this.checkIn);
+                            const e = new Date(end);
+                            return dt > s && dt < e;
+                        },
+                        isRangeEdge(d, m, y) {
+                            return this.isCheckIn(d,m,y) || this.isCheckOut(d,m,y);
+                        },
+                        selectDate(d, m, y) {
+                            if (this.isBlocked(d, m, y)) return;
+                            const ds = this.fmt(d, m, y);
+                            if (this.selecting === 'checkin' || !this.checkIn) {
+                                this.checkIn = ds;
+                                this.checkOut = '';
+                                this.selecting = 'checkout';
+                            } else {
+                                if (ds <= this.checkIn) {
+                                    this.checkIn = ds;
+                                    this.checkOut = '';
+                                    this.selecting = 'checkout';
+                                } else {
+                                    // Check no blocked date in range
+                                    const hasBlocked = this.unavailable.some(u => u > this.checkIn && u < ds);
+                                    if (hasBlocked) {
+                                        this.checkIn = ds;
+                                        this.checkOut = '';
+                                        this.selecting = 'checkout';
+                                    } else {
+                                        this.checkOut = ds;
+                                        this.selecting = 'checkin';
+                                        this.$dispatch('calendar-dates-selected', { checkIn: this.checkIn, checkOut: this.checkOut });
+                                        window.dispatchEvent(new CustomEvent('calendar-dates-selected', { detail: { checkIn: this.checkIn, checkOut: this.checkOut } }));
+                                    }
+                                }
+                            }
+                        },
+                        clearDates() {
+                            this.checkIn = '';
+                            this.checkOut = '';
+                            this.selecting = 'checkin';
+                            this.hoverDate = '';
+                            window.dispatchEvent(new CustomEvent('calendar-dates-selected', { detail: { checkIn: '', checkOut: '' } }));
+                        },
+                        dayClass(d, m, y) {
+                            if (this.isBlocked(d, m, y)) return 'text-gray-300 line-through cursor-not-allowed';
+                            if (this.isCheckIn(d,m,y) || this.isCheckOut(d,m,y)) return 'bg-gray-900 text-white font-semibold cursor-pointer rounded-full';
+                            if (this.inRange(d,m,y)) return 'bg-orange-100 text-orange-800 cursor-pointer rounded-none';
+                            if (this.isT(d,m,y)) return 'ring-2 ring-orange-400 text-gray-900 font-semibold cursor-pointer rounded-full hover:bg-gray-100';
+                            return 'text-gray-700 hover:bg-gray-100 cursor-pointer rounded-full';
                         }
                     }">
                         <h2 class="text-[22px] font-semibold text-gray-900 mb-2">
                             {{ $residence->min_nights ?? 2 }} nuit{{ ($residence->min_nights ?? 2) > 1 ? 's' : '' }}
                             minimum
                         </h2>
-                        <p class="text-gray-500 text-sm mb-6">Sélectionnez vos dates de séjour</p>
+                        <p class="text-gray-500 text-sm mb-6">
+                            <span x-show="!checkIn">Sélectionnez votre date d'arrivée</span>
+                            <span x-show="checkIn && !checkOut" x-cloak>Sélectionnez votre date de départ</span>
+                            <span x-show="checkIn && checkOut" x-cloak>
+                                <strong x-text="checkIn"></strong> → <strong x-text="checkOut"></strong>
+                            </span>
+                        </p>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {{-- Month 1 --}}
                             <div>
                                 <div class="flex items-center justify-between mb-4">
-                                    <button @click="prev()" class="p-1 rounded-full hover:bg-gray-100 transition"><svg
-                                            class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor"
-                                            stroke-width="2" viewBox="0 0 24 24">
+                                    <button @click="prev()" type="button" class="p-1 rounded-full hover:bg-gray-100 transition">
+                                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                                        </svg></button>
+                                        </svg>
+                                    </button>
                                     <span class="font-semibold text-gray-900 text-sm" x-text="mn[cm]+' '+cy"></span>
                                     <div class="w-7"></div>
                                 </div>
                                 <div class="grid grid-cols-7 gap-0 text-center">
-                                    <template x-for="d in dn" :key="'h1-' + d">
+                                    <template x-for="d in dn" :key="'h1-'+d">
                                         <div class="text-xs font-medium text-gray-400 pb-2" x-text="d"></div>
                                     </template>
-                                    <template x-for="b in fdm(cm,cy)" :key="'b1-' + b">
+                                    <template x-for="b in fdm(cm,cy)" :key="'b1-'+b">
                                         <div></div>
                                     </template>
-                                    <template x-for="d in dim(cm,cy)" :key="'d1-' + d">
-                                        <div class="py-2"><span
-                                                class="inline-flex items-center justify-center w-9 h-9 rounded-full text-sm"
-                                                :class="{
-                                                    'bg-gray-900 text-white font-semibold': isT(d, cm,
-                                                        cy),
-                                                    'text-gray-300 line-through cursor-not-allowed': isP(d, cm,
-                                                        cy) && !isT(d, cm,
-                                                        cy),
-                                                    'text-gray-700 hover:bg-gray-100 cursor-pointer': !isP(d,
-                                                        cm, cy) && !isT(d, cm, cy)
-                                                }"
-                                                x-text="d"></span></div>
+                                    <template x-for="d in dim(cm,cy)" :key="'d1-'+d">
+                                        <div class="py-1">
+                                            <span
+                                                class="inline-flex items-center justify-center w-9 h-9 text-sm transition-colors"
+                                                :class="dayClass(d, cm, cy)"
+                                                @click="selectDate(d, cm, cy)"
+                                                @mouseenter="!isBlocked(d,cm,cy) && (hoverDate = (checkIn && !checkOut) ? fmt(d,cm,cy) : '')"
+                                                @mouseleave="hoverDate = ''"
+                                                x-text="d"
+                                            ></span>
+                                        </div>
                                     </template>
                                 </div>
                             </div>
+                            {{-- Month 2 --}}
                             <div>
                                 <div class="flex items-center justify-between mb-4">
                                     <div class="w-7"></div>
                                     <span class="font-semibold text-gray-900 text-sm" x-text="mn[m2]+' '+y2"></span>
-                                    <button @click="next()" class="p-1 rounded-full hover:bg-gray-100 transition"><svg
-                                            class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor"
-                                            stroke-width="2" viewBox="0 0 24 24">
+                                    <button @click="next()" type="button" class="p-1 rounded-full hover:bg-gray-100 transition">
+                                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                                        </svg></button>
+                                        </svg>
+                                    </button>
                                 </div>
                                 <div class="grid grid-cols-7 gap-0 text-center">
-                                    <template x-for="d in dn" :key="'h2-' + d">
+                                    <template x-for="d in dn" :key="'h2-'+d">
                                         <div class="text-xs font-medium text-gray-400 pb-2" x-text="d"></div>
                                     </template>
-                                    <template x-for="b in fdm(m2,y2)" :key="'b2-' + b">
+                                    <template x-for="b in fdm(m2,y2)" :key="'b2-'+b">
                                         <div></div>
                                     </template>
-                                    <template x-for="d in dim(m2,y2)" :key="'d2-' + d">
-                                        <div class="py-2"><span
-                                                class="inline-flex items-center justify-center w-9 h-9 rounded-full text-sm"
-                                                :class="{
-                                                    'bg-gray-900 text-white font-semibold': isT(d, m2,
-                                                        y2),
-                                                    'text-gray-300 line-through cursor-not-allowed': isP(d, m2,
-                                                        y2) && !isT(d, m2,
-                                                        y2),
-                                                    'text-gray-700 hover:bg-gray-100 cursor-pointer': !isP(d,
-                                                        m2, y2) && !isT(d, m2, y2)
-                                                }"
-                                                x-text="d"></span></div>
+                                    <template x-for="d in dim(m2,y2)" :key="'d2-'+d">
+                                        <div class="py-1">
+                                            <span
+                                                class="inline-flex items-center justify-center w-9 h-9 text-sm transition-colors"
+                                                :class="dayClass(d, m2, y2)"
+                                                @click="selectDate(d, m2, y2)"
+                                                @mouseenter="!isBlocked(d,m2,y2) && (hoverDate = (checkIn && !checkOut) ? fmt(d,m2,y2) : '')"
+                                                @mouseleave="hoverDate = ''"
+                                                x-text="d"
+                                            ></span>
+                                        </div>
                                     </template>
                                 </div>
                             </div>
                         </div>
-                        <button class="mt-4 text-sm font-semibold text-gray-900 underline hover:no-underline">Effacer les
-                            dates</button>
+                        <button type="button" @click="clearDates()" x-show="checkIn || checkOut"
+                            class="mt-4 text-sm font-semibold text-gray-900 underline hover:no-underline" x-cloak>
+                            Effacer les dates
+                        </button>
                     </div>
 
                     {{-- Reviews --}}
