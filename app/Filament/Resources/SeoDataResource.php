@@ -18,13 +18,13 @@ class SeoDataResource extends Resource
 
     protected static ?string $navigationGroup = 'Paramètres';
 
-    protected static ?string $navigationLabel = 'SEO';
+    protected static ?string $navigationLabel = 'SEO par page';
 
-    protected static ?string $modelLabel = 'Donnée SEO';
+    protected static ?string $modelLabel = 'SEO par page';
 
-    protected static ?string $pluralModelLabel = 'Données SEO';
+    protected static ?string $pluralModelLabel = 'SEO par page';
 
-    protected static ?int $navigationSort = 15;
+    protected static ?int $navigationSort = 12;
 
     public static function form(Form $form): Form
     {

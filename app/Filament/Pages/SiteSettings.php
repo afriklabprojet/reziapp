@@ -23,7 +23,7 @@ class SiteSettings extends Page implements HasForms
 
     protected static ?string $title = 'Paramètres localisation';
 
-    protected static ?int $navigationSort = 12;
+    protected static ?int $navigationSort = 13;
 
     protected static string $view = 'filament.pages.site-settings';
 
