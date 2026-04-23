@@ -84,6 +84,8 @@ php artisan storage:link 2>/dev/null || warn "Lien storage déjà existant"
 info "Application des permissions..."
 chmod -R 755 storage bootstrap/cache
 chmod -R 644 storage/logs
+# Propriétaire www-data requis pour que Nginx/Apache puisse écrire
+chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
 success "Permissions OK"
 
 # ── 9. Queue worker — redémarrage ─────────────────────────────────────────────
