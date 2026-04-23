@@ -246,7 +246,7 @@ class CalculateOwnerBadges extends Command
 
         // Messages reçus par le propriétaire (envoyés par les utilisateurs)
         $messagesReceived = Message::whereIn('conversation_id', $conversations)
-            ->where('user_id', '!=', $owner->id)
+            ->where('sender_id', '!=', $owner->id)
             ->where('created_at', '>=', now()->subMonths(3)) // 3 derniers mois
             ->orderBy('created_at')
             ->get();
@@ -265,7 +265,7 @@ class CalculateOwnerBadges extends Command
         foreach ($messagesReceived as $received) {
             // Chercher la réponse du propriétaire
             $response = Message::where('conversation_id', $received->conversation_id)
-                ->where('user_id', $owner->id)
+                ->where('sender_id', $owner->id)
                 ->where('created_at', '>', $received->created_at)
                 ->orderBy('created_at')
                 ->first();
