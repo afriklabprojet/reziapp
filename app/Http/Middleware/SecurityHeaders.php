@@ -53,12 +53,14 @@ class SecurityHeaders
         $mapboxCdn = 'https://api.mapbox.com';
         // Google Fonts (DM Serif Display + Outfit)
         $googleFonts = 'https://fonts.googleapis.com';
+        // Microsoft Clarity (analytics)
+        $clarity = 'https://www.clarity.ms';
 
         $directives = [
             "default-src 'self'",
             // Alpine.js, Livewire et Filament nécessitent inline/eval
-            // Mapbox GL JS chargé depuis le CDN Mapbox
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' {$mapboxCdn}",
+            // Mapbox GL JS chargé depuis le CDN Mapbox + Microsoft Clarity
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' {$mapboxCdn} {$clarity}",
             // Tailwind v4 injecte des styles inline ; fonts.bunny.net pour Figtree
             // Mapbox GL CSS + Google Fonts
             "style-src 'self' 'unsafe-inline' {$externalFontHosts} {$mapboxCdn} {$googleFonts}",
@@ -67,7 +69,7 @@ class SecurityHeaders
             // Polices locales, data URIs et fonts.bunny.net + Google Fonts
             "font-src 'self' data: {$externalFontHosts} https://fonts.gstatic.com",
             // WebSockets Pusher + API Jeko + Mapbox + Google APIs
-            "connect-src 'self' wss://*.pusher.com https://*.pusher.com https://*.pusherapp.com https://soketi.app https://api.jeko.africa https://api.mapbox.com https://events.mapbox.com https://maps.googleapis.com https://maps.gstatic.com",
+            "connect-src 'self' wss://*.pusher.com https://*.pusher.com https://*.pusherapp.com https://soketi.app https://api.jeko.africa https://api.mapbox.com https://events.mapbox.com https://maps.googleapis.com https://maps.gstatic.com https://www.clarity.ms",
             // Aucun embed/iframe autorisé
             "frame-src 'none'",
             // Bloquer les plugins (Flash, etc.)
