@@ -1,8 +1,12 @@
-@extends('layouts.client', ['sidebarActive' => 'profile'])
+@php
+    $isOwner = auth()->user()?->isOwner();
+@endphp
+
+@extends($isOwner ? 'layouts.owner' : 'layouts.client', $isOwner ? [] : ['sidebarActive' => 'profile'])
 
 @section('title', 'Mon Profil - REZI')
 
-@section('client-content')
+@section($isOwner ? 'owner-content' : 'client-content')
     {{-- En-tête du profil --}}
     <div
         class="bg-linear-to-r from-orange-500 to-orange-600 rounded-2xl p-6 sm:p-8 mb-6 text-white relative overflow-hidden">
