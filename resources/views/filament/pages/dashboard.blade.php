@@ -154,7 +154,86 @@
         </div>
 
         {{-- ═══════════════════════════════════════════════════════
-             SECTION 6 — Alertes & Signalements
+             SECTION 6 — Statistiques Mise en avant (Marketing)
+        ═══════════════════════════════════════════════════════ --}}
+        @livewire(\App\Filament\Widgets\SponsoredStatsWidget::class)
+
+        {{-- ═══════════════════════════════════════════════════════
+             SECTION 7 — Statistiques Paiements
+        ═══════════════════════════════════════════════════════ --}}
+        @livewire(\App\Filament\Widgets\PaymentStatsWidget::class)
+
+        {{-- ═══════════════════════════════════════════════════════
+             SECTION 8 — Graphiques géo + 12 mois de revenus
+        ═══════════════════════════════════════════════════════ --}}
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            @livewire(\App\Filament\Widgets\ResidencesByLocationChart::class)
+            @livewire(\App\Filament\Widgets\RevenueChart::class)
+        </div>
+
+        {{-- ═══════════════════════════════════════════════════════
+             SECTION 9 — Newsletter
+        ═══════════════════════════════════════════════════════ --}}
+        @php
+            $newsletterTotal   = \App\Models\NewsletterSubscriber::count();
+            $newsletterActive  = \App\Models\NewsletterSubscriber::where('status', 'active')->count();
+            $newsletterThisMonth = \App\Models\NewsletterSubscriber::where('status', 'active')
+                ->where('created_at', '>=', now()->startOfMonth())->count();
+            $latestSubscribers = \App\Models\NewsletterSubscriber::where('status', 'active')
+                ->latest()->limit(5)->get();
+        @endphp
+
+        @if($newsletterTotal > 0)
+        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div class="mb-4 flex items-center justify-between">
+                <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+                    <x-heroicon-o-envelope class="inline h-5 w-5 text-pink-500 mr-1" />
+                    Newsletter
+                </h3>
+                <span class="rounded-full bg-pink-50 px-3 py-1 text-xs font-medium text-pink-700 dark:bg-pink-950 dark:text-pink-300">
+                    {{ number_format($newsletterActive) }} abonné(s) actif(s)
+                </span>
+            </div>
+
+            <div class="mb-4 grid grid-cols-3 gap-3">
+                <div class="rounded-xl bg-gray-50 p-3 text-center dark:bg-gray-800">
+                    <p class="text-xl font-bold text-gray-900 dark:text-white">{{ number_format($newsletterTotal) }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Total</p>
+                </div>
+                <div class="rounded-xl bg-green-50 p-3 text-center dark:bg-green-950">
+                    <p class="text-xl font-bold text-green-700 dark:text-green-300">{{ number_format($newsletterActive) }}</p>
+                    <p class="text-xs text-green-600 dark:text-green-400">Actifs</p>
+                </div>
+                <div class="rounded-xl bg-blue-50 p-3 text-center dark:bg-blue-950">
+                    <p class="text-xl font-bold text-blue-700 dark:text-blue-300">+{{ $newsletterThisMonth }}</p>
+                    <p class="text-xs text-blue-600 dark:text-blue-400">Ce mois</p>
+                </div>
+            </div>
+
+            @if($latestSubscribers->isNotEmpty())
+            <div class="space-y-2">
+                <p class="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">Derniers abonnés</p>
+                @foreach($latestSubscribers as $sub)
+                <div class="flex items-center justify-between rounded-lg px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                    <div class="flex items-center gap-2">
+                        <div class="flex h-7 w-7 items-center justify-center rounded-full bg-pink-100 text-xs font-semibold text-pink-700 dark:bg-pink-900 dark:text-pink-300">
+                            {{ mb_strtoupper(mb_substr($sub->name ?? $sub->email, 0, 1)) }}
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $sub->name ?? '—' }}</p>
+                            <p class="text-xs text-gray-400">{{ $sub->email }}</p>
+                        </div>
+                    </div>
+                    <span class="text-xs text-gray-400">{{ $sub->created_at->diffForHumans() }}</span>
+                </div>
+                @endforeach
+            </div>
+            @endif
+        </div>
+        @endif
+
+        {{-- ═══════════════════════════════════════════════════════
+             SECTION 10 — Alertes & Signalements
         ═══════════════════════════════════════════════════════ --}}
         @livewire(\App\Filament\Widgets\AlertsWidget::class)
 

@@ -173,6 +173,10 @@ class DatabaseSeeder extends Seeder
             }
         }
 
+        // 9. Dashboard admin — réservations, paiements, tickets, etc.
+        $this->command->info('Creating admin dashboard data...');
+        $this->call(AdminDashboardSeeder::class);
+
         $this->command->info('✅ Database seeded successfully!');
         $this->command->info('');
         $this->command->info('📊 Summary:');
