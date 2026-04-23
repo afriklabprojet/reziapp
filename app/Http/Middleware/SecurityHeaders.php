@@ -141,7 +141,7 @@ class SecurityHeaders
         }
 
         // La page selfie nécessite l'accès caméra — on lève la restriction
-        if ($request->routeIs('verification.identity.selfie.form') || $request->routeIs('verification.identity.selfie')) {
+        if ($request->is('verification/identity/selfie')) {
             $response->headers->set('Permissions-Policy', 'camera=(self), microphone=(), geolocation=(self)');
         }
 
