@@ -10,6 +10,7 @@ use App\Models\PaymentMethod;
 use App\Models\PaymentProvider;
 use App\Models\Payout;
 use App\Models\Residence;
+use App\Models\Promotion;
 use App\Models\SponsoredListing;
 use App\Models\SupportTicket;
 use App\Models\User;
@@ -66,7 +67,9 @@ class AdminDashboardSeeder extends Seeder
         // ─── 7. Sponsored Listings ──────────────────────────────────────────────
         $this->command->info('  → Sponsored listings...');
         $this->seedSponsoredListings($owners, $residences);
-
+        // ─── 8. Promotions Flash ─────────────────────────────────────────────
+        $this->command->info('  → Promotions flash...');
+        $this->seedPromotions($owners, $residences);
         $this->command->info('✅ Admin dashboard data seeded!');
     }
 
@@ -576,6 +579,114 @@ class AdminDashboardSeeder extends Seeder
                 'payment_reference' => 'SP-'.strtoupper(Str::random(8)),
                 'created_at'        => Carbon::now()->subDays($daysAgo + $duration + 1),
                 'updated_at'        => Carbon::now()->subDays($daysAgo),
+            ]);
+        }
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // PROMOTIONS FLASH
+    // ──────────────────────────────────────────────────────────────────────────
+    private function seedPromotions($owners, $residences): void
+    {
+        $titles = [
+            'Offre Spéciale Weekend',
+            'Réduction Séjour Long',
+            'Flash Sale -30%',
+            'Promo Saison Haute',
+            '1 nuit offerte dès 7 nuits',
+            'Tarif Préférentiel Étudiant',
+            'Offre Découverte',
+            'Promotion Fidélité',
+            'Réduction Réservation Anticipée',
+            'Offre Dernière Minute',
+        ];
+
+        // Promotions actives (en cours)
+        for ($i = 0; $i < 8; $i++) {
+            $daysAgo  = rand(0, 20);
+            $duration = rand(14, 45);
+            $type     = ['percentage', 'fixed', 'free_nights'][array_rand(['percentage', 'fixed', 'free_nights'])];
+            $owner    = $owners->random();
+            $residence = $residences->where('owner_id', $owner->id)->isNotEmpty()
+                ? $residences->where('owner_id', $owner->id)->random()
+                : $residences->random();
+
+            Promotion::create([
+                'residence_id'   => $residence->id,
+                'user_id'        => $owner->id,
+                'title'          => $titles[array_rand($titles)],
+                'description'    => 'Profitez de cette offre limitée sur notre résidence. Réservez maintenant !',
+                'discount_type'  => $type,
+                'discount_value' => $type === 'percentage' ? rand(10, 40) : ($type === 'fixed' ? rand(5000, 25000) : 1),
+                'free_nights_min' => $type === 'free_nights' ? rand(5, 7) : null,
+                'starts_at'      => Carbon::now()->subDays($daysAgo),
+                'ends_at'        => Carbon::now()->subDays($daysAgo)->addDays($duration),
+                'min_nights'     => rand(0, 1) ? rand(2, 5) : null,
+                'max_uses'       => rand(0, 1) ? rand(5, 50) : null,
+                'uses_count'     => rand(0, 10),
+                'is_active'      => true,
+                'is_featured'    => rand(0, 1) === 1,
+                'created_at'     => Carbon::now()->subDays($daysAgo + 1),
+                'updated_at'     => Carbon::now()->subDays(rand(0, $daysAgo)),
+            ]);
+        }
+
+        // Promotions expirées (historique)
+        for ($i = 0; $i < 12; $i++) {
+            $daysAgo  = rand(30, 120);
+            $duration = rand(7, 30);
+            $type     = ['percentage', 'fixed', 'free_nights'][array_rand(['percentage', 'fixed', 'free_nights'])];
+            $owner    = $owners->random();
+            $residence = $residences->random();
+            $uses     = rand(3, 30);
+
+            Promotion::create([
+                'residence_id'   => $residence->id,
+                'user_id'        => $owner->id,
+                'title'          => $titles[array_rand($titles)],
+                'description'    => 'Offre expirée — résidence disponible à tarif normal.',
+                'discount_type'  => $type,
+                'discount_value' => $type === 'percentage' ? rand(10, 35) : ($type === 'fixed' ? rand(5000, 20000) : 1),
+                'free_nights_min' => $type === 'free_nights' ? rand(5, 7) : null,
+                'starts_at'      => Carbon::now()->subDays($daysAgo + $duration),
+                'ends_at'        => Carbon::now()->subDays($daysAgo),
+                'min_nights'     => rand(0, 1) ? rand(2, 5) : null,
+                'max_uses'       => $uses + rand(0, 20),
+                'uses_count'     => $uses,
+                'is_active'      => false,
+                'is_featured'    => false,
+                'created_at'     => Carbon::now()->subDays($daysAgo + $duration + 1),
+                'updated_at'     => Carbon::now()->subDays($daysAgo),
+            ]);
+        }
+
+        // Promotions à venir (programmées)
+        for ($i = 0; $i < 4; $i++) {
+            $daysAhead = rand(3, 20);
+            $duration  = rand(7, 21);
+            $type      = ['percentage', 'fixed'][array_rand(['percentage', 'fixed'])];
+            $owner     = $owners->random();
+            $residence = $residences->where('owner_id', $owner->id)->isNotEmpty()
+                ? $residences->where('owner_id', $owner->id)->random()
+                : $residences->random();
+
+            Promotion::create([
+                'residence_id'   => $residence->id,
+                'user_id'        => $owner->id,
+                'title'          => $titles[array_rand($titles)],
+                'description'    => 'Promotion à venir — réservez dès maintenant pour bénéficier du tarif réduit.',
+                'discount_type'  => $type,
+                'discount_value' => $type === 'percentage' ? rand(15, 40) : rand(8000, 30000),
+                'free_nights_min' => null,
+                'starts_at'      => Carbon::now()->addDays($daysAhead),
+                'ends_at'        => Carbon::now()->addDays($daysAhead + $duration),
+                'min_nights'     => rand(2, 4),
+                'max_uses'       => rand(10, 30),
+                'uses_count'     => 0,
+                'is_active'      => true,
+                'is_featured'    => rand(0, 1) === 1,
+                'created_at'     => now()->subDays(rand(1, 5)),
+                'updated_at'     => now()->subDays(rand(0, 3)),
             ]);
         }
     }
