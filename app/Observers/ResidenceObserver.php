@@ -8,6 +8,7 @@ use App\Jobs\ComputeListingScore;
 use App\Jobs\FetchNearbyPlaces;
 use App\Jobs\SendNewsletterCampaign;
 use App\Models\Residence;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -75,7 +76,7 @@ class ResidenceObserver
             // on empêche ce changement (sauf si c'est l'admin via Filament)
             if (in_array($originalStatus, ['active', 'approved']) && $newStatus === 'pending') {
                 // Vérifier si c'est un admin qui fait le changement via Filament
-                $isAdminAction = auth()->check() && auth()->user()->role === 'admin';
+                $isAdminAction = Auth::check() && Auth::user()->role === 'admin';
 
                 if (!$isAdminAction) {
                     // Restaurer le statut actif — pas de re-approbation nécessaire
