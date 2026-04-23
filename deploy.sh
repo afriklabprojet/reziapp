@@ -70,6 +70,17 @@ success "Migrations OK"
 
 # ── 6. Caches de config/routes/vues (optimisation prod) ───────────────────────
 info "Génération des caches de production..."
+# Charger les variables .env dans l'environnement avant de construire le cache
+# Évite que des variables système vides n'écrasent les valeurs du .env
+if [[ -f .env ]]; then
+    while IFS='=' read -r key value; do
+        [[ "$key" =~ ^[[:space:]]*# ]] && continue
+        [[ -z "$key" ]] && continue
+        value="${value%%#*}"
+        value="${value%"${value##*[![:space:]]}"}"
+        export "$key=$value"
+    done < <(grep -v '^#' .env | grep '=')
+fi
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
