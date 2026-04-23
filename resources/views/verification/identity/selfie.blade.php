@@ -14,11 +14,9 @@
                 this.stream = await navigator.mediaDevices.getUserMedia({
                     video: { facingMode: 'user', width: 640, height: 480 }
                 });
-                // Activer useCamera d'abord pour insérer le <video> dans le DOM,
-                // puis attendre le prochain tick Alpine avant d'assigner srcObject
-                this.useCamera = true;
-                await this.$nextTick();
+                // Le <video> est toujours dans le DOM (x-show), srcObject assignable directement
                 this.$refs.video.srcObject = this.stream;
+                this.useCamera = true;
             } catch (err) {
                 if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
                     alert('Accès à la caméra refusé. Vérifiez les permissions de votre navigateur pour ce site, ou utilisez le bouton Choisir une photo ci-dessous.');
@@ -113,21 +111,19 @@
 
                         {{-- Zone preview/caméra --}}
                         <div class="relative aspect-4/3 bg-gray-100 rounded-xl overflow-hidden mb-5">
-                            {{-- Caméra active --}}
-                            <template x-if="useCamera">
-                                <div class="absolute inset-0">
-                                    <video x-ref="video" autoplay playsinline class="w-full h-full object-cover"></video>
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        <div class="w-48 h-60 border-[3px] border-white/60 border-dashed rounded-full">
-                                        </div>
-                                    </div>
-                                    <div class="absolute bottom-3 left-0 right-0 text-center">
-                                        <span
-                                            class="inline-block px-3 py-1 bg-black/50 text-white text-xs rounded-full">Placez
-                                            votre visage dans le cercle</span>
+                            {{-- Caméra active — x-show pour garder le <video> dans le DOM et pouvoir l'accéder via $refs --}}
+                            <div x-show="useCamera" class="absolute inset-0">
+                                <video x-ref="video" autoplay playsinline class="w-full h-full object-cover"></video>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="w-48 h-60 border-[3px] border-white/60 border-dashed rounded-full">
                                     </div>
                                 </div>
-                            </template>
+                                <div class="absolute bottom-3 left-0 right-0 text-center">
+                                    <span
+                                        class="inline-block px-3 py-1 bg-black/50 text-white text-xs rounded-full">Placez
+                                        votre visage dans le cercle</span>
+                                </div>
+                            </div>
 
                             {{-- Preview selfie --}}
                             <template x-if="selfiePreview && !useCamera">
