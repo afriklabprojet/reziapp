@@ -61,6 +61,75 @@ class PageContentResource extends Resource
                             ->helperText('150-160 caractères recommandés'),
                     ])
                     ->columns(2),
+
+                Forms\Components\Section::make('Options Boost')
+                    ->description('Plans tarifaires affichés sur la page /tarifs')
+                    ->visible(fn ($record) => $record?->page_slug === 'tarifs')
+                    ->schema([
+                        Forms\Components\Repeater::make('data.boost_plans')
+                            ->label('Plans Boost')
+                            ->schema([
+                                Forms\Components\Grid::make(4)
+                                    ->schema([
+                                        Forms\Components\TextInput::make('emoji')
+                                            ->label('Emoji')
+                                            ->maxLength(5)
+                                            ->columnSpan(1),
+                                        Forms\Components\TextInput::make('name')
+                                            ->label('Nom')
+                                            ->required()
+                                            ->columnSpan(1),
+                                        Forms\Components\TextInput::make('price')
+                                            ->label('Prix (FCFA)')
+                                            ->numeric()
+                                            ->required()
+                                            ->suffix('FCFA')
+                                            ->columnSpan(1),
+                                        Forms\Components\TextInput::make('duration_label')
+                                            ->label('Durée')
+                                            ->placeholder('30 jours de boost')
+                                            ->columnSpan(1),
+                                    ]),
+                                Forms\Components\Grid::make(2)
+                                    ->schema([
+                                        Forms\Components\TextInput::make('badge')
+                                            ->label('Badge (ex: POPULAIRE)')
+                                            ->columnSpan(1),
+                                        Forms\Components\Toggle::make('popular')
+                                            ->label('Plan mis en avant')
+                                            ->columnSpan(1),
+                                    ]),
+                                Forms\Components\TagsInput::make('features')
+                                    ->label('Fonctionnalités (une par entrée)')
+                                    ->placeholder('Ajouter une fonctionnalité'),
+                            ])
+                            ->itemLabel(fn (array $state): ?string => ($state['emoji'] ?? '') . ' ' . ($state['name'] ?? 'Plan'))
+                            ->collapsible()
+                            ->reorderableWithButtons()
+                            ->maxItems(5),
+                    ]),
+
+                Forms\Components\Section::make('FAQ')
+                    ->description('Questions/Réponses affichées sur la page /tarifs')
+                    ->visible(fn ($record) => $record?->page_slug === 'tarifs')
+                    ->schema([
+                        Forms\Components\Repeater::make('data.faq')
+                            ->label('Questions fréquentes')
+                            ->schema([
+                                Forms\Components\TextInput::make('q')
+                                    ->label('Question')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\Textarea::make('a')
+                                    ->label('Réponse')
+                                    ->required()
+                                    ->rows(3),
+                            ])
+                            ->itemLabel(fn (array $state): ?string => $state['q'] ?? 'Question')
+                            ->collapsible()
+                            ->reorderableWithButtons()
+                            ->maxItems(10),
+                    ]),
             ]);
     }
 
@@ -103,6 +172,7 @@ class PageContentResource extends Resource
                         'mentions-legales' => route('pages.mentions-legales'),
                         'faq' => route('pages.faq'),
                         'guide-proprietaire' => route('pages.guide-proprietaire'),
+                        'tarifs' => route('pages.tarifs'),
                         'home' => route('home'),
                         default => route('home'),
                     }, shouldOpenInNewTab: true),

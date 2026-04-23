@@ -137,62 +137,29 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                {{-- STARTER --}}
-                <div class="bg-white rounded-2xl border border-gray-200 p-6 text-center hover:border-orange-200 hover:shadow-lg transition-all">
-                    <div class="text-2xl mb-3">🚀</div>
-                    <h3 class="font-bold text-gray-900 text-lg mb-1">Starter</h3>
-                    <div class="text-3xl font-extrabold text-orange-500 mb-1">5 000 <span class="text-base font-normal text-gray-400">FCFA</span></div>
-                    <p class="text-xs text-gray-400 mb-5">7 jours de boost</p>
-                    <ul class="space-y-2 text-sm text-left text-gray-600 mb-6">
-                        <li class="flex gap-2"><span class="text-green-500">✓</span> Annonce en top des résultats</li>
-                        <li class="flex gap-2"><span class="text-green-500">✓</span> Badge "Vedette"</li>
-                        <li class="flex gap-2"><span class="text-green-500">✓</span> +3x de contacts estimés</li>
-                    </ul>
-                    <a href="{{ route('owner.residences.create') }}"
-                        class="block w-full py-2.5 rounded-xl bg-gray-100 hover:bg-orange-500 hover:text-white text-gray-700 font-semibold text-sm transition-all">
-                        Commencer
-                    </a>
-                </div>
-
-                {{-- PRO --}}
-                <div class="bg-white rounded-2xl border-2 border-orange-400 p-6 text-center shadow-xl shadow-orange-100 relative">
+                @foreach($boostPlans as $plan)
+                @php $popular = !empty($plan['popular']); @endphp
+                <div class="bg-white rounded-2xl {{ $popular ? 'border-2 border-orange-400 shadow-xl shadow-orange-100' : 'border border-gray-200 hover:border-orange-200 hover:shadow-lg' }} p-6 text-center transition-all relative">
+                    @if(!empty($plan['badge']))
                     <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-orange-500 text-white text-xs font-bold px-4 py-1 rounded-full">
-                        POPULAIRE
+                        {{ $plan['badge'] }}
                     </div>
-                    <div class="text-2xl mb-3">⚡</div>
-                    <h3 class="font-bold text-gray-900 text-lg mb-1">Pro</h3>
-                    <div class="text-3xl font-extrabold text-orange-500 mb-1">15 000 <span class="text-base font-normal text-gray-400">FCFA</span></div>
-                    <p class="text-xs text-gray-400 mb-5">30 jours de boost</p>
+                    @endif
+                    <div class="text-2xl mb-3">{{ $plan['emoji'] ?? '' }}</div>
+                    <h3 class="font-bold text-gray-900 text-lg mb-1">{{ $plan['name'] }}</h3>
+                    <div class="text-3xl font-extrabold text-orange-500 mb-1">{{ number_format($plan['price'], 0, ',', ' ') }} <span class="text-base font-normal text-gray-400">FCFA</span></div>
+                    <p class="text-xs text-gray-400 mb-5">{{ $plan['duration_label'] }}</p>
                     <ul class="space-y-2 text-sm text-left text-gray-600 mb-6">
-                        <li class="flex gap-2"><span class="text-green-500">✓</span> Top 3 des résultats garantis</li>
-                        <li class="flex gap-2"><span class="text-green-500">✓</span> Badge "Vedette" + priorité carte</li>
-                        <li class="flex gap-2"><span class="text-green-500">✓</span> +5x de contacts estimés</li>
-                        <li class="flex gap-2"><span class="text-green-500">✓</span> Statistiques avancées</li>
+                        @foreach($plan['features'] ?? [] as $feature)
+                        <li class="flex gap-2"><span class="text-green-500">✓</span> {{ $feature }}</li>
+                        @endforeach
                     </ul>
                     <a href="{{ route('owner.residences.create') }}"
-                        class="block w-full py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm shadow-lg shadow-orange-500/25 transition-all">
-                        Choisir Pro
+                        class="block w-full py-2.5 rounded-xl {{ $popular ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25' : 'bg-gray-100 hover:bg-orange-500 hover:text-white text-gray-700' }} font-semibold text-sm transition-all">
+                        {{ $popular ? 'Choisir ' . $plan['name'] : 'Commencer' }}
                     </a>
                 </div>
-
-                {{-- PREMIUM --}}
-                <div class="bg-white rounded-2xl border border-gray-200 p-6 text-center hover:border-orange-200 hover:shadow-lg transition-all">
-                    <div class="text-2xl mb-3">👑</div>
-                    <h3 class="font-bold text-gray-900 text-lg mb-1">Premium</h3>
-                    <div class="text-3xl font-extrabold text-orange-500 mb-1">35 000 <span class="text-base font-normal text-gray-400">FCFA</span></div>
-                    <p class="text-xs text-gray-400 mb-5">90 jours de boost</p>
-                    <ul class="space-y-2 text-sm text-left text-gray-600 mb-6">
-                        <li class="flex gap-2"><span class="text-green-500">✓</span> Position #1 exclusif</li>
-                        <li class="flex gap-2"><span class="text-green-500">✓</span> Badge "Super Hôte"</li>
-                        <li class="flex gap-2"><span class="text-green-500">✓</span> +8x de contacts estimés</li>
-                        <li class="flex gap-2"><span class="text-green-500">✓</span> Mise en avant newsletter</li>
-                        <li class="flex gap-2"><span class="text-green-500">✓</span> Rapport mensuel détaillé</li>
-                    </ul>
-                    <a href="{{ route('owner.residences.create') }}"
-                        class="block w-full py-2.5 rounded-xl bg-gray-100 hover:bg-orange-500 hover:text-white text-gray-700 font-semibold text-sm transition-all">
-                        Choisir Premium
-                    </a>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>
@@ -242,28 +209,7 @@
                 <h2 class="font-display text-3xl font-extrabold text-gray-900">Questions fréquentes</h2>
             </div>
             <div x-data="{ open: null }" class="space-y-3">
-                @foreach([
-                    [
-                        'q' => 'Est-ce vraiment gratuit pour publier une résidence ?',
-                        'a' => 'Oui, à 100%. La publication de base est gratuite et le restera toujours. Vous payez uniquement si vous souhaitez activer des options de visibilité Boost pour accélérer vos mises en location.',
-                    ],
-                    [
-                        'q' => 'REZI prend-il une commission sur mes loyers ?',
-                        'a' => "Non. REZI ne prend aucune commission sur vos revenus locatifs. Vous encaissez 100% de vos loyers directement avec vos locataires, sans intermédiaire.",
-                    ],
-                    [
-                        'q' => 'Les locataires paient-ils quelque chose ?',
-                        'a' => "Jamais. La recherche, le contact et les échanges avec le propriétaire sont entièrement gratuits pour les locataires. Aucune inscription n'est requise pour contacter un propriétaire.",
-                    ],
-                    [
-                        'q' => 'Les options Boost sont-elles remboursables ?',
-                        'a' => "Les Boosts sont activés instantanément. En cas de problème technique de notre part, nous procédons à un remboursement intégral ou à un crédit équivalent.",
-                    ],
-                    [
-                        'q' => 'Comment REZI gagne-t-il de l\'argent ?',
-                        'a' => "REZI se rémunère uniquement sur les options Boost optionnelles que les propriétaires peuvent activer pour gagner en visibilité. La plateforme et la mise en relation restent gratuites.",
-                    ],
-                ] as $i => $faq)
+                @foreach($faqItems as $i => $faq)
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                     <button @click="open = open === {{ $i }} ? null : {{ $i }}"
                         class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:text-orange-600 transition-colors">

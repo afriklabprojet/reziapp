@@ -367,6 +367,78 @@ class PageContent extends Model
     /**
      * Default data structure for 'guide-proprietaire' page
      */
+    public static function defaultTarifsData(): array
+    {
+        return [
+            'boost_plans' => [
+                [
+                    'name'           => 'Starter',
+                    'emoji'          => '🚀',
+                    'price'          => 5000,
+                    'duration_label' => '7 jours de boost',
+                    'badge'          => '',
+                    'popular'        => false,
+                    'features'       => [
+                        'Annonce en top des résultats',
+                        'Badge "Vedette"',
+                        '+3x de contacts estimés',
+                    ],
+                ],
+                [
+                    'name'           => 'Pro',
+                    'emoji'          => '⚡',
+                    'price'          => 15000,
+                    'duration_label' => '30 jours de boost',
+                    'badge'          => 'POPULAIRE',
+                    'popular'        => true,
+                    'features'       => [
+                        'Top 3 des résultats garantis',
+                        'Badge "Vedette" + priorité carte',
+                        '+5x de contacts estimés',
+                        'Statistiques avancées',
+                    ],
+                ],
+                [
+                    'name'           => 'Premium',
+                    'emoji'          => '👑',
+                    'price'          => 35000,
+                    'duration_label' => '90 jours de boost',
+                    'badge'          => '',
+                    'popular'        => false,
+                    'features'       => [
+                        'Position #1 exclusif',
+                        'Badge "Super Hôte"',
+                        '+8x de contacts estimés',
+                        'Mise en avant newsletter',
+                        'Rapport mensuel détaillé',
+                    ],
+                ],
+            ],
+            'faq' => [
+                [
+                    'q' => 'Est-ce vraiment gratuit pour publier une résidence ?',
+                    'a' => 'Oui, à 100%. La publication de base est gratuite et le restera toujours. Vous payez uniquement si vous souhaitez activer des options de visibilité Boost pour accélérer vos mises en location.',
+                ],
+                [
+                    'q' => 'REZI prend-il une commission sur mes loyers ?',
+                    'a' => 'Non. REZI ne prend aucune commission sur vos revenus locatifs. Vous encaissez 100% de vos loyers directement avec vos locataires, sans intermédiaire.',
+                ],
+                [
+                    'q' => 'Les locataires paient-ils quelque chose ?',
+                    'a' => "Jamais. La recherche, le contact et les échanges avec le propriétaire sont entièrement gratuits pour les locataires. Aucune inscription n'est requise pour contacter un propriétaire.",
+                ],
+                [
+                    'q' => 'Les options Boost sont-elles remboursables ?',
+                    'a' => "Les Boosts sont activés instantanément. En cas de problème technique de notre part, nous procédons à un remboursement intégral ou à un crédit équivalent.",
+                ],
+                [
+                    'q' => "Comment REZI gagne-t-il de l'argent ?",
+                    'a' => "REZI se rémunère uniquement sur les options Boost optionnelles que les propriétaires peuvent activer pour gagner en visibilité. La plateforme et la mise en relation restent gratuites.",
+                ],
+            ],
+        ];
+    }
+
     public static function defaultGuideProprietaireData(): array
     {
         return [

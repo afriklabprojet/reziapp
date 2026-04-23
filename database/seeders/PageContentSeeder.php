@@ -85,5 +85,16 @@ class PageContentSeeder extends Seeder
                 'is_active' => true,
             ],
         );
+
+        PageContent::updateOrCreate(
+            ['page_slug' => 'tarifs'],
+            [
+                'page_title' => 'Tarifs',
+                'data' => PageContent::defaultTarifsData(),
+                'meta_title' => 'Tarifs REZI – Publication gratuite, 0 commission',
+                'meta_description' => 'Publiez votre résidence meublée gratuitement sur REZI. Aucune commission sur la mise en location, options de visibilité disponibles.',
+                'is_active' => true,
+            ],
+        );
     }
 }
