@@ -51,16 +51,18 @@ class SecurityHeaders
 
         // CDN Mapbox (carte interactive)
         $mapboxCdn = 'https://api.mapbox.com';
+        // Google Maps JS API + Places (autocomplétion adresses)
+        $googleMaps = 'https://maps.googleapis.com https://maps.gstatic.com';
         // Google Fonts (DM Serif Display + Outfit)
         $googleFonts = 'https://fonts.googleapis.com';
-        // Microsoft Clarity (analytics)
-        $clarity = 'https://www.clarity.ms';
+        // Microsoft Clarity (analytics) — scripts chargés depuis scripts.clarity.ms
+        $clarity = 'https://www.clarity.ms https://scripts.clarity.ms';
 
         $directives = [
             "default-src 'self'",
             // Alpine.js, Livewire et Filament nécessitent inline/eval
-            // Mapbox GL JS chargé depuis le CDN Mapbox + Microsoft Clarity
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' {$mapboxCdn} {$clarity}",
+            // Mapbox GL JS + Google Maps Places API + Microsoft Clarity
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' {$mapboxCdn} {$googleMaps} {$clarity}",
             // Tailwind v4 injecte des styles inline ; fonts.bunny.net pour Figtree
             // Mapbox GL CSS + Google Fonts
             "style-src 'self' 'unsafe-inline' {$externalFontHosts} {$mapboxCdn} {$googleFonts}",
