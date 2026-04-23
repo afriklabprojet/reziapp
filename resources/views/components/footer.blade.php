@@ -153,7 +153,7 @@
                 {{-- Social Links --}}
                 <div class="flex flex-wrap gap-2 sm:gap-3">
                     @if($fc['footer_social_facebook_enabled'] ?? true)
-                    <a href="{{ config('rezi.social.facebook') }}" target="_blank" rel="noopener noreferrer"
+                    <a href="{{ $fc['footer_social_facebook_url'] ?? config('rezi.social.facebook') }}" target="_blank" rel="noopener noreferrer"
                         aria-label="Facebook"
                         class="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-full flex items-center justify-center transition-colors duration-200">
                         <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -163,7 +163,7 @@
                     </a>
                     @endif
                     @if($fc['footer_social_instagram_enabled'] ?? true)
-                    <a href="{{ config('rezi.social.instagram') }}" target="_blank" rel="noopener noreferrer"
+                    <a href="{{ $fc['footer_social_instagram_url'] ?? config('rezi.social.instagram') }}" target="_blank" rel="noopener noreferrer"
                         aria-label="Instagram"
                         class="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-full flex items-center justify-center transition-colors duration-200">
                         <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -173,7 +173,7 @@
                     </a>
                     @endif
                     @if($fc['footer_social_whatsapp_enabled'] ?? true)
-                    <a href="https://wa.me/{{ str_replace('+', '', config('rezi.company.phone_raw')) }}" target="_blank"
+                    <a href="{{ $fc['footer_social_whatsapp_url'] ?? 'https://wa.me/'.str_replace('+', '', config('rezi.company.phone_raw')) }}" target="_blank"
                         rel="noopener noreferrer" aria-label="WhatsApp"
                         class="w-10 h-10 bg-gray-800 hover:bg-green-500 rounded-full flex items-center justify-center transition-colors duration-200">
                         <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -183,7 +183,7 @@
                     </a>
                     @endif
                     @if($fc['footer_social_twitter_enabled'] ?? true)
-                    <a href="https://twitter.com/rezi_ci" target="_blank" rel="noopener noreferrer"
+                    <a href="{{ $fc['footer_social_twitter_url'] ?? 'https://twitter.com/rezi_ci' }}" target="_blank" rel="noopener noreferrer"
                         aria-label="X (Twitter)"
                         class="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-full flex items-center justify-center transition-colors duration-200">
                         <svg aria-hidden="true" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -193,7 +193,7 @@
                     </a>
                     @endif
                     @if($fc['footer_social_linkedin_enabled'] ?? true)
-                    <a href="https://linkedin.com/company/rezi-ci" target="_blank" rel="noopener noreferrer"
+                    <a href="{{ $fc['footer_social_linkedin_url'] ?? 'https://linkedin.com/company/rezi-ci' }}" target="_blank" rel="noopener noreferrer"
                         aria-label="LinkedIn"
                         class="w-10 h-10 bg-gray-800 hover:bg-blue-600 rounded-full flex items-center justify-center transition-colors duration-200">
                         <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -203,7 +203,7 @@
                     </a>
                     @endif
                     @if($fc['footer_social_tiktok_enabled'] ?? true)
-                    <a href="{{ config('rezi.social.tiktok') }}" target="_blank" rel="noopener noreferrer"
+                    <a href="{{ $fc['footer_social_tiktok_url'] ?? config('rezi.social.tiktok') }}" target="_blank" rel="noopener noreferrer"
                         aria-label="TikTok"
                         class="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-full flex items-center justify-center transition-colors duration-200">
                         <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

@@ -67,6 +67,12 @@ class FooterSettings extends Page implements HasForms
             'footer_social_twitter_enabled'   => (bool) ($s->get('footer_social_twitter_enabled')?->value ?? true),
             'footer_social_linkedin_enabled'  => (bool) ($s->get('footer_social_linkedin_enabled')?->value ?? true),
             'footer_social_tiktok_enabled'    => (bool) ($s->get('footer_social_tiktok_enabled')?->value ?? true),
+            'footer_social_facebook_url'      => $s->get('footer_social_facebook_url')?->value  ?? 'https://facebook.com/reziapp.ci',
+            'footer_social_instagram_url'     => $s->get('footer_social_instagram_url')?->value ?? 'https://instagram.com/reziapp.ci',
+            'footer_social_whatsapp_url'      => $s->get('footer_social_whatsapp_url')?->value  ?? 'https://wa.me/2250700000000',
+            'footer_social_twitter_url'       => $s->get('footer_social_twitter_url')?->value   ?? 'https://twitter.com/rezi_ci',
+            'footer_social_linkedin_url'      => $s->get('footer_social_linkedin_url')?->value  ?? 'https://linkedin.com/company/rezi-ci',
+            'footer_social_tiktok_url'        => $s->get('footer_social_tiktok_url')?->value    ?? 'https://tiktok.com/@reziapp.ci',
         ];
     }
 
@@ -161,28 +167,71 @@ class FooterSettings extends Page implements HasForms
         return $form
             ->schema([
                 Forms\Components\Section::make('Réseaux sociaux')
-                    ->description('Activer ou désactiver chaque icône de réseau social dans le footer')
+                    ->description('URLs et visibilité de chaque réseau dans le footer')
                     ->icon('heroicon-o-share')
                     ->schema([
-                        Forms\Components\Toggle::make('footer_social_facebook_enabled')
-                            ->label('Facebook')
-                            ->onColor('success'),
-                        Forms\Components\Toggle::make('footer_social_instagram_enabled')
-                            ->label('Instagram')
-                            ->onColor('success'),
-                        Forms\Components\Toggle::make('footer_social_whatsapp_enabled')
-                            ->label('WhatsApp')
-                            ->onColor('success'),
-                        Forms\Components\Toggle::make('footer_social_twitter_enabled')
-                            ->label('X (Twitter)')
-                            ->onColor('success'),
-                        Forms\Components\Toggle::make('footer_social_linkedin_enabled')
-                            ->label('LinkedIn')
-                            ->onColor('success'),
-                        Forms\Components\Toggle::make('footer_social_tiktok_enabled')
-                            ->label('TikTok')
-                            ->onColor('success'),
-                    ])->columns(3),
+                        Forms\Components\Grid::make(2)->schema([
+                            Forms\Components\Toggle::make('footer_social_facebook_enabled')
+                                ->label('Facebook')
+                                ->onColor('success'),
+                            Forms\Components\TextInput::make('footer_social_facebook_url')
+                                ->label('URL Facebook')
+                                ->url()
+                                ->placeholder('https://facebook.com/votrepage')
+                                ->prefixIcon('heroicon-o-link'),
+                        ]),
+                        Forms\Components\Grid::make(2)->schema([
+                            Forms\Components\Toggle::make('footer_social_instagram_enabled')
+                                ->label('Instagram')
+                                ->onColor('success'),
+                            Forms\Components\TextInput::make('footer_social_instagram_url')
+                                ->label('URL Instagram')
+                                ->url()
+                                ->placeholder('https://instagram.com/votreprofil')
+                                ->prefixIcon('heroicon-o-link'),
+                        ]),
+                        Forms\Components\Grid::make(2)->schema([
+                            Forms\Components\Toggle::make('footer_social_whatsapp_enabled')
+                                ->label('WhatsApp')
+                                ->onColor('success'),
+                            Forms\Components\TextInput::make('footer_social_whatsapp_url')
+                                ->label('URL WhatsApp')
+                                ->url()
+                                ->placeholder('https://wa.me/2250700000000')
+                                ->helperText('Format : https://wa.me/INDICATIF+NUMERO (sans le +)')
+                                ->prefixIcon('heroicon-o-link'),
+                        ]),
+                        Forms\Components\Grid::make(2)->schema([
+                            Forms\Components\Toggle::make('footer_social_twitter_enabled')
+                                ->label('X (Twitter)')
+                                ->onColor('success'),
+                            Forms\Components\TextInput::make('footer_social_twitter_url')
+                                ->label('URL X (Twitter)')
+                                ->url()
+                                ->placeholder('https://twitter.com/votrepage')
+                                ->prefixIcon('heroicon-o-link'),
+                        ]),
+                        Forms\Components\Grid::make(2)->schema([
+                            Forms\Components\Toggle::make('footer_social_linkedin_enabled')
+                                ->label('LinkedIn')
+                                ->onColor('success'),
+                            Forms\Components\TextInput::make('footer_social_linkedin_url')
+                                ->label('URL LinkedIn')
+                                ->url()
+                                ->placeholder('https://linkedin.com/company/votrepage')
+                                ->prefixIcon('heroicon-o-link'),
+                        ]),
+                        Forms\Components\Grid::make(2)->schema([
+                            Forms\Components\Toggle::make('footer_social_tiktok_enabled')
+                                ->label('TikTok')
+                                ->onColor('success'),
+                            Forms\Components\TextInput::make('footer_social_tiktok_url')
+                                ->label('URL TikTok')
+                                ->url()
+                                ->placeholder('https://tiktok.com/@votreprofil')
+                                ->prefixIcon('heroicon-o-link'),
+                        ]),
+                    ]),
             ])
             ->statePath('socialData');
     }
@@ -218,9 +267,21 @@ class FooterSettings extends Page implements HasForms
 
     public function saveSocial(): void
     {
-        foreach ($this->socialForm->getState() as $key => $value) {
-            PlatformSetting::setValue($key, $value);
+        $state = $this->socialForm->getState();
+
+        foreach ($state as $key => $value) {
+            // updateOrCreate pour les clés URL (peuvent ne pas encore exister si migration non jouée)
+            if (str_ends_with($key, '_url')) {
+                \App\Models\PlatformSetting::updateOrCreate(
+                    ['key' => $key],
+                    ['value' => $value, 'type' => 'string', 'group' => 'footer', 'is_public' => false]
+                );
+                \Illuminate\Support\Facades\Cache::forget("setting.{$key}");
+            } else {
+                PlatformSetting::setValue($key, $value);
+            }
         }
+
         Cache::forget('footer_all_settings');
         Notification::make()->title('Réseaux sociaux mis à jour')->success()->send();
     }
