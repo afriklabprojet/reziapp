@@ -252,18 +252,21 @@ class ClientController extends Controller
         $sixMonthsAgo = now()->subMonths(5)->startOfMonth();
 
         $viewsByMonth = $user->residenceViews()
+            ->reorder()
             ->where('created_at', '>=', $sixMonthsAgo)
             ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as ym, COUNT(*) as cnt")
             ->groupBy('ym')
             ->pluck('cnt', 'ym');
 
         $searchesByMonth = $user->searchHistories()
+            ->reorder()
             ->where('created_at', '>=', $sixMonthsAgo)
             ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as ym, COUNT(*) as cnt")
             ->groupBy('ym')
             ->pluck('cnt', 'ym');
 
         $contactsByMonth = $user->sentContacts()
+            ->reorder()
             ->where('created_at', '>=', $sixMonthsAgo)
             ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as ym, COUNT(*) as cnt")
             ->groupBy('ym')
