@@ -24,8 +24,9 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'profile_photo' => $this->profile_photo
-                ? url('storage/'.$this->profile_photo)
+                ? (str_starts_with($this->profile_photo, 'http') ? $this->profile_photo : url('storage/'.$this->profile_photo))
                 : null,
+            'avatar_url' => $this->getAvatarUrl(),
             'role' => $this->role,
 
             // Champs privés (seulement pour soi-même ou admin)

@@ -27,9 +27,6 @@
                     <x-nav-link :href="route('pages.contact')" :active="request()->routeIs('pages.contact')">
                         {{ __('Contact') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('pages.tarifs')" :active="request()->routeIs('pages.tarifs')" class="font-semibold text-orange-600 dark:text-orange-400">
-                        {{ __('Tarifs') }}
-                    </x-nav-link>
                 </div>
             </div>
 
@@ -203,9 +200,6 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('pages.contact')" :active="request()->routeIs('pages.contact')">
                 {{ __('Contact') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('pages.tarifs')" :active="request()->routeIs('pages.tarifs')">
-                {{ __('Tarifs') }}
             </x-responsive-nav-link>
         </div>
 

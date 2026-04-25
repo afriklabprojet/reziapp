@@ -378,7 +378,7 @@
                 </div>
             </a>
 
-            <a href="{{ route('owner.pricing.index', auth()->user()->residences()->first() ?? 0) }}"
+            <a href="{{ route('owner.pricing.index', $firstResidenceId) }}"
                 class="bg-white rounded-xl p-4 border border-gray-200 hover:border-orange-300 hover:shadow-md transition flex items-center gap-4">
                 <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                     <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -109,6 +109,9 @@ return Application::configure(basePath: dirname(__DIR__))
         }
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        // Sentry — capture toutes les exceptions non gérées (no-op si SENTRY_LARAVEL_DSN vide)
+        \Sentry\Laravel\Integration::handles($exceptions);
+
         // API : retourner JSON structuré pour toutes les erreurs
         $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
             if (! $request->expectsJson() && ! $request->is('api/*')) {

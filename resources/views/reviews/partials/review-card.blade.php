@@ -1,19 +1,19 @@
 <div class="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
     <div class="flex items-start gap-4">
         <!-- Avatar -->
-        <a href="{{ route('profile.public', $review->user) }}" class="shrink-0">
-            <img loading="lazy" src="{{ $review->user->getAvatarUrl() }}" 
+        <div class="shrink-0">
+            <img loading="lazy" src="{{ $review->user->getAvatarUrl() }}"
                  alt="{{ $review->user->name }}"
                  class="w-12 h-12 rounded-full object-cover">
-        </a>
-        
+        </div>
+
         <div class="flex-1 min-w-0">
             <!-- En-tête -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
                 <div>
-                    <a href="{{ route('profile.public', $review->user) }}" class="font-medium text-gray-900 hover:text-orange-500">
+                    <span class="font-medium text-gray-900">
                         {{ $review->user->name }}
-                    </a>
+                    </span>
                     @if($review->is_verified)
                         <span class="inline-flex items-center ml-2 text-xs text-orange-500">
                             <svg class="w-4 h-4 mr-0.5" fill="currentColor" viewBox="0 0 20 20">
@@ -42,7 +42,7 @@
 
             <!-- Résidence (si showResidence) -->
             @if(isset($showResidence) && $showResidence && $review->residence)
-                <a href="{{ route('residences.show', $review->residence) }}" 
+                <a href="{{ route('residences.show', $review->residence) }}"
                    class="flex items-center gap-2 mb-3 text-sm text-gray-600 hover:text-orange-500">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
@@ -58,7 +58,7 @@
             @if($review->photos && count($review->photos) > 0)
                 <div class="flex flex-wrap gap-2 mt-3">
                     @foreach($review->photos as $photo)
-                        <img loading="lazy" src="{{ storage_url($photo) }}" 
+                        <img loading="lazy" src="{{ storage_url($photo) }}"
                              alt="Photo de l'avis"
                              class="w-20 h-20 rounded-lg object-cover cursor-pointer hover:opacity-90 transition"
                              onclick="openLightbox('{{ storage_url($photo) }}')">
@@ -81,7 +81,7 @@
             <div class="flex items-center gap-4 mt-4">
                 @auth
                     <!-- Vote utile -->
-                    <button onclick="toggleHelpful({{ $review->id }})" 
+                    <button onclick="toggleHelpful({{ $review->id }})"
                             class="helpful-btn-{{ $review->id }} flex items-center gap-1 text-sm {{ $review->hasUserVoted(Auth::user()) ? 'text-orange-500' : 'text-gray-500 hover:text-orange-500' }} transition"
                             data-voted="{{ $review->hasUserVoted(Auth::user()) ? 'true' : 'false' }}">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -93,7 +93,7 @@
 
                     <!-- Signaler -->
                     @if(Auth::id() !== $review->user_id)
-                        <button onclick="openReportModal({{ $review->id }})" 
+                        <button onclick="openReportModal({{ $review->id }})"
                                 class="flex items-center gap-1 text-sm text-gray-500 hover:text-red-500 transition">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"/>

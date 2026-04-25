@@ -38,32 +38,32 @@ class OwnerBalance extends Model
 
     public function getFormattedAvailableAttribute(): string
     {
-        return number_format($this->available_balance, 0, ',', ' ').' '.$this->currency;
+        return number_format((float) $this->available_balance, 0, ',', ' ').' '.$this->currency;
     }
 
     public function getFormattedPendingAttribute(): string
     {
-        return number_format($this->pending_balance, 0, ',', ' ').' '.$this->currency;
+        return number_format((float) $this->pending_balance, 0, ',', ' ').' '.$this->currency;
     }
 
     public function getFormattedTotalEarnedAttribute(): string
     {
-        return number_format($this->total_earned, 0, ',', ' ').' '.$this->currency;
+        return number_format((float) $this->total_earned, 0, ',', ' ').' '.$this->currency;
     }
 
     public function getFormattedTotalWithdrawnAttribute(): string
     {
-        return number_format($this->total_withdrawn, 0, ',', ' ').' '.$this->currency;
+        return number_format((float) $this->total_withdrawn, 0, ',', ' ').' '.$this->currency;
     }
 
     public function getTotalBalanceAttribute(): float
     {
-        return $this->available_balance + $this->pending_balance;
+        return (float) $this->available_balance + (float) $this->pending_balance;
     }
 
     public function getFormattedTotalBalanceAttribute(): string
     {
-        return number_format($this->total_balance, 0, ',', ' ').' '.$this->currency;
+        return number_format((float) $this->total_balance, 0, ',', ' ').' '.$this->currency;
     }
 
     // ===== METHODS =====
@@ -78,30 +78,42 @@ class OwnerBalance extends Model
     }
 
     /**
-     * Convertir les gains en attente en disponibles
+     * Convertir les gains en attente en disponibles (atomique)
      */
     public function releasePendingEarnings(float $amount): void
     {
-        $releaseAmount = min($amount, $this->pending_balance);
+        \Illuminate\Support\Facades\DB::transaction(function () use ($amount) {
+            /** @var self $locked */
+            $locked = self::lockForUpdate()->find($this->id);
+            $releaseAmount = min($amount, (float) $locked->pending_balance);
 
-        $this->decrement('pending_balance', $releaseAmount);
-        $this->increment('available_balance', $releaseAmount);
+            $locked->decrement('pending_balance', $releaseAmount);
+            $locked->increment('available_balance', $releaseAmount);
+        });
     }
 
     /**
-     * Retirer du solde disponible (pour payout)
+     * Retirer du solde disponible pour payout (atomique, protégé contre le double retrait)
      */
     public function withdraw(float $amount): bool
     {
-        if ($amount > $this->available_balance) {
-            return false;
-        }
+        $success = false;
 
-        $this->decrement('available_balance', $amount);
-        $this->increment('total_withdrawn', $amount);
-        $this->update(['last_payout_at' => now()]);
+        \Illuminate\Support\Facades\DB::transaction(function () use ($amount, &$success) {
+            /** @var self $locked */
+            $locked = self::lockForUpdate()->find($this->id);
 
-        return true;
+            if ($amount > (float) $locked->available_balance) {
+                return; // solde insuffisant — $success reste false
+            }
+
+            $locked->decrement('available_balance', $amount);
+            $locked->increment('total_withdrawn', $amount);
+            $locked->update(['last_payout_at' => now()]);
+            $success = true;
+        });
+
+        return $success;
     }
 
     /**

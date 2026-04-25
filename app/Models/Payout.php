@@ -122,12 +122,12 @@ class Payout extends Model
 
     public function getFormattedGrossAttribute(): string
     {
-        return number_format($this->gross_amount, 0, ',', ' ').' '.$this->currency;
+        return number_format((float) $this->gross_amount, 0, ',', ' ').' '.$this->currency;
     }
 
     public function getFormattedNetAttribute(): string
     {
-        return number_format($this->net_amount, 0, ',', ' ').' '.$this->currency;
+        return number_format((float) $this->net_amount, 0, ',', ' ').' '.$this->currency;
     }
 
     public function getStatusLabelAttribute(): string
@@ -249,7 +249,7 @@ class Payout extends Model
             $this->user,
             'system',
             'Versement effectué',
-            'Votre versement de '.number_format($this->net_amount, 0, ',', ' ').' FCFA a été traité.',
+            'Votre versement de '.number_format((float) $this->net_amount, 0, ',', ' ').' FCFA a été traité.',
             route('owner.earnings.index'),
             ['payout_id' => $this->id, 'amount' => $this->net_amount],
         );

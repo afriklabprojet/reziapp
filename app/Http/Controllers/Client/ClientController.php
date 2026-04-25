@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Residence;
 use App\Models\ResidenceView;
 use App\Models\SearchHistory;
+use App\Models\Payment;
 use App\Services\ClientDashboardService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,12 +19,19 @@ class ClientController extends Controller
     ) {
     }
 
+    /** @return \App\Models\User */
+    private function user(): \App\Models\User
+    {
+        /** @var \App\Models\User */
+        return Auth::user();
+    }
+
     /**
      * Dashboard principal du client
      */
     public function dashboard()
     {
-        $user = Auth::user();
+        $user = $this->user();
 
         // Rediriger les propriétaires vers leur dashboard dédié
         if ($user->isOwner()) {
@@ -40,7 +48,7 @@ class ClientController extends Controller
      */
     public function searchHistory(Request $request)
     {
-        $user = Auth::user();
+        $user = $this->user();
 
         $searches = $user->searchHistories()
             ->when($request->commune, fn ($q, $commune) => $q->where('commune', $commune))
@@ -85,7 +93,7 @@ class ClientController extends Controller
      */
     public function clearSearchHistory()
     {
-        Auth::user()->searchHistories()->delete();
+        $this->user()->searchHistories()->delete();
 
         return back()->with('success', 'Historique de recherche effacé.');
     }
@@ -95,7 +103,7 @@ class ClientController extends Controller
      */
     public function viewHistory(Request $request)
     {
-        $user = Auth::user();
+        $user = $this->user();
 
         $views = ResidenceView::where('user_id', $user->id)
             ->with(['residence.photos', 'residence.amenities'])
@@ -128,7 +136,7 @@ class ClientController extends Controller
      */
     public function clearViewHistory()
     {
-        Auth::user()->residenceViews()->delete();
+        $this->user()->residenceViews()->delete();
 
         return back()->with('success', 'Historique des visites effacé.');
     }
@@ -138,7 +146,7 @@ class ClientController extends Controller
      */
     public function compare(Request $request)
     {
-        $user = Auth::user();
+        $user = $this->user();
         $residenceIds = $request->input('residences', []);
 
         // Si aucune résidence sélectionnée, prendre les favoris récents
@@ -167,7 +175,7 @@ class ClientController extends Controller
      */
     public function alerts()
     {
-        $user = Auth::user();
+        $user = $this->user();
 
         // Alertes de prix réelles (via PriceAlert model)
         $priceAlerts = $this->dashboardService->getPriceAlerts($user);
@@ -192,7 +200,7 @@ class ClientController extends Controller
      */
     public function contacts(Request $request)
     {
-        $user = Auth::user();
+        $user = $this->user();
 
         $contacts = $user->sentContacts()
             ->with(['residence.photos', 'owner'])
@@ -216,7 +224,7 @@ class ClientController extends Controller
      */
     public function reviews()
     {
-        $user = Auth::user();
+        $user = $this->user();
 
         $reviews = $user->reviews()
             ->with(['residence.photos', 'residence.owner'])
@@ -238,17 +246,38 @@ class ClientController extends Controller
      */
     public function statistics()
     {
-        $user = Auth::user();
+        $user = $this->user();
 
-        // Activité par mois (derniers 6 mois)
+        // Activité par mois (derniers 6 mois) — une seule requête GROUP BY par métrique
+        $sixMonthsAgo = now()->subMonths(5)->startOfMonth();
+
+        $viewsByMonth = $user->residenceViews()
+            ->where('created_at', '>=', $sixMonthsAgo)
+            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as ym, COUNT(*) as cnt")
+            ->groupBy('ym')
+            ->pluck('cnt', 'ym');
+
+        $searchesByMonth = $user->searchHistories()
+            ->where('created_at', '>=', $sixMonthsAgo)
+            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as ym, COUNT(*) as cnt")
+            ->groupBy('ym')
+            ->pluck('cnt', 'ym');
+
+        $contactsByMonth = $user->sentContacts()
+            ->where('created_at', '>=', $sixMonthsAgo)
+            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as ym, COUNT(*) as cnt")
+            ->groupBy('ym')
+            ->pluck('cnt', 'ym');
+
         $monthlyActivity = [];
         for ($i = 5; $i >= 0; $i--) {
             $date = now()->subMonths($i);
+            $ym   = $date->format('Y-m');
             $monthlyActivity[] = [
-                'month' => $date->translatedFormat('M Y'),
-                'views' => $user->residenceViews()->whereYear('created_at', $date->year)->whereMonth('created_at', $date->month)->count(),
-                'searches' => $user->searchHistories()->whereYear('created_at', $date->year)->whereMonth('created_at', $date->month)->count(),
-                'contacts' => $user->sentContacts()->whereYear('created_at', $date->year)->whereMonth('created_at', $date->month)->count(),
+                'month'    => $date->translatedFormat('M Y'),
+                'views'    => $viewsByMonth[$ym] ?? 0,
+                'searches' => $searchesByMonth[$ym] ?? 0,
+                'contacts' => $contactsByMonth[$ym] ?? 0,
             ];
         }
 
@@ -288,6 +317,7 @@ class ClientController extends Controller
         ];
 
         return view('client.statistics', compact(
+            'user',
             'monthlyActivity',
             'topCommunes',
             'preferredTypes',
@@ -301,7 +331,7 @@ class ClientController extends Controller
      */
     public function contracts()
     {
-        $user = Auth::user();
+        $user = $this->user();
 
         $contracts = $user->leaseContracts()
             ->with(['residence.photos', 'owner'])
@@ -323,7 +353,7 @@ class ClientController extends Controller
      */
     public function showContract(\App\Models\LeaseContract $leaseContract)
     {
-        $user = Auth::user();
+        $user = $this->user();
 
         if ((int) $leaseContract->tenant_id !== (int) $user->id) {
             abort(403);
@@ -347,7 +377,7 @@ class ClientController extends Controller
      */
     public function signContract(\App\Models\LeaseContract $leaseContract)
     {
-        $user = Auth::user();
+        $user = $this->user();
 
         if ((int) $leaseContract->tenant_id !== (int) $user->id) {
             abort(403);
@@ -372,7 +402,7 @@ class ClientController extends Controller
      */
     public function downloadContract(\App\Models\LeaseContract $leaseContract)
     {
-        $user = Auth::user();
+        $user = $this->user();
 
         if ((int) $leaseContract->tenant_id !== (int) $user->id) {
             abort(403);
@@ -389,11 +419,133 @@ class ClientController extends Controller
     }
 
     /**
+     * Demande de résiliation de contrat par le locataire
+     */
+    public function requestContractTermination(\App\Models\LeaseContract $leaseContract, Request $request)
+    {
+        $user = $this->user();
+
+        if ((int) $leaseContract->tenant_id !== (int) $user->id) {
+            abort(403);
+        }
+
+        if ($leaseContract->status !== \App\Models\LeaseContract::STATUS_ACTIVE) {
+            return back()->with('error', 'Ce contrat ne peut pas faire l\'objet d\'une demande de résiliation.');
+        }
+
+        if ($leaseContract->termination_requested_at) {
+            return back()->with('info', 'Une demande de résiliation est déjà en cours pour ce contrat.');
+        }
+
+        $request->validate([
+            'reason' => ['required', 'string', 'min:20', 'max:1000'],
+        ], [
+            'reason.required' => 'Veuillez indiquer le motif de résiliation.',
+            'reason.min'      => 'Le motif doit contenir au moins 20 caractères.',
+        ]);
+
+        $leaseContract->update([
+            'termination_requested_at'    => now(),
+            'termination_request_reason'  => $request->input('reason'),
+        ]);
+
+        // Notifier le propriétaire et l'admin
+        try {
+            $leaseContract->owner->notify(new \App\Notifications\ContractTerminationRequested($leaseContract));
+        } catch (\Throwable) {
+            // Silently fail — la demande est enregistrée
+        }
+
+        return back()->with('success', 'Votre demande de résiliation a été envoyée au propriétaire. Vous serez contacté prochainement.');
+    }
+
+    /**
+     * Annuler une demande de résiliation en cours
+     */
+    public function cancelContractTermination(\App\Models\LeaseContract $leaseContract)
+    {
+        $user = $this->user();
+
+        if ((int) $leaseContract->tenant_id !== (int) $user->id) {
+            abort(403);
+        }
+
+        if (! $leaseContract->termination_requested_at) {
+            return back()->with('info', 'Aucune demande de résiliation en cours.');
+        }
+
+        // Seul possible si le propriétaire n'a pas encore traité la demande
+        if ($leaseContract->status === \App\Models\LeaseContract::STATUS_ACTIVE) {
+            $leaseContract->update([
+                'termination_requested_at'   => null,
+                'termination_request_reason' => null,
+            ]);
+
+            return back()->with('success', 'Votre demande de résiliation a bien été annulée.');
+        }
+
+        return back()->with('error', 'Cette demande ne peut plus être annulée.');
+    }
+
+    /**
+     * Supprimer un avis publié par le locataire
+     */
+    public function deleteReview(\App\Models\Review $review)
+    {
+        $user = $this->user();
+
+        if ($review->user_id !== $user->id) {
+            abort(403);
+        }
+
+        // On ne peut pas supprimer si le propriétaire a déjà répondu
+        if ($review->owner_response) {
+            return back()->with('error', 'Impossible de supprimer un avis auquel le propriétaire a répondu.');
+        }
+
+        $review->delete();
+
+        return back()->with('success', 'Votre avis a été supprimé.');
+    }
+
+    /**
+     * Modifier un avis publié par le locataire
+     */
+    public function updateReview(\App\Models\Review $review, Request $request)
+    {
+        $user = $this->user();
+
+        if ($review->user_id !== $user->id) {
+            abort(403);
+        }
+
+        if ($review->owner_response) {
+            return back()->with('error', 'Impossible de modifier un avis auquel le propriétaire a répondu.');
+        }
+
+        $validated = $request->validate([
+            'rating'  => ['required', 'integer', 'min:1', 'max:5'],
+            'comment' => ['nullable', 'string', 'min:10', 'max:2000'],
+        ], [
+            'rating.required' => 'La note est obligatoire.',
+            'comment.min'     => 'Le commentaire doit contenir au moins 10 caractères.',
+        ]);
+
+        $review->update([
+            'rating'  => $validated['rating'],
+            'comment' => $validated['comment'] ?? null,
+            'status'  => \App\Models\Review::STATUS_PENDING, // repasse en modération
+        ]);
+
+        return back()->with('success', 'Votre avis a été mis à jour et repassera en modération.');
+    }
+
+    /**
      * Sauvegarder une recherche comme alerte
      */
     public function saveSearchAsAlert(SearchHistory $search)
     {
-        $user = Auth::user();
+        $user = $this->user();
 
         if ($search->user_id !== $user->id) {
             abort(403);
@@ -413,7 +565,7 @@ class ClientController extends Controller
         $user->savedSearches()->create([
             'name'            => $search->commune
                 ? "Alerte {$search->commune}"
-                : 'Alerte recherche',
+                : ($search->type ? 'Alerte ' . ucfirst($search->type) : 'Alerte personnalisée'),
             'filters'         => array_filter([
                 'type'      => $search->type,
                 'bedrooms'  => $search->bedrooms,
@@ -444,6 +596,71 @@ class ClientController extends Controller
         $savedSearch->delete();
 
         return back()->with('success', 'Alerte supprimée.');
+    }
+
+    /**
+     * Modifier une alerte de recherche
+     */
+    public function updateAlert(\App\Models\SavedSearch $savedSearch, Request $request)
+    {
+        if ($savedSearch->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'name'            => ['required', 'string', 'max:100'],
+            'location'        => ['nullable', 'string', 'max:100'],
+            'min_price'       => ['nullable', 'integer', 'min:0'],
+            'max_price'       => ['nullable', 'integer', 'min:0'],
+            'type'            => ['nullable', 'string', 'max:50'],
+            'alert_frequency' => ['nullable', 'in:instant,daily,weekly'],
+        ]);
+
+        $savedSearch->update([
+            'name'            => $validated['name'],
+            'alert_frequency' => $validated['alert_frequency'] ?? $savedSearch->alert_frequency,
+            'location'        => $validated['location'] ?: null,
+            'min_price'       => $validated['min_price'] ?? null,
+            'max_price'       => $validated['max_price'] ?? null,
+            'type'            => $validated['type'] ?: null,
+        ]);
+
+        return back()->with('success', 'Alerte mise à jour.');
+    }
+
+    /**
+     * Historique des paiements du locataire
+     */
+    public function payments(Request $request)
+    {
+        $user = $this->user();
+        $status = $request->query('status', 'all');
+
+        $query = Payment::where('user_id', $user->id)
+            ->with(['booking.residence.photos'])
+            ->orderBy('created_at', 'desc');
+
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        $payments = $query->paginate(15);
+
+        $rawStats = Payment::where('user_id', $user->id)
+            ->selectRaw('COUNT(*) as total')
+            ->selectRaw("SUM(CASE WHEN status = 'completed' THEN total_amount ELSE 0 END) as total_paid")
+            ->selectRaw("SUM(CASE WHEN status IN ('pending','processing') THEN 1 ELSE 0 END) as pending_count")
+            ->selectRaw("SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed_count")
+            ->first();
+
+        $paymentStats = [
+            'total'        => (int) $rawStats->total,
+            'total_paid'   => (float) $rawStats->total_paid,
+            'pending'      => (int) $rawStats->pending_count,
+            'failed'       => (int) $rawStats->failed_count,
+        ];
+
+        return view('client.payments', compact('payments', 'paymentStats', 'status'));
     }
 
     /**

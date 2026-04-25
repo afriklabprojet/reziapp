@@ -198,6 +198,6 @@ class MarketPriceData extends Model
      */
     public function getFormattedAvgPrice(): string
     {
-        return number_format($this->avg_price_per_night, 0, ',', ' ').' FCFA/nuit';
+        return number_format((float) $this->avg_price_per_night, 0, ',', ' ').' FCFA/nuit';
     }
 }

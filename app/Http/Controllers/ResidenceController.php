@@ -250,6 +250,13 @@ class ResidenceController extends Controller
             $query->ofType($validated['type']);
         }
 
+        // Sprint 2 — Catégorie visuelle (slug)
+        if (!empty($validated['category'])) {
+            $query->whereHas('category', function ($q) use ($validated) {
+                $q->where('slug', $validated['category']);
+            });
+        }
+
         // Filtre par caractéristiques
         if (!empty($validated['bedrooms'])) {
             $query->where('bedrooms', '>=', $validated['bedrooms']);
@@ -312,15 +319,44 @@ class ResidenceController extends Controller
         if (!empty($validated['check_in']) && !empty($validated['check_out'])) {
             $checkIn = \Carbon\Carbon::parse($validated['check_in']);
             $checkOut = \Carbon\Carbon::parse($validated['check_out']);
-            // Exclure les résidences avec une réservation confirmée chevauchant ces dates
-            $query->whereDoesntHave('bookings', function ($q) use ($checkIn, $checkOut) {
-                $q->whereIn('status', ['confirmed', 'pending', 'pending_payment'])
-                  ->where('check_in', '<', $checkOut)
-                  ->where('check_out', '>', $checkIn);
-            })->whereDoesntHave('blockedDates', function ($q) use ($checkIn, $checkOut) {
-                $q->where('start_date', '<', $checkOut)
-                  ->where('end_date', '>', $checkIn);
-            });
+            $flexWindow = (int) ($validated['flex_window'] ?? 0);
+
+            if ($flexWindow > 0) {
+                // Sprint 2 — Dates flexibles ± N jours : on teste 3 fenêtres (avant, exacte, après)
+                // et on inclut la résidence si AU MOINS UNE fenêtre est libre.
+                $duration = $checkIn->diffInDays($checkOut);
+                $windows = [
+                    [$checkIn->copy()->subDays($flexWindow), $checkIn->copy()->subDays($flexWindow)->addDays($duration)],
+                    [$checkIn->copy(), $checkOut->copy()],
+                    [$checkIn->copy()->addDays($flexWindow), $checkIn->copy()->addDays($flexWindow)->addDays($duration)],
+                ];
+
+                $query->where(function ($outer) use ($windows) {
+                    foreach ($windows as $window) {
+                        [$ws, $we] = $window;
+                        $outer->orWhere(function ($q) use ($ws, $we) {
+                            $q->whereDoesntHave('bookings', function ($b) use ($ws, $we) {
+                                $b->whereIn('status', ['confirmed', 'pending', 'pending_payment'])
+                                  ->where('check_in', '<', $we)
+                                  ->where('check_out', '>', $ws);
+                            })->whereDoesntHave('blockedDates', function ($b) use ($ws, $we) {
+                                $b->where('start_date', '<', $we)
+                                  ->where('end_date', '>', $ws);
+                            });
+                        });
+                    }
+                });
+            } else {
+                // Exact dates uniquement
+                $query->whereDoesntHave('bookings', function ($q) use ($checkIn, $checkOut) {
+                    $q->whereIn('status', ['confirmed', 'pending', 'pending_payment'])
+                      ->where('check_in', '<', $checkOut)
+                      ->where('check_out', '>', $checkIn);
+                })->whereDoesntHave('blockedDates', function ($q) use ($checkIn, $checkOut) {
+                    $q->where('start_date', '<', $checkOut)
+                      ->where('end_date', '>', $checkIn);
+                });
+            }
         } elseif (!empty($validated['flex_dates']) && !empty($validated['flex_type'])) {
             // Dates flexibles — calculer la fenêtre correspondante
             [$flexStart, $flexEnd] = $this->resolveFlexDateRange($validated['flex_type']);
@@ -412,6 +448,11 @@ class ResidenceController extends Controller
 
         $cancellationPolicies = \App\Models\CancellationPolicy::orderBy('name')->get();
 
+        // Sprint 2 — Catégories visuelles (Airbnb-style pills)
+        $categories = \Illuminate\Support\Facades\Cache::remember('search_categories_pills', 600, function () {
+            return \App\Models\Category::active()->ordered()->get(['id', 'name', 'slug', 'icon']);
+        });
+
         // Prix min/max pour le slider
         $priceRange = Residence::approved()
             ->selectRaw('MIN(price_per_month) as min_price, MAX(price_per_month) as max_price')
@@ -424,6 +465,7 @@ class ResidenceController extends Controller
             'quartiers',
             'amenities',
             'cancellationPolicies',
+            'categories',
             'priceRange',
             'validated',
             'sponsoredIds',
@@ -575,6 +617,15 @@ class ResidenceController extends Controller
             ->where('confirmed_at', '>=', now()->subDays(14))
             ->count();
 
+        // ── Statut Superhost de l'hôte ──
+        $isSuperhost = \App\Models\OwnerBadge::where('user_id', $residence->owner_id)
+            ->where('badge_type', \App\Models\OwnerBadge::TYPE_SUPERHOST)
+            ->where('status', \App\Models\OwnerBadge::STATUS_ACTIVE)
+            ->where(function ($q) {
+                $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+            })
+            ->exists();
+
         // ── Taux de réponse de l'hôte ──
         // Utilise les vraies données depuis la table residences
         $responseRate    = $residence->response_rate ?? 0;
@@ -674,6 +725,7 @@ class ResidenceController extends Controller
             'lastBookedDaysAgo',
             'responseRate',
             'avgResponseTime',
+            'isSuperhost',
             'priceSuggestion',
         ));
     }

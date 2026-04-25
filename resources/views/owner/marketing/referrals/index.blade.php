@@ -143,7 +143,7 @@
         </div>
 
         {{-- Stats Grid --}}
-        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
             <div class="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center shrink-0">

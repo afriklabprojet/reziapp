@@ -148,7 +148,7 @@ class Promotion extends Model
             case 'percentage':
                 return '-'.intval($this->discount_value).'%';
             case 'fixed':
-                return '-'.number_format($this->discount_value, 0, ',', ' ').' F';
+                return '-'.number_format((float) $this->discount_value, 0, ',', ' ').' F';
             case 'free_nights':
                 return $this->free_nights_min.' nuits = '.($this->free_nights_min + 1).'ème offerte';
             default:

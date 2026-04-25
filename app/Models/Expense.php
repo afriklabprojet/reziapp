@@ -69,7 +69,7 @@ class Expense extends Model
 
     public function getFormattedAmountAttribute(): string
     {
-        return number_format($this->amount, 0, ',', ' ').' FCFA';
+        return number_format((float) $this->amount, 0, ',', ' ').' FCFA';
     }
 
     // ===== SCOPES =====

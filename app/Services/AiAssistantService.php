@@ -389,6 +389,9 @@ SYSTEM;
             'generationConfig' => [
                 'maxOutputTokens' => 400,
                 'temperature'     => 0.8,
+                'thinkingConfig'  => [
+                    'thinkingBudget' => 0,
+                ],
             ],
         ]);
 
@@ -457,6 +460,11 @@ SYSTEM;
             'generationConfig' => [
                 'maxOutputTokens' => $maxTokens,
                 'temperature'     => 0.7,
+                // Désactive le "thinking mode" de Gemini 2.5 Flash pour
+                // éviter qu'il consomme tous les tokens en réflexion interne.
+                'thinkingConfig'  => [
+                    'thinkingBudget' => 0,
+                ],
             ],
         ]);
 

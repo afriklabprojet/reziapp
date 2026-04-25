@@ -138,11 +138,11 @@ class SavedSearch extends Model
         if ($this->min_price || $this->max_price) {
             $price = '';
             if ($this->min_price && $this->max_price) {
-                $price = number_format($this->min_price, 0, ',', ' ').' - '.number_format($this->max_price, 0, ',', ' ').' FCFA';
+                $price = number_format((float) $this->min_price, 0, ',', ' ').' - '.number_format((float) $this->max_price, 0, ',', ' ').' FCFA';
             } elseif ($this->min_price) {
-                $price = 'Min '.number_format($this->min_price, 0, ',', ' ').' FCFA';
+                $price = 'Min '.number_format((float) $this->min_price, 0, ',', ' ').' FCFA';
             } else {
-                $price = 'Max '.number_format($this->max_price, 0, ',', ' ').' FCFA';
+                $price = 'Max '.number_format((float) $this->max_price, 0, ',', ' ').' FCFA';
             }
             $parts[] = $price;
         }

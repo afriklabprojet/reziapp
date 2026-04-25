@@ -6,6 +6,8 @@ use App\Models\SponsoredListing;
 use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class SponsoredStatsWidget extends BaseWidget
 {
@@ -16,6 +18,11 @@ class SponsoredStatsWidget extends BaseWidget
     protected int | string | array $columnSpan = 'full';
 
     protected function getStats(): array
+    {
+        return Cache::remember('admin.sponsored_stats', 300, fn () => $this->computeStats());
+    }
+
+    protected function computeStats(): array
     {
         $now = Carbon::now();
         $startOfMonth = $now->copy()->startOfMonth();
@@ -69,7 +76,7 @@ class SponsoredStatsWidget extends BaseWidget
             $chartData[] = $dailyCounts[$date] ?? 0;
         }
 
-        return [
+        return array_values([
             Stat::make('Campagnes actives', $activeCount)
                 ->description($pendingCount > 0 ? $pendingCount.' en attente' : 'Tout est à jour')
                 ->descriptionIcon($pendingCount > 0 ? 'heroicon-m-clock' : 'heroicon-m-check-circle')
@@ -100,11 +107,11 @@ class SponsoredStatsWidget extends BaseWidget
                 ->description($pendingCount > 0 ? 'À traiter' : 'Rien en attente')
                 ->descriptionIcon($pendingCount > 0 ? 'heroicon-m-exclamation-triangle' : 'heroicon-m-check')
                 ->color($pendingCount > 0 ? 'danger' : 'gray'),
-        ];
+        ]);
     }
 
     public static function canView(): bool
     {
-        return auth()->user()?->role === 'admin';
+        return Auth::user()?->role === 'admin';
     }
 }

@@ -169,13 +169,9 @@ class RefundService
     {
         $user = $refund->user;
 
-        // Add credit to user account
-        // This is instant and doesn't require external API
+        // Add credit to user account (atomic increment to prevent race conditions)
         DB::transaction(function () use ($user, $refund) {
-            $currentCredit = $user->wallet_credit ?? 0;
-            $user->update([
-                'wallet_credit' => $currentCredit + $refund->amount,
-            ]);
+            $user->increment('wallet_credit', $refund->amount);
         });
 
         return [

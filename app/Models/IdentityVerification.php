@@ -6,9 +6,12 @@ namespace App\Models;
 
 use App\Notifications\IdentityVerificationApproved;
 use App\Notifications\IdentityVerificationRejected;
+use App\Observers\IdentityVerificationObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+#[ObservedBy([IdentityVerificationObserver::class])]
 class IdentityVerification extends Model
 {
     use HasFactory;

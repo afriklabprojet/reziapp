@@ -57,7 +57,7 @@
             @endif
         </div>
 
-        <div class="p-6 border-t bg-gray-50 grid grid-cols-3 gap-4 text-center text-sm">
+        <div class="p-4 sm:p-6 border-t bg-gray-50 grid grid-cols-3 gap-2 sm:gap-4 text-center text-xs sm:text-sm">
             <div>
                 <p class="text-gray-500">Utilisations</p>
                 <p class="font-bold text-gray-900">{{ $template->usage_count ?? 0 }}</p>

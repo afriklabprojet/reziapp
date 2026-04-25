@@ -110,12 +110,14 @@ class WhatsappMessageResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
+                    ->badge()
                     ->label('Utilisateur')
                     ->sortable()
                     ->searchable()
                     ->placeholder('—'),
 
                 Tables\Columns\TextColumn::make('phone_number')
+                    ->badge()
                     ->label('Numéro')
                     ->searchable()
                     ->copyable(),
@@ -134,6 +136,7 @@ class WhatsappMessageResource extends Resource
                     }),
 
                 Tables\Columns\TextColumn::make('message_type')
+                    ->badge()
                     ->label('Type')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
@@ -146,11 +149,13 @@ class WhatsappMessageResource extends Resource
                     }),
 
                 Tables\Columns\TextColumn::make('content')
+                    ->badge()
                     ->label('Contenu')
                     ->limit(50)
                     ->tooltip(fn (WhatsappMessage $record): string => $record->content ?? ''),
 
-                Tables\Columns\BadgeColumn::make('status')
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
                     ->label('Statut')
                     ->colors([
                         'warning' => 'pending',
@@ -168,6 +173,7 @@ class WhatsappMessageResource extends Resource
                     }),
 
                 Tables\Columns\TextColumn::make('created_at')
+                    ->badge()
                     ->label('Date')
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),

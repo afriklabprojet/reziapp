@@ -54,6 +54,24 @@
                                     @if ($savedSearch->new_results_count > 0)
                                         <span class="min-w-5 h-5 bg-purple-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">{{ $savedSearch->new_results_count }}</span>
                                     @endif
+                                    <button type="button"
+                                        x-data
+                                        @click="$dispatch('open-alert-edit', {
+                                            id: {{ $savedSearch->id }},
+                                            name: {{ json_encode($savedSearch->name) }},
+                                            location: {{ json_encode($savedSearch->location ?? '') }},
+                                            minPrice: '{{ $savedSearch->min_price ?? '' }}',
+                                            maxPrice: '{{ $savedSearch->max_price ?? '' }}',
+                                            type: {{ json_encode($savedSearch->type ?? '') }},
+                                            frequency: {{ json_encode($savedSearch->alert_frequency ?? 'daily') }},
+                                            actionUrl: '{{ route('client.alerts.update', $savedSearch) }}'
+                                        })"
+                                        class="p-1.5 text-gray-400 hover:text-purple-600 transition rounded-lg hover:bg-purple-50"
+                                        title="Modifier cette alerte">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+                                        </svg>
+                                    </button>
                                     <form action="{{ route('client.alerts.delete', $savedSearch) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
@@ -314,3 +332,118 @@
     </div>
 
 @endsection
+
+{{-- Modal édition alerte de recherche --}}
+<div
+    x-data="{
+        open: false,
+        alertId: null,
+        name: '',
+        location: '',
+        minPrice: '',
+        maxPrice: '',
+        type: '',
+        frequency: 'daily',
+        actionUrl: '',
+        submitting: false,
+    }"
+    @open-alert-edit.window="
+        alertId = $event.detail.id;
+        name = $event.detail.name;
+        location = $event.detail.location;
+        minPrice = $event.detail.minPrice;
+        maxPrice = $event.detail.maxPrice;
+        type = $event.detail.type;
+        frequency = $event.detail.frequency;
+        actionUrl = $event.detail.actionUrl;
+        open = true;
+    "
+    x-show="open"
+    x-cloak
+    class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    style="display: none;"
+>
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="open = false"></div>
+
+    <div class="relative w-full max-w-md bg-white rounded-2xl shadow-xl p-6 z-10" @click.stop>
+        <div class="flex items-center justify-between mb-5">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-purple-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+                    </svg>
+                </div>
+                <h3 class="text-base font-semibold text-gray-900">Modifier l'alerte</h3>
+            </div>
+            <button @click="open = false" class="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <form :action="actionUrl" method="POST" @submit="submitting = true" class="space-y-4">
+            @csrf
+            @method('PATCH')
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nom de l'alerte</label>
+                <input type="text" name="name" x-model="name" required maxlength="100"
+                    class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-purple-300 focus:border-purple-400" />
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Zone / Commune</label>
+                <input type="text" name="location" x-model="location" maxlength="100" placeholder="Ex: Cocody, Plateau…"
+                    class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-purple-300 focus:border-purple-400" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Budget min (FCFA)</label>
+                    <input type="number" name="min_price" x-model="minPrice" min="0" step="1000"
+                        class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-purple-300 focus:border-purple-400" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Budget max (FCFA)</label>
+                    <input type="number" name="max_price" x-model="maxPrice" min="0" step="1000"
+                        class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-purple-300 focus:border-purple-400" />
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Type de logement</label>
+                <select name="type" x-model="type"
+                    class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-purple-300 focus:border-purple-400">
+                    <option value="">Tous types</option>
+                    <option value="studio">Studio</option>
+                    <option value="appartement">Appartement</option>
+                    <option value="villa">Villa</option>
+                    <option value="chambre">Chambre</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Fréquence de notification</label>
+                <select name="alert_frequency" x-model="frequency"
+                    class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-purple-300 focus:border-purple-400">
+                    <option value="instant">Instantanée</option>
+                    <option value="daily">Quotidienne</option>
+                    <option value="weekly">Hebdomadaire</option>
+                </select>
+            </div>
+
+            <div class="flex gap-3 pt-1">
+                <button type="button" @click="open = false"
+                    class="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition">
+                    Annuler
+                </button>
+                <button type="submit" :disabled="submitting || !name.trim()"
+                    class="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 disabled:cursor-not-allowed rounded-xl transition">
+                    <span x-show="!submitting">Enregistrer</span>
+                    <span x-show="submitting">Enregistrement…</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

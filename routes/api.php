@@ -196,6 +196,11 @@ Route::prefix('v1')->group(function () {
                 ->name('reverse-geocode');
             Route::post('/validate-address', [\App\Http\Controllers\Api\MapsController::class, 'validateAddress'])
                 ->name('validate-address');
+
+            // Sprint 2 — Search-as-I-move : recherche dans la bbox visible de la carte
+            Route::get('/search-bounds', \App\Http\Controllers\Api\MapBoundsSearchController::class)
+                ->name('search-bounds')
+                ->middleware('throttle:60,1');
         });
     });
 

@@ -138,17 +138,17 @@ class Invoice extends Model
 
     public function getFormattedSubtotalAttribute(): string
     {
-        return number_format($this->subtotal, 0, ',', ' ').' '.$this->currency;
+        return number_format((float) $this->subtotal, 0, ',', ' ').' '.$this->currency;
     }
 
     public function getFormattedTotalAttribute(): string
     {
-        return number_format($this->total, 0, ',', ' ').' '.$this->currency;
+        return number_format((float) $this->total, 0, ',', ' ').' '.$this->currency;
     }
 
     public function getFormattedTaxAttribute(): string
     {
-        return number_format($this->tax_amount, 0, ',', ' ').' '.$this->currency;
+        return number_format((float) $this->tax_amount, 0, ',', ' ').' '.$this->currency;
     }
 
     public function getStatusLabelAttribute(): string

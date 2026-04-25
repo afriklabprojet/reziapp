@@ -408,7 +408,7 @@ class ChatService
             'guest_name' => $sender->name ?? $sender->first_name ?? 'Cher client',
             'residence_name' => $conversation->residence?->name ?? 'notre résidence',
             'owner_name' => $owner->name ?? 'Le propriétaire',
-            'price' => $conversation->residence?->price_per_day ? number_format($conversation->residence->price_per_day, 0, ',', ' ').' F/nuit' : '',
+            'price' => $conversation->residence?->price_per_day ? number_format((float) $conversation->residence->price_per_day, 0, ',', ' ').' F/nuit' : '',
             'address' => $conversation->residence?->address ?? '',
             'phone' => $owner->phone ?? '',
             'checkin_time' => '14h00',

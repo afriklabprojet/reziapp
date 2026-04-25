@@ -302,7 +302,9 @@ class ResidenceController extends Controller
     {
         Gate::authorize('create', Residence::class);
 
-        return view('owner.residences.wizard');
+        $amenities = Amenity::orderBy('name')->get(['id', 'name', 'icon']);
+
+        return view('owner.residences.wizard', compact('amenities'));
     }
 
     /**

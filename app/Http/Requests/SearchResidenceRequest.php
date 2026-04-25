@@ -64,6 +64,11 @@ class SearchResidenceRequest extends FormRequest
             'check_out' => ['nullable', 'date', 'after:check_in'],
             'flex_dates' => ['nullable', 'boolean'],
             'flex_type' => ['nullable', 'string', 'in:weekend,week,month,flexible_3,flexible_7'],
+            // Sprint 2 — fenêtre ± N jours autour des dates exactes (Airbnb-style)
+            'flex_window' => ['nullable', 'integer', 'in:0,1,3,7'],
+
+            // Sprint 2 — Catégorie visuelle (slug)
+            'category' => ['nullable', 'string', 'exists:categories,slug'],
 
             // Tri et pagination
             'sort' => ['nullable', 'string', 'in:price_asc,price_desc,rating,newest,distance'],

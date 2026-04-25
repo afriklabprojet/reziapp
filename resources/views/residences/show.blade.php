@@ -190,7 +190,7 @@
         }
     @endphp
 
-    <div class="bg-white min-h-screen" x-data="residencePage(@js(['totalPhotos' => $totalPhotos, 'title' => $residence->title]))">
+    <div class="bg-white min-h-screen" x-data="residencePage(@js(['totalPhotos' => $totalPhotos, 'title' => $residence->title, 'photoUrls' => $photos->map(fn($p) => storage_url($p->path))->values()->all()]))">
 
         {{-- ═══════════════════════════════════
          SECTION 1 — Title + Actions
@@ -208,7 +208,39 @@
                         Sponsorisé
                     </span>
                 @endif
+                @if (!empty($isSuperhost))
+                    <span class="inline-flex items-center gap-1 px-3 py-1 bg-rose-50 text-rose-700 text-xs font-bold rounded-full">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.39 7.36H22l-6.19 4.5L18.2 22 12 17.27 5.8 22l2.39-8.14L2 9.36h7.61z"/></svg>
+                        Superhôte
+                    </span>
+                @endif
             </div>
+            {{-- Badges FOMO style Booking/Airbnb --}}
+            @if (($activeViewers ?? 0) > 0 || ($bookingsThisMonth ?? 0) > 0 || ($lastBookedDaysAgo ?? 0) > 0)
+                <div class="flex flex-wrap items-center gap-2 mt-2.5">
+                    @if (($activeViewers ?? 0) >= 3)
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-orange-50 text-orange-700 text-xs font-semibold rounded-full border border-orange-200">
+                            <span class="relative flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                            </span>
+                            {{ $activeViewers }} personnes regardent ce logement
+                        </span>
+                    @endif
+                    @if (($bookingsThisMonth ?? 0) >= 2)
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full border border-emerald-200">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            Réservé {{ $bookingsThisMonth }} fois ce mois-ci
+                        </span>
+                    @endif
+                    @if (($lastBookedDaysAgo ?? 0) > 0 && ($bookingsThisMonth ?? 0) < 2)
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-200">
+                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .2.08.39.22.53l3 3a.75.75 0 101.06-1.06L10.75 9.69V5z" clip-rule="evenodd"/></svg>
+                            Réservé récemment
+                        </span>
+                    @endif
+                </div>
+            @endif
             <div class="flex flex-wrap items-center justify-between mt-2 gap-2">
                 <div class="flex flex-wrap items-center gap-1 text-sm">
                     @if ($residence->reviews_count > 0)
@@ -216,7 +248,7 @@
                             <path
                                 d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
-                        <span class="font-semibold">{{ number_format($residence->average_rating, 2) }}</span>
+                        <span class="font-semibold">{{ number_format($residence->average_rating, 1) }}</span>
                         <span class="text-gray-400 mx-0.5">·</span>
                         <a href="#avis"
                             class="underline font-medium text-gray-900 hover:text-gray-600">{{ $residence->reviews_count }}
@@ -230,6 +262,12 @@
                                 d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
                         <span class="font-medium text-gray-900">Vérifié</span>
+                        <span class="text-gray-400 mx-0.5">·</span>
+                    @endif
+                    @if ($residence->instant_book)
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 text-xs font-semibold" title="Réservation immédiate sans validation">
+                            ⚡ Réservation instantanée
+                        </span>
                         <span class="text-gray-400 mx-0.5">·</span>
                     @endif
                     <a href="#emplacement"
@@ -280,7 +318,8 @@
             <div class="photo-grid" id="photos">
                 @if ($mainPhoto)
                     <div class="photo-item photo-main" @click="openGallery(0)">
-                        <img src="{{ storage_url($mainPhoto->path) }}" alt="{{ $residence->title }}">
+                        <img src="{{ storage_url($mainPhoto->path) }}" alt="{{ $residence->title }}"
+                            loading="eager" fetchpriority="high">
                     </div>
                 @else
                     <div class="photo-item photo-main bg-gray-100 flex items-center justify-center">
@@ -349,11 +388,14 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
             </button>
-            @foreach ($photos as $pIndex => $photo)
-                <img x-show="currentPhoto === {{ $pIndex }}" x-transition.opacity
-                    src="{{ storage_url($photo->path) }}" alt="Photo {{ $pIndex + 1 }}" class="select-none"
-                    loading="lazy">
-            @endforeach
+            {{-- Single dynamic image (loads only current photo) --}}
+            <img x-bind:src="(photoUrls ?? [])[currentPhoto] ?? ''"
+                 x-bind:alt="'Photo ' + (currentPhoto + 1)"
+                 x-transition:enter="transition-opacity duration-200"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 class="select-none max-h-full max-w-full object-contain"
+                 loading="lazy">
         </div>
 
         {{-- ═══════════════════════════════════
@@ -427,36 +469,64 @@
                                 </div>
                             </div>
                         @endif
-                        <div class="flex gap-4 items-start">
-                            <div class="shrink-0 mt-0.5">
-                                <svg aria-hidden="true" class="w-6 h-6 text-gray-900" fill="none"
-                                    stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                                </svg>
+                        @if ($residence->commune || $residence->city)
+                            <div class="flex gap-4 items-start">
+                                <div class="shrink-0 mt-0.5">
+                                    <svg aria-hidden="true" class="w-6 h-6 text-gray-900" fill="none"
+                                        stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900">Très bien situé</p>
+                                    <p class="text-gray-500 text-sm mt-0.5">Situé à {{ $residence->commune ?? $residence->city }}{{ $residence->commune && $residence->city ? ', ' . $residence->city : '' }}.</p>
+                                </div>
                             </div>
-                            <div>
-                                <p class="font-medium text-gray-900">Très bien situé</p>
-                                <p class="text-gray-500 text-sm mt-0.5">100% des voyageurs récents ont attribué 5 étoiles à
-                                    l'emplacement.</p>
+                        @endif
+                        @php
+                            $cancelPolicy = $residence->relationLoaded('cancellationPolicy')
+                                ? $residence->cancellationPolicy
+                                : ($residence->cancellation_policy_id ? $residence->cancellationPolicy()->first() : null);
+                            $cancelLabel = $cancelPolicy?->display_name ?? $residence->cancellation_policy;
+                            $isFlex48 = $cancelPolicy && in_array($cancelPolicy->name, ['flexible_48h', 'flexible'], true);
+                        @endphp
+                        @if ($cancelLabel)
+                            <div class="flex gap-4 items-start">
+                                <div class="shrink-0 mt-0.5">
+                                    @if ($isFlex48)
+                                        <svg aria-hidden="true" class="w-6 h-6 text-emerald-600" fill="none"
+                                            stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    @else
+                                        <svg aria-hidden="true" class="w-6 h-6 text-gray-900" fill="none"
+                                            stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                        </svg>
+                                    @endif
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900">
+                                        {{ $isFlex48 ? 'Annulation gratuite' : "Politique d'annulation" }}
+                                        @if ($isFlex48)
+                                            <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200">48h</span>
+                                        @endif
+                                    </p>
+                                    <p class="text-gray-500 text-sm mt-0.5">
+                                        @if ($isFlex48)
+                                            Remboursement intégral si vous annulez jusqu'à 48h avant l'arrivée.
+                                        @else
+                                            {{ $cancelLabel }}
+                                        @endif
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="flex gap-4 items-start">
-                            <div class="shrink-0 mt-0.5">
-                                <svg aria-hidden="true" class="w-6 h-6 text-gray-900" fill="none"
-                                    stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="font-medium text-gray-900">Annulation gratuite</p>
-                                <p class="text-gray-500 text-sm mt-0.5">Obtenez un remboursement complet si vous changez
-                                    d'avis.</p>
-                            </div>
-                        </div>
+                        @endif
                         @if ($residence->instant_book)
                             <div class="flex gap-4 items-start">
                                 <div class="shrink-0 mt-0.5">
@@ -732,7 +802,7 @@
                                             d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                     </svg>
                                     <span
-                                        class="text-5xl font-bold text-gray-900">{{ number_format($residence->average_rating, 2) }}</span>
+                                        class="text-5xl font-bold text-gray-900">{{ number_format($residence->average_rating, 1) }}</span>
                                     <svg aria-hidden="true" class="w-8 h-8 text-gray-900" fill="currentColor"
                                         viewBox="0 0 20 20">
                                         <path
@@ -1015,6 +1085,14 @@
                                         {{ substr($residence->owner->name ?? 'H', 0, 1) }}</div>
                                 @endif
                                 <h3 class="text-xl font-bold text-gray-900">{{ $residence->owner->name ?? 'Hôte' }}</h3>
+                                @if (!empty($isSuperhost))
+                                    <div class="inline-flex items-center gap-1 mt-1.5 px-2.5 py-1 bg-rose-50 rounded-full">
+                                        <svg class="w-3.5 h-3.5 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l2.39 7.36H22l-6.19 4.5L18.2 22 12 17.27 5.8 22l2.39-8.14L2 9.36h7.61z"/>
+                                        </svg>
+                                        <span class="text-xs font-bold text-rose-700">Superhôte</span>
+                                    </div>
+                                @endif
                                 @if ($residence->owner?->identity_verified)
                                     <div
                                         class="inline-flex items-center gap-1 mt-1.5 px-2.5 py-1 bg-emerald-50 rounded-full">
@@ -1051,8 +1129,31 @@
                             </div>
                             <div class="flex-1">
                                 <div class="space-y-3 text-[15px] text-gray-700">
-                                    <p>Taux de réponse : 100 %</p>
-                                    <p>Répond dans l'heure</p>
+                                    @if (!is_null($responseRate ?? null))
+                                        <p class="flex items-center gap-2">
+                                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                            Taux de réponse : <strong>{{ (int) $responseRate }} %</strong>
+                                        </p>
+                                    @endif
+                                    @if (!empty($avgResponseTime))
+                                        <p class="flex items-center gap-2">
+                                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                            @if ($avgResponseTime < 1)
+                                                Répond <strong>en moins d'une heure</strong>
+                                            @elseif ($avgResponseTime <= 3)
+                                                Répond <strong>en {{ (int) $avgResponseTime }}h</strong>
+                                            @elseif ($avgResponseTime <= 24)
+                                                Répond <strong>dans la journée</strong>
+                                            @else
+                                                Répond <strong>en {{ (int) round($avgResponseTime / 24) }} jour(s)</strong>
+                                            @endif
+                                        </p>
+                                    @elseif (!is_null($responseRate ?? null))
+                                        <p class="flex items-center gap-2 text-gray-500 text-sm">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                            Délai de réponse en cours de calcul
+                                        </p>
+                                    @endif
                                 </div>
                                 @auth
                                     @if (auth()->id() !== $residence->owner_id)
@@ -1182,7 +1283,7 @@
                                     <path
                                         d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                 </svg>
-                                <span class="font-semibold">{{ number_format($residence->average_rating, 2) }}</span>
+                                <span class="font-semibold">{{ number_format($residence->average_rating, 1) }}</span>
                                 <span class="text-gray-300">·</span>
                                 <a href="#avis" class="underline text-gray-500 hover:text-gray-700">
                                     {{ $residence->reviews_count }}
@@ -1242,7 +1343,8 @@
 
                                     {{-- Guest Picker Dropdown --}}
                                     <div x-show="showGuestPicker" x-transition.origin.top x-ref="guestPicker"
-                                        class="absolute left-0 right-0 top-full bg-white border border-gray-200 rounded-b-xl shadow-lg z-10 p-4 space-y-4"
+                                        @click.outside="showGuestPicker = false"
+                                        class="absolute left-0 right-0 top-full bg-white border border-gray-200 rounded-b-xl shadow-lg z-20 p-4 space-y-4"
                                         x-cloak>
                                         {{-- Adultes --}}
                                         <div class="flex items-center justify-between">

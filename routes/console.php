@@ -11,6 +11,11 @@ Artisan::command('inspire', function () {
 // Vérifier quotidiennement les promotions et mises en avant expirant bientôt
 Schedule::command('rezi:check-expiring-promotions')->dailyAt('09:00');
 
+// Sprint 3 — Paiements échelonnés (rappels J-30)
+Schedule::command('bookings:process-split-payments')->dailyAt('07:30')
+    ->withoutOverlapping()
+    ->runInBackground();
+
 // Recalculer les prix du marché chaque semaine (dimanche à 4h)
 Schedule::command('rezi:calculate-market-prices --country=CI')->weeklyOn(0, '04:00');
 
@@ -79,6 +84,11 @@ Schedule::command('rezi:sync-ical')->hourly()
 
 // Recalculer les scores des voyageurs (chaque nuit à 03h30)
 Schedule::command('rezi:recalculate-guest-scores')->dailyAt('03:30')
+    ->withoutOverlapping()
+    ->runInBackground();
+
+// Publier reviews bilatérales aveugles dont la fenêtre 14j est écoulée (toutes les 6h)
+Schedule::command('rezi:publish-expired-reviews')->everySixHours()
     ->withoutOverlapping()
     ->runInBackground();
 

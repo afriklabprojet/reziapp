@@ -185,11 +185,11 @@
                                     </div>
                                     <span
                                         class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0
-                                    {{ $residence->status === 'active' ? 'bg-green-100 text-green-700' : '' }}
+                                    {{ in_array($residence->status, ['active', 'approved']) ? 'bg-green-100 text-green-700' : '' }}
                                     {{ $residence->status === 'pending' ? 'bg-amber-100 text-amber-700' : '' }}
                                     {{ $residence->status === 'rejected' ? 'bg-red-100 text-red-700' : '' }}
-                                    {{ !in_array($residence->status, ['active', 'pending', 'rejected']) ? 'bg-gray-100 text-gray-600' : '' }}">
-                                        {{ match ($residence->status) {'active' => 'Actif','pending' => 'En attente','rejected' => 'Rejeté',default => ucfirst($residence->status)} }}
+                                    {{ !in_array($residence->status, ['active', 'approved', 'pending', 'rejected']) ? 'bg-gray-100 text-gray-600' : '' }}">
+                                        {{ match ($residence->status) {'active', 'approved' => 'Actif','pending' => 'En attente','rejected' => 'Rejeté',default => ucfirst($residence->status)} }}
                                     </span>
                                 </div>
 
@@ -243,12 +243,14 @@
                     <div class="space-y-4">
                         @php $maxViews = $communeStats->max('views') ?: 1; @endphp
                         @foreach ($communeStats as $commune)
-                            @php $pct = ($commune->views / $maxViews) * 100; @endphp
+                            @php
+                                $pct = ($commune->views / $maxViews) * 100;
+                                $dotColor = ['bg-orange-500', 'bg-orange-400', 'bg-amber-500', 'bg-orange-300', 'bg-amber-400'][$loop->index % 5];
+                            @endphp
                             <div>
                                 <div class="flex items-center justify-between mb-1.5">
                                     <div class="flex items-center gap-2">
-                                        <div
-                                            class="w-2 h-2 rounded-full bg-orange-{{ min(500, 300 + $loop->index * 50) }}">
+                                        <div class="w-2 h-2 rounded-full {{ $dotColor }}">
                                         </div>
                                         <span class="text-sm font-medium text-gray-700">{{ $commune->commune }}</span>
                                         <span class="text-[11px] text-gray-400">({{ $commune->count }})</span>

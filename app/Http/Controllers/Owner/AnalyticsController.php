@@ -40,6 +40,7 @@ class AnalyticsController extends Controller
 
         // Taux d'occupation
         $residenceIds = $owner->residences()->pluck('id');
+        $firstResidenceId = $residenceIds->first() ?? 0;
         $occupancy = $this->analyticsService->getOccupancyRate($residenceIds, $startDate, $endDate);
 
         // Périodes rapides pour le sélecteur
@@ -57,6 +58,7 @@ class AnalyticsController extends Controller
             'startDate',
             'endDate',
             'quickPeriods',
+            'firstResidenceId',
         ));
     }
 

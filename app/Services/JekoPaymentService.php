@@ -713,7 +713,19 @@ class JekoPaymentService
         ];
 
         try {
-            $payout->markAsProcessing();
+            // Protéger contre le double envoi (retries, dispatches concurrents)
+            $updated = Payout::where('id', $payout->id)
+                ->whereIn('status', ['pending', 'approved'])
+                ->update(['status' => 'processing']);
+
+            if (!$updated) {
+                return [
+                    'success' => false,
+                    'error' => 'Payout already being processed or completed.',
+                ];
+            }
+
+            $payout->refresh();
 
             /** @var \Illuminate\Http\Client\Response $response */
             $response = Http::withHeaders([

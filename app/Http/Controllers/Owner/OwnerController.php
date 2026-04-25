@@ -11,6 +11,7 @@ use App\Models\Conversation;
 use App\Models\IdentityVerification;
 use App\Models\Review;
 use App\Models\Statistic;
+use App\Models\User;
 use App\Services\Owner\OwnerStatsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -136,10 +137,12 @@ class OwnerController extends Controller
 
         $recentMessages = Conversation::where('owner_id', $user->id)
             ->whereHas('messages')
-            ->with(['user:id,name,profile_photo,avatar', 'residence:id,name', 'messages' => fn ($q) => $q->latest()->limit(1)])
+            ->with(['user:id,name,profile_photo,avatar', 'residence:id,name', 'latestMessage'])
             ->orderBy('last_message_at', 'desc')
             ->take(3)
             ->get();
+
+        $totalOwners = Cache::remember('total_owners_count', 3600, fn () => User::where('role', 'owner')->count());
 
         $calendarEvents = Booking::whereIn('residence_id', $residenceIds)
             ->where(function ($q) {
@@ -172,6 +175,7 @@ class OwnerController extends Controller
             'recentMessages',
             'calendarEvents',
             'starDistribution',
+            'totalOwners',
         ));
     }
     /**
@@ -384,7 +388,7 @@ class OwnerController extends Controller
                     'type' => 'booking',
                     'title' => $isPending ? 'Nouvelle réservation' : 'Réservation confirmée',
                     'message' => ($booking->user->name ?? 'Un voyageur').' — '.($booking->residence->name ?? 'Résidence')
-                        .' · '.number_format($booking->total_amount, 0, ',', ' ').' FCFA',
+                        .' · '.number_format((float) $booking->total_amount, 0, ',', ' ').' FCFA',
                     'action_url' => route('owner.bookings.show', $booking),
                     'action_text' => 'Voir la réservation',
                     'created_at' => $booking->created_at,

@@ -72,6 +72,16 @@ class RegisteredUserController extends Controller
             return redirect(route('owner.dashboard', absolute: false));
         }
 
-        return redirect(route('home', absolute: false));
+        // Locataire → page de confirmation d'inscription
+        return redirect(route('register.success'))
+            ->with('registration', 'success');
+    }
+
+    /**
+     * Page de confirmation d'inscription.
+     */
+    public function success(): View
+    {
+        return view('auth.register-success');
     }
 }

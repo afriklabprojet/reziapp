@@ -5,11 +5,12 @@
  * Usage in Blade:
  *   x-data="residencePage(@js(['totalPhotos' => $allPhotos->count(), 'title' => $residence->title]))"
  */
-export function residencePage(config) {
+export function residencePage(config = {}) {
     return {
         galleryOpen: false,
         currentPhoto: 0,
-        totalPhotos: config.totalPhotos || 0,
+        totalPhotos: config?.totalPhotos || 0,
+        photoUrls: config?.photoUrls || [],
         scrolled: false,
         activeSection: 'photos',
 
@@ -39,30 +40,55 @@ export function residencePage(config) {
             });
         },
 
+        // Preload adjacent photos for smoother navigation
+        preloadAdjacent() {
+            const urls = [
+                this.photoUrls[this.currentPhoto - 1],
+                this.photoUrls[this.currentPhoto + 1],
+            ].filter(Boolean);
+            urls.forEach(url => {
+                const img = new Image();
+                img.src = url;
+            });
+        },
+
         openGallery(index) {
             this.currentPhoto = index;
             this.galleryOpen = true;
             document.body.style.overflow = 'hidden';
+            this.$nextTick(() => this.preloadAdjacent());
         },
 
         prevPhoto() {
             this.currentPhoto = this.currentPhoto > 0 ? this.currentPhoto - 1 : this.totalPhotos - 1;
+            this.preloadAdjacent();
         },
 
         nextPhoto() {
             this.currentPhoto = this.currentPhoto < this.totalPhotos - 1 ? this.currentPhoto + 1 : 0;
+            this.preloadAdjacent();
         },
 
         shareResidence() {
+            const url = window.location.href;
             if (navigator.share) {
-                navigator.share({
-                    title: config.title,
-                    url: window.location.href
-                });
+                navigator.share({ title: config.title, url });
             } else {
-                navigator.clipboard.writeText(window.location.href);
-                alert('Lien copié !');
+                navigator.clipboard.writeText(url).then(() => {
+                    this._showToast('Lien copié dans le presse-papiers !');
+                });
             }
+        },
+
+        _showToast(message) {
+            const toast = document.createElement('div');
+            toast.textContent = message;
+            toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm px-5 py-3 rounded-full shadow-lg z-50 transition-opacity duration-300';
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
         }
     };
 }
@@ -126,12 +152,7 @@ export function bookingForm(config) {
                 }
             });
 
-            // Close guest picker on outside click
-            document.addEventListener('click', (e) => {
-                if (!this.$refs.guestPicker?.contains(e.target) && !this.$refs.guestTrigger?.contains(e.target)) {
-                    this.showGuestPicker = false;
-                }
-            });
+            // Outside-click handled directly on the picker via Alpine's @click.outside
         },
 
         // Computed

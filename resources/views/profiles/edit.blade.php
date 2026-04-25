@@ -1,6 +1,6 @@
 @extends('layouts.client', ['sidebarActive' => 'profile'])
 
-@section('title', 'Modifier mon profil public - REZI')
+@section('title', 'Mon profil - REZI')
 
 @section('client-content')
     {{-- En-tête --}}
@@ -13,8 +13,8 @@
                 </svg>
             </a>
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Profil public</h1>
-                <p class="text-gray-500 text-sm">Ces informations seront visibles par les autres utilisateurs</p>
+                <h1 class="text-2xl font-bold text-gray-900">Mon profil</h1>
+                <p class="text-gray-500 text-sm">Ces informations sont visibles uniquement par vous</p>
             </div>
         </div>
     </div>
@@ -230,8 +230,8 @@
                 </h2>
             </div>
             <div class="p-6 space-y-4">
-                <p class="text-sm text-gray-500 mb-4">Choisissez les informations que vous souhaitez rendre visibles sur
-                    votre profil public.</p>
+                <p class="text-sm text-gray-500 mb-4">Choisissez les informations que vous souhaitez afficher
+                    sur votre profil.</p>
 
                 <label
                     class="flex items-start gap-4 p-4 rounded-lg border border-gray-200 hover:border-orange-200 cursor-pointer transition group">

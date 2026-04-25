@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Models\Residence;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class ResidencesByLocationChart extends ChartWidget
@@ -13,6 +14,11 @@ class ResidencesByLocationChart extends ChartWidget
     protected int | string | array $columnSpan = 'half';
 
     protected function getData(): array
+    {
+        return Cache::remember('admin.residences_by_location', 600, fn () => $this->computeData());
+    }
+
+    protected function computeData(): array
     {
         $data = Residence::query()
             ->select('commune', DB::raw('count(*) as count'))

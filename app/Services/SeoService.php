@@ -51,7 +51,7 @@ class SeoService
         $title .= " à {$location}";
 
         if ($residence->price_per_night) {
-            $price = number_format($residence->price_per_night, 0, ',', ' ');
+            $price = number_format((float) $residence->price_per_night, 0, ',', ' ');
             $title .= " - {$price} FCFA/jour";
         }
 
@@ -91,7 +91,7 @@ class SeoService
         $featuresText = $features ? ' - '.implode(', ', $features) : '';
 
         $price = $residence->price_per_night
-            ? number_format($residence->price_per_night, 0, ',', ' ').' FCFA/jour'
+            ? number_format((float) $residence->price_per_night, 0, ',', ' ').' FCFA/jour'
             : '';
 
         $description = "Louez ce {$type} meublé à {$location}{$featuresText}. {$price}. Réservation en ligne sécurisée sur REZI.";
@@ -167,7 +167,7 @@ class SeoService
                 'longitude' => $residence->longitude,
             ],
             'priceRange' => $residence->price_per_night
-                ? number_format($residence->price_per_night, 0).' FCFA'
+                ? number_format((float) $residence->price_per_night, 0).' FCFA'
                 : null,
             'aggregateRating' => $residence->reviews_count > 0 ? [
                 '@type' => 'AggregateRating',

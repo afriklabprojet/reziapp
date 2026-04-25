@@ -385,20 +385,6 @@
                                 @enderror
                             </div>
                         </div>
-
-                        {{-- Prix hebdomadaire (optionnel, toujours visible) --}}
-                        <div>
-                            <label for="price_per_week" class="block text-sm font-medium text-gray-700 mb-2">
-                                Prix hebdomadaire (FCFA)
-                                <span class="text-gray-400 text-xs block">Optionnel</span>
-                            </label>
-                            <input type="number" id="price_per_week" name="price_per_week" value="{{ old('price_per_week') }}"
-                                placeholder="50000" min="0"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-                            @error('price_per_week')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
                     </div>
 
                     {{-- Caution --}}
@@ -615,7 +601,7 @@
                         </div>
 
                         {{-- Réservation instantanée --}}
-                        <div class="flex items-center">
+                        <div class="flex items-center md:col-span-2">
                             <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-orange-300 w-full">
                                 <input type="checkbox" name="instant_book" value="1"
                                     class="w-5 h-5 text-orange-500 rounded" {{ old('instant_book') ? 'checked' : '' }}>
@@ -624,22 +610,6 @@
                                     <p class="text-sm text-gray-500">Les locataires peuvent réserver sans validation</p>
                                 </div>
                             </label>
-                        </div>
-
-                        {{-- Type de bail --}}
-                        <div>
-                            <label for="lease_type" class="block text-sm font-medium text-gray-700 mb-2">
-                                Type de bail
-                            </label>
-                            <select id="lease_type" name="lease_type"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-                                <option value="written" {{ old('lease_type', 'written') == 'written' ? 'selected' : '' }}>Bail écrit</option>
-                                <option value="verbal" {{ old('lease_type') == 'verbal' ? 'selected' : '' }}>Accord verbal</option>
-                                <option value="flexible" {{ old('lease_type') == 'flexible' ? 'selected' : '' }}>Flexible</option>
-                            </select>
-                            @error('lease_type')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
                         </div>
                     </div>
 
@@ -758,7 +728,7 @@
                     {{-- Profils de locataires cibles --}}
                     <div class="mt-6 pt-6 border-t border-gray-200">
                         <h3 class="text-sm font-semibold text-gray-700 mb-4">Locataires idéaux</h3>
-                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
                             <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-orange-300 has-checked:border-orange-500 has-checked:bg-orange-50">
                                 <input type="checkbox" name="target_tenants[]" value="students"
                                     class="w-4 h-4 text-orange-500 rounded" {{ in_array('students', old('target_tenants', [])) ? 'checked' : '' }}>

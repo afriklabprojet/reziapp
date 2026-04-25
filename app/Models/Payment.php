@@ -184,12 +184,12 @@ class Payment extends Model
 
     public function getFormattedAmountAttribute(): string
     {
-        return number_format($this->amount, 0, ',', ' ').' '.$this->currency;
+        return number_format((float) $this->amount, 0, ',', ' ').' '.$this->currency;
     }
 
     public function getFormattedTotalAttribute(): string
     {
-        return number_format($this->total_amount, 0, ',', ' ').' '.$this->currency;
+        return number_format((float) $this->total_amount, 0, ',', ' ').' '.$this->currency;
     }
 
     public function getStatusLabelAttribute(): string

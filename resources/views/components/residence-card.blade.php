@@ -1,6 +1,10 @@
 @props(['residence'])
 
-<div class="group bg-white rounded-2xl shadow-md overflow-hidden card-lift border border-gray-100 hover:border-orange-100">
+<div class="group bg-white rounded-2xl shadow-md overflow-hidden card-lift border border-gray-100 hover:border-orange-100"
+    x-data="{
+        isFavorite: {{ auth()->check() && method_exists($residence, 'isFavoritedBy') && $residence->isFavoritedBy(auth()->user()) ? 'true' : 'false' }},
+        loading: false
+    }">
     <!-- Photo principale -->
     <div class="relative aspect-4/3 sm:h-48 bg-sand-100 overflow-hidden">
         @if ($residence->photos->isNotEmpty())
@@ -18,6 +22,32 @@
 
         <!-- Gradient overlay -->
         <div class="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
+
+        @auth
+        <!-- Bouton favoris AJAX -->
+        <button
+            @click.prevent="
+                if (loading) return;
+                loading = true;
+                fetch('{{ route('favorites.toggle', $residence) }}', {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
+                })
+                .then(r => r.json())
+                .then(data => { isFavorite = data.is_favorite; loading = false; })
+                .catch(() => loading = false);
+            "
+            class="absolute top-3 right-3 w-9 h-9 flex items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-sm transition-transform active:scale-90"
+            :class="{ 'animate-pulse': loading }"
+            aria-label="{{ __('Favori') }}">
+            <svg aria-hidden="true" class="w-5 h-5 transition-colors"
+                :class="isFavorite ? 'text-rose-500 fill-rose-500' : 'text-gray-600'"
+                fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+        </button>
+        @endauth
 
         <!-- Badge type -->
         <div class="absolute top-3 left-3 flex flex-col gap-1.5 items-start">

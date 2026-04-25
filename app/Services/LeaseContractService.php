@@ -138,33 +138,39 @@ class LeaseContractService
             throw new \RuntimeException('Vous n\'êtes pas autorisé à signer ce contrat.');
         }
 
-        if ($isOwner && ! $contract->canBeSignedByOwner()) {
-            throw new \RuntimeException('Le propriétaire a déjà signé ou le contrat ne peut pas être signé.');
-        }
+        \Illuminate\Support\Facades\DB::transaction(function () use ($contract, $signer, $ip, $isOwner, $isTenant) {
+            // Relire avec lock pour éviter la double signature concurrente
+            $locked = LeaseContract::lockForUpdate()->find($contract->id);
 
-        if ($isTenant && ! $contract->canBeSignedByTenant()) {
-            throw new \RuntimeException('Le locataire a déjà signé ou le contrat ne peut pas être signé.');
-        }
+            if ($isOwner) {
+                if (! $locked->canBeSignedByOwner()) {
+                    throw new \RuntimeException('Le propriétaire a déjà signé ou le contrat ne peut pas être signé.');
+                }
 
-        if ($isOwner) {
-            $contract->update([
-                'owner_signed_at'    => now(),
-                'owner_signature_ip' => $ip,
-                'status'             => LeaseContract::STATUS_PENDING_TENANT,
-            ]);
-            $contract->tenant->notify(new LeaseContractReadyNotification($contract, 'tenant'));
-        }
+                $locked->update([
+                    'owner_signed_at'    => now(),
+                    'owner_signature_ip' => $ip,
+                    'status'             => LeaseContract::STATUS_PENDING_TENANT,
+                ]);
+                $contract->refresh();
+                $contract->tenant->notify(new LeaseContractReadyNotification($contract, 'tenant'));
+            }
 
-        if ($isTenant) {
-            $contract->update([
-                'tenant_signed_at'    => now(),
-                'tenant_signature_ip' => $ip,
-                'status'              => LeaseContract::STATUS_ACTIVE,
-            ]);
+            if ($isTenant) {
+                if (! $locked->canBeSignedByTenant()) {
+                    throw new \RuntimeException('Le locataire a déjà signé ou le contrat ne peut pas être signé.');
+                }
 
-            // Le contrat est maintenant actif — notifier les deux parties
-            event(new LeaseContractSigned($contract));
-        }
+                $locked->update([
+                    'tenant_signed_at'    => now(),
+                    'tenant_signature_ip' => $ip,
+                    'status'              => LeaseContract::STATUS_ACTIVE,
+                ]);
+
+                $contract->refresh();
+                event(new LeaseContractSigned($contract));
+            }
+        });
 
         // Régénérer le PDF avec les horodatages de signature
         $this->generatePdf($contract->fresh());

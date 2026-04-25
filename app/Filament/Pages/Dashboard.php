@@ -12,6 +12,7 @@ use App\Filament\Widgets\RecentPaymentsWidget;
 use App\Filament\Widgets\ResidencesByLocationChart;
 use App\Filament\Widgets\RevenueChart;
 use App\Filament\Widgets\RevenueChartWidget;
+use App\Filament\Widgets\SponsoredStatsWidget;
 use App\Filament\Widgets\StatsOverview;
 use Filament\Pages\Dashboard as BaseDashboard;
 
@@ -27,18 +28,20 @@ class Dashboard extends BaseDashboard
 
     public function getWidgets(): array
     {
+        // Liste de référence — la vue filament.pages.dashboard rend ces widgets via @livewire()
         return [
             StatsOverview::class,
             PaymentStatsWidget::class,
             AlertsWidget::class,
             PendingApprovalsWidget::class,
-            PaymentChartWidget::class,
+            RevenueChartWidget::class,
+            BookingsChartWidget::class,
             RecentBookingsWidget::class,
             RecentPaymentsWidget::class,
-            BookingsChartWidget::class,
-            RevenueChartWidget::class,
+            SponsoredStatsWidget::class,
             ResidencesByLocationChart::class,
             RevenueChart::class,
+            PaymentChartWidget::class,
         ];
     }
 

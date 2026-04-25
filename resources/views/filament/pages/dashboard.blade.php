@@ -7,8 +7,8 @@
         <div class="relative overflow-hidden rounded-2xl p-6 text-white shadow-lg"
              style="background: linear-gradient(to right, #e11d48, #db2777, #f43f5e);">
             {{-- Cercles décoratifs --}}
-            <div class="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full" style="background: rgba(255,255,255,0.1);"></div>
-            <div class="pointer-events-none absolute -bottom-8 right-24 h-32 w-32 rounded-full" style="background: rgba(255,255,255,0.05);"></div>
+            <div class="pointer-events-none absolute -right-10 -top-10 h-24 w-24 sm:h-48 sm:w-48 rounded-full" style="background: rgba(255,255,255,0.1);"></div>
+            <div class="pointer-events-none absolute -bottom-8 right-12 h-16 w-16 sm:right-24 sm:h-32 sm:w-32 rounded-full" style="background: rgba(255,255,255,0.05);"></div>
 
             <div class="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -70,10 +70,16 @@
              SECTION 2 — Alertes urgentes
         ═══════════════════════════════════════════════════════ --}}
         @php
-            $pendingResidences = \App\Models\Residence::where('status', 'pending')->count();
-            $pendingPayouts    = \App\Models\Payout::where('status', 'pending')->count();
-            $openTickets       = \App\Models\SupportTicket::whereIn('status', ['open', 'pending'])->count();
-            $fraudPending      = \App\Models\FraudReport::where('status', 'pending')->count();
+            $alertCounts = \Illuminate\Support\Facades\Cache::remember('admin.dashboard.alerts', 120, fn () => [
+                'residences' => \App\Models\Residence::where('status', 'pending')->count(),
+                'payouts'    => \App\Models\Payout::where('status', 'pending')->count(),
+                'tickets'    => \App\Models\SupportTicket::whereIn('status', ['open', 'pending'])->count(),
+                'fraud'      => \App\Models\FraudReport::where('status', 'pending')->count(),
+            ]);
+            $pendingResidences = $alertCounts['residences'];
+            $pendingPayouts    = $alertCounts['payouts'];
+            $openTickets       = $alertCounts['tickets'];
+            $fraudPending      = $alertCounts['fraud'];
         @endphp
 
         @if($pendingResidences > 0 || $pendingPayouts > 0 || $openTickets > 0 || $fraudPending > 0)
@@ -175,60 +181,99 @@
              SECTION 9 — Newsletter
         ═══════════════════════════════════════════════════════ --}}
         @php
-            $newsletterTotal   = \App\Models\NewsletterSubscriber::count();
-            $newsletterActive  = \App\Models\NewsletterSubscriber::where('status', 'active')->count();
-            $newsletterThisMonth = \App\Models\NewsletterSubscriber::where('status', 'active')
-                ->where('created_at', '>=', now()->startOfMonth())->count();
-            $latestSubscribers = \App\Models\NewsletterSubscriber::where('status', 'active')
-                ->latest()->limit(5)->get();
+            $newsletterData    = \Illuminate\Support\Facades\Cache::remember('admin.dashboard.newsletter', 300, fn () => [
+                'total'      => \App\Models\NewsletterSubscriber::count(),
+                'active'     => \App\Models\NewsletterSubscriber::where('status', 'active')->count(),
+                'thisMonth'  => \App\Models\NewsletterSubscriber::where('status', 'active')
+                    ->where('created_at', '>=', now()->startOfMonth())->count(),
+                'latest'     => \App\Models\NewsletterSubscriber::where('status', 'active')
+                    ->latest()->limit(5)->get(),
+            ]);
+            $newsletterTotal     = $newsletterData['total'];
+            $newsletterActive    = $newsletterData['active'];
+            $newsletterThisMonth = $newsletterData['thisMonth'];
+            $latestSubscribers   = $newsletterData['latest'];
         @endphp
 
         @if($newsletterTotal > 0)
-        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-            <div class="mb-4 flex items-center justify-between">
-                <h3 class="text-base font-semibold text-gray-900 dark:text-white">
-                    <x-heroicon-o-envelope class="inline h-5 w-5 text-pink-500 mr-1" />
-                    Newsletter
-                </h3>
-                <span class="rounded-full bg-pink-50 px-3 py-1 text-xs font-medium text-pink-700 dark:bg-pink-950 dark:text-pink-300">
-                    {{ number_format($newsletterActive) }} abonné(s) actif(s)
-                </span>
-            </div>
+        @php
+            $activeRate = $newsletterTotal > 0 ? round(($newsletterActive / $newsletterTotal) * 100) : 0;
+        @endphp
+        <div class="overflow-hidden rounded-2xl border border-pink-100 bg-white shadow-sm dark:border-pink-900/30 dark:bg-gray-900">
 
-            <div class="mb-4 grid grid-cols-3 gap-3">
-                <div class="rounded-xl bg-gray-50 p-3 text-center dark:bg-gray-800">
-                    <p class="text-xl font-bold text-gray-900 dark:text-white">{{ number_format($newsletterTotal) }}</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Total</p>
-                </div>
-                <div class="rounded-xl bg-green-50 p-3 text-center dark:bg-green-950">
-                    <p class="text-xl font-bold text-green-700 dark:text-green-300">{{ number_format($newsletterActive) }}</p>
-                    <p class="text-xs text-green-600 dark:text-green-400">Actifs</p>
-                </div>
-                <div class="rounded-xl bg-blue-50 p-3 text-center dark:bg-blue-950">
-                    <p class="text-xl font-bold text-blue-700 dark:text-blue-300">+{{ $newsletterThisMonth }}</p>
-                    <p class="text-xs text-blue-600 dark:text-blue-400">Ce mois</p>
-                </div>
-            </div>
-
-            @if($latestSubscribers->isNotEmpty())
-            <div class="space-y-2">
-                <p class="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">Derniers abonnés</p>
-                @foreach($latestSubscribers as $sub)
-                <div class="flex items-center justify-between rounded-lg px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+            {{-- Header gradient --}}
+            <div class="bg-linear-to-r from-pink-500 to-rose-500 px-5 py-4">
+                <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <div class="flex h-7 w-7 items-center justify-center rounded-full bg-pink-100 text-xs font-semibold text-pink-700 dark:bg-pink-900 dark:text-pink-300">
-                            {{ mb_strtoupper(mb_substr($sub->name ?? $sub->email, 0, 1)) }}
+                        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/20">
+                            <x-heroicon-o-envelope class="h-4 w-4 text-white" />
                         </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $sub->name ?? '—' }}</p>
-                            <p class="text-xs text-gray-400">{{ $sub->email }}</p>
-                        </div>
+                        <span class="text-sm font-semibold text-white">Newsletter</span>
                     </div>
-                    <span class="text-xs text-gray-400">{{ $sub->created_at->diffForHumans() }}</span>
+                    <span class="rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+                        {{ number_format($newsletterActive) }} actif{{ $newsletterActive > 1 ? 's' : '' }}
+                    </span>
                 </div>
-                @endforeach
             </div>
-            @endif
+
+            <div class="p-5">
+                {{-- Stats row --}}
+                <div class="mb-4 flex items-stretch gap-3">
+                    <div class="flex flex-1 flex-col items-center justify-center rounded-xl bg-gray-50 py-3 dark:bg-gray-800">
+                        <span class="text-2xl font-bold text-gray-800 dark:text-white">{{ number_format($newsletterTotal) }}</span>
+                        <span class="mt-0.5 text-xs text-gray-400 dark:text-gray-500">Total</span>
+                    </div>
+                    <div class="flex flex-1 flex-col items-center justify-center rounded-xl bg-emerald-50 py-3 dark:bg-emerald-950/40">
+                        <span class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ number_format($newsletterActive) }}</span>
+                        <span class="mt-0.5 text-xs text-emerald-500 dark:text-emerald-500">Actifs</span>
+                    </div>
+                    <div class="flex flex-1 flex-col items-center justify-center rounded-xl bg-blue-50 py-3 dark:bg-blue-950/40">
+                        <span class="text-2xl font-bold text-blue-600 dark:text-blue-400">+{{ $newsletterThisMonth }}</span>
+                        <span class="mt-0.5 text-xs text-blue-500 dark:text-blue-500">Ce mois</span>
+                    </div>
+                </div>
+
+                {{-- Taux d'engagement --}}
+                <div class="mb-4">
+                    <div class="mb-1.5 flex items-center justify-between">
+                        <span class="text-xs text-gray-400 dark:text-gray-500">Taux d'engagement</span>
+                        <span class="text-xs font-semibold text-pink-600 dark:text-pink-400">{{ $activeRate }}%</span>
+                    </div>
+                    <div class="h-1.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
+                        <div class="h-full rounded-full bg-linear-to-r from-pink-400 to-rose-500 transition-all duration-500"
+                             style="width: {{ $activeRate }}%"></div>
+                    </div>
+                </div>
+
+                {{-- Derniers abonnés --}}
+                @if($latestSubscribers->isNotEmpty())
+                <div>
+                    <p class="mb-2 text-xs font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500">Derniers abonnés</p>
+                    <div class="space-y-1">
+                        @foreach($latestSubscribers as $sub)
+                        @php
+                            $colors = ['bg-pink-100 text-pink-700 dark:bg-pink-900/60 dark:text-pink-300', 'bg-violet-100 text-violet-700 dark:bg-violet-900/60 dark:text-violet-300', 'bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300', 'bg-amber-100 text-amber-700 dark:bg-amber-900/60 dark:text-amber-300'];
+                            $color = $colors[$loop->index % count($colors)];
+                        @endphp
+                        <div class="flex items-center justify-between rounded-lg px-2 py-1.5 transition hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <div class="flex items-center gap-2.5">
+                                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold {{ $color }}">
+                                    {{ mb_strtoupper(mb_substr($sub->email, 0, 1)) }}
+                                </div>
+                                <div class="min-w-0">
+                                    @if($sub->name && $sub->name !== $sub->email)
+                                    <p class="truncate text-sm font-medium text-gray-800 dark:text-white">{{ $sub->name }}</p>
+                                    @endif
+                                    <p class="truncate text-xs text-gray-400">{{ $sub->email }}</p>
+                                </div>
+                            </div>
+                            <span class="ml-2 shrink-0 text-xs text-gray-300 dark:text-gray-600">{{ $sub->created_at->diffForHumans() }}</span>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+            </div>
         </div>
         @endif
 

@@ -278,18 +278,18 @@
                     </div>
                 </a>
 
-                <a href="{{ route('notifications.index') }}"
+                <a href="{{ route('client.alerts') }}"
                     class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-orange-200 transition group">
                     <div class="flex items-center gap-3">
                         <div
-                            class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 transition">
-                            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center group-hover:bg-amber-200 transition">
+                            <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                             </svg>
                         </div>
                         <div>
-                            <p class="text-2xl font-bold text-gray-900">{{ $stats['notifications_unread'] }}</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ $stats['alerts_count'] }}</p>
                             <p class="text-xs text-gray-500">Alertes</p>
                         </div>
                     </div>
@@ -386,6 +386,60 @@
                                         {{ number_format($booking->total_price, 0, ',', ' ') }} FCFA</p>
                                     <p class="text-xs text-green-600 font-medium">
                                         {{ $booking->check_in->diffForHumans() }}</p>
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            {{-- Séjours passés --}}
+            @if ($recentCompletedBookings->count() > 0)
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                </svg>
+                            </div>
+                            <h2 class="font-semibold text-gray-900">Séjours passés</h2>
+                        </div>
+                        <a href="{{ route('bookings.index', ['status' => 'completed']) }}"
+                            class="text-sm text-orange-500 hover:text-orange-600 font-medium">
+                            Tout voir →
+                        </a>
+                    </div>
+                    <div class="divide-y divide-gray-100">
+                        @foreach ($recentCompletedBookings as $booking)
+                            <a href="{{ route('bookings.show', $booking) }}"
+                                class="flex items-center gap-4 p-4 hover:bg-gray-50 transition">
+                                <div class="w-20 h-16 rounded-lg overflow-hidden bg-gray-200 shrink-0">
+                                    @if ($booking->residence->photos->count() > 0)
+                                        <img loading="lazy"
+                                            src="{{ storage_url($booking->residence->photos->first()?->path) }}"
+                                            alt="{{ $booking->residence->title }}"
+                                            class="w-full h-full object-cover grayscale-[30%]">
+                                    @else
+                                        <div class="w-full h-full flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                            </svg>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-medium text-gray-900 truncate">{{ $booking->residence->title }}</h3>
+                                    <p class="text-sm text-gray-500">
+                                        {{ $booking->check_in->translatedFormat('d M') }} →
+                                        {{ $booking->check_out->translatedFormat('d M Y') }}
+                                    </p>
+                                </div>
+                                <div class="text-right shrink-0">
+                                    <span class="inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">Terminé</span>
+                                    <p class="text-xs text-gray-400 mt-1">{{ $booking->check_out->diffForHumans() }}</p>
                                 </div>
                             </a>
                         @endforeach

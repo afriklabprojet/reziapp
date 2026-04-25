@@ -88,7 +88,7 @@ class PlatformSetting extends Model
      */
     public static function getCommissionRate(): float
     {
-        return static::getValue('commission_rate', 10);
+        return (float) static::getValue('commission_rate', 10);
     }
 
     /**
@@ -97,7 +97,7 @@ class PlatformSetting extends Model
     public static function calculateCommission(float $amount): float
     {
         $rate = static::getCommissionRate();
-        $min = static::getValue('commission_min', 1000);
+        $min = (float) static::getValue('commission_min', 1000);
 
         $commission = $amount * ($rate / 100);
 

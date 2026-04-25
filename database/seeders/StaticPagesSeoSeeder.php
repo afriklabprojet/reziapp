@@ -16,11 +16,11 @@ class StaticPagesSeoSeeder extends Seeder
                 'url_pattern'      => '/',
                 'page_type'        => 'home',
                 'locale'           => 'fr',
-                'meta_title'       => 'REZI – Location de résidences meublées à Abidjan',
+                'meta_title'       => 'Rezi App – Location de résidences meublés à Abidjan',
                 'meta_description' => 'Trouvez votre résidence meublée idéale à Abidjan. Studios, appartements, villas disponibles en location courte et longue durée. Réservation en ligne sécurisée.',
                 'keywords'         => ['location meublée', 'appartement Abidjan', 'résidence meublée', 'location Côte d\'Ivoire', 'REZI'],
                 'og_data'          => [
-                    'title'       => 'REZI – Location de résidences meublées à Abidjan',
+                    'title'       => 'Rezi App – Location de résidences meublés à Abidjan',
                     'description' => 'Trouvez votre résidence meublée idéale à Abidjan. Studios, appartements, villas disponibles.',
                     'og:type'     => 'website',
                     'og:locale'   => 'fr_CI',

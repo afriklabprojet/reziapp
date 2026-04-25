@@ -69,7 +69,7 @@ class CouponService
         if ($coupon->min_amount && $subtotal < $coupon->min_amount) {
             return [
                 'valid' => false,
-                'error' => 'Montant minimum '.number_format($coupon->min_amount, 0, ',', ' ').' FCFA requis.',
+                'error' => 'Montant minimum '.number_format((float) $coupon->min_amount, 0, ',', ' ').' FCFA requis.',
             ];
         }
 
@@ -117,7 +117,7 @@ class CouponService
         }
 
         if ($coupon->min_amount && $subtotal < $coupon->min_amount) {
-            return ['discount' => 0, 'coupon' => null, 'error' => 'Montant minimum '.number_format($coupon->min_amount, 0, ',', ' ').' FCFA'];
+            return ['discount' => 0, 'coupon' => null, 'error' => 'Montant minimum '.number_format((float) $coupon->min_amount, 0, ',', ' ').' FCFA'];
         }
 
         $discount = $coupon->calculateDiscount($subtotal);
@@ -142,6 +142,13 @@ class CouponService
     public function recordUsage(Coupon $coupon, User $user, Booking $booking, float $discount): CouponUse
     {
         return DB::transaction(function () use ($coupon, $user, $booking, $discount) {
+            // Re-check max_uses avec lock pour éviter le dépassement concurrent (TOCTOU)
+            $locked = Coupon::lockForUpdate()->find($coupon->id);
+
+            if ($locked->max_uses && $locked->uses_count >= $locked->max_uses) {
+                throw new \RuntimeException('Ce coupon a atteint sa limite d\'utilisation.');
+            }
+
             $use = CouponUse::create([
                 'coupon_id' => $coupon->id,
                 'user_id' => $user->id,
@@ -149,7 +156,7 @@ class CouponService
                 'discount_applied' => $discount,
             ]);
 
-            $coupon->increment('uses_count');
+            $locked->increment('uses_count');
 
             return $use;
         });

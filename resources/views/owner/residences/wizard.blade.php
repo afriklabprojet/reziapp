@@ -4,7 +4,7 @@
 
 @section('owner-content')
     <div x-data="residenceWizard(@js([
-    'amenities' => \App\Models\Amenity::all(['id', 'name', 'icon']),
+    'amenities' => $amenities,
     'storeUrl' => route('owner.residences.store'),
     'indexUrl' => route('owner.residences.index'),
     'csrfToken' => csrf_token(),

@@ -80,7 +80,7 @@
                     @if ($message->type === 'image' && !empty($message->attachments))
                         @foreach ($message->attachments as $attachment)
                             <div class="p-1.5 {{ !empty($message->content) ? 'pb-0' : '' }}">
-                                <img src="{{ Storage::url($attachment['path']) }}"
+                                <img src="{{ route('messages.image', [$message, $loop->index]) }}"
                                     alt="{{ $attachment['name'] ?? 'Image' }}"
                                     class="rounded-xl max-h-72 w-auto cursor-pointer hover:opacity-90 transition-opacity"
                                     onclick="window.open(this.src, '_blank')" loading="lazy">
@@ -127,9 +127,25 @@
 
                     {{-- Text content --}}
                     @if (!empty($message->content))
+                        @php
+                            $hasTranslation = !empty($message->translated_content)
+                                && $message->translated_locale === app()->getLocale()
+                                && $message->original_locale
+                                && $message->original_locale !== app()->getLocale();
+                        @endphp
                         <div
-                            class="px-3.5 py-2 {{ $message->type !== 'text' && !empty($message->attachments) ? 'pt-1.5' : '' }}">
-                            <p class="msg-text text-[14.5px] leading-relaxed whitespace-pre-wrap wrap-break-word">{{ $message->content }}</p>
+                            class="px-3.5 py-2 {{ $message->type !== 'text' && !empty($message->attachments) ? 'pt-1.5' : '' }}"
+                            @if ($hasTranslation) x-data="{ showOriginal: false }" @endif>
+                            @if ($hasTranslation)
+                                <p x-show="!showOriginal" class="msg-text text-[14.5px] leading-relaxed whitespace-pre-wrap wrap-break-word">{{ $message->translated_content }}</p>
+                                <p x-show="showOriginal" x-cloak class="msg-text text-[14.5px] leading-relaxed whitespace-pre-wrap wrap-break-word">{{ $message->content }}</p>
+                                <button type="button" @click="showOriginal = !showOriginal"
+                                    class="mt-1 text-[11px] font-medium {{ $isOwn ? 'text-white/80 hover:text-white' : 'text-blue-600 hover:text-blue-800' }} underline-offset-2 hover:underline">
+                                    🌐 <span x-text="showOriginal ? 'Voir la traduction' : 'Voir l\'original ({{ strtoupper($message->original_locale) }})'"></span>
+                                </button>
+                            @else
+                                <p class="msg-text text-[14.5px] leading-relaxed whitespace-pre-wrap wrap-break-word">{{ $message->content }}</p>
+                            @endif
                             @if ($message->isEdited())
                                 <span class="edited-badge text-[10px] {{ $isOwn ? 'text-white/60' : 'text-gray-400' }} ml-1">(modifié)</span>
                             @endif
@@ -149,7 +165,7 @@
                     {{-- Voice message --}}
                     @if ($message->type === 'voice' && !empty($message->attachments))
                         @php $voiceAttach = $message->attachments[0]; @endphp
-                        <div class="px-3 py-2.5 flex items-center gap-3 min-w-[200px]">
+                        <div class="px-3 py-2.5 flex items-center gap-3 min-w-40 sm:min-w-50 max-w-full">
                             <button onclick="this.closest('.voice-player').querySelector('audio').paused ? this.closest('.voice-player').querySelector('audio').play() : this.closest('.voice-player').querySelector('audio').pause()"
                                 class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 {{ $isOwn ? 'bg-white/20 hover:bg-white/30' : 'bg-orange-100 hover:bg-orange-200' }} transition-colors">
                                 <svg class="w-4 h-4 {{ $isOwn ? 'text-white' : 'text-orange-600' }}" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>

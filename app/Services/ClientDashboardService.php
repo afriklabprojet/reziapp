@@ -33,16 +33,17 @@ class ClientDashboardService
         $ongoingBooking = $this->getOngoingBooking($user);
 
         return [
-            'stats'               => $this->getStats($user, $upcomingBookings),
-            'upcomingBookings'    => $upcomingBookings,
-            'ongoingBooking'      => $ongoingBooking,
-            'recentViews'         => $this->getRecentViews($user),
-            'recentConversations' => $this->getRecentConversations($user),
-            'recentSearches'      => $this->getRecentSearches($user),
-            'recommendations'     => $this->getRecommendations($user, 6),
-            'pendingContacts'     => $this->getPendingContacts($user),
-            'newInFavoriteAreas'  => $this->getNewInFavoriteAreas($user, 4),
-            'profileCompletion'   => $this->getProfileCompletion($user),
+            'stats'                    => $this->getStats($user, $upcomingBookings),
+            'upcomingBookings'         => $upcomingBookings,
+            'ongoingBooking'           => $ongoingBooking,
+            'recentCompletedBookings'  => $this->getRecentCompletedBookings($user),
+            'recentViews'              => $this->getRecentViews($user),
+            'recentConversations'      => $this->getRecentConversations($user),
+            'recentSearches'           => $this->getRecentSearches($user),
+            'recommendations'          => $this->getRecommendations($user, 6),
+            'pendingContacts'          => $this->getPendingContacts($user),
+            'newInFavoriteAreas'       => $this->getNewInFavoriteAreas($user, 4),
+            'profileCompletion'        => $this->getProfileCompletion($user),
         ];
     }
 
@@ -66,17 +67,28 @@ class ClientDashboardService
             ->first();
     }
 
+    public function getRecentCompletedBookings(User $user, int $limit = 3): Collection
+    {
+        return $user->bookings()
+            ->completed()
+            ->with(['residence.photos'])
+            ->orderBy('check_out', 'desc')
+            ->take($limit)
+            ->get();
+    }
+
     // ─── Stats ────────────────────────────────────────────────
 
     public function getStats(User $user, ?Collection $upcomingBookings = null): array
     {
         return [
-            'bookings_upcoming'  => ($upcomingBookings ?? $this->getUpcomingBookings($user))->count(),
-            'favorites_count'    => $user->favorites()->count(),
-            'messages_unread'    => $user->unreadMessagesCount(),
-            'views_count'        => $user->residenceViews()->count(),
-            'reviews_count'      => $user->reviews()->count(),
+            'bookings_upcoming'    => ($upcomingBookings ?? $this->getUpcomingBookings($user))->count(),
+            'favorites_count'      => $user->favorites()->count(),
+            'messages_unread'      => $user->unreadMessagesCount(),
             'notifications_unread' => $user->unreadNotifications()->count(),
+            'views_count'          => $user->residenceViews()->count(),
+            'reviews_count'        => $user->reviews()->count(),
+            'alerts_count'         => $user->savedSearches()->count(),
         ];
     }
 

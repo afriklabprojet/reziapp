@@ -10,7 +10,7 @@
     </div>
 
     {{-- Global Summary --}}
-    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
         <div class="bg-white rounded-2xl border border-gray-100 p-4">
             <p class="text-xs font-semibold text-gray-400 uppercase">Résidences</p>
             <p class="text-2xl font-bold text-gray-900 mt-1">{{ $summary['total_residences'] }}</p>

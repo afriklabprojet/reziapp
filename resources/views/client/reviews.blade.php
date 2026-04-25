@@ -134,11 +134,45 @@
                             @endif
 
                             {{-- Actions --}}
-                            <div class="mt-4 flex items-center gap-3">
+                            <div class="mt-4 flex items-center gap-3 flex-wrap">
                                 <a href="{{ route('residences.show', $review->residence) }}"
                                     class="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg transition">
                                     Voir la résidence
                                 </a>
+
+                                @if (! $review->owner_response)
+                                    <button type="button"
+                                        x-data
+                                        @click="$dispatch('open-review-edit', {
+                                            reviewId: {{ $review->id }},
+                                            rating: {{ $review->rating }},
+                                            comment: @js($review->comment ?? ''),
+                                            actionUrl: '{{ route('client.reviews.update', $review) }}'
+                                        })"
+                                        class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition">
+                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+                                        </svg>
+                                        Modifier
+                                    </button>
+
+                                    <form action="{{ route('client.reviews.delete', $review) }}" method="POST"
+                                          onsubmit="return confirm('Supprimer définitivement cet avis ?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="inline-flex items-center px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">
+                                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                            Supprimer
+                                        </button>
+                                    </form>
+                                @else
+                                    <span class="text-xs text-gray-400 italic">Modification impossible — réponse propriétaire</span>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -167,3 +201,98 @@
         </div>
     @endif
 @endsection
+
+{{-- Modal édition avis --}}
+<div
+    x-data="{
+        open: false,
+        reviewId: null,
+        rating: 5,
+        comment: '',
+        actionUrl: '',
+        submitting: false,
+    }"
+    @open-review-edit.window="
+        reviewId = $event.detail.reviewId;
+        rating = $event.detail.rating;
+        comment = $event.detail.comment;
+        actionUrl = $event.detail.actionUrl;
+        open = true;
+    "
+    x-show="open"
+    x-cloak
+    class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    style="display: none;"
+>
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="open = false"></div>
+
+    <div class="relative w-full max-w-lg bg-white rounded-2xl shadow-xl p-6 z-10" @click.stop>
+        <div class="flex items-start justify-between mb-5">
+            <div>
+                <h3 class="text-base font-semibold text-gray-900">Modifier mon avis</h3>
+                <p class="text-sm text-gray-500 mt-0.5">L'avis repassera en modération après modification.</p>
+            </div>
+            <button @click="open = false" class="text-gray-400 hover:text-gray-600 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <form :action="actionUrl" method="POST" @submit="submitting = true">
+            @csrf
+            @method('PATCH')
+
+            {{-- Note --}}
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Note <span class="text-red-500">*</span></label>
+                <div class="flex gap-1" x-data>
+                    @for ($s = 1; $s <= 5; $s++)
+                        <button type="button"
+                            @click="$dispatch('set-rating', { value: {{ $s }} })"
+                            @set-rating.window="rating = $event.detail.value"
+                            class="focus:outline-none transition-transform hover:scale-110">
+                            <svg class="w-8 h-8 transition-colors"
+                                :class="rating >= {{ $s }} ? 'text-amber-400 fill-current' : 'text-gray-300 fill-current'"
+                                viewBox="0 0 24 24">
+                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                            </svg>
+                        </button>
+                    @endfor
+                </div>
+                <input type="hidden" name="rating" :value="rating">
+            </div>
+
+            {{-- Commentaire --}}
+            <div class="mb-5">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Commentaire</label>
+                <textarea
+                    name="comment"
+                    x-model="comment"
+                    rows="4"
+                    placeholder="Décrivez votre expérience… (min. 10 caractères)"
+                    class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm placeholder-gray-400 focus:ring-2 focus:ring-orange-300 focus:border-orange-400 resize-none"
+                    minlength="10"
+                    maxlength="2000"
+                ></textarea>
+                <p class="text-xs text-gray-400 mt-1" x-text="comment.length + '/2000 caractères'"></p>
+            </div>
+
+            @error('rating')  <p class="text-xs text-red-500 mb-2">{{ $message }}</p> @enderror
+            @error('comment') <p class="text-xs text-red-500 mb-2">{{ $message }}</p> @enderror
+
+            <div class="flex gap-3">
+                <button type="button" @click="open = false"
+                    class="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition">
+                    Annuler
+                </button>
+                <button type="submit"
+                    :disabled="submitting"
+                    class="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 disabled:cursor-not-allowed rounded-xl transition">
+                    <span x-show="!submitting">Enregistrer</span>
+                    <span x-show="submitting">Mise à jour…</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -53,8 +53,8 @@
         {{-- HERO --}}
         <section class="relative overflow-hidden bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
             <div class="absolute inset-0 opacity-10" aria-hidden="true">
-                <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-orange-500 blur-3xl"></div>
-                <div class="absolute bottom-0 left-0 w-72 h-72 rounded-full bg-orange-400 blur-3xl"></div>
+                <div class="absolute -top-12 -right-12 w-48 h-48 sm:-top-24 sm:-right-24 sm:w-96 sm:h-96 rounded-full bg-orange-500 blur-3xl"></div>
+                <div class="absolute bottom-0 left-0 w-40 h-40 sm:w-72 sm:h-72 rounded-full bg-orange-400 blur-3xl"></div>
             </div>
 
             <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">

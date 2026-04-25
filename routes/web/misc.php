@@ -70,7 +70,7 @@ Route::get('/residences/{residence}/reviews', [ReviewController::class, 'index']
 
 use App\Http\Controllers\PublicProfileController;
 
-Route::prefix('profile')->group(function () {
+Route::middleware(['auth', 'verified'])->prefix('profile')->group(function () {
     Route::get('/u/{user}', [PublicProfileController::class, 'show'])->name('profile.public');
     Route::get('/u/{user}/badges', [PublicProfileController::class, 'badges'])->name('profile.badges');
     Route::get('/u/{user}/reviews-received', [PublicProfileController::class, 'receivedReviews'])->name('profile.received-reviews');
@@ -209,6 +209,7 @@ Route::middleware(['auth', 'verified'])
         Route::delete('/{message}', [App\Http\Controllers\ChatController::class, 'deleteMessage'])->name('delete');
         Route::post('/{message}/reaction', [App\Http\Controllers\ChatController::class, 'toggleReaction'])->name('reaction');
         Route::get('/{message}/voice-stream', [App\Http\Controllers\ChatController::class, 'streamVoice'])->name('voice-stream');
+        Route::get('/{message}/image/{index}', [App\Http\Controllers\ChatController::class, 'streamImage'])->name('image');
     });
 
 // API utilitaires chat (GIF search, link preview)
@@ -542,6 +543,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Demandes de réservation
         Route::get('/requests/{bookingRequest}', [App\Http\Controllers\BookingController::class, 'showRequest'])->name('requests.show');
+
+        // Sprint 3 — Modification de réservation post-booking
+        Route::get('/{booking}/modify', [App\Http\Controllers\BookingModificationController::class, 'create'])->name('modify');
+        Route::post('/{booking}/modify', [App\Http\Controllers\BookingModificationController::class, 'store'])->name('modify.store');
     });
 });
 
@@ -565,6 +570,10 @@ Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
 
         // Calendrier
         Route::get('/calendar/{residence}', [App\Http\Controllers\BookingController::class, 'calendar'])->name('calendar');
+
+        // Sprint 3 — Réponse aux demandes de modification
+        Route::post('/modifications/{modification}/approve', [App\Http\Controllers\BookingModificationController::class, 'approve'])->name('modifications.approve');
+        Route::post('/modifications/{modification}/reject', [App\Http\Controllers\BookingModificationController::class, 'reject'])->name('modifications.reject');
     });
 
 // === PRICING API ===

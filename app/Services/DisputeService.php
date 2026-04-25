@@ -7,6 +7,7 @@ use App\Models\Cancellation;
 use App\Models\Dispute;
 use App\Models\SupportTicket;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -236,27 +237,34 @@ class DisputeService
         ?float $refundAmount = null,
     ): Dispute {
         return DB::transaction(function () use ($dispute, $resolution, $notes, $resolvedBy, $refundAmount) {
+            // Relire avec lock pour éviter la double résolution concurrente
+            $locked = \App\Models\Dispute::lockForUpdate()->find($dispute->id);
+
+            if (in_array($locked->status, ['resolved', 'closed'])) {
+                return $locked; // Déjà résolu, retour idempotent
+            }
+
             // Process refund if applicable
-            if ($refundAmount && $refundAmount > 0 && $dispute->booking) {
-                $this->processDisputeRefund($dispute, $refundAmount, $resolution);
+            if ($refundAmount && $refundAmount > 0 && $locked->booking) {
+                $this->processDisputeRefund($locked, $refundAmount, $resolution);
             }
 
             // Resolve the dispute
-            $dispute->resolve($resolution, $notes);
+            $locked->resolve($resolution, $notes);
 
             // Close associated support tickets
-            $dispute->supportTickets()->active()->each(function ($ticket) {
+            $locked->supportTickets()->active()->each(function ($ticket) {
                 $ticket->resolve();
             });
 
             Log::info('Dispute resolved', [
-                'dispute_id' => $dispute->id,
+                'dispute_id' => $locked->id,
                 'resolution' => $resolution,
                 'resolved_by' => $resolvedBy,
                 'refund_amount' => $refundAmount,
             ]);
 
-            return $dispute;
+            return $locked;
         });
     }
 
@@ -276,7 +284,7 @@ class DisputeService
             $userId,
             $amount,
             'credit', // Default to credit for dispute resolutions
-            auth()->id() ?? 0,
+            Auth::id() ?? 0,
             "Résolution de litige #{$dispute->id}",
         );
     }

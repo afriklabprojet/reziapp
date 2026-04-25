@@ -197,13 +197,13 @@ class Coupon extends Model
         if ($this->discount_type === 'percentage') {
             $label = '-'.intval($this->discount_value).'%';
             if ($this->max_discount) {
-                $label .= ' (max '.number_format($this->max_discount, 0, ',', ' ').' F)';
+                $label .= ' (max '.number_format((float) $this->max_discount, 0, ',', ' ').' F)';
             }
 
             return $label;
         }
 
-        return '-'.number_format($this->discount_value, 0, ',', ' ').' F';
+        return '-'.number_format((float) $this->discount_value, 0, ',', ' ').' F';
     }
 
     public function getStatusLabelAttribute(): string

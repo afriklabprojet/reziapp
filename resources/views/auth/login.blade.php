@@ -15,11 +15,11 @@
                 aria-hidden="true"></div>
 
             {{-- Blobs décoratifs (lueur orange) --}}
-            <div class="absolute inset-0" aria-hidden="true">
-                <div class="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-orange-500/20 blur-3xl"></div>
-                <div class="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-orange-400/15 blur-3xl"></div>
+            <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
+                <div class="absolute -top-12 -left-12 w-48 h-48 sm:-top-24 sm:-left-24 sm:w-96 sm:h-96 rounded-full bg-orange-500/20 blur-3xl"></div>
+                <div class="absolute bottom-0 right-0 w-40 h-40 sm:w-80 sm:h-80 rounded-full bg-orange-400/15 blur-3xl"></div>
                 <div
-                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-orange-500/10 blur-3xl">
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 sm:w-64 sm:h-64 rounded-full bg-orange-500/10 blur-3xl">
                 </div>
             </div>
 

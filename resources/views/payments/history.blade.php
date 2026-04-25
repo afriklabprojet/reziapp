@@ -24,7 +24,7 @@
 
             <!-- Filtres -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
-                <form method="GET" class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                <form method="GET" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                     <div>
                         <label class="block text-xs font-medium text-gray-700 mb-1">Statut</label>
                         <select name="status"

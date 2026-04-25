@@ -32,7 +32,7 @@
         @if($request->photos && count($request->photos))
         <div class="mt-4">
             <p class="text-sm font-semibold text-gray-700 mb-2">Photos</p>
-            <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
                 @foreach($request->photos as $photo)
                 <a href="{{ Storage::url($photo) }}" target="_blank" class="aspect-square rounded-xl bg-gray-100 overflow-hidden hover:opacity-80 transition-opacity">
                     <img src="{{ Storage::url($photo) }}" alt="Photo" class="w-full h-full object-cover">

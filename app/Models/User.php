@@ -441,11 +441,15 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     public function getAvatarUrl(): string
     {
         if ($this->avatar) {
-            return asset('storage/'.$this->avatar);
+            return str_starts_with($this->avatar, 'http')
+                ? $this->avatar
+                : asset('storage/'.$this->avatar);
         }
 
         if ($this->profile_photo) {
-            return asset('storage/'.$this->profile_photo);
+            return str_starts_with($this->profile_photo, 'http')
+                ? $this->profile_photo
+                : asset('storage/'.$this->profile_photo);
         }
 
         return 'https://ui-avatars.com/api/?name='.urlencode($this->name).'&background=10b981&color=fff';

@@ -103,7 +103,7 @@
                         {{-- Photo résidence --}}
                         @if ($contract->residence && $contract->residence->photos->isNotEmpty())
                             <div class="sm:w-40 h-32 sm:h-auto shrink-0">
-                                <img loading="lazy" src="{{ asset('storage/' . $contract->residence->photos->first()->path) }}"
+                                <img loading="lazy" src="{{ storage_url($contract->residence->photos->first()?->path) }}"
                                     alt="{{ $contract->residence->title }}" class="w-full h-full object-cover">
                             </div>
                         @endif
@@ -164,7 +164,7 @@
                                 </div>
 
                                 {{-- Actions --}}
-                                <div class="flex items-center gap-2 shrink-0">
+                                <div class="flex items-center gap-2 shrink-0 flex-wrap">
                                     @if ($contract->status === 'pending_tenant')
                                         <form action="{{ route('client.contracts.sign', $contract) }}" method="POST">
                                             @csrf
@@ -180,6 +180,36 @@
                                                 Signer
                                             </button>
                                         </form>
+                                    @endif
+
+                                    @if ($contract->status === 'active')
+                                        @if ($contract->termination_requested_at)
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-2 bg-amber-50 text-amber-700 text-sm font-medium rounded-lg border border-amber-200">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                Résiliation en attente
+                                            </span>
+                                            <form action="{{ route('client.contracts.cancel-termination', $contract) }}" method="POST"
+                                                  onsubmit="return confirm('Annuler votre demande de résiliation ?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="inline-flex items-center px-3 py-2 text-xs font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-lg transition">
+                                                    Annuler la demande
+                                                </button>
+                                            </form>
+                                        @else
+                                            <button type="button"
+                                                x-data
+                                                @click="$dispatch('open-termination-modal', { contractId: {{ $contract->id }}, contractRef: '{{ $contract->reference }}', actionUrl: '{{ route('client.contracts.request-termination', $contract) }}' })"
+                                                class="inline-flex items-center px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition">
+                                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                                Demander résiliation
+                                            </button>
+                                        @endif
                                     @endif
 
                                     @if ($contract->pdf_path)
@@ -253,3 +283,83 @@
         @endif
     @endif
 @endsection
+
+{{-- Modal résiliation --}}
+<div
+    x-data="{
+        open: false,
+        contractId: null,
+        contractRef: '',
+        actionUrl: '',
+        reason: '',
+        submitting: false,
+    }"
+    @open-termination-modal.window="
+        contractId = $event.detail.contractId;
+        contractRef = $event.detail.contractRef;
+        actionUrl = $event.detail.actionUrl;
+        reason = '';
+        open = true;
+    "
+    x-show="open"
+    x-cloak
+    class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    style="display: none;"
+>
+    {{-- Overlay --}}
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="open = false"></div>
+
+    {{-- Contenu --}}
+    <div class="relative w-full max-w-md bg-white rounded-2xl shadow-xl p-6 z-10" @click.stop>
+        <div class="flex items-start gap-3 mb-4">
+            <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z" />
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-base font-semibold text-gray-900">Demander la résiliation</h3>
+                <p class="text-sm text-gray-500 mt-0.5">Contrat <span class="font-medium" x-text="contractRef"></span></p>
+            </div>
+        </div>
+
+        <p class="text-sm text-gray-600 mb-4">
+            Votre demande sera transmise au propriétaire. Cette action n'est pas une résiliation immédiate — un accord mutuel ou un délai de préavis sera nécessaire.
+        </p>
+
+        <form :action="actionUrl" method="POST" @submit="submitting = true">
+            @csrf
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+                Motif de résiliation <span class="text-red-500">*</span>
+            </label>
+            <textarea
+                name="reason"
+                x-model="reason"
+                rows="4"
+                placeholder="Décrivez le motif de votre demande (déménagement, raisons professionnelles, etc.) — minimum 20 caractères."
+                class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm placeholder-gray-400 focus:ring-2 focus:ring-red-300 focus:border-red-400 resize-none"
+                required
+                minlength="20"
+                maxlength="1000"
+            ></textarea>
+            <p class="text-xs text-gray-400 mt-1" x-text="reason.length + '/1000 caractères'"></p>
+
+            @error('reason')
+                <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+            @enderror
+
+            <div class="flex gap-3 mt-5">
+                <button type="button" @click="open = false"
+                    class="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition">
+                    Annuler
+                </button>
+                <button type="submit"
+                    :disabled="submitting || reason.length < 20"
+                    class="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 disabled:bg-red-300 disabled:cursor-not-allowed rounded-xl transition">
+                    <span x-show="!submitting">Envoyer la demande</span>
+                    <span x-show="submitting">Envoi en cours…</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

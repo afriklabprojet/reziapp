@@ -53,15 +53,18 @@ class LeaseContract extends Model
         'terminated_at',
         'termination_reason',
         'terminated_by',
+        'termination_requested_at',
+        'termination_request_reason',
     ];
 
     protected $casts = [
         'start_date'          => 'date',
         'end_date'            => 'date',
-        'terminated_at'       => 'date',
-        'owner_signed_at'     => 'datetime',
-        'tenant_signed_at'    => 'datetime',
-        'pdf_generated_at'    => 'datetime',
+        'terminated_at'             => 'date',
+        'owner_signed_at'           => 'datetime',
+        'tenant_signed_at'          => 'datetime',
+        'pdf_generated_at'          => 'datetime',
+        'termination_requested_at'  => 'datetime',
         'monthly_rent'        => 'decimal:2',
         'deposit_amount'      => 'decimal:2',
         'charges_amount'      => 'decimal:2',

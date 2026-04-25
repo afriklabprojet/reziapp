@@ -11,7 +11,9 @@ use App\Models\Referral;
 use App\Models\Residence;
 use App\Models\SponsoredListing;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -182,7 +184,7 @@ class MarketingService
         if ($coupon->min_amount && $amount < $coupon->min_amount) {
             return [
                 'valid' => false,
-                'error' => 'Le montant minimum requis est de '.number_format($coupon->min_amount, 0, ',', ' ').' FCFA',
+                'error' => 'Le montant minimum requis est de '.number_format((float) $coupon->min_amount, 0, ',', ' ').' FCFA',
             ];
         }
 
@@ -222,9 +224,16 @@ class MarketingService
     public function useCoupon(Coupon $coupon, User $user, float $amount, float $discount): CouponUse
     {
         return DB::transaction(function () use ($coupon, $user, $amount, $discount) {
+            // Verrouiller le coupon pour éviter le dépassement concurrent de max_uses
+            $locked = Coupon::lockForUpdate()->find($coupon->id);
+
+            if ($locked->max_uses && $locked->uses_count >= $locked->max_uses) {
+                throw new \RuntimeException('Ce coupon a atteint sa limite d\'utilisation.');
+            }
+
             // Enregistrer l'utilisation
             $couponUse = CouponUse::create([
-                'coupon_id' => $coupon->id,
+                'coupon_id' => $locked->id,
                 'user_id' => $user->id,
                 'original_amount' => $amount,
                 'discount_amount' => $discount,
@@ -232,7 +241,7 @@ class MarketingService
             ]);
 
             // Incrémenter le compteur
-            $coupon->increment('uses_count');
+            $locked->increment('uses_count');
 
             return $couponUse;
         });
@@ -325,16 +334,23 @@ class MarketingService
         }
 
         return DB::transaction(function () use ($referral) {
+            // Vérifier + verrouiller le statut dans la transaction pour éviter le double reward
+            $locked = \App\Models\Referral::lockForUpdate()->find($referral->id);
+
+            if (!$locked || $locked->status !== 'qualified') {
+                return false;
+            }
+
             // Créditer le parrain
-            $referrer = $referral->referrer;
-            $referrer->increment('referral_balance', $referral->referrer_reward);
+            $referrer = $locked->referrer;
+            $referrer->increment('referral_balance', $locked->referrer_reward);
 
             // Créditer le filleul
-            $referred = $referral->referred;
-            $referred->increment('referral_balance', $referral->referred_reward);
+            $referred = $locked->referred;
+            $referred->increment('referral_balance', $locked->referred_reward);
 
             // Mettre à jour le statut
-            $referral->update([
+            $locked->update([
                 'status' => 'rewarded',
                 'rewarded_at' => now(),
             ]);
@@ -466,7 +482,7 @@ class MarketingService
                 $sent++;
             } catch (\Exception $e) {
                 $failed++;
-                \Log::error("Failed to send campaign {$campaign->id} to user {$user->id}: ".$e->getMessage());
+                Log::error("Failed to send campaign {$campaign->id} to user {$user->id}: ".$e->getMessage());
             }
         }
 
@@ -568,7 +584,7 @@ class MarketingService
         try {
             app(SmsService::class)->send($user->phone, $content);
         } catch (\Throwable $e) {
-            \Log::warning('Failed to send campaign SMS', [
+            Log::warning('Failed to send campaign SMS', [
                 'user_id' => $user->id,
                 'error' => $e->getMessage(),
             ]);
@@ -646,7 +662,7 @@ class MarketingService
     public function recordSponsoredClick(SponsoredListing $sponsored, ?string $ip = null, ?int $userId = null): void
     {
         if ($sponsored->canRun()) {
-            $sponsored->recordClick($ip ?? request()->ip(), $userId ?? auth()->id());
+            $sponsored->recordClick($ip ?? request()->ip(), $userId ?? Auth::id());
         }
     }
 

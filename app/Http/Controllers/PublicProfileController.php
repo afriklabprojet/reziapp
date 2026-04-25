@@ -23,17 +23,17 @@ class PublicProfileController extends Controller
     }
 
     /**
-     * Afficher le profil public d'un utilisateur
+     * Afficher le profil d'un utilisateur — accessible uniquement par lui-même.
      */
     public function show(User $user)
     {
-        // Obtenir ou créer le profil public
-        $profile = PublicProfile::getOrCreateForUser($user);
-
-        // Incrémenter les vues (sauf si c'est l'utilisateur lui-même)
+        // Seul l'utilisateur peut voir son propre profil
         if (Auth::id() !== $user->id) {
-            $profile->incrementViews();
+            abort(403, 'Vous n\'êtes pas autorisé à consulter ce profil.');
         }
+
+        // Obtenir ou créer le profil
+        $profile = PublicProfile::getOrCreateForUser($user);
 
         // Obtenir les badges actifs
         $badges = $user->activeBadges()->get();
@@ -83,10 +83,14 @@ class PublicProfileController extends Controller
     }
 
     /**
-     * Afficher les avis reçus par un propriétaire
+     * Afficher les avis reçus — accessible uniquement par l'utilisateur lui-même.
      */
     public function receivedReviews(User $user)
     {
+        if (Auth::id() !== $user->id) {
+            abort(403, 'Vous n\'êtes pas autorisé à consulter ces informations.');
+        }
+
         if (!$user->isOwner()) {
             abort(404);
         }
@@ -100,10 +104,14 @@ class PublicProfileController extends Controller
     }
 
     /**
-     * Afficher les avis donnés par un utilisateur
+     * Afficher les avis donnés — accessible uniquement par l'utilisateur lui-même.
      */
     public function givenReviews(User $user)
     {
+        if (Auth::id() !== $user->id) {
+            abort(403, 'Vous n\'êtes pas autorisé à consulter ces informations.');
+        }
+
         $reviews = $this->reviewService->getUserReviews($user, 'given');
 
         return view('profiles.given-reviews', [
@@ -158,10 +166,14 @@ class PublicProfileController extends Controller
     }
 
     /**
-     * Afficher les badges d'un utilisateur
+     * Afficher les badges — accessible uniquement par l'utilisateur lui-même.
      */
     public function badges(User $user)
     {
+        if (Auth::id() !== $user->id) {
+            abort(403, 'Vous n\'êtes pas autorisé à consulter ces informations.');
+        }
+
         $activeBadges = $user->activeBadges()->get();
         $allBadgeTypes = Badge::getTypes();
 

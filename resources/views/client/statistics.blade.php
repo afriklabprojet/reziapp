@@ -14,18 +14,18 @@
     </div>
 
     {{-- Infos membre --}}
-    <div class="bg-linear-to-r from-orange-500 to-orange-500 rounded-xl p-6 text-white mb-8">
+    <div class="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl p-6 text-white mb-8">
         <div class="flex items-center gap-4">
             <div class="w-16 h-16 rounded-full overflow-hidden bg-white/20 flex items-center justify-center">
-                @if (auth()->user()->profile_photo || auth()->user()->avatar)
-                    <img loading="lazy" src="{{ auth()->user()->getAvatarUrl() }}" alt=""
+                @if ($user->profile_photo || $user->avatar)
+                    <img loading="lazy" src="{{ $user->getAvatarUrl() }}" alt=""
                         class="w-full h-full object-cover">
                 @else
-                    <span class="text-2xl font-bold">{{ substr(auth()->user()->name, 0, 1) }}</span>
+                    <span class="text-2xl font-bold">{{ substr($user->name, 0, 1) }}</span>
                 @endif
             </div>
             <div>
-                <h2 class="text-xl font-bold">{{ auth()->user()->name }}</h2>
+                <h2 class="text-xl font-bold">{{ $user->name }}</h2>
                 <p class="text-orange-100">Membre depuis {{ $globalStats['member_since']->translatedFormat('d F Y') }}</p>
             </div>
         </div>
@@ -201,7 +201,7 @@
     </div>
 
     {{-- Conseils personnalisés --}}
-    <div class="mt-8 bg-linear-to-br from-orange-50 to-orange-50 rounded-xl p-6 border border-orange-100">
+    <div class="mt-8 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-6 border border-orange-100">
         <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <span class="text-xl">💡</span>
             Conseils personnalisés

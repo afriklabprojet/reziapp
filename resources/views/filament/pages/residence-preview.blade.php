@@ -8,7 +8,7 @@
                 <div class="grid grid-cols-2 gap-2">
                     @foreach($residence->photos->take(6) as $photo)
                         <div class="relative aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
-                            <img loading="lazy" src="{{ storage_url($photo->path) }}" 
+                            <img loading="lazy" src="{{ storage_url($photo->path) }}"
                                 alt="{{ $residence->name }}"
                                 class="w-full h-full object-cover"
                             >
@@ -88,7 +88,7 @@
     {{-- Caractéristiques --}}
     <div>
         <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-3">Caractéristiques</h3>
-        <div class="grid grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 text-center">
                 <x-heroicon-o-home class="w-6 h-6 mx-auto text-gray-400 mb-1"/>
                 <p class="text-lg font-bold">{{ $residence->bedrooms ?? 0 }}</p>
@@ -173,8 +173,8 @@
                 Coordonnées: {{ $residence->latitude }}, {{ $residence->longitude }}
             </p>
             <div class="aspect-video bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-                <a 
-                    href="https://www.google.com/maps?q={{ $residence->latitude }},{{ $residence->longitude }}" 
+                <a
+                    href="https://www.google.com/maps?q={{ $residence->latitude }},{{ $residence->longitude }}"
                     target="_blank"
                     class="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700"
                 >

@@ -438,6 +438,26 @@
                         </div>
                     </section>
 
+                    {{-- ─── Sprint 3 — Paiement échelonné 50/50 ─── --}}
+                    <section x-show="splitEligible" x-cloak class="rounded-2xl border-2 border-emerald-200 bg-emerald-50/60 p-4">
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" x-model="paymentSplit" name="payment_split" value="1"
+                                class="mt-1 h-5 w-5 rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500">
+                            <div class="flex-1 min-w-0">
+                                <div class="font-semibold text-emerald-900 text-sm flex items-center gap-2">
+                                    💳 Payer en 2 fois (50% maintenant, 50% à J-30)
+                                </div>
+                                <div class="text-xs text-emerald-800 mt-1" x-show="!paymentSplit">
+                                    Disponible car votre arrivée est dans plus de 30 jours.
+                                </div>
+                                <div class="text-xs text-emerald-900 mt-2 space-y-0.5" x-show="paymentSplit" x-cloak>
+                                    <div>• Aujourd'hui : <strong x-text="formatCurrency(Math.round((price?.total ?? 0) * 0.5))"></strong></div>
+                                    <div>• Solde dû le <strong x-text="balanceDueLabel"></strong> : <strong x-text="formatCurrency(Math.round((price?.total ?? 0) * 0.5))"></strong></div>
+                                </div>
+                            </div>
+                        </label>
+                    </section>
+
                     <hr class="border-gray-200">
 
                     {{-- ─── Erreur ─── --}}
@@ -504,6 +524,7 @@
                             <input type="hidden" name="coupon_code"
                                 :value="appliedCodeType === 'coupon' ? appliedCode : ''">
                             <input type="hidden" name="payment_method" :value="paymentMethod">
+                            <input type="hidden" name="payment_split" :value="paymentSplit && splitEligible ? 1 : 0">
 
                             <button type="submit" :disabled="!canSubmit || submitting"
                                 class="w-full py-4 text-white text-base font-semibold rounded-xl transition-all

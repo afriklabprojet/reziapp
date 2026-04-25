@@ -48,15 +48,16 @@
                             @endforeach
                             @for ($i = $residences->count(); $i < 4; $i++)
                                 <th class="py-4 px-4 text-center min-w-64">
-                                    <div
-                                        class="border-2 border-dashed border-gray-200 rounded-lg p-8 h-full flex flex-col items-center justify-center">
-                                        <svg class="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor"
+                                    <a href="{{ route('residences.index') }}"
+                                        class="block border-2 border-dashed border-gray-200 hover:border-orange-300 rounded-lg p-8 h-full flex flex-col items-center justify-center transition-colors group">
+                                        <svg class="w-8 h-8 text-gray-300 group-hover:text-orange-400 mb-2 transition-colors" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                         </svg>
-                                        <span class="text-sm text-gray-400">Ajouter une résidence</span>
-                                    </div>
+                                        <span class="text-sm text-gray-400 group-hover:text-orange-500 transition-colors">Ajouter une résidence</span>
+                                        <span class="text-xs text-gray-300 mt-1">Parcourir les annonces</span>
+                                    </a>
                                 </th>
                             @endfor
                         </tr>

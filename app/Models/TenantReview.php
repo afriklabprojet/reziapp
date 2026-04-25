@@ -12,7 +12,7 @@ class TenantReview extends Model
     protected $fillable = [
         'owner_id', 'tenant_id', 'booking_id', 'residence_id',
         'cleanliness_rating', 'respect_rules_rating', 'communication_rating', 'payment_rating',
-        'overall_rating', 'comment', 'would_rent_again', 'is_public',
+        'overall_rating', 'comment', 'would_rent_again', 'is_public', 'published_at',
     ];
 
     protected $casts = [
@@ -23,6 +23,7 @@ class TenantReview extends Model
         'overall_rating'         => 'integer',
         'would_rent_again' => 'boolean',
         'is_public'       => 'boolean',
+        'published_at'    => 'datetime',
     ];
 
     public const RATING_DIMENSIONS = [
@@ -88,6 +89,11 @@ class TenantReview extends Model
     public function scopePublic($query)
     {
         return $query->where('is_public', true);
+    }
+
+    public function scopePublished($query)
+    {
+        return $query->where('is_public', true)->whereNotNull('published_at');
     }
 
     public function scopePositive($query)

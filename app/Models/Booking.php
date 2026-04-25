@@ -66,6 +66,14 @@ class Booking extends Model
         'owner_response_deadline',
         'actual_check_in',
         'actual_check_out',
+        // Sprint 3 — split payment
+        'payment_split',
+        'deposit_amount',
+        'deposit_paid_at',
+        'balance_amount',
+        'balance_due_at',
+        'balance_paid_at',
+        'balance_reminder_sent_at',
     ];
 
     protected $casts = [
@@ -90,6 +98,14 @@ class Booking extends Model
         'owner_response_deadline' => 'datetime',
         'actual_check_in' => 'datetime',
         'actual_check_out' => 'datetime',
+        // Sprint 3 — split payment
+        'payment_split' => 'boolean',
+        'deposit_amount' => 'decimal:2',
+        'deposit_paid_at' => 'datetime',
+        'balance_amount' => 'decimal:2',
+        'balance_due_at' => 'date',
+        'balance_paid_at' => 'datetime',
+        'balance_reminder_sent_at' => 'datetime',
     ];
 
     // ===== RELATIONSHIPS =====
@@ -116,6 +132,30 @@ class Booking extends Model
     public function residence()
     {
         return $this->belongsTo(Residence::class);
+    }
+
+    /**
+     * Demandes de modification (Sprint 3 item 3)
+     */
+    public function modifications()
+    {
+        return $this->hasMany(BookingModification::class);
+    }
+
+    /**
+     * Paiement échelonné activé ?
+     */
+    public function isPaymentSplit(): bool
+    {
+        return (bool) $this->payment_split;
+    }
+
+    public function isBalanceDue(): bool
+    {
+        return $this->payment_split
+            && $this->balance_due_at
+            && !$this->balance_paid_at
+            && $this->balance_due_at->isPast();
     }
 
     /**

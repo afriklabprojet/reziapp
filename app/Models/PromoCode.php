@@ -189,7 +189,17 @@ class PromoCode extends Model
 
     public function recordUsage(User $user, Booking $booking): PromoCodeUse
     {
-        $this->incrementUsage();
+        // Vérifier + incrémenter sous lock pour éviter le dépassement concurrent (TOCTOU)
+        \Illuminate\Support\Facades\DB::transaction(function () {
+            /** @var self $locked */
+            $locked = self::lockForUpdate()->find($this->id);
+
+            if ($locked->usage_limit && $locked->usage_count >= $locked->usage_limit) {
+                throw new \RuntimeException('Ce code promo a atteint sa limite d\'utilisation.');
+            }
+
+            $locked->increment('usage_count');
+        });
 
         return $this->usages()->create([
             'user_id' => $user->id,
@@ -205,7 +215,7 @@ class PromoCode extends Model
             return $this->value.'%';
         }
 
-        return number_format($this->value, 0, ',', ' ').' FCFA';
+        return number_format((float) $this->value, 0, ',', ' ').' FCFA';
     }
 
     public function getStatusBadge(): string

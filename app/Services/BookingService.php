@@ -213,7 +213,12 @@ class BookingService
         // Déterminer le type de réservation
         $bookingType = $data['booking_type'] ?? ($residence->instant_book ? 'instant' : 'request');
 
-        return DB::transaction(function () use ($residence, $user, $data, $priceBreakdown, $checkIn, $checkOut, $bookingType, $idempotencyKey) {
+        // Sprint 3 — Paiement échelonné 50/50 (éligible si check-in > J+30)
+        $paymentSplit = !empty($data['payment_split']) && (bool) $data['payment_split'];
+        $splitEligible = now()->startOfDay()->diffInDays($checkIn->copy()->startOfDay(), false) > 30;
+        $paymentSplit = $paymentSplit && $splitEligible;
+
+        return DB::transaction(function () use ($residence, $user, $data, $priceBreakdown, $checkIn, $checkOut, $bookingType, $idempotencyKey, $paymentSplit) {
             // SECURITE : Vérification de disponibilité DANS la transaction avec lock pessimiste
             // Empêche les double bookings par requêtes concurrentes (race condition)
             $hasConflict = Booking::where('residence_id', $residence->id)
@@ -283,6 +288,12 @@ class BookingService
                 'guest_message' => $data['message'] ?? null,
                 'status' => 'pending_payment',
                 'payment_status' => 'pending',
+
+                // Sprint 3 — Paiement échelonné 50/50
+                'payment_split' => $paymentSplit,
+                'deposit_amount' => $paymentSplit ? (int) round($priceBreakdown['total_amount'] * 0.5) : null,
+                'balance_amount' => $paymentSplit ? $priceBreakdown['total_amount'] - (int) round($priceBreakdown['total_amount'] * 0.5) : null,
+                'balance_due_at' => $paymentSplit ? $checkIn->copy()->subDays(30)->toDateString() : null,
             ]);
 
             // Enregistrer l'utilisation du code promo

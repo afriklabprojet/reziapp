@@ -1,6 +1,6 @@
 <x-app-layout>
-    @section('title', 'REZI — Résidences meublées à ' . ($userLocation['city'] ??
-        (\App\Services\UserLocationService::current()['city'] ?? 'Abidjan')) . ' | Recherche géolocalisée')
+    @section('title', 'Rezi App – Location de résidences meublés à ' . ($userLocation['city'] ??
+        (\App\Services\UserLocationService::current()['city'] ?? 'Abidjan')))
 
         @push('styles')
             {{-- Preload Mapbox pour la carte héro + mini-map + page carte --}}

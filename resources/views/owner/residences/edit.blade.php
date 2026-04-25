@@ -279,19 +279,6 @@
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
-
-                            {{-- Prix hebdomadaire (toujours optionnel) --}}
-                            <div>
-                                <label for="price_per_week" class="block text-sm font-medium text-gray-700 mb-1">
-                                    Prix hebdomadaire (FCFA)
-                                </label>
-                                <input type="number" id="price_per_week" name="price_per_week" min="0"
-                                    step="1000" class="input-field @error('price_per_week') border-red-500 @enderror"
-                                    value="{{ old('price_per_week', $residence->price_per_week) }}">
-                                @error('price_per_week')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
                         </div>
                     </div>
 
@@ -370,6 +357,24 @@
                                     <span class="ml-2 text-sm text-gray-700">Ascenseur</span>
                                 </label>
                             </div>
+                        </div>
+
+                        {{-- Sprint 3 — Instant Book --}}
+                        <div class="mt-6 p-4 bg-linear-to-r from-emerald-50 to-teal-50 rounded-xl ring-1 ring-emerald-100">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" name="instant_book" value="1"
+                                    {{ old('instant_book', $residence->instant_book) ? 'checked' : '' }}
+                                    class="mt-1 form-checkbox h-5 w-5 text-emerald-600 rounded">
+                                <span class="flex-1">
+                                    <span class="flex text-sm font-semibold text-gray-900 items-center gap-1.5">
+                                        ⚡ Réservation instantanée
+                                    </span>
+                                    <span class="block text-xs text-gray-600 mt-1">
+                                        Les voyageurs peuvent réserver immédiatement sans attendre votre validation.
+                                        Votre logement apparaît plus haut dans les résultats et reçoit jusqu'à <strong>3× plus de demandes</strong>.
+                                    </span>
+                                </span>
+                            </label>
                         </div>
                     </div>
 

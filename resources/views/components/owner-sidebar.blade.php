@@ -641,7 +641,7 @@
     {{-- Fixed bottom tab bar --}}
     <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200"
         style="padding-bottom: env(safe-area-inset-bottom)">
-        <div class="grid grid-cols-5 h-14">
+        <div class="grid grid-cols-5 h-14 text-[10px] xs:text-xs">
             <a href="{{ route('owner.dashboard') }}"
                 class="flex flex-col items-center justify-center gap-0.5 {{ $active === 'dashboard' ? 'text-gray-900' : 'text-gray-400' }}">
                 <svg class="w-5 h-5" fill="{{ $active === 'dashboard' ? 'currentColor' : 'none' }}"

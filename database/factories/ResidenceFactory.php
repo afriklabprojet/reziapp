@@ -62,6 +62,7 @@ class ResidenceFactory extends Factory
             'bathrooms' => $this->faker->numberBetween(1, 3),
             'type' => $this->faker->randomElement(['studio', 'apartment', 'house', 'villa', 'duplex']),
             'surface_area' => $this->faker->randomElement([25, 40, 60, 80, 100, 150, 200]),
+            'max_guests' => $this->faker->randomElement([2, 4, 4, 6, 6, 8, 10]),
 
             // Statut
             'status' => 'active',

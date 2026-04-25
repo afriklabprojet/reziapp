@@ -366,6 +366,22 @@ class Residence extends Model
     }
 
     /**
+     * Dates bloquées par le propriétaire
+     */
+    public function blockedDates()
+    {
+        return $this->hasMany(\App\Models\BlockedDate::class);
+    }
+
+    /**
+     * Connexions canaux externes (Airbnb, Booking, etc.)
+     */
+    public function channelListings()
+    {
+        return $this->hasMany(\App\Models\ChannelListing::class);
+    }
+
+    /**
      * Vérifie la disponibilité pour une période
      */
     public function isAvailableFor(\Carbon\Carbon $checkIn, \Carbon\Carbon $checkOut): bool

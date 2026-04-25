@@ -67,25 +67,32 @@
 <body>
     <div class="container">
         <div class="logo">
-            <span class="logo-text">REZI</span>
+            <a href="https://reziapp.ci" style="text-decoration:none; display:inline-block;">
+                <img src="{{ asset('images/logo-rezi.png') }}" alt="Rezi App" style="height:56px; width:auto; vertical-align:middle; display:inline-block;">
+                <span style="display:inline-block; vertical-align:middle; margin-left:12px; font-size:24px; font-weight:800; color:#111827; letter-spacing:-0.5px;">Rezi <span style="color:#f97316;">App</span></span>
+            </a>
         </div>
-        
+
         <h1>{{ $title }}</h1>
-        
+
         <p>Bonjour {{ $userName }},</p>
-        
-        <p>{{ $body }}</p>
-        
+
+        <p>{!! nl2br(e($body)) !!}</p>
+
         @if($actionUrl)
             <p style="text-align: center;">
                 <a href="{{ $actionUrl }}" class="cta-button">Voir plus</a>
             </p>
         @endif
-        
+
         <div class="footer">
-            <p>Merci de faire confiance à REZI !</p>
-            <p>L'équipe REZI<br>
-            <a href="https://reziapp.ci" style="color: #f97316;">reziapp.ci</a></p>
+            <p>Merci de faire confiance à <strong>Rezi App</strong> !</p>
+            <p style="color:#6b7280; margin:8px 0;">L'équipe Rezi App</p>
+            <p style="margin:8px 0;">
+                <a href="https://reziapp.ci" style="color: #f97316; text-decoration:none; font-weight:600;">reziapp.ci</a> &middot;
+                <a href="mailto:contact@reziapp.ci" style="color:#f97316; text-decoration:none; font-weight:600;">contact@reziapp.ci</a>
+            </p>
+            <p style="font-size:11px; color:#9ca3af; margin-top:12px;">&copy; {{ date('Y') }} Rezi App &middot; Abidjan, Côte d'Ivoire</p>
         </div>
     </div>
 </body>

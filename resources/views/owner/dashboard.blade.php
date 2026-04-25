@@ -21,7 +21,7 @@
             </div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 {{-- KPI skeleton --}}
-                <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-8">
                     <div class="bg-gray-800 rounded-2xl p-5 col-span-2 lg:col-span-1 animate-pulse h-28"></div>
                     @for ($sk = 0; $sk < 4; $sk++)
                         <div class="bg-white rounded-2xl border border-gray-100 p-5 animate-pulse">
@@ -127,7 +127,7 @@
                 {{-- ============================== VÉRIFICATION IDENTITÉ ============================== --}}
                 @php
                     $showVerificationBanner =
-                        !$verificationStatus || in_array($verificationStatus, ['rejected', 'expired']);
+                        !$verificationStatus || in_array($verificationStatus, ['pending', 'rejected', 'expired']);
                     $showVerificationPending = in_array($verificationStatus, [
                         'submitted',
                         'processing',
@@ -363,13 +363,13 @@
                 @endif
 
                 {{-- ============================== BANNIÈRE ONBOARDING (nouveaux proprio) ============================== --}}
-                @if(auth()->user()->residences()->count() === 0)
+                @if($stats['total_residences'] === 0)
                 <div class="mb-6 bg-linear-to-r from-orange-500 to-amber-500 rounded-2xl p-5 text-white shadow-lg shadow-orange-500/20" x-data="{ closed: false }" x-show="!closed" x-transition>
                     <div class="flex items-start gap-4">
                         <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0 text-xl">🚀</div>
                         <div class="flex-1 min-w-0">
                             <p class="font-bold text-white text-base">Publiez votre première résidence en 5 minutes</p>
-                            <p class="text-orange-100 text-sm mt-0.5">Rejoignez {{ number_format(\App\Models\User::where('role', 'owner')->count()) }}+ propriétaires actifs sur REZI. Gratuit, sans commission.</p>
+                            <p class="text-orange-100 text-sm mt-0.5">Rejoignez {{ number_format($totalOwners) }}+ propriétaires actifs sur REZI. Gratuit, sans commission.</p>
                         </div>
                         <div class="flex items-center gap-3 shrink-0">
                             <a href="{{ route('owner.residences.create') }}"
@@ -394,7 +394,7 @@
                 @endif
 
                 {{-- ============================== KPI CARDS ============================== --}}
-                <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
                     {{-- Revenus ce mois --}}
                     <div
                         class="bg-linear-to-br from-gray-900 to-gray-800 rounded-2xl p-4 sm:p-5 text-white col-span-2 lg:col-span-1 relative overflow-hidden">
@@ -741,7 +741,7 @@
                                                             {{ $residence->name }}</h3>
                                                         @php
                                                             $statusConfig = match ($residence->status) {
-                                                                'active' => ['bg-green-100 text-green-700', '●'],
+                                                                'active', 'approved' => ['bg-green-100 text-green-700', '●'],
                                                                 'pending' => ['bg-yellow-100 text-yellow-700', '◐'],
                                                                 'needs_changes' => [
                                                                     'bg-orange-100 text-orange-700',
@@ -1164,7 +1164,7 @@
                                 <div class="divide-y divide-gray-50">
                                     @foreach ($recentMessages as $conversation)
                                         @php
-                                            $lastMsg = $conversation->messages->first();
+                                            $lastMsg = $conversation->latestMessage;
                                             $otherUser = $conversation->user;
                                             $isUnread =
                                                 $lastMsg && $lastMsg->sender_id !== auth()->id() && !$lastMsg->read_at;
@@ -1239,7 +1239,6 @@
                                 <div class="divide-y divide-gray-50">
                                     @foreach ($calendarEvents as $event)
                                         @php
-                                            $isCheckIn = $event->check_in->isToday() || $event->check_in->isFuture();
                                             $isToday = $event->check_in->isToday() || $event->check_out->isToday();
                                             $eventType = $event->check_out->isToday()
                                                 ? 'checkout'

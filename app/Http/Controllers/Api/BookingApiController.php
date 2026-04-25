@@ -219,7 +219,7 @@ class BookingApiController extends Controller
                 'success' => true,
                 'message' => 'Réservation annulée.',
                 'refund_amount' => $result['refund_amount'],
-                'formatted_refund' => number_format($result['refund_amount'], 0, ',', ' ').' FCFA',
+                'formatted_refund' => number_format((float) $result['refund_amount'], 0, ',', ' ').' FCFA',
             ]);
         } catch (\Exception $e) {
             Log::error('API booking cancellation failed', [

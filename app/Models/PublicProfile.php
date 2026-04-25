@@ -136,7 +136,7 @@ class PublicProfile extends Model
      */
     public function getResponseRateFormattedAttribute(): string
     {
-        return number_format($this->response_rate, 0).'%';
+        return number_format((float) $this->response_rate, 0).'%';
     }
 
     /**

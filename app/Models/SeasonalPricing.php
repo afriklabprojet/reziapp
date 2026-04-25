@@ -181,7 +181,7 @@ class SeasonalPricing extends Model
     {
         $priceInfo = $this->price_multiplier != 1.0
             ? ($this->price_multiplier > 1 ? '+' : '').round(($this->price_multiplier - 1) * 100).'%'
-            : number_format($this->price_per_day).' FCFA';
+            : number_format((float) $this->price_per_day).' FCFA';
 
         return "{$this->name} ({$this->start_date->format('d/m')} - {$this->end_date->format('d/m')}) - {$priceInfo}";
     }

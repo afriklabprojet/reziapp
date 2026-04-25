@@ -26,7 +26,12 @@ class TenantReviewService
     {
         $data['owner_id'] = $owner->id;
 
-        return TenantReview::create($data);
+        $review = TenantReview::create($data);
+
+        // Reviews bilatérales aveugles : si l'autre côté a déjà posté, on révèle
+        app(\App\Services\DoubleBlindReviewService::class)->onOwnerReviewCreated($review);
+
+        return $review;
     }
 
     public function update(TenantReview $review, array $data): TenantReview

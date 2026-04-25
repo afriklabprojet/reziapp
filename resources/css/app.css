@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/*
+ * Tailwind v4 safelist — dynamic color classes used via PHP accessors
+ * (status_color, priority_color, risk_color, scColor, typeColors…)
+ * These patterns are not detectable by JIT scan so we declare them explicitly.
+ */
+@source inline("{bg,text,border}-{green,yellow,red,blue,orange,amber,emerald,pink,gray}-{50,100,200,300,400,500,600,700,800}");
+@source inline("hover:{bg}-{green,yellow,red,blue,orange,amber,emerald,pink,gray}-{100,200}");
+
 /* Class-based dark mode toggle (manual + respects prefers-color-scheme fallback) */
 @custom-variant dark (&:where(.dark, .dark *));
 

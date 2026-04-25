@@ -1,7 +1,7 @@
 <x-filament-panels::page>
     <div class="space-y-6">
         {{-- Stats Cards --}}
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             <x-filament::section>
                 <div class="flex items-center gap-3">
                     <div class="p-2 bg-warning-100 dark:bg-warning-900 rounded-lg">
@@ -59,7 +59,7 @@
                     Annonces en attente de validation
                 </div>
             </x-slot>
-            
+
             {{ $this->table }}
         </x-filament::section>
     </div>

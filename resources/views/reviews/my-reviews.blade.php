@@ -12,12 +12,12 @@
     <!-- Onglets -->
     <div class="border-b border-gray-200 mb-6">
         <nav class="flex gap-8">
-            <a href="{{ route('reviews.my', ['type' => 'given']) }}" 
+            <a href="{{ route('reviews.my', ['type' => 'given']) }}"
                class="pb-4 px-1 border-b-2 font-medium text-sm {{ $type === 'given' ? 'border-orange-500 text-orange-500' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                 Avis donnés
             </a>
             @if(Auth::user()->isOwner())
-                <a href="{{ route('reviews.my', ['type' => 'received']) }}" 
+                <a href="{{ route('reviews.my', ['type' => 'received']) }}"
                    class="pb-4 px-1 border-b-2 font-medium text-sm {{ $type === 'received' ? 'border-orange-500 text-orange-500' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                     Avis reçus
                 </a>
@@ -34,7 +34,7 @@
                         @if($type === 'given')
                             <a href="{{ route('residences.show', $review->residence) }}" class="shrink-0">
                                 @if($review->residence->photos->count() > 0)
-                                    <img loading="lazy" src="{{ storage_url($review->residence->photos->first()?->path) }}" 
+                                    <img loading="lazy" src="{{ storage_url($review->residence->photos->first()?->path) }}"
                                          alt="{{ $review->residence->title }}"
                                          class="w-16 h-16 rounded-lg object-cover">
                                 @else
@@ -46,11 +46,11 @@
                                 @endif
                             </a>
                         @else
-                            <a href="{{ route('profile.public', $review->user) }}" class="shrink-0">
-                                <img loading="lazy" src="{{ $review->user->getAvatarUrl() }}" 
+                            <div class="shrink-0">
+                                <img loading="lazy" src="{{ $review->user->getAvatarUrl() }}"
                                      alt="{{ $review->user->name }}"
                                      class="w-16 h-16 rounded-full object-cover">
-                            </a>
+                            </div>
                         @endif
 
                         <div class="flex-1 min-w-0">
@@ -58,18 +58,17 @@
                             <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                                 <div>
                                     @if($type === 'given')
-                                        <a href="{{ route('residences.show', $review->residence) }}" 
+                                        <a href="{{ route('residences.show', $review->residence) }}"
                                            class="font-semibold text-gray-900 hover:text-orange-500">
                                             {{ $review->residence->title }}
                                         </a>
                                         <p class="text-sm text-gray-500">{{ $review->residence->commune }}</p>
                                     @else
-                                        <a href="{{ route('profile.public', $review->user) }}" 
-                                           class="font-semibold text-gray-900 hover:text-orange-500">
+                                        <span class="font-semibold text-gray-900">
                                             {{ $review->user->name }}
-                                        </a>
+                                        </span>
                                         <p class="text-sm text-gray-500">
-                                            Avis sur 
+                                            Avis sur
                                             <a href="{{ route('residences.show', $review->residence) }}" class="hover:underline">
                                                 {{ $review->residence->title }}
                                             </a>
@@ -126,25 +125,25 @@
                             <!-- Formulaire de réponse (pour avis reçus) -->
                             @if($type === 'received' && !$review->owner_response)
                                 <div class="mt-4" x-data="{ showForm: false }">
-                                    <button @click="showForm = !showForm" 
+                                    <button @click="showForm = !showForm"
                                             class="text-orange-500 hover:text-orange-600 text-sm font-medium">
                                         Répondre à cet avis
                                     </button>
-                                    
+
                                     <form x-show="showForm" x-cloak
-                                          action="{{ route('reviews.respond', $review) }}" 
-                                          method="POST" 
+                                          action="{{ route('reviews.respond', $review) }}"
+                                          method="POST"
                                           class="mt-4">
                                         @csrf
                                         <textarea name="owner_response" rows="3" required
                                                   class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                                                   placeholder="Écrivez votre réponse..."></textarea>
                                         <div class="flex justify-end gap-2 mt-2">
-                                            <button type="button" @click="showForm = false" 
+                                            <button type="button" @click="showForm = false"
                                                     class="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm font-medium">
                                                 Annuler
                                             </button>
-                                            <button type="submit" 
+                                            <button type="submit"
                                                     class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg">
                                                 Publier
                                             </button>
@@ -189,7 +188,7 @@
                 @endif
             </p>
             @if($type === 'given')
-                <a href="{{ route('residences.index') }}" 
+                <a href="{{ route('residences.index') }}"
                    class="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition">
                     Parcourir les résidences
                 </a>

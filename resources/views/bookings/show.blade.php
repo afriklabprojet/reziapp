@@ -128,8 +128,8 @@
                     <div class="bg-white rounded-xl shadow-sm p-6">
                         <h3 class="font-semibold text-gray-900 mb-4">Votre hôte</h3>
                         <div class="flex items-center">
-                            @if ($booking->residence->owner->avatar)
-                                <img loading="lazy" src="{{ $booking->residence->owner->avatar }}"
+                            @if ($booking->residence->owner->avatar || $booking->residence->owner->profile_photo)
+                                <img loading="lazy" src="{{ $booking->residence->owner->getAvatarUrl() }}"
                                     alt="{{ $booking->residence->owner->first_name }}"
                                     class="w-16 h-16 rounded-full object-cover">
                             @else
@@ -183,6 +183,13 @@
                                         class="px-6 py-3 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 font-medium">
                                         Annuler la réservation
                                     </button>
+                                @endif
+
+                                @if ($booking->status === 'confirmed' && $booking->check_in > now()->addDays(2))
+                                    <a href="{{ route('bookings.modify', $booking) }}"
+                                        class="px-6 py-3 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50 font-medium">
+                                        ✏️ Modifier la réservation
+                                    </a>
                                 @endif
                             </div>
                         </div>

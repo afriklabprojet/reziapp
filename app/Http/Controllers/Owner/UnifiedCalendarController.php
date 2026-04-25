@@ -112,7 +112,7 @@ class UnifiedCalendarController extends Controller
         foreach ($expenses as $expense) {
             $events[] = [
                 'id'    => 'expense-'.$expense->id,
-                'title' => '📋 '.number_format($expense->amount, 0, ',', ' ').' F — '.$expense->category_label,
+                'title' => '📋 '.number_format((float) $expense->amount, 0, ',', ' ').' F — '.$expense->category_label,
                 'start' => $expense->expense_date->toDateString(),
                 'color' => '#8B5CF6', // Violet
                 'type'  => 'expense',

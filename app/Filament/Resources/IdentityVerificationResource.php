@@ -9,9 +9,21 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class IdentityVerificationResource extends Resource
 {
+    /**
+     * Génère l'URL sécurisée pour un fichier privé KYC.
+     */
+    private static function privateFileUrl(?string $path): ?string
+    {
+        if (blank($path)) {
+            return null;
+        }
+        return route('admin.private-file', ['path' => $path]);
+    }
+
     protected static ?string $model = IdentityVerification::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-identification';
@@ -130,12 +142,16 @@ class IdentityVerificationResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\ImageColumn::make('document_front')
                     ->label('Recto')
-                    ->disk('private')
+                    ->getStateUsing(fn ($record) => $record->document_front
+                        ? self::privateFileUrl($record->document_front)
+                        : null)
                     ->circular()
                     ->size(40),
                 Tables\Columns\ImageColumn::make('selfie_photo')
                     ->label('Selfie')
-                    ->disk('private')
+                    ->getStateUsing(fn ($record) => $record->selfie_photo
+                        ? self::privateFileUrl($record->selfie_photo)
+                        : null)
                     ->circular()
                     ->size(40),
                 Tables\Columns\TextColumn::make('status')
@@ -188,6 +204,21 @@ class IdentityVerificationResource extends Resource
                     ]),
             ])
             ->actions([
+                Tables\Actions\Action::make('view_documents')
+                    ->label('Voir documents')
+                    ->icon('heroicon-o-eye')
+                    ->color('info')
+                    ->modalHeading(fn ($record) => 'Documents de '.($record->user?->name ?? 'Utilisateur'))
+                    ->modalWidth('4xl')
+                    ->modalContent(fn ($record) => view('filament.identity-verification-documents', [
+                        'record'    => $record,
+                        'frontUrl'  => self::privateFileUrl($record->document_front),
+                        'backUrl'   => self::privateFileUrl($record->document_back),
+                        'selfieUrl' => self::privateFileUrl($record->selfie_photo),
+                    ]))
+                    ->modalFooterActions([])
+                    ->modalSubmitAction(false)
+                    ->modalCancelAction(false),
                 Tables\Actions\Action::make('approve')
                     ->label('Approuver')
                     ->icon('heroicon-o-check')
@@ -202,7 +233,7 @@ class IdentityVerificationResource extends Resource
                             ->rows(2),
                     ])
                     ->action(function ($record, array $data) {
-                        $record->approve(auth()->id(), $data['admin_notes'] ?? null);
+                        $record->approve(Auth::id(), $data['admin_notes'] ?? null);
 
                         \Filament\Notifications\Notification::make()
                             ->title('Vérification approuvée')
@@ -225,7 +256,7 @@ class IdentityVerificationResource extends Resource
                             ->rows(2),
                     ])
                     ->action(function ($record, array $data) {
-                        $record->reject(auth()->id(), $data['rejection_reason'], $data['admin_notes'] ?? null);
+                        $record->reject(Auth::id(), $data['rejection_reason'], $data['admin_notes'] ?? null);
 
                         \Filament\Notifications\Notification::make()
                             ->title('Vérification rejetée')

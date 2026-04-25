@@ -210,6 +210,14 @@ class Review extends Model
     }
 
     /**
+     * Scope pour les avis publiquement visibles (double-blind : approved + published_at non null).
+     */
+    public function scopePublished($query)
+    {
+        return $query->where('status', self::STATUS_APPROVED)->whereNotNull('published_at');
+    }
+
+    /**
      * Scope pour les avis en attente
      */
     public function scopePending($query)

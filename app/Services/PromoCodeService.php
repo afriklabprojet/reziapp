@@ -81,7 +81,7 @@ class PromoCodeService
         if (!$promoCode->isApplicableToAmount($subtotal)) {
             return [
                 'valid' => false,
-                'error' => 'Montant minimum '.number_format($promoCode->min_amount, 0, ',', ' ').' FCFA requis.',
+                'error' => 'Montant minimum '.number_format((float) $promoCode->min_amount, 0, ',', ' ').' FCFA requis.',
             ];
         }
 

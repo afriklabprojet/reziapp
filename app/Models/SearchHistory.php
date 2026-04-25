@@ -64,11 +64,11 @@ class SearchHistory extends Model
 
         if ($this->min_price || $this->max_price) {
             if ($this->min_price && $this->max_price) {
-                $parts[] = number_format($this->min_price, 0, ',', ' ').' - '.number_format($this->max_price, 0, ',', ' ').' FCFA';
+                $parts[] = number_format((float) $this->min_price, 0, ',', ' ').' - '.number_format((float) $this->max_price, 0, ',', ' ').' FCFA';
             } elseif ($this->min_price) {
-                $parts[] = 'Min '.number_format($this->min_price, 0, ',', ' ').' FCFA';
+                $parts[] = 'Min '.number_format((float) $this->min_price, 0, ',', ' ').' FCFA';
             } else {
-                $parts[] = 'Max '.number_format($this->max_price, 0, ',', ' ').' FCFA';
+                $parts[] = 'Max '.number_format((float) $this->max_price, 0, ',', ' ').' FCFA';
             }
         }
 

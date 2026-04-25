@@ -170,7 +170,7 @@ class GeoSearchController extends Controller
     }
 
     /**
-     * Autocomplétion des communes et villes
+     * Autocomplétion intelligente : zones, quartiers, résidences, POIs
      *
      * GET /api/v1/geo/autocomplete?q=coco
      */
@@ -185,39 +185,78 @@ class GeoSearchController extends Controller
             ]);
         }
 
-        // Filtrer les zones par le query
-        $suggestions = collect(GeolocationService::getZones())
-            ->filter(fn ($zone, $key) => str_contains($key, $query) || str_contains(strtolower($zone['label']), $query))
-            ->map(fn ($zone, $key) => [
-                'id' => $key,
-                'label' => $zone['label'],
-                'latitude' => $zone['lat'],
-                'longitude' => $zone['lng'],
-                'type' => 'commune',
-            ])
-            ->values()
-            ->take(5);
+        // Cache 5min — query identiques très fréquents
+        $cacheKey = 'autocomplete:'.md5($query);
+        $results = Cache::remember($cacheKey, 300, function () use ($query) {
+            $safeQuery = str_replace(['%', '_'], ['\%', '\_'], $query);
 
-        // Ajouter les quartiers depuis la base
-        $safeQuery = str_replace(['%', '_'], ['\%', '\_'], $query);
-        $quartiers = Residence::approved()
-            ->available()
-            ->where('quartier', 'like', "%{$safeQuery}%")
-            ->select('quartier', 'commune', 'city', 'latitude', 'longitude')
-            ->distinct()
-            ->limit(5)
-            ->get()
-            ->map(fn ($r) => [
-                'id' => strtolower($r->quartier),
-                'label' => $r->quartier.', '.$r->commune.($r->city ? ', '.$r->city : ''),
-                'latitude' => (float) $r->latitude,
-                'longitude' => (float) $r->longitude,
-                'type' => 'quartier',
-            ]);
+            // 1. Zones connues (communes principales)
+            $zones = collect(GeolocationService::getZones())
+                ->filter(fn ($zone, $key) => str_contains($key, $query) || str_contains(strtolower($zone['label']), $query))
+                ->map(fn ($zone, $key) => [
+                    'id' => 'zone:'.$key,
+                    'label' => $zone['label'],
+                    'subtitle' => 'Commune',
+                    'latitude' => $zone['lat'],
+                    'longitude' => $zone['lng'],
+                    'type' => 'commune',
+                    'icon' => '🏙️',
+                    'priority' => 10,
+                ])
+                ->values()
+                ->take(4);
+
+            // 2. Quartiers depuis la base
+            $quartiers = Residence::approved()
+                ->available()
+                ->where('quartier', 'like', "%{$safeQuery}%")
+                ->select('quartier', 'commune', 'city', 'latitude', 'longitude')
+                ->selectRaw('COUNT(*) as nb')
+                ->groupBy('quartier', 'commune', 'city', 'latitude', 'longitude')
+                ->orderByDesc('nb')
+                ->limit(4)
+                ->get()
+                ->map(fn ($r) => [
+                    'id' => 'quartier:'.strtolower($r->quartier),
+                    'label' => $r->quartier,
+                    'subtitle' => 'Quartier · '.$r->commune.($r->nb > 1 ? ' · '.$r->nb.' biens' : ''),
+                    'latitude' => (float) $r->latitude,
+                    'longitude' => (float) $r->longitude,
+                    'type' => 'quartier',
+                    'icon' => '📍',
+                    'priority' => 8,
+                ]);
+
+            // 3. Résidences par nom (POI direct — accès résidence)
+            $residences = Residence::approved()
+                ->available()
+                ->where('name', 'like', "%{$safeQuery}%")
+                ->select('id', 'name', 'commune', 'quartier', 'latitude', 'longitude', 'reviews_count', 'average_rating')
+                ->orderByDesc('reviews_count')
+                ->limit(4)
+                ->get()
+                ->map(fn ($r) => [
+                    'id' => 'residence:'.$r->id,
+                    'label' => $r->name,
+                    'subtitle' => 'Résidence · '.($r->quartier ?: $r->commune).($r->average_rating ? ' · ⭐ '.number_format($r->average_rating, 1) : ''),
+                    'latitude' => (float) $r->latitude,
+                    'longitude' => (float) $r->longitude,
+                    'type' => 'residence',
+                    'residence_id' => $r->id,
+                    'icon' => '🏠',
+                    'priority' => 9,
+                ]);
+
+            return $zones->concat($quartiers)->concat($residences)
+                ->sortByDesc('priority')
+                ->take(10)
+                ->values()
+                ->all();
+        });
 
         return response()->json([
             'success' => true,
-            'data' => $suggestions->concat($quartiers)->take(8)->values(),
+            'data' => $results,
         ]);
     }
 

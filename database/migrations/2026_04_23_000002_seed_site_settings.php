@@ -19,7 +19,7 @@ return new class extends Migration
             ['key' => 'site_locale',        'value' => 'fr',            'label' => 'Langue'],
 
             // --- SEO ---
-            ['key' => 'seo_site_title',         'value' => 'REZI – Résidences meublées à Abidjan',       'label' => 'Titre du site'],
+            ['key' => 'seo_site_title',         'value' => 'Rezi App – Location de résidences meublés à Abidjan', 'label' => 'Titre du site'],
             ['key' => 'seo_site_description',   'value' => 'Trouvez votre résidence meublée à Abidjan. Courte et longue durée, toutes communes.', 'label' => 'Méta description'],
             ['key' => 'seo_site_keywords',      'value' => 'résidence meublée, Abidjan, location, appartement, studio, REZI', 'label' => 'Mots-clés'],
             ['key' => 'seo_og_image',           'value' => '',          'label' => 'OG Image URL'],

@@ -179,11 +179,14 @@ class CancellationPolicy extends Model
     // ===== STATIC HELPERS =====
 
     /**
-     * Get default policy
+     * Get default policy — préfère is_default=true, fallback flexible_48h, puis flexible/moderate.
      */
     public static function getDefault(): ?self
     {
-        return static::where('name', 'moderate')->first()
+        return static::where('is_default', true)->first()
+            ?? static::where('name', 'flexible_48h')->first()
+            ?? static::where('name', 'flexible')->first()
+            ?? static::where('name', 'moderate')->first()
             ?? static::active()->first();
     }
 

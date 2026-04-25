@@ -65,18 +65,20 @@ class PointOfInterest extends Model
 
     public function getFormattedDistanceAttribute(): string
     {
-        if ($this->distance_meters < 1000) {
-            return round($this->distance_meters).' m';
+        $meters = (float) $this->distance_meters;
+
+        if ($meters < 1000) {
+            return round($meters).' m';
         }
 
-        return number_format($this->distance_meters / 1000, 1, ',', ' ').' km';
+        return number_format($meters / 1000, 1, ',', ' ').' km';
     }
 
     public function getFormattedWalkingTimeAttribute(): string
     {
         if (!$this->walking_time_minutes) {
             // Estimate: 5 km/h walking speed = 83m/min
-            $estimated = ceil($this->distance_meters / 83);
+            $estimated = (int) ceil(((float) $this->distance_meters) / 83);
 
             return "~{$estimated} min à pied";
         }

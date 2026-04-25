@@ -57,6 +57,21 @@ export default function mapSearch(config) {
 
             this.map.on('moveend', () => {
                 this.updateVisibleCount();
+
+                // Sprint 2 — Search-as-I-move : émet bounds-changed (debounced)
+                clearTimeout(this._boundsTimer);
+                this._boundsTimer = setTimeout(() => {
+                    const b = this.map.getBounds();
+                    window.dispatchEvent(new CustomEvent('map:bounds-changed', {
+                        detail: {
+                            sw_lat: b.getSouth(),
+                            sw_lng: b.getWest(),
+                            ne_lat: b.getNorth(),
+                            ne_lng: b.getEast(),
+                            zoom: this.map.getZoom(),
+                        },
+                    }));
+                }, 350);
             });
 
             // Écouter les événements Alpine pour la synchronisation

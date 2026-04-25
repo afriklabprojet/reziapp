@@ -15,7 +15,8 @@
         "laravel/tinker": "^2.10.1",
         "pragmarx/google2fa": "^9.0",
         "pusher/pusher-php-server": "^7.2",
-        "resend/resend-laravel": "^1.2"
+        "resend/resend-laravel": "^1.2",
+        "sentry/sentry-laravel": "^4.25"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

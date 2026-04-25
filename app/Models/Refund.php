@@ -152,7 +152,7 @@ class Refund extends Model
      */
     public function getFormattedAmountAttribute(): string
     {
-        return number_format($this->amount, 0, ',', ' ').' '.($this->currency ?? 'FCFA');
+        return number_format((float) $this->amount, 0, ',', ' ').' '.($this->currency ?? 'FCFA');
     }
 
     // ===== METHODS =====
@@ -282,6 +282,6 @@ class Refund extends Model
      */
     public static function generateTransactionId(): string
     {
-        return 'REF-'.strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 12));
+        return 'REF-'.strtoupper(substr(md5(uniqid((string) mt_rand(), true)), 0, 12));
     }
 }

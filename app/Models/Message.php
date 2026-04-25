@@ -27,6 +27,11 @@ class Message extends Model
         'read_at',
         'delivered_at',
         'link_preview',
+        // Sprint 3 — auto-translation
+        'original_locale',
+        'translated_content',
+        'translated_locale',
+        'translated_at',
     ];
 
     protected $casts = [
@@ -36,6 +41,7 @@ class Message extends Model
         'attachments' => 'array',
         'metadata' => 'array',
         'link_preview' => 'array',
+        'translated_at' => 'datetime',
     ];
 
     /**
@@ -50,6 +56,23 @@ class Message extends Model
     public const TYPE_AUTO_REPLY = 'auto_reply';
     public const TYPE_VOICE = 'voice';
     public const TYPE_GIF = 'gif';
+
+    /**
+     * Boot — déclenche la traduction async pour les messages texte (Sprint 3)
+     */
+    protected static function booted(): void
+    {
+        static::created(function (Message $message) {
+            if ($message->type !== self::TYPE_TEXT || empty($message->content)) {
+                return;
+            }
+            try {
+                \App\Jobs\TranslateMessageJob::dispatch($message->id)->afterCommit();
+            } catch (\Throwable $e) {
+                // Ignore — traduction = bonus
+            }
+        });
+    }
 
     /**
      * La conversation parente

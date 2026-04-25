@@ -56,13 +56,13 @@
                 <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
                     <p class="sm:hidden text-xs text-gray-400 px-4 pt-3 mb-0">← Faites défiler pour comparer →</p>
                     <div class="overflow-x-auto">
-                        <table class="w-full min-w-200">
+                        <table class="w-full min-w-[640px]">
                             <!-- Header avec images -->
                             <thead>
                                 <tr>
-                                    <th class="w-48 p-4 text-left bg-gray-50 sticky left-0"></th>
+                                    <th class="w-32 sm:w-48 p-2 sm:p-4 text-left bg-gray-50 sticky left-0"></th>
                                     @foreach ($residences as $residence)
-                                        <th class="p-4 text-center min-w-50">
+                                        <th class="p-2 sm:p-4 text-center min-w-[160px]">
                                             <div class="relative">
                                                 <!-- Image -->
                                                 <div class="aspect-4/3 rounded-xl overflow-hidden mb-3">

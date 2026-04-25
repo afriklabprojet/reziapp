@@ -37,6 +37,7 @@ class ReviewService
         $review = Review::create([
             'user_id' => $user->id,
             'residence_id' => $residence->id,
+            'booking_id' => $data['booking_id'] ?? null,
             'rating' => $data['rating'],
             'cleanliness_rating' => $data['cleanliness_rating'] ?? null,
             'location_rating' => $data['location_rating'] ?? null,
@@ -62,6 +63,9 @@ class ReviewService
         // Mettre à jour le profil public du reviewer
         $this->updateReviewerProfile($user);
 
+        // Reviews bilatérales aveugles : si l'autre côté a déjà posté, on révèle les 2
+        app(\App\Services\DoubleBlindReviewService::class)->onGuestReviewCreated($review);
+
         return $review;
     }
 
@@ -81,6 +85,17 @@ class ReviewService
             ->exists();
 
         if ($existingReview) {
+            return false;
+        }
+
+        // Vérifier qu'un séjour complété existe (anti fake-review)
+        $hasCompletedStay = \App\Models\Booking::where('user_id', $user->id)
+            ->where('residence_id', $residence->id)
+            ->whereIn('status', ['completed', 'confirmed'])
+            ->where('check_out', '<=', now())
+            ->exists();
+
+        if (!$hasCompletedStay) {
             return false;
         }
 

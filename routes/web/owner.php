@@ -204,6 +204,20 @@ Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
         });
 
         // ============================================
+        // Sprint 3 — Channel Manager (Airbnb / Booking)
+        // ============================================
+        Route::prefix('residences/{residence}/channels')->name('channels.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Owner\ChannelListingController::class, 'index'])
+                ->middleware('ensure.owner:residence')->name('index');
+            Route::post('/', [\App\Http\Controllers\Owner\ChannelListingController::class, 'store'])
+                ->middleware('ensure.owner:residence')->name('store');
+        });
+        Route::post('channels/{listing}/sync', [\App\Http\Controllers\Owner\ChannelListingController::class, 'sync'])
+            ->name('channels.sync');
+        Route::delete('channels/{listing}', [\App\Http\Controllers\Owner\ChannelListingController::class, 'destroy'])
+            ->name('channels.destroy');
+
+        // ============================================
         // Gestion des Co-hôtes
         // ============================================
         Route::prefix('residences/{residence}/cohosts')->name('cohosts.')->group(function () {

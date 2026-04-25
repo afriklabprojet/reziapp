@@ -168,6 +168,16 @@ export default function chatShow(config = {}) {
             const time = new Date(msg.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
             const isOwn = msg.is_own;
 
+            const imageHtml = (msg.type === 'image' && msg.attachments?.length)
+                ? msg.attachments.map((att, idx) =>
+                    `<div class="p-1.5"><img src="/messages/${msg.id}/image/${idx}" alt="${this.esc(att.name ?? 'Image')}" class="rounded-xl max-h-72 w-auto cursor-pointer hover:opacity-90 transition-opacity" onclick="window.open(this.src,'_blank')" loading="lazy"></div>`
+                ).join('')
+                : '';
+            const textHtml = msg.content
+                ? `<div class="px-3.5 py-2"><p class="msg-text text-[14.5px] leading-relaxed whitespace-pre-wrap wrap-break-word">${this.esc(msg.content)}</p></div>`
+                : '';
+            const bubbleContent = imageHtml + textHtml;
+
             if (isOwn) {
                 const avatar = this.ownAvatarUrl
                     ? `<div class="shrink-0 mb-5"><img src="${this.esc(this.ownAvatarUrl)}" alt="" class="w-7 h-7 rounded-full object-cover ring-2 ring-orange-200 shadow-sm"></div>`
@@ -177,9 +187,7 @@ export default function chatShow(config = {}) {
                 <div class="flex justify-end group msg-row" id="msg-${msg.id}" @contextmenu.prevent="showContextMenu($event, ${msg.id}, true, ${JSON.stringify(this.esc(msg.content || ''))})">
                     <div class="flex items-end gap-2 max-w-[85%] sm:max-w-[75%] lg:max-w-[65%]">
                         <div class="space-y-0.5 items-end">
-                            <div class="bg-orange-500 text-white rounded-2xl rounded-br-md">
-                                <div class="px-3.5 py-2"><p class="msg-text text-[14.5px] leading-relaxed whitespace-pre-wrap wrap-break-word">${this.esc(msg.content || '')}</p></div>
-                            </div>
+                            <div class="bg-orange-500 text-white rounded-2xl rounded-br-md">${bubbleContent}</div>
                             <div class="msg-meta flex items-center gap-1.5 px-1 justify-end">
                                 <span class="text-[10px] text-gray-400">${time}</span>
                                 <span class="msg-status-icon" data-own="true">${this.statusSvg(msg.status)}</span>
@@ -198,9 +206,7 @@ export default function chatShow(config = {}) {
                     <div class="flex items-end gap-2 max-w-[85%] sm:max-w-[75%] lg:max-w-[65%]">
                         ${avatar}
                         <div class="space-y-0.5 items-start">
-                            <div class="bg-white border border-gray-100 text-gray-900 rounded-2xl rounded-bl-md shadow-sm">
-                                <div class="px-3.5 py-2"><p class="msg-text text-[14.5px] leading-relaxed whitespace-pre-wrap wrap-break-word">${this.esc(msg.content || '')}</p></div>
-                            </div>
+                            <div class="bg-white border border-gray-100 text-gray-900 rounded-2xl rounded-bl-md shadow-sm">${bubbleContent}</div>
                             <div class="msg-meta flex items-center gap-1.5 px-1">
                                 <span class="text-[10px] text-gray-400">${time}</span>
                             </div>
@@ -630,9 +636,14 @@ export default function chatShow(config = {}) {
                 ? `<div class="shrink-0 mb-5"><img src="${this.esc(this.otherAvatarUrl)}" alt="" class="w-7 h-7 rounded-full object-cover ring-2 ring-white shadow-sm"></div>`
                 : `<div class="shrink-0 mb-5"><div class="w-7 h-7 rounded-full bg-linear-to-br from-gray-300 to-gray-400 flex items-center justify-center text-white text-[10px] font-bold ring-2 ring-white shadow-sm">${this.esc(this.otherInitial)}</div></div>`;
 
-            const bubbleContent = data.content
-                ? `<div class="px-3.5 py-2"><p class="msg-text text-[14.5px] leading-relaxed whitespace-pre-wrap wrap-break-word">${this.esc(data.content)}</p></div>`
+            const imageHtml = (data.type === 'image' && data.attachments?.length)
+                ? data.attachments.map((att, idx) =>
+                    `<div class="p-1.5"><img src="/messages/${data.id}/image/${idx}" alt="${this.esc(att.name ?? 'Image')}" class="rounded-xl max-h-72 w-auto cursor-pointer hover:opacity-90 transition-opacity" onclick="window.open(this.src,'_blank')" loading="lazy"></div>`
+                ).join('')
                 : '';
+            const bubbleContent = imageHtml + (data.content
+                ? `<div class="px-3.5 py-2"><p class="msg-text text-[14.5px] leading-relaxed whitespace-pre-wrap wrap-break-word">${this.esc(data.content)}</p></div>`
+                : '');
 
             const html = `
             <div class="flex justify-start group msg-row animate-slide-in" id="msg-${data.id}">

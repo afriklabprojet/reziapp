@@ -54,6 +54,9 @@ export default function bookingCreateForm(config) {
         message: '',
         paymentMethod: 'wave',
 
+        // ─── Sprint 3 — Paiement échelonné 50/50 ───
+        paymentSplit: false,
+
         // ─── Price ───
         price: config.pricePreview || null,
         loading: false,
@@ -109,6 +112,24 @@ export default function bookingCreateForm(config) {
             const a = new Date(this.checkIn + 'T00:00:00');
             const b = new Date(this.checkOut + 'T00:00:00');
             return Math.max(0, Math.round((b - a) / 86400000));
+        },
+
+        /** Sprint 3 — Eligible to split payment if check-in is more than 30 days away */
+        get splitEligible() {
+            if (!this.checkIn) return false;
+            const ci = new Date(this.checkIn + 'T00:00:00');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const days = Math.round((ci - today) / 86400000);
+            return days > 30 && (this.price?.total ?? 0) > 0;
+        },
+
+        /** Sprint 3 — Date label for balance due (check_in - 30 days) */
+        get balanceDueLabel() {
+            if (!this.checkIn) return '';
+            const ci = new Date(this.checkIn + 'T00:00:00');
+            ci.setDate(ci.getDate() - 30);
+            return ci.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
         },
 
         /** Can we submit the form? */

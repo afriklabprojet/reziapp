@@ -74,18 +74,21 @@ class RentReceiptService
         $periodEnd  = $periodEnd ?? $periodStart->copy()->endOfMonth();
         $chargesSum = array_sum(array_column($charges, 'amount'));
 
+        // Immutable clones pour éviter les mutations croisées dans le tableau
+        $start = $periodStart->copy()->startOfDay();
+        $end   = $periodEnd->copy()->endOfDay();
+
         $receipt = RentReceipt::create([
             'owner_id'         => $contract->owner_id,
             'tenant_id'        => $contract->tenant_id,
             'residence_id'     => $contract->residence_id,
             'lease_contract_id' => $contract->id,
-            'period_start'     => $periodStart->startOfDay(),
-            'period_end'       => $periodEnd->endOfDay(),
+            'period_start'     => $start,
+            'period_end'       => $end,
             'rent_amount'      => $contract->monthly_rent,
             'charges_amount'   => $chargesSum,
             'total_amount'     => $contract->monthly_rent + $chargesSum,
             'currency'         => $contract->currency,
-            'payment_day'      => $periodStart->day($contract->payment_day),
             'is_paid'          => true,
             'charges_detail'   => $charges,
             'payment_date'     => now()->toDateString(),
@@ -101,7 +104,7 @@ class RentReceiptService
      */
     public function createManual(array $data): RentReceipt
     {
-        $data['total_amount'] = ($data['rent_amount'] ?? 0) + ($data['charges_amount'] ?? 0);
+        $data['total_amount'] = (float) ($data['rent_amount'] ?? 0) + (float) ($data['charges_amount'] ?? 0);
         $data['is_paid']      = true;
 
         $receipt = RentReceipt::create($data);
@@ -156,7 +159,7 @@ class RentReceiptService
         // WhatsApp optionnel
         if ($viaWhatsApp && $receipt->tenant->phone) {
             $message = $this->buildWhatsAppMessage($receipt);
-            $this->whatsApp->sendMessage($receipt->tenant->phone, $message);
+            $this->whatsApp->sendText($receipt->tenant->phone, $message);
             $receipt->markAsSent('whatsapp');
         }
     }
@@ -179,7 +182,7 @@ class RentReceiptService
                  SUM(total_amount) as grand_total, COUNT(*) as count',
             )
             ->groupByRaw('YEAR(period_start), MONTH(period_start)')
-            ->orderByRaw('YEAR(period_start), MONTH(period_start)')
+            ->orderByRaw('YEAR(period_start) ASC, MONTH(period_start) ASC')
             ->get()
             ->keyBy(fn ($row) => "{$row->year}-{$row->month}");
 
@@ -213,7 +216,7 @@ class RentReceiptService
             ."Votre quittance de loyer est disponible :\n"
             ."• *Référence :* {$receipt->reference}\n"
             ."• *Période :* {$receipt->period_label}\n"
-            .'• *Montant :* '.number_format($receipt->total_amount, 0, ',', ' ')." {$receipt->currency}\n"
+            .'• *Montant :* '.number_format((float) $receipt->total_amount, 0, ',', ' ')." {$receipt->currency}\n"
             ."• *Résidence :* {$receipt->residence->title}\n\n"
             ."Connectez-vous à votre espace REZI pour télécharger le document.\n\n"
             .'_REZI – Votre plateforme de résidences meublées à Abidjan_';

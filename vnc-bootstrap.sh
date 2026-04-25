@@ -78,6 +78,7 @@ echo "[OK] Certbot installé"
 
 # ── Répertoire déploiement ───────────────────────────────────────────────────
 mkdir -p "$DEPLOY_PATH"
+mkdir -p "${DEPLOY_PATH}/storage/logs"
 chown -R www-data:www-data "$DEPLOY_PATH"
 chmod -R 755 "$DEPLOY_PATH"
 
@@ -138,15 +139,22 @@ sed -i 's/^user = .*/user = www-data/' /etc/php/${PHP_VERSION}/fpm/pool.d/www.co
 sed -i 's/^group = .*/group = www-data/' /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
 systemctl restart php${PHP_VERSION}-fpm
 
+# ── Supervisor (démarrage) ────────────────────────────────────────────────────
+systemctl enable supervisor
+systemctl start supervisor
+supervisorctl reread
+supervisorctl update
+echo "[OK] Supervisor démarré (queue workers actifs)"
+
 # ── UFW Pare-feu ─────────────────────────────────────────────────────────────
-ufw --force enable
 ufw allow 22/tcp
 ufw allow 80/tcp
 ufw allow 443/tcp
+ufw --force enable
 echo "[OK] Pare-feu UFW configuré"
 
 # ── Cron Laravel Scheduler ───────────────────────────────────────────────────
-(crontab -l 2>/dev/null; echo "* * * * * cd ${DEPLOY_PATH} && php artisan schedule:run >> /dev/null 2>&1") | crontab -
+(crontab -u www-data -l 2>/dev/null; echo "* * * * * cd ${DEPLOY_PATH} && php artisan schedule:run >> /dev/null 2>&1") | crontab -u www-data -
 
 echo ""
 echo "========================================================"

@@ -72,7 +72,7 @@ class SecurityHeaders
             // Polices locales, data URIs et fonts.bunny.net + Google Fonts
             "font-src 'self' data: {$externalFontHosts} https://fonts.gstatic.com",
             // WebSockets Pusher + API Jeko + Mapbox + Google APIs + Microsoft Clarity collect
-            "connect-src 'self' wss://*.pusher.com https://*.pusher.com https://*.pusherapp.com https://soketi.app https://api.jeko.africa https://api.mapbox.com https://events.mapbox.com https://maps.googleapis.com https://maps.gstatic.com https://www.clarity.ms https://o.clarity.ms",
+            "connect-src 'self' wss://*.pusher.com https://*.pusher.com https://*.pusherapp.com https://soketi.app https://api.jeko.africa https://api.mapbox.com https://events.mapbox.com https://maps.googleapis.com https://maps.gstatic.com https://*.clarity.ms",
             // Aucun embed/iframe autorisé
             "frame-src 'none'",
             // Bloquer les plugins (Flash, etc.)

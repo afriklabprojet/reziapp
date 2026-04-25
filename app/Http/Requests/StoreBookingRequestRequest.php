@@ -36,6 +36,7 @@ class StoreBookingRequestRequest extends FormRequest
             'promo_code' => 'nullable|string',
             'coupon_code' => 'nullable|string',
             'payment_method' => 'required|string|in:wave,orange,mtn,moov,djamo',
+            'payment_split' => 'nullable|boolean',
         ];
     }
 

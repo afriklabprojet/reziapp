@@ -33,7 +33,7 @@
             </div>
 
             {{-- ============================== KPI CARDS ============================== --}}
-            <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center">

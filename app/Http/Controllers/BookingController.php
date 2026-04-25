@@ -230,6 +230,14 @@ class BookingController extends Controller
         ]);
 
         try {
+            // Vérifier que l'email ne correspond pas à un compte réel existant
+            $existingUser = \App\Models\User::where('email', $request->guest_email)->first();
+            if ($existingUser && !$existingUser->is_guest) {
+                return back()
+                    ->withErrors(['guest_email' => 'Un compte existe déjà avec cet email. Veuillez vous connecter pour réserver.'])
+                    ->withInput();
+            }
+
             // Créer ou récupérer le compte invité
             $guestUser = User::createOrFindGuest(
                 $request->guest_email,
@@ -386,7 +394,7 @@ class BookingController extends Controller
 
             $message = 'Réservation annulée.';
             if ($result['refund_amount'] > 0) {
-                $message .= ' Remboursement de '.number_format($result['refund_amount'], 0, ',', ' ').' FCFA en cours.';
+                $message .= ' Remboursement de '.number_format((float) $result['refund_amount'], 0, ',', ' ').' FCFA en cours.';
             }
 
             return redirect()->route('bookings.index')

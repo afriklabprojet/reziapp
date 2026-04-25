@@ -19,6 +19,7 @@ use App\Services\LinkPreviewService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -156,7 +157,7 @@ class ChatController extends Controller
         return response()->json([
             'success' => true,
             'message' => $message,
-            'html' => view('chat.partials.message', compact('message'))->render(),
+            'html' => view('chat.partials.message', compact('message', 'conversation'))->render(),
         ]);
     }
 
@@ -182,7 +183,7 @@ class ChatController extends Controller
         return response()->json([
             'success' => true,
             'message' => $message,
-            'html' => view('chat.partials.message', compact('message'))->render(),
+            'html' => view('chat.partials.message', compact('message', 'conversation'))->render(),
         ]);
     }
 
@@ -367,7 +368,7 @@ class ChatController extends Controller
         return response()->json([
             'success' => true,
             'message' => $message,
-            'html' => view('chat.partials.message', compact('message'))->render(),
+            'html' => view('chat.partials.message', compact('message', 'conversation'))->render(),
         ]);
     }
 
@@ -396,7 +397,7 @@ class ChatController extends Controller
         return response()->json([
             'success' => true,
             'message' => $message,
-            'html' => view('chat.partials.message', compact('message'))->render(),
+            'html' => view('chat.partials.message', compact('message', 'conversation'))->render(),
         ]);
     }
 
@@ -430,7 +431,7 @@ class ChatController extends Controller
         return response()->json([
             'success' => true,
             'messages' => $messages,
-            'html' => $messages->map(fn ($m) => view('chat.partials.message', ['message' => $m])->render()),
+            'html' => $messages->map(fn ($m) => view('chat.partials.message', ['message' => $m, 'conversation' => $conversation])->render()),
         ]);
     }
 
@@ -723,9 +724,9 @@ class ChatController extends Controller
 
         // Incrémenter unread counter
         if ($user->id === $conversation->user_id) {
-            $conversation->update(['unread_owner_count' => \DB::raw('unread_owner_count + 1')]);
+            $conversation->update(['unread_owner_count' => DB::raw('unread_owner_count + 1')]);
         } else {
-            $conversation->update(['unread_user_count' => \DB::raw('unread_user_count + 1')]);
+            $conversation->update(['unread_user_count' => DB::raw('unread_user_count + 1')]);
         }
 
         $message->load('sender');
@@ -734,7 +735,7 @@ class ChatController extends Controller
         return response()->json([
             'success' => true,
             'message' => $message,
-            'html' => view('chat.partials.message', compact('message'))->render(),
+            'html' => view('chat.partials.message', compact('message', 'conversation'))->render(),
         ]);
     }
 
@@ -769,9 +770,9 @@ class ChatController extends Controller
         $conversation->update(['last_message_at' => now()]);
 
         if ($user->id === $conversation->user_id) {
-            $conversation->update(['unread_owner_count' => \DB::raw('unread_owner_count + 1')]);
+            $conversation->update(['unread_owner_count' => DB::raw('unread_owner_count + 1')]);
         } else {
-            $conversation->update(['unread_user_count' => \DB::raw('unread_user_count + 1')]);
+            $conversation->update(['unread_user_count' => DB::raw('unread_user_count + 1')]);
         }
 
         $message->load('sender');
@@ -780,7 +781,7 @@ class ChatController extends Controller
         return response()->json([
             'success' => true,
             'message' => $message,
-            'html' => view('chat.partials.message', compact('message'))->render(),
+            'html' => view('chat.partials.message', compact('message', 'conversation'))->render(),
         ]);
     }
 
@@ -797,6 +798,7 @@ class ChatController extends Controller
         $limit = 20;
 
         try {
+            /** @var \Illuminate\Http\Client\Response $response */
             $response = Http::timeout(5)->get('https://tenor.googleapis.com/v2/search', [
                 'q' => $validated['q'],
                 'key' => $apiKey,
@@ -875,6 +877,33 @@ class ChatController extends Controller
     /**
      * Stream audio vocal
      */
+    public function streamImage(Request $request, Message $message, int $index = 0): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        $conversation = $message->conversation;
+        $this->authorize('view', $conversation);
+
+        if ($message->type !== Message::TYPE_IMAGE || empty($message->attachments)) {
+            abort(404);
+        }
+
+        $attachments = $message->attachments;
+        if (!isset($attachments[$index])) {
+            abort(404);
+        }
+
+        $attachment = $attachments[$index];
+        $path = Storage::disk('private')->path($attachment['path']);
+
+        if (!file_exists($path)) {
+            abort(404);
+        }
+
+        return response()->file($path, [
+            'Content-Type' => $attachment['mime'] ?? 'image/jpeg',
+            'Cache-Control' => 'private, max-age=3600',
+        ]);
+    }
+
     public function streamVoice(Request $request, Message $message): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
         $user = $request->user();

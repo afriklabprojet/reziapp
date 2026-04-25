@@ -47,6 +47,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Translation (messages auto-traduits FR ↔ EN)
+    |--------------------------------------------------------------------------
+    */
+
+    'translation' => [
+        'driver' => env('TRANSLATION_DRIVER', 'stub'), // stub|libretranslate|deepl
+        'libretranslate_url' => env('LIBRETRANSLATE_URL', 'https://libretranslate.de/translate'),
+        'libretranslate_key' => env('LIBRETRANSLATE_API_KEY'),
+        'deepl_key' => env('DEEPL_API_KEY'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Google Cloud Vision (KYC automatique)
     |--------------------------------------------------------------------------
     | Activer l'API Cloud Vision dans Google Cloud Console :
