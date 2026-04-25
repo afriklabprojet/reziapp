@@ -1157,24 +1157,42 @@
                                 </div>
                                 @auth
                                     @if (auth()->id() !== $residence->owner_id)
-                                        <div x-data="{ showMsgForm: false, message: '' }" class="mt-6">
-                                            <button @click="showMsgForm = !showMsgForm"
-                                                class="px-6 py-3 bg-gray-900 text-white rounded-lg text-sm font-semibold hover:bg-gray-800 transition">
-                                                Contacter l'hôte
-                                            </button>
-                                            <form x-show="showMsgForm" x-transition x-cloak
-                                                action="{{ route('chat.start') }}" method="POST" class="mt-4 space-y-3">
-                                                @csrf
-                                                <input type="hidden" name="residence_id" value="{{ $residence->id }}">
-                                                <textarea x-model="message" name="message" rows="3" required
-                                                    class="w-full rounded-lg border-gray-300 text-sm focus:border-orange-500 focus:ring-orange-500"
-                                                    placeholder="Bonjour, je suis intéressé(e) par votre résidence..."></textarea>
-                                                <button type="submit" :disabled="!message.trim()"
-                                                    class="px-5 py-2.5 bg-orange-500 text-white rounded-lg text-sm font-semibold hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed">
-                                                    Envoyer
+                                        @if ($canContact)
+                                            <div x-data="{ showMsgForm: false, message: '' }" class="mt-6">
+                                                <button @click="showMsgForm = !showMsgForm"
+                                                    class="px-6 py-3 bg-gray-900 text-white rounded-lg text-sm font-semibold hover:bg-gray-800 transition">
+                                                    Contacter l'hôte
                                                 </button>
-                                            </form>
-                                        </div>
+                                                <form x-show="showMsgForm" x-transition x-cloak
+                                                    action="{{ route('chat.start') }}" method="POST" class="mt-4 space-y-3">
+                                                    @csrf
+                                                    <input type="hidden" name="residence_id" value="{{ $residence->id }}">
+                                                    <textarea x-model="message" name="message" rows="3" required
+                                                        class="w-full rounded-lg border-gray-300 text-sm focus:border-orange-500 focus:ring-orange-500"
+                                                        placeholder="Bonjour, je suis intéressé(e) par votre résidence..."></textarea>
+                                                    <button type="submit" :disabled="!message.trim()"
+                                                        class="px-5 py-2.5 bg-orange-500 text-white rounded-lg text-sm font-semibold hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                                        Envoyer
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        @else
+                                            <div class="mt-6 p-4 bg-orange-50 border border-orange-100 rounded-lg">
+                                                <p class="text-sm text-orange-800 font-medium mb-1">
+                                                    Réservation requise
+                                                </p>
+                                                <p class="text-sm text-orange-700 mb-3">
+                                                    Pour contacter le propriétaire, vous devez d'abord effectuer une réservation.
+                                                </p>
+                                                <a href="{{ route('bookings.create', $residence) }}"
+                                                    class="inline-flex items-center px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg transition">
+                                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                    </svg>
+                                                    Réserver maintenant
+                                                </a>
+                                            </div>
+                                        @endif
                                     @endif
                                 @else
                                     <a href="{{ route('login') }}"

@@ -503,6 +503,18 @@ class ChatController extends Controller
             return back()->with('error', 'Vous ne pouvez pas vous envoyer un message.');
         }
 
+        // Un locataire doit avoir effectué une réservation pour contacter le propriétaire
+        if ($user->id !== $residence->owner_id) {
+            $hasBooking = \App\Models\Booking::where('user_id', $user->id)
+                ->where('residence_id', $residence->id)
+                ->whereNotIn('status', ['cancelled', 'expired'])
+                ->exists();
+
+            if (!$hasBooking) {
+                return back()->with('error', 'Vous devez effectuer une réservation avant de contacter le propriétaire.');
+            }
+        }
+
         if ($residence->owner_id === $user->id && $request->has('user_id')) {
             $searchUserId = $request->user_id;
             $ownerId = $user->id;

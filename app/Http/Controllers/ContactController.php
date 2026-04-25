@@ -32,6 +32,16 @@ class ContactController extends Controller
             return back()->with('error', 'Vous ne pouvez pas contacter votre propre résidence.');
         }
 
+        // Un locataire doit avoir effectué une réservation pour contacter le propriétaire
+        $hasBooking = \App\Models\Booking::where('user_id', $request->user()->id)
+            ->where('residence_id', $residence->id)
+            ->whereNotIn('status', ['cancelled', 'expired'])
+            ->exists();
+
+        if (!$hasBooking) {
+            return back()->with('error', 'Vous devez effectuer une réservation avant de contacter le propriétaire.');
+        }
+
         $validated = $request->validate([
             'message' => ['nullable', 'string', 'max:1000'],
             'phone' => ['nullable', 'string', 'max:20'],

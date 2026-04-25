@@ -681,6 +681,16 @@ class ResidenceController extends Controller
             $canReview = $hasCompletedBooking && !$hasAlreadyReviewed;
         }
 
+        // Vérifier si l'utilisateur peut contacter le propriétaire
+        // (doit avoir au moins une réservation non annulée pour cette résidence)
+        $canContact = false;
+        if ($user !== null && $user->id !== $residence->owner_id) {
+            $canContact = \App\Models\Booking::where('user_id', $user->id)
+                ->where('residence_id', $residence->id)
+                ->whereNotIn('status', ['cancelled', 'expired'])
+                ->exists();
+        }
+
         // Dates bloquées pour les 6 prochains mois — cachées 15 min
         $unavailableDates = \Illuminate\Support\Facades\Cache::remember(
             "residence:{$residence->id}:unavailable_dates",
@@ -718,6 +728,7 @@ class ResidenceController extends Controller
             'ownerPhone',
             'ownerResidencesCount',
             'canReview',
+            'canContact',
             'unavailableDates',
             'isSponsored',
             'activeViewers',
