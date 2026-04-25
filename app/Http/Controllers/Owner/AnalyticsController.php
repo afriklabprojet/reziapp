@@ -24,6 +24,7 @@ class AnalyticsController extends Controller
      */
     public function index(Request $request)
     {
+        /** @var \App\Models\User $owner */
         $owner = Auth::user();
 
         // Période par défaut: mois courant
@@ -67,6 +68,7 @@ class AnalyticsController extends Controller
      */
     public function revenue(Request $request)
     {
+        /** @var \App\Models\User $owner */
         $owner = Auth::user();
 
         $startDate = $request->filled('start_date')
@@ -100,6 +102,7 @@ class AnalyticsController extends Controller
      */
     public function views(Request $request)
     {
+        /** @var \App\Models\User $owner */
         $owner = Auth::user();
 
         $startDate = $request->filled('start_date')
@@ -148,6 +151,7 @@ class AnalyticsController extends Controller
      */
     public function chartData(Request $request)
     {
+        /** @var \App\Models\User $owner */
         $owner = Auth::user();
 
         $startDate = $request->filled('start_date')
@@ -176,6 +180,7 @@ class AnalyticsController extends Controller
      */
     public function exportPdf(Request $request)
     {
+        /** @var \App\Models\User $owner */
         $owner = Auth::user();
 
         $startDate = $request->filled('start_date')
