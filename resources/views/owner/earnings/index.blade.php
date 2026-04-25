@@ -379,7 +379,7 @@
                                 <div>
                                     <label class="block text-xs text-gray-500 font-medium mb-1">PIN (4 chiffres)</label>
                                     <input type="password" name="withdrawal_pin" required maxlength="4" pattern="\d{4}" inputmode="numeric" autocomplete="off"
-                                        class="w-full rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono text-lg"
+                                        class="w-full rounded-xl border border-gray-200 text-lg px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono"
                                         placeholder="••••">
                                     @error('withdrawal_pin')
                                         <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
@@ -388,7 +388,7 @@
                                 <div>
                                     <label class="block text-xs text-gray-500 font-medium mb-1">Confirmer le PIN</label>
                                     <input type="password" name="withdrawal_pin_confirmation" required maxlength="4" pattern="\d{4}" inputmode="numeric" autocomplete="off"
-                                        class="w-full rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono text-lg"
+                                        class="w-full rounded-xl border border-gray-200 text-lg px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono"
                                         placeholder="••••">
                                 </div>
                             </div>
@@ -437,7 +437,7 @@
                                 <div>
                                     <label class="block text-xs text-gray-500 font-medium mb-1">Nouveau PIN (4 chiffres)</label>
                                     <input type="password" name="withdrawal_pin" required maxlength="4" pattern="\d{4}" inputmode="numeric" autocomplete="off"
-                                        class="w-full rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono text-lg"
+                                        class="w-full rounded-xl border border-gray-200 text-lg px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono"
                                         placeholder="••••">
                                     @error('withdrawal_pin')
                                         <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
@@ -446,7 +446,7 @@
                                 <div>
                                     <label class="block text-xs text-gray-500 font-medium mb-1">Confirmer</label>
                                     <input type="password" name="withdrawal_pin_confirmation" required maxlength="4" pattern="\d{4}" inputmode="numeric" autocomplete="off"
-                                        class="w-full rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono text-lg"
+                                        class="w-full rounded-xl border border-gray-200 text-lg px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono"
                                         placeholder="••••">
                                 </div>
                             </div>
@@ -570,7 +570,7 @@
                                     <div>
                                         <label class="block text-xs text-gray-500 font-medium mb-1">PIN de retrait</label>
                                         <input type="password" name="withdrawal_pin" required maxlength="4" pattern="\d{4}" inputmode="numeric" autocomplete="off"
-                                            class="w-full sm:w-48 rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono text-lg"
+                                            class="w-full sm:w-48 rounded-xl border border-gray-200 text-lg px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono"
                                             placeholder="••••">
                                         @error('withdrawal_pin')
                                             <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
