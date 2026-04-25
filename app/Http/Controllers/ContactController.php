@@ -22,18 +22,21 @@ class ContactController extends Controller
      */
     public function store(Request $request, Residence $residence): RedirectResponse
     {
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+
         // Vérifier que la résidence est disponible
         if ($residence->status !== 'active' || !$residence->is_available) {
             return back()->with('error', 'Cette résidence n\'est pas disponible.');
         }
 
         // Vérifier que l'utilisateur ne contacte pas sa propre résidence
-        if ($residence->owner_id === $request->user()->id) {
+        if ($residence->owner_id === $user->id) {
             return back()->with('error', 'Vous ne pouvez pas contacter votre propre résidence.');
         }
 
         // Un locataire doit avoir effectué une réservation pour contacter le propriétaire
-        $hasBooking = \App\Models\Booking::where('user_id', $request->user()->id)
+        $hasBooking = \App\Models\Booking::where('user_id', $user->id)
             ->where('residence_id', $residence->id)
             ->whereNotIn('status', ['cancelled', 'expired'])
             ->exists();
@@ -48,10 +51,10 @@ class ContactController extends Controller
         ]);
 
         $contact = Contact::create([
-            'user_id' => $request->user()->id,
+            'user_id' => $user->id,
             'residence_id' => $residence->id,
             'owner_id' => $residence->owner_id,
-            'phone' => $validated['phone'] ?? $request->user()->phone,
+            'phone' => $validated['phone'] ?? $user->phone,
             'message' => $validated['message'] ?? null,
             'status' => 'pending',
         ]);
@@ -62,7 +65,7 @@ class ContactController extends Controller
         if ($residence->isSponsored()) {
             $activeSponsoredListing = $residence->activeSponsoredListing();
             if ($activeSponsoredListing) {
-                $activeSponsoredListing->recordContact(request()->ip(), auth()->id());
+                $activeSponsoredListing->recordContact(request()->ip(), $user->id);
             }
         }
 
@@ -74,7 +77,7 @@ class ContactController extends Controller
             $residence->owner,
             'contact',
             'Nouvelle demande de contact',
-            ($request->user()->name ?? 'Un visiteur').' vous a contacté pour '.$residence->name,
+            ($user->name ?? 'Un visiteur').' vous a contacté pour '.$residence->name,
             route('owner.contacts.show', $contact),
             ['contact_id' => $contact->id, 'residence_id' => $residence->id],
         );
@@ -87,7 +90,9 @@ class ContactController extends Controller
      */
     public function myContacts(Request $request): View
     {
-        $contacts = Contact::where('user_id', $request->user()->id)
+        /** @var \App\Models\User $me */
+        $me = $request->user();
+        $contacts = Contact::where('user_id', $me->id)
             ->with(['residence:id,name,commune,quartier,price_per_month', 'owner:id,name'])
             ->orderBy('created_at', 'desc')
             ->paginate(config('rezi.pagination.contacts'));
@@ -103,7 +108,9 @@ class ContactController extends Controller
         Gate::authorize('view', $contact);
 
         // Marquer comme vu si c'est le propriétaire
-        if (auth()->id() === $contact->owner_id && $contact->status === 'pending') {
+        /** @var \App\Models\User $authUser */
+        $authUser = \Illuminate\Support\Facades\Auth::user();
+        if ($authUser->id === $contact->owner_id && $contact->status === 'pending') {
             $contact->markAsViewed();
         }
 
