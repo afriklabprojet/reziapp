@@ -343,12 +343,13 @@ class JekoPaymentService
             ];
         }
 
-        $amountCents = (int) round($payment->amount * 100);
+        // Pour XOF, amountCents = montant en XOF directement (pas × 100)
+        $amountCents = (int) round($payment->amount);
 
         if ($amountCents < 100) {
             return [
                 'success' => false,
-                'error' => 'Le montant minimum est de 1 FCFA.',
+                'error' => 'Le montant minimum est de 100 FCFA.',
             ];
         }
 
@@ -443,7 +444,8 @@ class JekoPaymentService
         }
 
         $reference = 'REZI-INS-'.$insurance->id.'-'.\Illuminate\Support\Str::random(8);
-        $amountCents = (int) round($insurance->premium_amount * 100);
+        // Pour XOF, amountCents = montant en XOF directement (pas × 100)
+        $amountCents = (int) round($insurance->premium_amount);
 
         $successUrl = $this->callbackBaseUrl.'/insurance/payment/success?reference='.$reference;
         $errorUrl = $this->callbackBaseUrl.'/insurance/payment/error?reference='.$reference;
@@ -696,8 +698,8 @@ class JekoPaymentService
 
         $contactId = $contactResult['contact_id'];
 
-        // 2. Montant en centimes (minimum 500 centimes = 5 XOF)
-        $amountCents = (int) round($payout->net_amount * 100);
+        // 2. Montant en XOF (mapping 1:1 avec Jeko, minimum 500 XOF)
+        $amountCents = (int) round($payout->net_amount);
 
         if ($amountCents < 500) {
             return [
