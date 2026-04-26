@@ -79,10 +79,12 @@ class SecurityHeaders
             "object-src 'none'",
             // Limiter les URLs de base aux ressources locales
             "base-uri 'self'",
-            // Limiter l'envoi de formulaires au domaine courant
-            // https://reziapp.ci est explicite pour couvrir les navigateurs qui ont
-            // mis en cache la page depuis www.reziapp.ci (service worker legacy)
-            "form-action 'self' https://reziapp.ci",
+            // Limiter l'envoi de formulaires au domaine courant + passerelle Jeko
+            // pay.jeko.africa est nécessaire car Chrome (90+) vérifie toute la chaîne
+            // de navigation : le POST arrive sur reziapp.ci puis Laravel fait un
+            // redirect()->away('https://pay.jeko.africa/...') — Chrome bloque ce
+            // redirect si le domaine n'est pas explicitement autorisé ici.
+            "form-action 'self' https://reziapp.ci https://pay.jeko.africa",
             // Workers uniquement locaux
             "worker-src 'self' blob:",
             // Manifeste PWA
