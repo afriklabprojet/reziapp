@@ -62,13 +62,14 @@ class JekoPaymentService
         // Generate a unique reference (1–100 chars)
         $reference = 'REZI-SP-'.$sponsored->id.'-'.Str::random(8);
 
-        // Amount in cents (minimum 100 centimes = 1 XOF — Jeko requires amountCents)
-        $amountCents = (int) round($sponsored->total_budget * 100);
+        // Pour XOF, amountCents = montant en XOF directement (pas × 100)
+        // Jeko docs: amountCents:10000 → amount:10000 XOF (mapping 1:1), minimum 100 XOF
+        $amountCents = (int) round($sponsored->total_budget);
 
         if ($amountCents < 100) {
             return [
                 'success' => false,
-                'error' => 'Le montant minimum est de 1 FCFA.',
+                'error' => 'Le montant minimum est de 100 FCFA.',
             ];
         }
 
@@ -167,12 +168,14 @@ class JekoPaymentService
         }
 
         $reference = 'REZI-BK-'.$booking->id.'-'.Str::random(8);
-        $amountCents = (int) round($booking->total_amount * 100);
+        // Pour XOF, amountCents = montant en XOF directement (pas × 100)
+        // Jeko docs: amountCents:10000 → amount:10000 XOF (mapping 1:1), minimum 100 XOF
+        $amountCents = (int) round($booking->total_amount);
 
         if ($amountCents < 100) {
             return [
                 'success' => false,
-                'error' => 'Le montant minimum est de 1 FCFA.',
+                'error' => 'Le montant minimum est de 100 FCFA.',
             ];
         }
 

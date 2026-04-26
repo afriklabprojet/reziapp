@@ -30,10 +30,14 @@ class TranslateMessageJob implements ShouldQueue
             return;
         }
 
-        // Détermine la locale du destinataire
-        $recipient = $message->conversation?->participants()
-            ->where('users.id', '!=', $message->sender_id)
-            ->first();
+        // Détermine la locale du destinataire (Conversation n'a pas participants())
+        $conversation = $message->conversation;
+        $recipient = null;
+        if ($conversation) {
+            $recipient = $message->sender_id === $conversation->user_id
+                ? $conversation->owner
+                : $conversation->user;
+        }
 
         $targetLocale = $recipient?->locale ?? config('app.fallback_locale', 'fr');
 
