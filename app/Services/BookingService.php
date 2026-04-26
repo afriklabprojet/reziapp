@@ -186,6 +186,14 @@ class BookingService
 
         // ─── Idempotency: detect duplicate submissions ───
         $idempotencyKey = 'bk_'.$residence->id.'_'.$user->id.'_'.$checkIn->format('Ymd').'_'.$checkOut->format('Ymd');
+
+        // Purger les bookings soft-deleted avec la même clé pour permettre une nouvelle
+        // tentative après un paiement échoué ou annulé (sinon la contrainte unique MySQL bloque)
+        Booking::withTrashed()
+            ->where('idempotency_key', $idempotencyKey)
+            ->whereNotNull('deleted_at')
+            ->forceDelete();
+
         $existing = Booking::where('idempotency_key', $idempotencyKey)
             ->whereIn('status', ['pending_payment', 'pending', 'confirmed'])
             ->first();
