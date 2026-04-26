@@ -80,7 +80,9 @@ class SecurityHeaders
             // Limiter les URLs de base aux ressources locales
             "base-uri 'self'",
             // Limiter l'envoi de formulaires au domaine courant
-            "form-action 'self'",
+            // https://reziapp.ci est explicite pour couvrir les navigateurs qui ont
+            // mis en cache la page depuis www.reziapp.ci (service worker legacy)
+            "form-action 'self' https://reziapp.ci",
             // Workers uniquement locaux
             "worker-src 'self' blob:",
             // Manifeste PWA
