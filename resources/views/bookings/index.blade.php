@@ -44,8 +44,8 @@
 
             <div class="bg-white rounded-xl shadow-sm p-6">
                 <div class="flex items-center">
-                    <div class="p-3 bg-orange-100 rounded-lg">
-                        <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-3 bg-[#ffd1da] rounded-lg">
+                        <svg class="w-6 h-6 text-[#e00b41]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
                     </div>
@@ -61,23 +61,23 @@
         <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
             <div class="flex flex-wrap gap-2">
                 <a href="{{ route('bookings.index', ['status' => 'all']) }}"
-                    class="px-4 py-2 rounded-lg text-sm font-medium {{ $status === 'all' ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    class="px-4 py-2 rounded-lg text-sm font-medium {{ $status === 'all' ? 'bg-[#ff385c] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                     Toutes
                 </a>
                 <a href="{{ route('bookings.index', ['status' => 'pending']) }}"
-                    class="px-4 py-2 rounded-lg text-sm font-medium {{ $status === 'pending' ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    class="px-4 py-2 rounded-lg text-sm font-medium {{ $status === 'pending' ? 'bg-[#ff385c] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                     En attente
                 </a>
                 <a href="{{ route('bookings.index', ['status' => 'confirmed']) }}"
-                    class="px-4 py-2 rounded-lg text-sm font-medium {{ $status === 'confirmed' ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    class="px-4 py-2 rounded-lg text-sm font-medium {{ $status === 'confirmed' ? 'bg-[#ff385c] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                     Confirmées
                 </a>
                 <a href="{{ route('bookings.index', ['status' => 'completed']) }}"
-                    class="px-4 py-2 rounded-lg text-sm font-medium {{ $status === 'completed' ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    class="px-4 py-2 rounded-lg text-sm font-medium {{ $status === 'completed' ? 'bg-[#ff385c] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                     Terminées
                 </a>
                 <a href="{{ route('bookings.index', ['status' => 'cancelled_by_user']) }}"
-                    class="px-4 py-2 rounded-lg text-sm font-medium {{ $status === 'cancelled_by_user' ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    class="px-4 py-2 rounded-lg text-sm font-medium {{ $status === 'cancelled_by_user' ? 'bg-[#ff385c] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                     Annulées
                 </a>
             </div>
@@ -93,7 +93,7 @@
                 <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune réservation</h3>
                 <p class="text-gray-500 mb-6">Vous n'avez pas encore de réservation.</p>
                 <a href="{{ route('residences.search') }}"
-                    class="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
+                    class="inline-flex items-center px-4 py-2 bg-[#ff385c] text-white rounded-lg hover:bg-[#e00b41]">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -128,7 +128,7 @@
                                     <div>
                                         <h3 class="text-lg font-semibold text-gray-900">
                                             <a href="{{ route('residences.show', $booking->residence) }}"
-                                                class="hover:text-orange-500">
+                                                class="hover:text-[#ff385c]">
                                                 {{ $booking->residence->title }}
                                             </a>
                                         </h3>
@@ -139,17 +139,19 @@
                                     <!-- Badge statut -->
                                     @php
                                         $statusColors = [
-                                            'pending' => 'bg-yellow-100 text-yellow-800',
-                                            'confirmed' => 'bg-green-100 text-green-800',
-                                            'completed' => 'bg-blue-100 text-blue-800',
-                                            'cancelled_by_user' => 'bg-red-100 text-red-800',
+                                            'pending'            => 'bg-yellow-100 text-yellow-800',
+                                            'pending_payment'    => 'bg-amber-100 text-amber-800',
+                                            'confirmed'          => 'bg-green-100 text-green-800',
+                                            'completed'          => 'bg-blue-100 text-blue-800',
+                                            'cancelled_by_user'  => 'bg-red-100 text-red-800',
                                             'cancelled_by_owner' => 'bg-red-100 text-red-800',
                                         ];
                                         $statusLabels = [
-                                            'pending' => 'En attente',
-                                            'confirmed' => 'Confirmée',
-                                            'completed' => 'Terminée',
-                                            'cancelled_by_user' => 'Annulée',
+                                            'pending'            => 'En attente',
+                                            'pending_payment'    => 'Paiement en cours',
+                                            'confirmed'          => 'Confirmée',
+                                            'completed'          => 'Terminée',
+                                            'cancelled_by_user'  => 'Annulée',
                                             'cancelled_by_owner' => 'Annulée par l\'hôte',
                                         ];
                                     @endphp
@@ -176,7 +178,7 @@
                                     </div>
                                     <div>
                                         <span class="text-gray-500">Total</span>
-                                        <p class="font-semibold text-orange-600">
+                                        <p class="font-semibold text-[#e00b41]">
                                             {{ number_format($booking->total_amount, 0, ',', ' ') }} FCFA</p>
                                     </div>
                                 </div>
@@ -188,14 +190,14 @@
 
                                     <div class="flex items-center space-x-3">
                                         <a href="{{ route('bookings.show', $booking) }}"
-                                            class="text-sm text-orange-500 hover:text-orange-600 font-medium">
+                                            class="text-sm text-[#ff385c] hover:text-[#e00b41] font-medium">
                                             Voir les détails
                                         </a>
 
                                         @if (in_array($booking->status, ['pending', 'confirmed']))
                                             @if ($booking->status === 'pending' && $booking->payment_status !== 'paid')
                                                 <a href="{{ route('payments.checkout', ['booking' => $booking->id]) }}"
-                                                    class="px-4 py-2 bg-orange-500 text-white text-sm rounded-lg hover:bg-orange-600">
+                                                    class="px-4 py-2 bg-[#ff385c] text-white text-sm rounded-lg hover:bg-[#e00b41]">
                                                     Payer
                                                 </a>
                                             @endif

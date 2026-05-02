@@ -3,7 +3,7 @@
         {{-- Commission Settings --}}
         <form wire:submit="saveCommission">
             {{ $this->commissionForm }}
-            
+
             <div class="mt-4">
                 <x-filament::button type="submit">
                     Enregistrer les commissions
@@ -14,7 +14,7 @@
         {{-- Payment Settings --}}
         <form wire:submit="savePayment">
             {{ $this->paymentForm }}
-            
+
             <div class="mt-4">
                 <x-filament::button type="submit">
                     Enregistrer les paiements
@@ -25,7 +25,7 @@
         {{-- Booking Settings --}}
         <form wire:submit="saveBooking">
             {{ $this->bookingForm }}
-            
+
             <div class="mt-4">
                 <x-filament::button type="submit">
                     Enregistrer les réservations
@@ -33,10 +33,21 @@
             </div>
         </form>
 
+        {{-- Pricing Settings --}}
+        <form wire:submit="savePricing">
+            {{ $this->pricingForm }}
+
+            <div class="mt-4">
+                <x-filament::button type="submit">
+                    Enregistrer la tarification
+                </x-filament::button>
+            </div>
+        </form>
+
         {{-- General Settings --}}
         <form wire:submit="saveGeneral">
             {{ $this->generalForm }}
-            
+
             <div class="mt-4">
                 <x-filament::button type="submit">
                     Enregistrer les paramètres généraux

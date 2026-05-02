@@ -16,7 +16,7 @@
 
                         {{-- Boutons d'action --}}
                         <a href="{{ route('residences.index') }}"
-                            class="shrink-0 px-4 py-2.5 bg-orange-500 text-white text-sm font-semibold rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/30 flex items-center gap-2">
+                            class="shrink-0 px-4 py-2.5 bg-[#ff385c] text-white text-sm font-semibold rounded-xl hover:bg-[#e00b41] transition-colors shadow-lg shadow-none flex items-center gap-2">
                             <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

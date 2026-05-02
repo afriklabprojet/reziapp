@@ -31,7 +31,7 @@
             @else
                 <a href="{{ route('home') }}" class="flex items-center">
                     <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="REZI" class="h-8"
-                        onerror="this.onerror=null; this.innerHTML='<span class=\'font-bold text-orange-600 text-xl\'>REZI</span>'">
+                        onerror="this.onerror=null; this.innerHTML='<span class=\'font-bold text-[#e00b41] text-xl\'>REZI</span>'">
                 </a>
             @endif
         </div>
@@ -102,7 +102,7 @@
         {{-- Liens de navigation --}}
         <div class="py-2">
             <a href="{{ route('home') }}"
-                class="flex items-center gap-3 px-5 py-3 text-sm font-medium transition-colors {{ request()->routeIs('home') ? 'text-orange-600 bg-orange-50' : 'text-gray-700 hover:bg-gray-50' }}">
+                class="flex items-center gap-3 px-5 py-3 text-sm font-medium transition-colors {{ request()->routeIs('home') ? 'text-[#e00b41] bg-[#fff0f3]' : 'text-gray-700 hover:bg-gray-50' }}">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -111,7 +111,7 @@
                 Accueil
             </a>
             <a href="{{ route('residences.index') }}"
-                class="flex items-center gap-3 px-5 py-3 text-sm font-medium transition-colors {{ request()->routeIs('residences.index', 'residences.show') ? 'text-orange-600 bg-orange-50' : 'text-gray-700 hover:bg-gray-50' }}">
+                class="flex items-center gap-3 px-5 py-3 text-sm font-medium transition-colors {{ request()->routeIs('residences.index', 'residences.show') ? 'text-[#e00b41] bg-[#fff0f3]' : 'text-gray-700 hover:bg-gray-50' }}">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -120,7 +120,7 @@
                 Résidences
             </a>
             <a href="{{ route('residences.map') }}"
-                class="flex items-center gap-3 px-5 py-3 text-sm font-medium transition-colors {{ request()->routeIs('residences.map') ? 'text-orange-600 bg-orange-50' : 'text-gray-700 hover:bg-gray-50' }}">
+                class="flex items-center gap-3 px-5 py-3 text-sm font-medium transition-colors {{ request()->routeIs('residences.map') ? 'text-[#e00b41] bg-[#fff0f3]' : 'text-gray-700 hover:bg-gray-50' }}">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -129,7 +129,7 @@
                 Carte
             </a>
             <a href="{{ route('pages.about') }}"
-                class="flex items-center gap-3 px-5 py-3 text-sm font-medium transition-colors {{ request()->routeIs('pages.about') ? 'text-orange-600 bg-orange-50' : 'text-gray-700 hover:bg-gray-50' }}">
+                class="flex items-center gap-3 px-5 py-3 text-sm font-medium transition-colors {{ request()->routeIs('pages.about') ? 'text-[#e00b41] bg-[#fff0f3]' : 'text-gray-700 hover:bg-gray-50' }}">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -138,7 +138,7 @@
                 À propos
             </a>
             <a href="{{ route('pages.contact') }}"
-                class="flex items-center gap-3 px-5 py-3 text-sm font-medium transition-colors {{ request()->routeIs('pages.contact') ? 'text-orange-600 bg-orange-50' : 'text-gray-700 hover:bg-gray-50' }}">
+                class="flex items-center gap-3 px-5 py-3 text-sm font-medium transition-colors {{ request()->routeIs('pages.contact') ? 'text-[#e00b41] bg-[#fff0f3]' : 'text-gray-700 hover:bg-gray-50' }}">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -159,9 +159,9 @@
                         <img src="{{ auth()->user()->getAvatarUrl() }}" alt="{{ auth()->user()->name }}"
                             class="w-9 h-9 rounded-full object-cover ring-2 ring-orange-100">
                     @else
-                        <div class="w-9 h-9 rounded-full bg-orange-100 flex items-center justify-center">
+                        <div class="w-9 h-9 rounded-full bg-[#ffd1da] flex items-center justify-center">
                             <span
-                                class="text-sm font-bold text-orange-600">{{ substr(auth()->user()->name, 0, 1) }}</span>
+                                class="text-sm font-bold text-[#e00b41]">{{ substr(auth()->user()->name, 0, 1) }}</span>
                         </div>
                     @endif
                     <div class="min-w-0">
@@ -213,7 +213,7 @@
                     Connexion
                 </a>
                 <a href="{{ route('register') }}"
-                    class="flex items-center gap-3 px-5 py-3 text-sm font-medium text-orange-600 hover:bg-orange-50 transition-colors">
+                    class="flex items-center gap-3 px-5 py-3 text-sm font-medium text-[#e00b41] hover:bg-[#fff0f3] transition-colors">
                     <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                         aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"

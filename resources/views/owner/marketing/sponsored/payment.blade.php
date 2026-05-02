@@ -121,11 +121,11 @@
                                 <input type="radio" name="payment_method" value="orange" x-model="method"
                                     class="sr-only peer">
                                 <div
-                                    class="border-2 rounded-2xl p-4 transition-all peer-checked:border-orange-500 peer-checked:bg-orange-50/50 peer-checked:shadow-sm border-gray-100 hover:border-gray-200">
+                                    class="border-2 rounded-2xl p-4 transition-all peer-checked:border-[#ff385c] peer-checked:bg-[#fff0f3]/50 peer-checked:shadow-sm border-gray-100 hover:border-gray-200">
                                     <div class="flex items-center gap-3">
                                         <div
-                                            class="w-11 h-11 bg-orange-50 rounded-xl flex items-center justify-center shrink-0">
-                                            <span class="text-lg font-black text-orange-600">OM</span>
+                                            class="w-11 h-11 bg-[#fff0f3] rounded-xl flex items-center justify-center shrink-0">
+                                            <span class="text-lg font-black text-[#e00b41]">OM</span>
                                         </div>
                                         <div>
                                             <p class="font-semibold text-sm text-gray-900">Orange Money</p>
@@ -133,7 +133,7 @@
                                         </div>
                                         <div class="ml-auto">
                                             <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors"
-                                                :class="method === 'orange' ? 'border-orange-500 bg-orange-500' :
+                                                :class="method === 'orange' ? 'border-[#ff385c] bg-[#ff385c]' :
                                                     'border-gray-300'">
                                                 <svg x-show="method === 'orange'" class="w-3 h-3 text-white" fill="none"
                                                     stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
@@ -262,13 +262,13 @@
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-5">
                         <label class="flex items-start gap-3 cursor-pointer">
                             <input type="checkbox" required
-                                class="mt-0.5 w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500">
+                                class="mt-0.5 w-4 h-4 text-[#e00b41] border-gray-300 rounded focus:ring-[#ff385c]">
                             <span class="text-xs text-gray-500 leading-relaxed">
                                 J'accepte les <a href="{{ route('pages.cgu') }}"
-                                    class="text-orange-600 hover:underline font-medium" target="_blank">conditions
+                                    class="text-[#e00b41] hover:underline font-medium" target="_blank">conditions
                                     générales</a>
                                 et la <a href="{{ route('pages.confidentialite') }}"
-                                    class="text-orange-600 hover:underline font-medium" target="_blank">politique
+                                    class="text-[#e00b41] hover:underline font-medium" target="_blank">politique
                                     d'annulation</a>.
                             </span>
                         </label>
@@ -334,7 +334,7 @@
                             'premium_listing' => 'from-amber-500 to-yellow-500',
                             'featured_home' => 'from-purple-500 to-indigo-500',
                             'top_search' => 'from-blue-500 to-cyan-500',
-                            'highlighted' => 'from-orange-500 to-red-500',
+                            'highlighted' => 'from-[#ff385c] to-red-500',
                         ];
                     @endphp
                     <div class="flex items-center gap-2.5 p-3 bg-gray-50 rounded-xl">
@@ -367,7 +367,7 @@
                         <div class="flex justify-between items-center">
                             <span class="text-base font-bold text-gray-900">Total</span>
                             <span
-                                class="text-xl font-bold text-orange-600">{{ number_format($sponsored->total_budget ?? 0, 0, ',', ' ') }}
+                                class="text-xl font-bold text-[#e00b41]">{{ number_format($sponsored->total_budget ?? 0, 0, ',', ' ') }}
                                 F</span>
                         </div>
                     </div>

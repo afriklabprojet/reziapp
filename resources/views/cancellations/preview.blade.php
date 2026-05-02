@@ -109,7 +109,7 @@
                 @endif
 
                 @if(isset($preview['amounts']['penalty_amount']) && $preview['amounts']['penalty_amount'] > 0)
-                    <div class="flex justify-between text-orange-600">
+                    <div class="flex justify-between text-[#e00b41]">
                         <span>Pénalité propriétaire</span>
                         <span class="font-medium">{{ number_format($preview['amounts']['penalty_amount'], 0, ',', ' ') }} FCFA</span>
                     </div>
@@ -135,7 +135,7 @@
                         <input type="radio" 
                                name="reason" 
                                value="{{ $value }}" 
-                               class="w-4 h-4 text-orange-600 border-gray-300 focus:ring-orange-500"
+                               class="w-4 h-4 text-[#e00b41] border-gray-300 focus:ring-[#ff385c]"
                                required>
                         <span class="ml-3 text-gray-700">{{ $label }}</span>
                     </label>
@@ -149,7 +149,7 @@
                 <textarea name="detailed_reason" 
                           id="detailed_reason" 
                           rows="3"
-                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]"
                           placeholder="Expliquez-nous pourquoi vous annulez..."></textarea>
             </div>
 
@@ -158,7 +158,7 @@
                     <label class="flex items-start">
                         <input type="checkbox" 
                                required 
-                               class="mt-1 w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500">
+                               class="mt-1 w-4 h-4 text-[#e00b41] border-gray-300 rounded focus:ring-[#ff385c]">
                         <span class="ml-3 text-sm text-yellow-800">
                             Je comprends que <strong>{{ $preview['amounts']['formatted_non_refundable'] }}</strong> 
                             ne seront pas remboursés selon la politique d'annulation.

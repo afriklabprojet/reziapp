@@ -24,7 +24,7 @@
                         @csrf
                         <input type="hidden" name="token" value="{{ $token }}">
                         <button type="submit"
-                            class="px-5 py-2.5 bg-orange-500 text-white font-medium rounded-xl hover:bg-orange-600 transition-colors">
+                            class="px-5 py-2.5 bg-[#ff385c] text-white font-medium rounded-xl hover:bg-[#e00b41] transition-colors">
                             Se réabonner
                         </button>
                     </form>
@@ -41,7 +41,7 @@
             @endif
 
             <div class="mt-8">
-                <a href="{{ route('home') }}" class="text-sm text-orange-500 hover:text-orange-600 font-medium">
+                <a href="{{ route('home') }}" class="text-sm text-[#ff385c] hover:text-[#e00b41] font-medium">
                     ← Retour à l'accueil
                 </a>
             </div>

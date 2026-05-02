@@ -40,7 +40,7 @@
                             @endif
                         @endforeach
                         <input type="text" name="q" value="{{ request('q') }}" placeholder="Rechercher..."
-                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-200 focus:border-orange-500 focus:ring-orange-500 text-sm">
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-200 focus:border-[#ff385c] focus:ring-[#ff385c] text-sm">
                         <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -52,13 +52,13 @@
                     @if (isset($cities) && $cities->count() > 1)
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open" type="button"
-                                class="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:border-orange-500 transition-all text-sm {{ request('city') ? 'border-orange-500 bg-orange-50' : '' }}">
+                                class="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:border-[#ff385c] transition-all text-sm {{ request('city') ? 'border-[#ff385c] bg-[#fff0f3]' : '' }}">
                                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                 </svg>
-                                <span class="{{ request('city') ? 'text-orange-600 font-medium' : 'text-gray-700' }}">
+                                <span class="{{ request('city') ? 'text-[#e00b41] font-medium' : 'text-gray-700' }}">
                                     {{ request('city') ?: 'Ville' }}
                                 </span>
                                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
@@ -70,12 +70,12 @@
                             <div x-show="open" @click.away="open = false" x-transition
                                 class="absolute top-full left-0 sm:left-0 right-0 sm:right-auto mt-2 w-auto sm:w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 max-h-64 overflow-y-auto">
                                 <a href="{{ route('residences.index', request()->except(['city', 'commune', 'page'])) }}"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600">
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-[#fff0f3] hover:text-[#e00b41]">
                                     Toutes les villes
                                 </a>
                                 @foreach ($cities as $city)
                                     <a href="{{ route('residences.index', array_merge(request()->except(['page', 'commune']), ['city' => $city])) }}"
-                                        class="block px-4 py-2 text-sm hover:bg-orange-50 hover:text-orange-600 {{ request('city') == $city ? 'bg-orange-50 text-orange-600 font-medium' : 'text-gray-700' }}">
+                                        class="block px-4 py-2 text-sm hover:bg-[#fff0f3] hover:text-[#e00b41] {{ request('city') == $city ? 'bg-[#fff0f3] text-[#e00b41] font-medium' : 'text-gray-700' }}">
                                         {{ $city }}
                                     </a>
                                 @endforeach
@@ -86,12 +86,12 @@
                     {{-- Commune Dropdown --}}
                     <div class="relative" x-data="{ open: false }">
                         <button @click="open = !open" type="button"
-                            class="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:border-orange-500 transition-all text-sm {{ request('commune') ? 'border-orange-500 bg-orange-50' : '' }}">
+                            class="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:border-[#ff385c] transition-all text-sm {{ request('commune') ? 'border-[#ff385c] bg-[#fff0f3]' : '' }}">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                             </svg>
-                            <span class="{{ request('commune') ? 'text-orange-600 font-medium' : 'text-gray-700' }}">
+                            <span class="{{ request('commune') ? 'text-[#e00b41] font-medium' : 'text-gray-700' }}">
                                 {{ request('commune') ?: 'Commune' }}
                             </span>
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,12 +102,12 @@
                         <div x-show="open" @click.away="open = false" x-transition
                             class="absolute top-full left-0 sm:left-0 right-0 sm:right-auto mt-2 w-auto sm:w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 max-h-64 overflow-y-auto">
                             <a href="{{ route('residences.index', request()->except(['commune', 'page'])) }}"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600">
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-[#fff0f3] hover:text-[#e00b41]">
                                 Toutes les communes
                             </a>
                             @foreach ($communes as $commune)
                                 <a href="{{ route('residences.index', array_merge(request()->except('page'), ['commune' => $commune])) }}"
-                                    class="block px-4 py-2 text-sm hover:bg-orange-50 hover:text-orange-600 {{ request('commune') == $commune ? 'bg-orange-50 text-orange-600 font-medium' : 'text-gray-700' }}">
+                                    class="block px-4 py-2 text-sm hover:bg-[#fff0f3] hover:text-[#e00b41] {{ request('commune') == $commune ? 'bg-[#fff0f3] text-[#e00b41] font-medium' : 'text-gray-700' }}">
                                     {{ $commune }}
                                 </a>
                             @endforeach
@@ -117,12 +117,12 @@
                     {{-- Price Dropdown --}}
                     <div class="relative" x-data="{ open: false }">
                         <button @click="open = !open" type="button"
-                            class="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:border-orange-500 transition-all text-sm {{ request('max_price') ? 'border-orange-500 bg-orange-50' : '' }}">
+                            class="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:border-[#ff385c] transition-all text-sm {{ request('max_price') ? 'border-[#ff385c] bg-[#fff0f3]' : '' }}">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span class="{{ request('max_price') ? 'text-orange-600 font-medium' : 'text-gray-700' }}">
+                            <span class="{{ request('max_price') ? 'text-[#e00b41] font-medium' : 'text-gray-700' }}">
                                 @if (request('max_price'))
                                     ≤ {{ number_format(request('max_price'), 0, ',', ' ') }} F
                                 @else
@@ -137,12 +137,12 @@
                         <div x-show="open" @click.away="open = false" x-transition
                             class="absolute top-full left-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50">
                             <a href="{{ route('residences.index', request()->except(['max_price', 'page'])) }}"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600">
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-[#fff0f3] hover:text-[#e00b41]">
                                 Tous les prix
                             </a>
                             @foreach ([50000 => '50 000 F', 100000 => '100 000 F', 150000 => '150 000 F', 200000 => '200 000 F', 300000 => '300 000 F', 500000 => '500 000 F'] as $value => $label)
                                 <a href="{{ route('residences.index', array_merge(request()->except('page'), ['max_price' => $value])) }}"
-                                    class="block px-4 py-2 text-sm hover:bg-orange-50 hover:text-orange-600 {{ request('max_price') == $value ? 'bg-orange-50 text-orange-600 font-medium' : 'text-gray-700' }}">
+                                    class="block px-4 py-2 text-sm hover:bg-[#fff0f3] hover:text-[#e00b41] {{ request('max_price') == $value ? 'bg-[#fff0f3] text-[#e00b41] font-medium' : 'text-gray-700' }}">
                                     ≤ {{ $label }}
                                 </a>
                             @endforeach
@@ -152,13 +152,13 @@
                     {{-- Type Dropdown --}}
                     <div class="relative hidden sm:block" x-data="{ open: false }">
                         <button @click="open = !open" type="button"
-                            class="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:border-orange-500 transition-all text-sm {{ request('type') ? 'border-orange-500 bg-orange-50' : '' }}">
+                            class="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:border-[#ff385c] transition-all text-sm {{ request('type') ? 'border-[#ff385c] bg-[#fff0f3]' : '' }}">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
-                            <span class="{{ request('type') ? 'text-orange-600 font-medium' : 'text-gray-700' }}">
+                            <span class="{{ request('type') ? 'text-[#e00b41] font-medium' : 'text-gray-700' }}">
                                 {{ request('type') ? ucfirst(request('type')) : 'Type' }}
                             </span>
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
@@ -170,12 +170,12 @@
                         <div x-show="open" @click.away="open = false" x-transition
                             class="absolute top-full left-0 mt-2 w-44 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50">
                             <a href="{{ route('residences.index', request()->except(['type', 'page'])) }}"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600">
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-[#fff0f3] hover:text-[#e00b41]">
                                 Tous les types
                             </a>
                             @foreach (['appartement' => 'Appartement', 'studio' => 'Studio', 'villa' => 'Villa', 'chambre' => 'Chambre', 'duplex' => 'Duplex'] as $key => $label)
                                 <a href="{{ route('residences.index', array_merge(request()->except('page'), ['type' => $key])) }}"
-                                    class="block px-4 py-2 text-sm hover:bg-orange-50 hover:text-orange-600 {{ request('type') == $key ? 'bg-orange-50 text-orange-600 font-medium' : 'text-gray-700' }}">
+                                    class="block px-4 py-2 text-sm hover:bg-[#fff0f3] hover:text-[#e00b41] {{ request('type') == $key ? 'bg-[#fff0f3] text-[#e00b41] font-medium' : 'text-gray-700' }}">
                                     {{ $label }}
                                 </a>
                             @endforeach
@@ -185,13 +185,13 @@
                     {{-- Bedrooms Dropdown --}}
                     <div class="relative hidden md:block" x-data="{ open: false }">
                         <button @click="open = !open" type="button"
-                            class="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:border-orange-500 transition-all text-sm {{ request('bedrooms') ? 'border-orange-500 bg-orange-50' : '' }}">
+                            class="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:border-[#ff385c] transition-all text-sm {{ request('bedrooms') ? 'border-[#ff385c] bg-[#fff0f3]' : '' }}">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                             </svg>
-                            <span class="{{ request('bedrooms') ? 'text-orange-600 font-medium' : 'text-gray-700' }}">
+                            <span class="{{ request('bedrooms') ? 'text-[#e00b41] font-medium' : 'text-gray-700' }}">
                                 {{ request('bedrooms') ? request('bedrooms') . '+ ch.' : 'Chambres' }}
                             </span>
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
@@ -203,12 +203,12 @@
                         <div x-show="open" @click.away="open = false" x-transition
                             class="absolute top-full left-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50">
                             <a href="{{ route('residences.index', request()->except(['bedrooms', 'page'])) }}"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600">
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-[#fff0f3] hover:text-[#e00b41]">
                                 Toutes
                             </a>
                             @foreach (range(1, 4) as $num)
                                 <a href="{{ route('residences.index', array_merge(request()->except('page'), ['bedrooms' => $num])) }}"
-                                    class="block px-4 py-2 text-sm hover:bg-orange-50 hover:text-orange-600 {{ request('bedrooms') == $num ? 'bg-orange-50 text-orange-600 font-medium' : 'text-gray-700' }}">
+                                    class="block px-4 py-2 text-sm hover:bg-[#fff0f3] hover:text-[#e00b41] {{ request('bedrooms') == $num ? 'bg-[#fff0f3] text-[#e00b41] font-medium' : 'text-gray-700' }}">
                                     {{ $num }}+ chambre{{ $num > 1 ? 's' : '' }}
                                 </a>
                             @endforeach
@@ -217,17 +217,17 @@
 
                     {{-- More Filters Button --}}
                     <button @click="showAdvancedFilters = !showAdvancedFilters" type="button"
-                        :class="{ 'bg-orange-50 border-orange-500 text-orange-600': showAdvancedFilters || hasActiveFilters }"
-                        class="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:border-orange-500 transition-all text-sm">
+                        :class="{ 'bg-[#fff0f3] border-[#ff385c] text-[#e00b41]': showAdvancedFilters || hasActiveFilters }"
+                        class="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:border-[#ff385c] transition-all text-sm">
                         <svg class="w-4 h-4"
-                            :class="showAdvancedFilters || hasActiveFilters ? 'text-orange-500' : 'text-gray-400'"
+                            :class="showAdvancedFilters || hasActiveFilters ? 'text-[#ff385c]' : 'text-gray-400'"
                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                         </svg>
                         <span>Plus de filtres</span>
                         <span x-show="activeFiltersCount > 0"
-                            class="flex items-center justify-center w-5 h-5 bg-orange-500 text-white text-xs font-bold rounded-full"
+                            class="flex items-center justify-center w-5 h-5 bg-[#ff385c] text-white text-xs font-bold rounded-full"
                             x-text="activeFiltersCount"></span>
                     </button>
 
@@ -237,7 +237,7 @@
                     {{-- View Toggle --}}
                     <div class="hidden sm:flex items-center bg-gray-100 rounded-xl p-1">
                         <button @click="setViewMode('grid')" type="button"
-                            :class="viewMode === 'grid' ? 'bg-white shadow-sm text-orange-600' :
+                            :class="viewMode === 'grid' ? 'bg-white shadow-sm text-[#e00b41]' :
                                 'text-gray-500 hover:text-gray-700'"
                             class="p-2 rounded-lg transition-all">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -246,7 +246,7 @@
                             </svg>
                         </button>
                         <button @click="setViewMode('list')" type="button"
-                            :class="viewMode === 'list' ? 'bg-white shadow-sm text-orange-600' :
+                            :class="viewMode === 'list' ? 'bg-white shadow-sm text-[#e00b41]' :
                                 'text-gray-500 hover:text-gray-700'"
                             class="p-2 rounded-lg transition-all">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -258,7 +258,7 @@
 
                     {{-- Map View Link --}}
                     <a href="{{ route('residences.map', request()->query()) }}"
-                        class="flex items-center gap-2 px-4 py-2.5 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors font-medium text-sm">
+                        class="flex items-center gap-2 px-4 py-2.5 bg-[#ff385c] text-white rounded-xl hover:bg-[#e00b41] transition-colors font-medium text-sm">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -288,7 +288,7 @@
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Salles de bain</label>
                             <select name="bathrooms"
-                                class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-orange-500 focus:border-orange-500">
+                                class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-[#ff385c] focus:border-[#ff385c]">
                                 <option value="">Peu importe</option>
                                 @foreach (range(1, 3) as $num)
                                     <option value="{{ $num }}"
@@ -303,7 +303,7 @@
                             <label class="block text-xs font-medium text-gray-500 mb-1">Prix min</label>
                             <input type="number" name="min_price" value="{{ request('min_price') }}"
                                 placeholder="0" step="5000"
-                                class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-orange-500 focus:border-orange-500">
+                                class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-[#ff385c] focus:border-[#ff385c]">
                         </div>
 
                         {{-- Min Surface --}}
@@ -311,14 +311,14 @@
                             <label class="block text-xs font-medium text-gray-500 mb-1">Surface min (m²)</label>
                             <input type="number" name="min_surface" value="{{ request('min_surface') }}"
                                 placeholder="0"
-                                class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-orange-500 focus:border-orange-500">
+                                class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-[#ff385c] focus:border-[#ff385c]">
                         </div>
 
                         {{-- Sort --}}
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Trier par</label>
                             <select name="sort"
-                                class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-orange-500 focus:border-orange-500">
+                                class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-[#ff385c] focus:border-[#ff385c]">
                                 <option value="recent" {{ request('sort', 'recent') == 'recent' ? 'selected' : '' }}>
                                     Plus récent</option>
                                 <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Prix
@@ -352,7 +352,7 @@
                             @foreach ($amenitiesList as $key => $label)
                                 <label
                                     class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border cursor-pointer transition-colors
-                                              {{ in_array($key, $selectedAmenities) ? 'bg-orange-100 border-orange-500 text-orange-600' : 'border-gray-200 hover:border-orange-300 bg-white' }}">
+                                              {{ in_array($key, $selectedAmenities) ? 'bg-[#ffd1da] border-[#ff385c] text-[#e00b41]' : 'border-gray-200 hover:border-[#ffb3c1] bg-white' }}">
                                     <input type="checkbox" name="amenities[]" value="{{ $key }}"
                                         {{ in_array($key, $selectedAmenities) ? 'checked' : '' }} class="sr-only">
                                     <span class="text-sm">{{ $label }}</span>
@@ -364,7 +364,7 @@
                     {{-- Actions --}}
                     <div class="mt-4 flex items-center gap-3">
                         <button type="submit"
-                            class="px-6 py-2 bg-orange-500 text-white text-sm font-medium rounded-xl hover:bg-orange-600 transition-colors">
+                            class="px-6 py-2 bg-[#ff385c] text-white text-sm font-medium rounded-xl hover:bg-[#e00b41] transition-colors">
                             Appliquer
                         </button>
                         <a href="{{ route('residences.index') }}"
@@ -395,7 +395,7 @@
 
                         @if (request('q'))
                             <a href="{{ route('residences.index', request()->except(['q', 'page'])) }}"
-                                class="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm hover:bg-orange-200 transition-colors">
+                                class="inline-flex items-center gap-1 px-3 py-1 bg-[#ffd1da] text-[#b5083a] rounded-full text-sm hover:bg-[#ffb3c1] transition-colors">
                                 "{{ request('q') }}"
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -406,7 +406,7 @@
 
                         @if (request('commune'))
                             <a href="{{ route('residences.index', request()->except(['commune', 'page'])) }}"
-                                class="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm hover:bg-orange-200 transition-colors">
+                                class="inline-flex items-center gap-1 px-3 py-1 bg-[#ffd1da] text-[#b5083a] rounded-full text-sm hover:bg-[#ffb3c1] transition-colors">
                                 {{ request('commune') }}
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -417,7 +417,7 @@
 
                         @if (request('type'))
                             <a href="{{ route('residences.index', request()->except(['type', 'page'])) }}"
-                                class="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm hover:bg-orange-200 transition-colors">
+                                class="inline-flex items-center gap-1 px-3 py-1 bg-[#ffd1da] text-[#b5083a] rounded-full text-sm hover:bg-[#ffb3c1] transition-colors">
                                 {{ ucfirst(request('type')) }}
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -428,7 +428,7 @@
 
                         @if (request('max_price'))
                             <a href="{{ route('residences.index', request()->except(['max_price', 'page'])) }}"
-                                class="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm hover:bg-orange-200 transition-colors">
+                                class="inline-flex items-center gap-1 px-3 py-1 bg-[#ffd1da] text-[#b5083a] rounded-full text-sm hover:bg-[#ffb3c1] transition-colors">
                                 ≤ {{ number_format(request('max_price'), 0, ',', ' ') }} F
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -439,7 +439,7 @@
 
                         @if (request('bedrooms'))
                             <a href="{{ route('residences.index', request()->except(['bedrooms', 'page'])) }}"
-                                class="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm hover:bg-orange-200 transition-colors">
+                                class="inline-flex items-center gap-1 px-3 py-1 bg-[#ffd1da] text-[#b5083a] rounded-full text-sm hover:bg-[#ffb3c1] transition-colors">
                                 {{ request('bedrooms') }}+ ch.
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -449,7 +449,7 @@
                         @endif
 
                         <a href="{{ route('residences.index') }}"
-                            class="text-sm text-orange-600 hover:text-orange-700 font-medium ml-2">
+                            class="text-sm text-[#e00b41] hover:text-[#b5083a] font-medium ml-2">
                             Tout effacer
                         </a>
                     </div>
@@ -475,12 +475,12 @@
                             @endif
                         </h1>
                         <p class="text-gray-500 mt-1">
-                            <span class="font-semibold text-orange-500">{{ $residences->total() }}</span>
+                            <span class="font-semibold text-[#ff385c]">{{ $residences->total() }}</span>
                             résidence{{ $residences->total() > 1 ? 's' : '' }}
                             trouvée{{ $residences->total() > 1 ? 's' : '' }}
                             @if (isset($userLocation))
                                 <span
-                                    class="inline-flex items-center gap-1 ml-2 px-2 py-0.5 bg-orange-50 text-orange-700 rounded-full text-xs font-medium">
+                                    class="inline-flex items-center gap-1 ml-2 px-2 py-0.5 bg-[#fff0f3] text-[#b5083a] rounded-full text-xs font-medium">
                                     {{ \App\Services\UserLocationService::countryFlag($userLocation['country_code'] ?? 'CI') }}
                                     {{ $userLocation['city'] ?? 'Abidjan' }},
                                     {{ $userLocation['country_name'] ?? "Côte d'Ivoire" }}
@@ -525,7 +525,7 @@
                     {{-- Load More --}}
                     <div class="mt-10 text-center" x-show="hasMore">
                         <button @click="loadMore()" :disabled="loading"
-                            class="inline-flex items-center gap-2 px-8 py-3 bg-white border-2 border-orange-200 text-orange-600 font-semibold rounded-xl hover:bg-orange-50 hover:border-orange-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-wait shadow-sm">
+                            class="inline-flex items-center gap-2 px-8 py-3 bg-white border-2 border-[#ffb3c1] text-[#e00b41] font-semibold rounded-xl hover:bg-[#fff0f3] hover:border-[#ffb3c1] transition-all duration-200 disabled:opacity-50 disabled:cursor-wait shadow-sm">
                             <template x-if="!loading">
                                 <span class="flex items-center gap-2">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -585,7 +585,7 @@
                         </p>
                         <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
                             <a href="{{ route('residences.index') }}"
-                                class="px-6 py-3 bg-orange-500 text-white font-medium rounded-xl hover:bg-orange-600 transition-colors">
+                                class="px-6 py-3 bg-[#ff385c] text-white font-medium rounded-xl hover:bg-[#e00b41] transition-colors">
                                 Voir toutes les résidences
                             </a>
                             <a href="{{ route('residences.map') }}"

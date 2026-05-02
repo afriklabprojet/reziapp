@@ -74,13 +74,13 @@
             <form method="POST" action="{{ route('owner.maintenance.status', $request) }}" class="space-y-3">
                 @csrf @method('PATCH')
                 <label class="block text-sm font-semibold text-gray-700">Changer le statut</label>
-                <select name="status" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 text-sm">
+                <select name="status" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] text-sm">
                     @foreach(\App\Models\MaintenanceRequest::STATUSES as $key => $label)
                         <option value="{{ $key }}" {{ $request->status === $key ? 'selected' : '' }}>{{ $label }}</option>
                     @endforeach
                 </select>
                 <div class="flex gap-2">
-                    <input type="number" name="cost" placeholder="Coût (FCFA)" value="{{ old('cost', $request->cost) }}" class="flex-1 rounded-xl border-gray-200 focus:ring-orange-500 text-sm">
+                    <input type="number" name="cost" placeholder="Coût (FCFA)" value="{{ old('cost', $request->cost) }}" class="flex-1 rounded-xl border-gray-200 focus:ring-[#ff385c] text-sm">
                     <button type="submit" class="px-4 py-2 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-colors">Mettre à jour</button>
                 </div>
             </form>
@@ -89,8 +89,8 @@
             <form method="POST" action="{{ route('owner.maintenance.assign', $request) }}" class="space-y-3">
                 @csrf @method('PATCH')
                 <label class="block text-sm font-semibold text-gray-700">Assigner à</label>
-                <input type="text" name="assigned_to_name" placeholder="Nom du technicien" value="{{ old('assigned_to_name') }}" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 text-sm">
-                <input type="text" name="assigned_to_phone" placeholder="Téléphone" value="{{ old('assigned_to_phone') }}" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 text-sm">
+                <input type="text" name="assigned_to_name" placeholder="Nom du technicien" value="{{ old('assigned_to_name') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] text-sm">
+                <input type="text" name="assigned_to_phone" placeholder="Téléphone" value="{{ old('assigned_to_phone') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] text-sm">
                 <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors">Assigner</button>
             </form>
         </div>

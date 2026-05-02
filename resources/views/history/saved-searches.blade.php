@@ -27,7 +27,7 @@
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Aucune recherche sauvegardée</h3>
                     <p class="text-gray-500 mb-4">Sauvegardez vos recherches pour les retrouver facilement.</p>
                     <a href="{{ route('residences.index') }}" 
-                       class="inline-flex items-center gap-2 bg-orange-600 text-white px-4 py-2 rounded-xl hover:bg-orange-700 transition-colors">
+                       class="inline-flex items-center gap-2 bg-[#e00b41] text-white px-4 py-2 rounded-xl hover:bg-[#b5083a] transition-colors">
                         Lancer une recherche
                     </a>
                 </div>
@@ -48,7 +48,7 @@
                                         </span>
                                     @endif
                                     @if($search->new_results_count > 0)
-                                        <span class="inline-flex items-center px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full">
+                                        <span class="inline-flex items-center px-2 py-1 bg-[#ffd1da] text-[#b5083a] text-xs rounded-full">
                                             {{ $search->new_results_count }} nouveau(x)
                                         </span>
                                     @endif
@@ -73,7 +73,7 @@
 
                             <div class="flex items-center gap-2 shrink-0">
                                 <a href="{{ route('history.saved-searches.execute', $search) }}" 
-                                   class="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm">
+                                   class="inline-flex items-center gap-2 px-4 py-2 bg-[#e00b41] text-white rounded-lg hover:bg-[#b5083a] transition-colors text-sm">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                     </svg>
@@ -98,18 +98,18 @@
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
                                         <input type="text" name="name" value="{{ $search->name }}" required
-                                               class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                                               class="w-full rounded-lg border-gray-300 focus:border-[#ff385c] focus:ring-[#ff385c]">
                                     </div>
                                     <div>
                                         <label class="flex items-center gap-2">
                                             <input type="checkbox" name="has_alerts" value="1" {{ $search->has_alerts ? 'checked' : '' }}
-                                                   class="rounded border-gray-300 text-orange-600 focus:ring-orange-500">
+                                                   class="rounded border-gray-300 text-[#e00b41] focus:ring-[#ff385c]">
                                             <span class="text-sm text-gray-700">Recevoir des alertes</span>
                                         </label>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Fréquence</label>
-                                        <select name="alert_frequency" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                                        <select name="alert_frequency" class="w-full rounded-lg border-gray-300 focus:border-[#ff385c] focus:ring-[#ff385c]">
                                             <option value="instant" {{ $search->alert_frequency === 'instant' ? 'selected' : '' }}>Instantané</option>
                                             <option value="daily" {{ $search->alert_frequency === 'daily' ? 'selected' : '' }}>Quotidien</option>
                                             <option value="weekly" {{ $search->alert_frequency === 'weekly' ? 'selected' : '' }}>Hebdomadaire</option>

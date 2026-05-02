@@ -6,9 +6,9 @@
 <div class="max-w-2xl space-y-6" x-data="listingScoreApp()">
 
     <nav class="text-sm text-gray-400">
-        <a href="{{ route('owner.residences.index') }}" class="hover:text-orange-500">Résidences</a>
+        <a href="{{ route('owner.residences.index') }}" class="hover:text-[#ff385c]">Résidences</a>
         <span class="mx-2">›</span>
-        <a href="{{ route('owner.residences.show', $residence) }}" class="hover:text-orange-500">{{ $residence->title }}</a>
+        <a href="{{ route('owner.residences.show', $residence) }}" class="hover:text-[#ff385c]">{{ $residence->title }}</a>
         <span class="mx-2">›</span>
         <span class="text-gray-700">Score qualité</span>
     </nav>
@@ -17,7 +17,7 @@
         <h1 class="text-2xl font-bold text-gray-900">⭐ Score qualité de l'annonce</h1>
         <button type="button" @click="recompute"
             :disabled="computing"
-            class="px-4 py-2 bg-orange-500 text-white rounded-xl text-sm font-semibold hover:bg-orange-600 transition disabled:opacity-50">
+            class="px-4 py-2 bg-[#ff385c] text-white rounded-xl text-sm font-semibold hover:bg-[#e00b41] transition disabled:opacity-50">
             <span x-show="!computing">🔄 Recalculer</span>
             <span x-show="computing" x-cloak>Calcul...</span>
         </button>
@@ -85,8 +85,8 @@
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-3">
         <h2 class="font-semibold text-gray-800">💡 Conseils pour améliorer votre score</h2>
         @foreach($tips as $tip)
-        <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-xl">
-            <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
+        <div class="flex items-start gap-3 p-3 bg-[#fff0f3] rounded-xl">
+            <div class="w-8 h-8 bg-[#ffd1da] rounded-lg flex items-center justify-center shrink-0">
                 @switch($tip['priority'] ?? 'low')
                     @case('high') <span class="text-red-500 text-sm">🔴</span> @break
                     @case('medium') <span class="text-amber-500 text-sm">🟡</span> @break
@@ -99,7 +99,7 @@
                 <div class="text-xs text-gray-500 mt-0.5">{{ $tip['action'] }}</div>
                 @endif
                 @if(isset($tip['points']))
-                <div class="text-xs text-orange-600 mt-1 font-medium">+{{ $tip['points'] }} pts potentiels</div>
+                <div class="text-xs text-[#e00b41] mt-1 font-medium">+{{ $tip['points'] }} pts potentiels</div>
                 @endif
             </div>
         </div>
@@ -108,7 +108,7 @@
     @endif
 
     <a href="{{ route('owner.residences.edit', $residence) }}"
-        class="block w-full py-3 bg-orange-500 text-white rounded-xl font-semibold text-center hover:bg-orange-600 transition">
+        class="block w-full py-3 bg-[#ff385c] text-white rounded-xl font-semibold text-center hover:bg-[#e00b41] transition">
         ✏️ Modifier l'annonce pour améliorer le score
     </a>
 </div>

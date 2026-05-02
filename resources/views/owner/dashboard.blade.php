@@ -56,7 +56,7 @@
                         <div class="flex items-center gap-4">
                             <div class="relative">
                                 <div
-                                    class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-linear-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-lg shadow-orange-500/20">
+                                    class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-linear-to-br from-[#ff4d6d] to-[#e00b41] flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-lg shadow-none">
                                     {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                                 </div>
                                 @if ($hostScore['score'] >= 70)
@@ -73,7 +73,7 @@
                                 <div class="flex items-center gap-2 mt-0.5 flex-wrap">
                                     <p class="text-sm text-gray-500">{{ now()->translatedFormat('l j F Y') }}</p>
                                     <span class="text-gray-300">·</span>
-                                    <span class="text-sm text-orange-600 font-medium">{{ $stats['approved_residences'] }}
+                                    <span class="text-sm text-[#e00b41] font-medium">{{ $stats['approved_residences'] }}
                                         annonce{{ $stats['approved_residences'] > 1 ? 's' : '' }}
                                         active{{ $stats['approved_residences'] > 1 ? 's' : '' }}</span>
                                     @if ($unreadMessages > 0)
@@ -137,7 +137,7 @@
 
                 @if ($showVerificationBanner)
                     <div
-                        class="mb-6 sm:mb-8 bg-linear-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200/60 p-5 sm:p-6">
+                        class="mb-6 sm:mb-8 bg-linear-to-r from-amber-50 to-[#fff0f3] rounded-2xl border border-amber-200/60 p-5 sm:p-6">
                         <div class="flex flex-col sm:flex-row sm:items-center gap-4">
                             <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center shrink-0">
                                 <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -198,7 +198,7 @@
                 @if (collect($todayTasks)->contains('urgent', true) || collect($todayTasks)->where('icon', '!=', 'check')->isNotEmpty())
                     <div class="mb-6 sm:mb-8">
                         <h2 class="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                            <span class="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></span>
+                            <span class="w-2 h-2 bg-[#ff385c] rounded-full animate-pulse"></span>
                             À faire aujourd'hui
                         </h2>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -209,7 +209,7 @@
                                         'w-10 h-10 rounded-xl flex items-center justify-center shrink-0',
                                         'bg-red-100' => $task['color'] === 'red',
                                         'bg-yellow-100' => $task['color'] === 'yellow',
-                                        'bg-orange-100' => $task['color'] === 'orange',
+                                        'bg-[#ffd1da]' => $task['color'] === 'orange',
                                         'bg-green-100' => $task['color'] === 'green',
                                         'bg-blue-100' => $task['color'] === 'blue',
                                     ])>
@@ -226,7 +226,7 @@
                                                     d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                             </svg>
                                         @elseif($task['icon'] === 'camera')
-                                            <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor"
+                                            <svg class="w-5 h-5 text-[#e00b41]" fill="none" stroke="currentColor"
                                                 stroke-width="2" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
@@ -264,7 +264,7 @@
                                         <p class="text-xs text-gray-500 mt-0.5">{{ $task['description'] }}</p>
                                         @if ($task['action_url'])
                                             <a href="{{ $task['action_url'] }}"
-                                                class="inline-flex items-center text-xs font-semibold text-orange-600 hover:text-orange-700 mt-2 gap-1">
+                                                class="inline-flex items-center text-xs font-semibold text-[#e00b41] hover:text-[#b5083a] mt-2 gap-1">
                                                 {{ $task['action_text'] }}
                                                 <svg class="w-3 h-3" fill="none" stroke="currentColor"
                                                     stroke-width="2" viewBox="0 0 24 24">
@@ -286,7 +286,7 @@
                         <div class="flex items-center justify-between mb-3">
                             <h2 class="text-base font-bold text-gray-900">Vos réservations</h2>
                             <a href="{{ route('owner.bookings.index') }}"
-                                class="text-xs text-orange-600 hover:text-orange-700 font-semibold">Tout voir →</a>
+                                class="text-xs text-[#e00b41] hover:text-[#b5083a] font-semibold">Tout voir →</a>
                         </div>
 
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
@@ -307,12 +307,12 @@
                                 <p class="text-[11px] text-gray-500 font-medium mt-0.5">Arrivées sous 7j</p>
                             </a>
                             <a href="{{ route('owner.bookings.requests') }}"
-                                class="bg-white rounded-xl border {{ $bookingsData['pending'] > 0 ? 'border-orange-200 bg-orange-50/50' : 'border-gray-100' }} p-4 hover:shadow-md transition-shadow text-center">
+                                class="bg-white rounded-xl border {{ $bookingsData['pending'] > 0 ? 'border-[#ffb3c1] bg-[#fff0f3]/50' : 'border-gray-100' }} p-4 hover:shadow-md transition-shadow text-center">
                                 <p
-                                    class="text-2xl font-extrabold {{ $bookingsData['pending'] > 0 ? 'text-orange-600' : 'text-gray-900' }}">
+                                    class="text-2xl font-extrabold {{ $bookingsData['pending'] > 0 ? 'text-[#e00b41]' : 'text-gray-900' }}">
                                     {{ $bookingsData['pending'] }}</p>
                                 <p
-                                    class="text-[11px] {{ $bookingsData['pending'] > 0 ? 'text-orange-600' : 'text-gray-500' }} font-medium mt-0.5">
+                                    class="text-[11px] {{ $bookingsData['pending'] > 0 ? 'text-[#e00b41]' : 'text-gray-500' }} font-medium mt-0.5">
                                     En attente</p>
                             </a>
                         </div>
@@ -334,7 +334,7 @@
                                                         {{ $booking->user->name ?? 'Locataire' }}</p>
                                                     @if ($booking->status === 'pending')
                                                         <span
-                                                            class="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-700 rounded font-semibold">À
+                                                            class="text-[10px] px-1.5 py-0.5 bg-[#ffd1da] text-[#b5083a] rounded font-semibold">À
                                                             confirmer</span>
                                                     @endif
                                                 </div>
@@ -364,16 +364,16 @@
 
                 {{-- ============================== BANNIÈRE ONBOARDING (nouveaux proprio) ============================== --}}
                 @if($stats['total_residences'] === 0)
-                <div class="mb-6 bg-linear-to-r from-orange-500 to-amber-500 rounded-2xl p-5 text-white shadow-lg shadow-orange-500/20" x-data="{ closed: false }" x-show="!closed" x-transition>
+                <div class="mb-6 bg-linear-to-r from-[#ff385c] to-amber-500 rounded-2xl p-5 text-white shadow-lg shadow-none" x-data="{ closed: false }" x-show="!closed" x-transition>
                     <div class="flex items-start gap-4">
                         <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0 text-xl">🚀</div>
                         <div class="flex-1 min-w-0">
                             <p class="font-bold text-white text-base">Publiez votre première résidence en 5 minutes</p>
-                            <p class="text-orange-100 text-sm mt-0.5">Rejoignez {{ number_format($totalOwners) }}+ propriétaires actifs sur REZI. Gratuit, sans commission.</p>
+                            <p class="text-[#ffd1da] text-sm mt-0.5">Rejoignez {{ number_format($totalOwners) }}+ propriétaires actifs sur REZI. Gratuit, sans commission.</p>
                         </div>
                         <div class="flex items-center gap-3 shrink-0">
                             <a href="{{ route('owner.residences.create') }}"
-                                class="bg-white text-orange-600 font-bold text-sm px-4 py-2 rounded-xl hover:bg-orange-50 transition-colors whitespace-nowrap">
+                                class="bg-white text-[#e00b41] font-bold text-sm px-4 py-2 rounded-xl hover:bg-[#fff0f3] transition-colors whitespace-nowrap">
                                 Publier maintenant
                             </a>
                             <button @click="closed = true" class="text-white/60 hover:text-white transition-colors" aria-label="Fermer">
@@ -384,8 +384,8 @@
                     {{-- Progress steps mini --}}
                     <div class="mt-4 flex flex-wrap gap-2">
                         @foreach(['Créer un compte ✅', 'Publier ma résidence', 'Recevoir mon premier contact'] as $step)
-                        <div class="flex items-center gap-1.5 text-xs {{ $loop->first ? 'text-white' : 'text-orange-200' }}">
-                            @if(!$loop->first)<span class="text-orange-300">→</span>@endif
+                        <div class="flex items-center gap-1.5 text-xs {{ $loop->first ? 'text-white' : 'text-[#ffb3c1]' }}">
+                            @if(!$loop->first)<span class="text-[#ff7a96]">→</span>@endif
                             {{ $step }}
                         </div>
                         @endforeach
@@ -491,8 +491,8 @@
                     <div
                         class="bg-white rounded-2xl shadow-sm p-4 sm:p-5 border border-gray-100 hover:shadow-md transition-shadow">
                         <div class="flex items-center justify-between mb-3">
-                            <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center">
-                                <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor"
+                            <div class="w-10 h-10 bg-[#fff0f3] rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-[#e00b41]" fill="none" stroke="currentColor"
                                     stroke-width="1.5" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
@@ -659,7 +659,7 @@
                                 <span class="text-gray-600 font-medium">Vues</span>
                             </span>
                             <span class="flex items-center gap-1.5">
-                                <span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-[#ff385c]"></span>
                                 <span class="text-gray-600 font-medium">Contacts</span>
                             </span>
                         </div>
@@ -700,7 +700,7 @@
                                     </p>
                                 </div>
                                 <a href="{{ route('owner.residences.index') }}"
-                                    class="text-xs text-orange-600 hover:text-orange-700 font-semibold flex items-center gap-1">
+                                    class="text-xs text-[#e00b41] hover:text-[#b5083a] font-semibold flex items-center gap-1">
                                     Tout voir
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
                                         viewBox="0 0 24 24">
@@ -744,7 +744,7 @@
                                                                 'active', 'approved' => ['bg-green-100 text-green-700', '●'],
                                                                 'pending' => ['bg-yellow-100 text-yellow-700', '◐'],
                                                                 'needs_changes' => [
-                                                                    'bg-orange-100 text-orange-700',
+                                                                    'bg-[#ffd1da] text-[#b5083a]',
                                                                     '⚠',
                                                                 ],
                                                                 'draft' => ['bg-gray-100 text-gray-500', '○'],
@@ -800,7 +800,7 @@
                                                             class="text-[11px] px-2 py-1 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors font-medium">Modifier</a>
                                                         <button
                                                             @click="toggleAvailability({{ $residence->id }}, {{ $residence->is_available ? 'true' : 'false' }})"
-                                                            class="text-[11px] px-2 py-1 {{ $residence->is_available ? 'bg-orange-50 text-orange-700' : 'bg-green-50 text-green-700' }} rounded-md hover:opacity-80 transition-colors font-medium">
+                                                            class="text-[11px] px-2 py-1 {{ $residence->is_available ? 'bg-[#fff0f3] text-[#b5083a]' : 'bg-green-50 text-green-700' }} rounded-md hover:opacity-80 transition-colors font-medium">
                                                             {{ $residence->is_available ? 'Indisponible' : 'Disponible' }}
                                                         </button>
                                                     </div>
@@ -812,8 +812,8 @@
                             @else
                                 <div class="p-10 sm:p-12 text-center">
                                     <div
-                                        class="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                        <svg class="w-8 h-8 text-orange-400" fill="none" stroke="currentColor"
+                                        class="w-16 h-16 bg-[#fff0f3] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                        <svg class="w-8 h-8 text-[#ff4d6d]" fill="none" stroke="currentColor"
                                             stroke-width="1.5" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
@@ -1006,8 +1006,8 @@
                                                     <p class="text-sm text-gray-700 line-clamp-2">{{ $review->comment }}
                                                     </p>
                                                     @if ($review->owner_response)
-                                                        <div class="mt-2 pl-3 border-l-2 border-orange-200">
-                                                            <p class="text-[11px] text-orange-600 font-medium">Votre
+                                                        <div class="mt-2 pl-3 border-l-2 border-[#ffb3c1]">
+                                                            <p class="text-[11px] text-[#e00b41] font-medium">Votre
                                                                 réponse
                                                             </p>
                                                             <p class="text-xs text-gray-600 line-clamp-1">
@@ -1017,7 +1017,7 @@
                                                         {{-- Inline reply toggle --}}
                                                         <button
                                                             @click="replyingTo === {{ $review->id }} ? replyingTo = null : (replyingTo = {{ $review->id }}, replyText = '', $nextTick(() => $refs.replyInput{{ $review->id }}?.focus()))"
-                                                            class="inline-flex items-center text-[11px] text-orange-600 font-medium mt-1.5 gap-0.5 hover:text-orange-700 transition-colors">
+                                                            class="inline-flex items-center text-[11px] text-[#e00b41] font-medium mt-1.5 gap-0.5 hover:text-[#b5083a] transition-colors">
                                                             <svg class="w-3 h-3" fill="none" stroke="currentColor"
                                                                 stroke-width="2" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -1032,7 +1032,7 @@
                                                             x-transition:enter-end="opacity-100 translate-y-0"
                                                             class="mt-2" x-cloak>
                                                             <textarea x-ref="replyInput{{ $review->id }}" x-model="replyText"
-                                                                class="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 resize-none transition-all"
+                                                                class="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff385c]/20 focus:border-[#ff4d6d] resize-none transition-all"
                                                                 rows="2" placeholder="Écrivez votre réponse (min. 10 caractères)..." maxlength="1000"></textarea>
                                                             <div class="flex items-center justify-between mt-1.5">
                                                                 <span class="text-[10px] text-gray-400"
@@ -1202,7 +1202,7 @@
                                 </div>
                                 <div class="px-5 py-3 border-t border-gray-100 bg-gray-50/50">
                                     <a href="{{ route('chat.index') }}"
-                                        class="block text-center text-xs text-orange-600 hover:text-orange-700 font-semibold">Voir
+                                        class="block text-center text-xs text-[#e00b41] hover:text-[#b5083a] font-semibold">Voir
                                         tous les messages →</a>
                                 </div>
                             @else
@@ -1232,7 +1232,7 @@
                                     Prochains événements
                                 </h2>
                                 <a href="{{ route('owner.bookings.index') }}"
-                                    class="text-[10px] text-orange-600 hover:text-orange-700 font-semibold">Calendrier
+                                    class="text-[10px] text-[#e00b41] hover:text-[#b5083a] font-semibold">Calendrier
                                     →</a>
                             </div>
                             @if ($calendarEvents->isNotEmpty())
@@ -1248,7 +1248,7 @@
                                                         ? 'checkin'
                                                         : 'checkout'));
                                         @endphp
-                                        <div class="flex items-center gap-3 p-4 {{ $isToday ? 'bg-orange-50/30' : '' }}">
+                                        <div class="flex items-center gap-3 p-4 {{ $isToday ? 'bg-[#fff0f3]/30' : '' }}">
                                             <div
                                                 class="w-10 h-12 rounded-xl {{ $eventType === 'checkin' ? 'bg-green-50' : 'bg-blue-50' }} flex flex-col items-center justify-center shrink-0">
                                                 <span
@@ -1268,7 +1268,7 @@
                                                     </span>
                                                     @if ($isToday)
                                                         <span
-                                                            class="text-[9px] px-1 py-0.5 bg-orange-100 text-orange-700 rounded font-bold">Aujourd'hui</span>
+                                                            class="text-[9px] px-1 py-0.5 bg-[#ffd1da] text-[#b5083a] rounded font-bold">Aujourd'hui</span>
                                                     @endif
                                                 </div>
                                                 <p class="text-xs font-medium text-gray-900 truncate mt-0.5">
@@ -1310,7 +1310,7 @@
                                         <div class="p-4 hover:bg-gray-50/50 transition-colors">
                                             <div class="flex items-start gap-3">
                                                 <div
-                                                    class="w-9 h-9 rounded-full flex items-center justify-center text-white font-semibold text-xs shrink-0 {{ $contact->status === 'pending' ? 'bg-linear-to-br from-orange-400 to-orange-500' : 'bg-linear-to-br from-gray-400 to-gray-500' }}">
+                                                    class="w-9 h-9 rounded-full flex items-center justify-center text-white font-semibold text-xs shrink-0 {{ $contact->status === 'pending' ? 'bg-linear-to-br from-[#ff4d6d] to-[#ff385c]' : 'bg-linear-to-br from-gray-400 to-gray-500' }}">
                                                     {{ strtoupper(substr($contact->user->name ?? 'A', 0, 1)) }}
                                                 </div>
                                                 <div class="flex-1 min-w-0">
@@ -1319,7 +1319,7 @@
                                                             {{ $contact->user->name ?? 'Anonyme' }}</p>
                                                         @if ($contact->status === 'pending')
                                                             <span
-                                                                class="shrink-0 text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-700 rounded font-semibold">Nouveau</span>
+                                                                class="shrink-0 text-[10px] px-1.5 py-0.5 bg-[#ffd1da] text-[#b5083a] rounded font-semibold">Nouveau</span>
                                                         @endif
                                                     </div>
                                                     <p class="text-[11px] text-gray-500 truncate">
@@ -1337,7 +1337,7 @@
                                 </div>
                                 <div class="px-5 py-3 border-t border-gray-100 bg-gray-50/50">
                                     <a href="{{ route('owner.contacts.index') }}"
-                                        class="block text-center text-xs text-orange-600 hover:text-orange-700 font-semibold">Voir
+                                        class="block text-center text-xs text-[#e00b41] hover:text-[#b5083a] font-semibold">Voir
                                         tous les contacts →</a>
                                 </div>
                             @else
@@ -1383,16 +1383,16 @@
                                     <span class="text-[11px] font-semibold text-gray-700">Mes annonces</span>
                                 </a>
                                 <a href="{{ route('owner.analytics.index') }}"
-                                    class="flex flex-col items-center p-3 bg-orange-50 rounded-xl hover:bg-orange-100 transition-colors group text-center">
+                                    class="flex flex-col items-center p-3 bg-[#fff0f3] rounded-xl hover:bg-[#ffd1da] transition-colors group text-center">
                                     <div
-                                        class="w-9 h-9 bg-orange-100 rounded-lg flex items-center justify-center mb-1.5 group-hover:bg-orange-200 transition-colors">
-                                        <svg class="w-4.5 h-4.5 text-orange-500" fill="none" stroke="currentColor"
+                                        class="w-9 h-9 bg-[#ffd1da] rounded-lg flex items-center justify-center mb-1.5 group-hover:bg-[#ffb3c1] transition-colors">
+                                        <svg class="w-4.5 h-4.5 text-[#ff385c]" fill="none" stroke="currentColor"
                                             stroke-width="2" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
                                         </svg>
                                     </div>
-                                    <span class="text-[11px] font-semibold text-orange-600">Analytics</span>
+                                    <span class="text-[11px] font-semibold text-[#e00b41]">Analytics</span>
                                 </a>
                                 <a href="{{ route('owner.marketing.promotions.index') }}"
                                     class="flex flex-col items-center p-3 bg-purple-50 rounded-xl hover:bg-purple-100 transition-colors group text-center">

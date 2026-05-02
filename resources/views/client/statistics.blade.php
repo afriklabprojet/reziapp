@@ -14,7 +14,7 @@
     </div>
 
     {{-- Infos membre --}}
-    <div class="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl p-6 text-white mb-8">
+    <div class="bg-gradient-to-r from-[#ff385c] to-[#e00b41] rounded-xl p-6 text-white mb-8">
         <div class="flex items-center gap-4">
             <div class="w-16 h-16 rounded-full overflow-hidden bg-white/20 flex items-center justify-center">
                 @if ($user->profile_photo || $user->avatar)
@@ -26,7 +26,7 @@
             </div>
             <div>
                 <h2 class="text-xl font-bold">{{ $user->name }}</h2>
-                <p class="text-orange-100">Membre depuis {{ $globalStats['member_since']->translatedFormat('d F Y') }}</p>
+                <p class="text-[#ffd1da]">Membre depuis {{ $globalStats['member_since']->translatedFormat('d F Y') }}</p>
             </div>
         </div>
     </div>
@@ -80,8 +80,8 @@
         </div>
 
         <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 text-center">
-            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-10 h-10 bg-[#ffd1da] rounded-lg flex items-center justify-center mx-auto mb-2">
+                <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                 </svg>
@@ -91,8 +91,8 @@
         </div>
 
         <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 text-center">
-            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-10 h-10 bg-[#ffd1da] rounded-lg flex items-center justify-center mx-auto mb-2">
+                <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
@@ -142,7 +142,7 @@
                                 <span class="text-sm text-gray-500">{{ $commune->views_count }} visites</span>
                             </div>
                             <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                <div class="h-full bg-orange-500 rounded-full transition-all"
+                                <div class="h-full bg-[#ff385c] rounded-full transition-all"
                                     style="width: {{ $percentage }}%"></div>
                             </div>
                         </div>
@@ -165,7 +165,7 @@
                             @if ($budgetStats->avg_min)
                                 <div class="text-center">
                                     <p class="text-sm text-gray-500 mb-1">Minimum</p>
-                                    <p class="text-2xl font-bold text-orange-500">
+                                    <p class="text-2xl font-bold text-[#ff385c]">
                                         {{ number_format($budgetStats->avg_min, 0, ',', ' ') }}</p>
                                     <p class="text-xs text-gray-500">FCFA</p>
                                 </div>
@@ -176,7 +176,7 @@
                             @if ($budgetStats->avg_max)
                                 <div class="text-center">
                                     <p class="text-sm text-gray-500 mb-1">Maximum</p>
-                                    <p class="text-2xl font-bold text-orange-500">
+                                    <p class="text-2xl font-bold text-[#ff385c]">
                                         {{ number_format($budgetStats->avg_max, 0, ',', ' ') }}</p>
                                     <p class="text-xs text-gray-500">FCFA</p>
                                 </div>
@@ -201,7 +201,7 @@
     </div>
 
     {{-- Conseils personnalisés --}}
-    <div class="mt-8 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-6 border border-orange-100">
+    <div class="mt-8 bg-gradient-to-br from-[#fff0f3] to-amber-50 rounded-xl p-6 border border-[#ffd1da]">
         <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <span class="text-xl">💡</span>
             Conseils personnalisés

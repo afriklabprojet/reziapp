@@ -16,7 +16,7 @@
         <div class="flex gap-2">
             <form action="{{ route('owner.guidebooks.toggle-publish', $guidebook) }}" method="POST">
                 @csrf
-                <button type="submit" class="inline-flex items-center gap-2 px-4 py-2.5 {{ $guidebook->is_published ? 'bg-orange-50 text-orange-700 hover:bg-orange-100' : 'bg-green-50 text-green-700 hover:bg-green-100' }} font-semibold rounded-xl transition-all text-sm">
+                <button type="submit" class="inline-flex items-center gap-2 px-4 py-2.5 {{ $guidebook->is_published ? 'bg-[#fff0f3] text-[#b5083a] hover:bg-[#ffd1da]' : 'bg-green-50 text-green-700 hover:bg-green-100' }} font-semibold rounded-xl transition-all text-sm">
                     {{ $guidebook->is_published ? 'Dépublier' : 'Publier' }}
                 </button>
             </form>

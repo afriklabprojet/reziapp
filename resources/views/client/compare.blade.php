@@ -40,7 +40,7 @@
                                                     </div>
                                                 @endif
                                             </div>
-                                            <h3 class="font-semibold text-gray-900 truncate group-hover:text-orange-500">
+                                            <h3 class="font-semibold text-gray-900 truncate group-hover:text-[#ff385c]">
                                                 {{ $residence->title }}</h3>
                                         </a>
                                     </div>
@@ -49,13 +49,13 @@
                             @for ($i = $residences->count(); $i < 4; $i++)
                                 <th class="py-4 px-4 text-center min-w-64">
                                     <a href="{{ route('residences.index') }}"
-                                        class="block border-2 border-dashed border-gray-200 hover:border-orange-300 rounded-lg p-8 h-full flex flex-col items-center justify-center transition-colors group">
-                                        <svg class="w-8 h-8 text-gray-300 group-hover:text-orange-400 mb-2 transition-colors" fill="none" stroke="currentColor"
+                                        class="border-2 border-dashed border-gray-200 hover:border-[#ffb3c1] rounded-lg p-8 h-full flex flex-col items-center justify-center transition-colors group">
+                                        <svg class="w-8 h-8 text-gray-300 group-hover:text-[#ff4d6d] mb-2 transition-colors" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                         </svg>
-                                        <span class="text-sm text-gray-400 group-hover:text-orange-500 transition-colors">Ajouter une résidence</span>
+                                        <span class="text-sm text-gray-400 group-hover:text-[#ff385c] transition-colors">Ajouter une résidence</span>
                                         <span class="text-xs text-gray-300 mt-1">Parcourir les annonces</span>
                                     </a>
                                 </th>
@@ -74,7 +74,7 @@
                             @foreach ($residences as $residence)
                                 <td class="py-4 px-4 text-center">
                                     <span
-                                        class="text-xl font-bold text-orange-500">{{ number_format($residence->price, 0, ',', ' ') }}</span>
+                                        class="text-xl font-bold text-[#ff385c]">{{ number_format($residence->price, 0, ',', ' ') }}</span>
                                     <span class="text-sm text-gray-500">FCFA</span>
                                 </td>
                             @endforeach
@@ -180,7 +180,7 @@
                                             <span class="text-gray-400 text-sm">Aucun</span>
                                         @endforelse
                                         @if ($residence->amenities->count() > 5)
-                                            <span class="px-2 py-1 bg-orange-100 text-orange-600 text-xs rounded">
+                                            <span class="px-2 py-1 bg-[#ffd1da] text-[#e00b41] text-xs rounded">
                                                 +{{ $residence->amenities->count() - 5 }}
                                             </span>
                                         @endif
@@ -258,7 +258,7 @@
                                 <td class="py-4 px-4 text-center">
                                     <div class="flex flex-col gap-2">
                                         <a href="{{ route('residences.show', $residence) }}"
-                                            class="block w-full px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg transition">
+                                            class="block w-full px-4 py-2 bg-[#ff385c] hover:bg-[#e00b41] text-white text-sm font-medium rounded-lg transition">
                                             Voir détails
                                         </a>
                                         @auth
@@ -287,7 +287,7 @@
                     @foreach ($allFavorites as $favorite)
                         @if (!$residences->contains('id', $favorite->residence_id))
                             <a href="{{ route('client.compare', ['residences' => array_merge($residences->pluck('id')->toArray(), [$favorite->residence_id])]) }}"
-                                class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-orange-100 text-gray-700 hover:text-orange-600 rounded-lg transition">
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-[#ffd1da] text-gray-700 hover:text-[#e00b41] rounded-lg transition">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -311,7 +311,7 @@
             <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune résidence à comparer</h3>
             <p class="text-gray-600 mb-6">Ajoutez des résidences à vos favoris pour pouvoir les comparer</p>
             <a href="{{ route('residences.index') }}"
-                class="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition">
+                class="inline-flex items-center px-4 py-2 bg-[#ff385c] hover:bg-[#e00b41] text-white font-medium rounded-lg transition">
                 Explorer les résidences
             </a>
         </div>

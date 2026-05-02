@@ -16,8 +16,8 @@
         @forelse($methods as $method)
         <div class="bg-white rounded-xl shadow-sm border p-6 flex items-center justify-between">
             <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-12 h-12 bg-[#ffd1da] rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-[#e00b41]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                     </svg>
                 </div>
@@ -32,7 +32,7 @@
                 @else
                 <form action="{{ route('payments.methods.default', $method) }}" method="POST">
                     @csrf
-                    <button type="submit" class="text-sm text-orange-600 hover:text-orange-700 font-medium">Définir par défaut</button>
+                    <button type="submit" class="text-sm text-[#e00b41] hover:text-[#b5083a] font-medium">Définir par défaut</button>
                 </form>
                 @endif
                 <form action="{{ route('payments.methods.delete', $method) }}" method="POST" onsubmit="return confirm('Supprimer cette méthode ?')">
@@ -79,7 +79,7 @@
                 <input type="text" name="label" id="label" class="input-field" placeholder="Mon numéro Orange">
             </div>
             <div class="flex items-center">
-                <input type="checkbox" name="is_default" id="is_default" value="1" class="rounded border-gray-300 text-orange-500 focus:ring-orange-500">
+                <input type="checkbox" name="is_default" id="is_default" value="1" class="rounded border-gray-300 text-[#ff385c] focus:ring-[#ff385c]">
                 <label for="is_default" class="ml-2 text-sm text-gray-700">Définir comme méthode par défaut</label>
             </div>
             <button type="submit" class="btn-primary">Ajouter la méthode</button>

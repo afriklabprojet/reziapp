@@ -1,30 +1,28 @@
 @props(['residence'])
 
-<div class="group bg-white rounded-2xl shadow-md overflow-hidden card-lift border border-gray-100 hover:border-orange-100"
+<div class="group bg-white rounded-[14px] overflow-hidden card-lift border border-[#dddddd] hover:border-[#c1c1c1] transition-all duration-200"
     x-data="{
         isFavorite: {{ auth()->check() && method_exists($residence, 'isFavoritedBy') && $residence->isFavoritedBy(auth()->user()) ? 'true' : 'false' }},
         loading: false
     }">
     <!-- Photo principale -->
-    <div class="relative aspect-4/3 sm:h-48 bg-sand-100 overflow-hidden">
+    <div class="relative aspect-[4/3] bg-[#f7f7f7] overflow-hidden">
         @if ($residence->photos->isNotEmpty())
             @php $photoPath = $residence->photos->where('is_primary', true)->first()?->path ?? $residence->photos->first()?->path; @endphp
             <img loading="lazy" src="{{ storage_url($photoPath) }}" alt="{{ $residence->name }}"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                class="w-full h-full object-cover object-center group-hover:scale-[1.05] transition-transform duration-500 ease-out">
         @else
-            <div class="w-full h-full flex items-center justify-center text-sand-400">
-                <svg aria-hidden="true" class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-full h-full flex flex-col items-center justify-center gap-2 bg-[#f7f7f7]">
+                <svg aria-hidden="true" class="w-12 h-12 text-[#dddddd]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                         d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
+                <span class="text-xs text-[#929292] font-medium">Aucune photo</span>
             </div>
         @endif
 
-        <!-- Gradient overlay -->
-        <div class="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
-
         @auth
-        <!-- Bouton favoris AJAX -->
+        <!-- Bouton favoris AJAX — cœur Airbnb style -->
         <button
             @click.prevent="
                 if (loading) return;
@@ -37,12 +35,12 @@
                 .then(data => { isFavorite = data.is_favorite; loading = false; })
                 .catch(() => loading = false);
             "
-            class="absolute top-3 right-3 w-9 h-9 flex items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-sm transition-transform active:scale-90"
+            class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full transition-transform active:scale-90"
             :class="{ 'animate-pulse': loading }"
             aria-label="{{ __('Favori') }}">
-            <svg aria-hidden="true" class="w-5 h-5 transition-colors"
-                :class="isFavorite ? 'text-rose-500 fill-rose-500' : 'text-gray-600'"
-                fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg aria-hidden="true" class="w-6 h-6 transition-colors drop-shadow"
+                :class="isFavorite ? 'text-[#ff385c] fill-[#ff385c]' : 'text-white fill-white/30'"
+                fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"
                     d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
@@ -51,14 +49,8 @@
 
         <!-- Badge type -->
         <div class="absolute top-3 left-3 flex flex-col gap-1.5 items-start">
-            <span class="px-2.5 py-1 bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-semibold rounded-full shadow-sm">
-                {{ ucfirst($residence->type) }}
-            </span>
             @if ($residence->isSponsored())
-                <span class="px-2.5 py-1 bg-terracotta-500 text-white text-xs font-semibold rounded-full flex items-center gap-1 shadow">
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
+                <span class="px-2.5 py-1 bg-white text-[#222222] text-[11px] font-semibold rounded-full" style="box-shadow: rgba(0,0,0,0.1) 0 1px 2px;">
                     Vedette
                 </span>
             @endif
@@ -66,9 +58,15 @@
 
         <!-- Prix en overlay bottom -->
         <div class="absolute bottom-3 left-3 right-3 flex items-end justify-between">
-            <span class="px-3 py-1.5 bg-white/95 backdrop-blur-sm text-gray-900 font-bold text-sm rounded-xl shadow">
-                {{ number_format($residence->price, 0, ',', ' ') }} FCFA<span class="font-normal text-xs text-gray-500">/{{ $residence->price_label }}</span>
+            <span class="px-3 py-1.5 bg-white/95 backdrop-blur-sm text-[#222222] font-semibold text-sm rounded-full" style="box-shadow: rgba(0,0,0,0.1) 0 1px 2px;">
+                {{ number_format($residence->price, 0, ',', ' ') }} <span class="text-[11px] font-medium text-[#6a6a6a]">FCFA/{{ $residence->price_label }}</span>
             </span>
+            @if($residence->rating_avg ?? $residence->average_rating ?? null)
+                <span class="flex items-center gap-1 px-2.5 py-1 bg-white/95 backdrop-blur-sm text-[#222222] text-xs font-semibold rounded-full" style="box-shadow: rgba(0,0,0,0.1) 0 1px 2px;">
+                    <svg class="w-3 h-3 fill-[#222222]" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    {{ number_format($residence->rating_avg ?? $residence->average_rating, 1) }}
+                </span>
+            @endif
         </div>
     </div>
 
@@ -76,11 +74,11 @@
     <div class="p-3 sm:p-4">
         <!-- Titre et localisation -->
         <div class="mb-3">
-            <h3 class="font-display text-base font-semibold text-gray-900 mb-1 line-clamp-1 group-hover:text-orange-600 transition-colors">
+            <h3 class="font-sans text-base font-semibold text-[#222222] mb-1 line-clamp-1">
                 {{ $residence->name }}
             </h3>
-            <p class="text-xs text-gray-500 flex items-center gap-1">
-                <svg aria-hidden="true" class="w-3.5 h-3.5 text-terracotta-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <p class="text-sm text-[#6a6a6a] flex items-center gap-1">
+                <svg aria-hidden="true" class="w-3.5 h-3.5 text-[#929292] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -88,7 +86,7 @@
                 </svg>
                 {{ $residence->city }}
                 @if (isset($residence->distance))
-                    <span class="text-orange-500 font-medium">· {{ number_format($residence->distance, 1) }} km</span>
+                    <span class="text-[#ff385c] font-medium">· {{ number_format($residence->distance, 1) }} km</span>
                 @endif
             </p>
         </div>
@@ -120,12 +118,12 @@
         @if ($residence->amenities->isNotEmpty())
             <div class="flex flex-wrap gap-1.5 mb-4">
                 @foreach ($residence->amenities->take(3) as $amenity)
-                    <span class="px-2 py-0.5 bg-sand-100 text-gray-600 text-xs rounded-full">
+                    <span class="px-2 py-0.5 bg-[#f7f7f7] text-gray-600 text-xs rounded-full">
                         {{ $amenity->icon }} {{ $amenity->name }}
                     </span>
                 @endforeach
                 @if ($residence->amenities->count() > 3)
-                    <span class="px-2 py-0.5 bg-sand-100 text-gray-500 text-xs rounded-full">
+                    <span class="px-2 py-0.5 bg-[#f7f7f7] text-gray-500 text-xs rounded-full">
                         +{{ $residence->amenities->count() - 3 }} autres
                     </span>
                 @endif
@@ -135,7 +133,7 @@
         <!-- Action -->
         <div class="flex gap-2">
             <a href="{{ route('residences.show', $residence) }}"
-                class="flex-1 text-center py-2.5 rounded-xl font-semibold text-sm bg-orange-500 hover:bg-orange-600 text-white transition-colors shadow-sm shadow-orange-200">
+                class="flex-1 text-center py-2.5 rounded-xl font-semibold text-sm bg-[#ff385c] hover:bg-[#e00b41] text-white transition-colors shadow-sm shadow-orange-200">
                 Voir les détails
             </a>
         </div>

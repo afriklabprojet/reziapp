@@ -57,7 +57,7 @@
                             <a href="{{ route('residences.index', ['commune' => $commune->commune]) }}"
                                 class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition">
                                 <span class="text-gray-700">{{ $commune->commune }}</span>
-                                <span class="px-2 py-1 bg-orange-100 text-orange-600 text-xs font-medium rounded-full">
+                                <span class="px-2 py-1 bg-[#ffd1da] text-[#e00b41] text-xs font-medium rounded-full">
                                     {{ $commune->count }}
                                 </span>
                             </a>
@@ -77,8 +77,8 @@
                                 <div class="flex items-center justify-between gap-4">
                                     <div class="flex items-center gap-4 flex-1 min-w-0">
                                         <div
-                                            class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
-                                            <svg class="w-6 h-6 text-orange-500" fill="none" stroke="currentColor"
+                                            class="w-12 h-12 bg-[#ffd1da] rounded-lg flex items-center justify-center shrink-0">
+                                            <svg class="w-6 h-6 text-[#ff385c]" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -109,7 +109,7 @@
                                     </div>
                                     <div class="flex items-center gap-2">
                                         <a href="{{ $search->search_url }}"
-                                            class="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg transition">
+                                            class="inline-flex items-center px-4 py-2 bg-[#ff385c] hover:bg-[#e00b41] text-white text-sm font-medium rounded-lg transition">
                                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -162,7 +162,7 @@
                     <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune recherche enregistrée</h3>
                     <p class="text-gray-600 mb-6">Vos recherches seront automatiquement sauvegardées ici</p>
                     <a href="{{ route('residences.index') }}"
-                        class="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition">
+                        class="inline-flex items-center px-4 py-2 bg-[#ff385c] hover:bg-[#e00b41] text-white font-medium rounded-lg transition">
                         Faire une recherche
                     </a>
                 </div>

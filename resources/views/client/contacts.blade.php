@@ -43,14 +43,14 @@
 
         <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 bg-[#ffd1da] rounded-lg flex items-center justify-center">
+                    <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
                 <div>
-                    <p class="text-2xl font-bold text-orange-500">{{ $contactStats['replied'] }}</p>
+                    <p class="text-2xl font-bold text-[#ff385c]">{{ $contactStats['replied'] }}</p>
                     <p class="text-xs text-gray-500">Répondues</p>
                 </div>
             </div>
@@ -75,7 +75,7 @@
     <div class="flex flex-wrap gap-2 mb-6">
         @if (!request('status'))
             <a href="{{ route('client.contacts') }}"
-                class="px-4 py-2 rounded-full text-sm font-medium transition bg-orange-500 text-white">
+                class="px-4 py-2 rounded-full text-sm font-medium transition bg-[#ff385c] text-white">
                 Toutes
             </a>
         @else
@@ -99,7 +99,7 @@
 
         @if (request('status') == 'replied')
             <a href="{{ route('client.contacts', ['status' => 'replied']) }}"
-                class="px-4 py-2 rounded-full text-sm font-medium transition bg-orange-500 text-white">
+                class="px-4 py-2 rounded-full text-sm font-medium transition bg-[#ff385c] text-white">
                 Répondues
             </a>
         @else
@@ -159,7 +159,7 @@
                                                 attente</span>
                                         @elseif($contact->status == 'replied')
                                             <span
-                                                class="px-2 py-1 bg-orange-100 text-orange-600 text-xs font-medium rounded-full">Répondue</span>
+                                                class="px-2 py-1 bg-[#ffd1da] text-[#e00b41] text-xs font-medium rounded-full">Répondue</span>
                                         @else
                                             <span
                                                 class="px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">Clôturée</span>
@@ -169,7 +169,7 @@
                                     </div>
 
                                     <a href="{{ route('residences.show', $contact->residence) }}" class="block">
-                                        <h3 class="font-semibold text-gray-900 hover:text-orange-500">
+                                        <h3 class="font-semibold text-gray-900 hover:text-[#ff385c]">
                                             {{ $contact->residence->title }}</h3>
                                         <p class="text-sm text-gray-500">{{ $contact->residence->commune }} •
                                             {{ number_format($contact->residence->price, 0, ',', ' ') }}
@@ -189,9 +189,9 @@
                                                 <img loading="lazy" src="{{ $contact->owner->getAvatarUrl() }}"
                                                     alt="{{ $contact->owner->name }}" class="w-full h-full object-cover">
                                             @else
-                                                <div class="w-full h-full flex items-center justify-center bg-orange-100">
+                                                <div class="w-full h-full flex items-center justify-center bg-[#ffd1da]">
                                                     <span
-                                                        class="text-sm font-medium text-orange-500">{{ substr($contact->owner->name, 0, 1) }}</span>
+                                                        class="text-sm font-medium text-[#ff385c]">{{ substr($contact->owner->name, 0, 1) }}</span>
                                                 </div>
                                             @endif
                                         </div>
@@ -206,8 +206,8 @@
 
                             {{-- Réponse du propriétaire --}}
                             @if ($contact->reply)
-                                <div class="mt-3 p-3 bg-orange-50 rounded-lg border-l-4 border-orange-500">
-                                    <p class="text-xs text-orange-500 font-medium mb-1">Réponse du propriétaire</p>
+                                <div class="mt-3 p-3 bg-[#fff0f3] rounded-lg border-l-4 border-[#ff385c]">
+                                    <p class="text-xs text-[#ff385c] font-medium mb-1">Réponse du propriétaire</p>
                                     <p class="text-sm text-gray-700">{{ $contact->reply }}</p>
                                     @if ($contact->replied_at)
                                         <p class="text-xs text-gray-500 mt-1">{{ $contact->replied_at->diffForHumans() }}
@@ -219,7 +219,7 @@
                             {{-- Actions --}}
                             <div class="mt-4 flex items-center gap-3">
                                 <a href="{{ route('residences.show', $contact->residence) }}"
-                                    class="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg transition">
+                                    class="inline-flex items-center px-4 py-2 bg-[#ff385c] hover:bg-[#e00b41] text-white text-sm font-medium rounded-lg transition">
                                     Voir la résidence
                                 </a>
                                 @if ($contact->status == 'replied')
@@ -256,7 +256,7 @@
             <p class="text-gray-600 mb-6">Contactez les propriétaires pour obtenir plus d'informations sur leurs résidences
             </p>
             <a href="{{ route('residences.index') }}"
-                class="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition">
+                class="inline-flex items-center px-4 py-2 bg-[#ff385c] hover:bg-[#e00b41] text-white font-medium rounded-lg transition">
                 Explorer les résidences
             </a>
         </div>

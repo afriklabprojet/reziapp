@@ -65,12 +65,12 @@
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Date de début *</label>
-                <input type="date" name="start_date" value="{{ old('start_date') }}" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" required>
+                <input type="date" name="start_date" value="{{ old('start_date') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" required>
                 @error('start_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Date de fin *</label>
-                <input type="date" name="end_date" value="{{ old('end_date') }}" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" required>
+                <input type="date" name="end_date" value="{{ old('end_date') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" required>
                 @error('end_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
         </div>
@@ -80,7 +80,7 @@
             <div class="space-y-2 mt-2">
                 @foreach($residences as $r)
                 <label class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors">
-                    <input type="checkbox" name="residence_ids[]" value="{{ $r->id }}" class="rounded border-gray-300 text-orange-500 focus:ring-orange-500" {{ in_array($r->id, old('residence_ids', [])) ? 'checked' : '' }}>
+                    <input type="checkbox" name="residence_ids[]" value="{{ $r->id }}" class="rounded border-gray-300 text-[#ff385c] focus:ring-[#ff385c]" {{ in_array($r->id, old('residence_ids', [])) ? 'checked' : '' }}>
                     <span class="text-sm text-gray-700">{{ $r->name }}</span>
                 </label>
                 @endforeach
@@ -90,7 +90,7 @@
 
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Raison (optionnel)</label>
-            <input type="text" name="reason" value="{{ old('reason') }}" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" placeholder="Ex: Voyage en famille">
+            <input type="text" name="reason" value="{{ old('reason') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" placeholder="Ex: Voyage en famille">
         </div>
 
         <button type="submit" class="w-full py-2.5 bg-amber-500 text-white font-semibold rounded-xl hover:bg-amber-600 transition-all text-sm">

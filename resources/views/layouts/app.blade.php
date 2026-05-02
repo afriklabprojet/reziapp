@@ -24,7 +24,7 @@
     @stack('meta')
 
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#F7931E">
+    <meta name="theme-color" content="#ff385c">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -35,13 +35,13 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/icons/favicon-16x16.png">
     <link rel="shortcut icon" href="/favicon.ico">
-    <meta name="msapplication-TileColor" content="#F7931E">
+    <meta name="msapplication-TileColor" content="#ff385c">
     <meta name="msapplication-config" content="/browserconfig.xml">
 
-    <!-- Fonts: DM Serif Display (titres) + Outfit (body) -->
+    <!-- Fonts: Plus Jakarta Sans (Airbnb Cereal / Circular fallback) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
 
     <!-- Additional Styles -->
     @stack('styles')
@@ -64,11 +64,11 @@
 <body class="font-sans antialiased">
     {{-- Skip to content (accessibilité) --}}
     <a href="#main-content"
-        class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-60 focus:bg-orange-500 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:outline-none">
+        class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-60 focus:bg-[#ff385c] focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:outline-none">
         Aller au contenu principal
     </a>
 
-    <div class="min-h-screen bg-gray-100">
+    <div class="min-h-screen bg-[#f7f7f7]/60 dark:bg-[#111111]">
         {{-- Header desktop classique --}}
         <div class="hidden md:block">
             @include('layouts.navigation')

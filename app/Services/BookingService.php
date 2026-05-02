@@ -509,6 +509,17 @@ class BookingService
             Log::warning('LoyaltyService::recordBooking failed', ['booking' => $booking->id, 'error' => $e->getMessage()]);
         }
 
+        // Auto-occupancy : si le check-in est aujourd'hui ou déjà passé, marquer la résidence occupée
+        try {
+            $checkIn = \Carbon\Carbon::parse($booking->check_in)->startOfDay();
+            $checkOut = \Carbon\Carbon::parse($booking->check_out)->startOfDay();
+            if ($checkIn->lte(now()->startOfDay()) && $checkOut->gt(now()->startOfDay())) {
+                $booking->residence()->update(['is_available' => false]);
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Auto-occupancy on confirm failed', ['booking' => $booking->id, 'error' => $e->getMessage()]);
+        }
+
         // Envoyer les confirmations
         // $booking->user->notify(new BookingConfirmation($booking));
         // $booking->residence->owner->notify(new BookingConfirmedForOwner($booking));
@@ -603,6 +614,29 @@ class BookingService
 
         // Débloquer les dates
         $this->unblockDatesForBooking($booking);
+
+        // Auto-occupancy : si le booking annulé couvrait aujourd'hui, vérifier si la résidence
+        // peut être remise disponible (aucun autre booking actif aujourd'hui)
+        try {
+            $today = now()->toDateString();
+            $checkIn = \Carbon\Carbon::parse($booking->check_in)->toDateString();
+            $checkOut = \Carbon\Carbon::parse($booking->check_out)->toDateString();
+
+            if ($checkIn <= $today && $checkOut > $today) {
+                $hasActiveBookingToday = \App\Models\Booking::where('residence_id', $booking->residence_id)
+                    ->where('status', 'confirmed')
+                    ->where('id', '!=', $booking->id)
+                    ->where('check_in', '<=', $today)
+                    ->where('check_out', '>', $today)
+                    ->exists();
+
+                if (!$hasActiveBookingToday) {
+                    $booking->residence()->update(['is_available' => true]);
+                }
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Auto-occupancy on cancel failed', ['booking' => $booking->id, 'error' => $e->getMessage()]);
+        }
 
         Log::info('Booking cancelled', [
             'booking_id' => $booking->id,

@@ -13,7 +13,7 @@
         @csrf
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Résidence *</label>
-            <select name="residence_id" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-orange-500 focus:border-orange-500">
+            <select name="residence_id" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]">
                 <option value="">Sélectionner...</option>
                 @foreach($residences as $r) <option value="{{ $r->id }}" {{ old('residence_id') == $r->id ? 'selected' : '' }}>{{ $r->name }}</option> @endforeach
             </select>
@@ -21,22 +21,22 @@
         </div>
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Locataire (ID) *</label>
-            <input type="number" name="tenant_id" value="{{ old('tenant_id') }}" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-orange-500 focus:border-orange-500" placeholder="ID du locataire">
+            <input type="number" name="tenant_id" value="{{ old('tenant_id') }}" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]" placeholder="ID du locataire">
             @error('tenant_id') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
         </div>
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Montant (FCFA) *</label>
-                <input type="number" name="amount" value="{{ old('amount') }}" required min="0" class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-orange-500 focus:border-orange-500">
+                <input type="number" name="amount" value="{{ old('amount') }}" required min="0" class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]">
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Date d'échéance *</label>
-                <input type="date" name="due_date" value="{{ old('due_date') }}" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-orange-500 focus:border-orange-500">
+                <input type="date" name="due_date" value="{{ old('due_date') }}" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]">
             </div>
         </div>
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Canal de notification *</label>
-            <select name="channel" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-orange-500 focus:border-orange-500">
+            <select name="channel" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]">
                 <option value="email" {{ old('channel') === 'email' ? 'selected' : '' }}>Email</option>
                 <option value="sms" {{ old('channel') === 'sms' ? 'selected' : '' }}>SMS</option>
                 <option value="whatsapp" {{ old('channel') === 'whatsapp' ? 'selected' : '' }}>WhatsApp</option>
@@ -44,7 +44,7 @@
         </div>
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Notes</label>
-            <textarea name="notes" rows="2" class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-orange-500 focus:border-orange-500">{{ old('notes') }}</textarea>
+            <textarea name="notes" rows="2" class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]">{{ old('notes') }}</textarea>
         </div>
         <div class="flex justify-end gap-3 pt-3 border-t border-gray-100">
             <a href="{{ route('owner.rent-reminders.index') }}" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors">Annuler</a>

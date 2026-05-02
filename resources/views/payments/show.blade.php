@@ -106,7 +106,7 @@
                     </div>
                 </div>
                 @endif
-                <a href="{{ route('bookings.show', $payment->booking) }}" class="text-sm text-orange-600 hover:text-orange-700 font-medium">
+                <a href="{{ route('bookings.show', $payment->booking) }}" class="text-sm text-[#e00b41] hover:text-[#b5083a] font-medium">
                     Voir la réservation →
                 </a>
             </div>

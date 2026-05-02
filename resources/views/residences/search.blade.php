@@ -384,13 +384,13 @@
                             <!-- Réservation instantanée -->
                             <label
                                 class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border transition-colors"
-                                :class="filters.instant_book ? 'bg-orange-50 border-orange-400' :
+                                :class="filters.instant_book ? 'bg-[#fff0f3] border-[#ff4d6d]' :
                                     'border-gray-200 hover:border-gray-300'">
                                 <input type="checkbox" x-model="filters.instant_book" @change="updateSearch()"
                                     class="sr-only">
                                 <span class="text-lg">⚡</span>
                                 <span class="text-sm font-medium"
-                                    :class="filters.instant_book ? 'text-orange-700' : 'text-gray-700'">Réservation
+                                    :class="filters.instant_book ? 'text-[#b5083a]' : 'text-gray-700'">Réservation
                                     instantanée</span>
                             </label>
 

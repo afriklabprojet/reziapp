@@ -27,7 +27,7 @@
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Aucune alerte de prix</h3>
                     <p class="text-gray-500 mb-4">Activez des alertes sur vos résidences préférées pour être notifié des baisses de prix.</p>
                     <a href="{{ route('residences.index') }}" 
-                       class="inline-flex items-center gap-2 bg-orange-600 text-white px-4 py-2 rounded-xl hover:bg-orange-700 transition-colors">
+                       class="inline-flex items-center gap-2 bg-[#e00b41] text-white px-4 py-2 rounded-xl hover:bg-[#b5083a] transition-colors">
                         Parcourir les résidences
                     </a>
                 </div>
@@ -53,7 +53,7 @@
 
                         <!-- Info -->
                         <div class="flex-1 min-w-0">
-                            <a href="{{ route('residences.show', $residence) }}" class="font-semibold text-gray-900 hover:text-orange-600">
+                            <a href="{{ route('residences.show', $residence) }}" class="font-semibold text-gray-900 hover:text-[#e00b41]">
                                 {{ $residence->title }}
                             </a>
                             <p class="text-sm text-gray-500">{{ $residence->quartier->name ?? '' }}</p>

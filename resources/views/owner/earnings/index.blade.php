@@ -77,12 +77,12 @@
                     <div>
                         <label class="block text-[11px] text-gray-400 font-medium mb-1">Début</label>
                         <input type="date" name="start_date" value="{{ $startDate->format('Y-m-d') }}"
-                            class="rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50">
+                            class="rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-[#ffb3c1] focus:ring focus:ring-orange-100 bg-gray-50/50">
                     </div>
                     <div>
                         <label class="block text-[11px] text-gray-400 font-medium mb-1">Fin</label>
                         <input type="date" name="end_date" value="{{ $endDate->format('Y-m-d') }}"
-                            class="rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50">
+                            class="rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-[#ffb3c1] focus:ring focus:ring-orange-100 bg-gray-50/50">
                     </div>
                     <button type="submit"
                         class="px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-colors">
@@ -144,7 +144,7 @@
                                         $percent = $maxNet > 0 ? ($item['net'] / $maxNet) * 100 : 0;
                                     @endphp
                                     <div class="w-full bg-gray-100 rounded-full h-2">
-                                        <div class="bg-orange-500 h-2 rounded-full transition-all duration-500"
+                                        <div class="bg-[#ff385c] h-2 rounded-full transition-all duration-500"
                                             style="width: {{ $percent }}%"></div>
                                     </div>
                                     <p class="text-[11px] text-gray-400 mt-1">{{ $item['count'] }}
@@ -369,7 +369,7 @@
                             <div>
                                 <label class="block text-xs text-gray-500 font-medium mb-1">Mot de passe actuel</label>
                                 <input type="password" name="current_password" required autocomplete="current-password"
-                                    class="w-full rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50"
+                                    class="w-full rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-[#ffb3c1] focus:ring focus:ring-orange-100 bg-gray-50/50"
                                     placeholder="Votre mot de passe de connexion">
                                 @error('current_password')
                                     <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
@@ -379,7 +379,7 @@
                                 <div>
                                     <label class="block text-xs text-gray-500 font-medium mb-1">PIN (4 chiffres)</label>
                                     <input type="password" name="withdrawal_pin" required maxlength="4" pattern="\d{4}" inputmode="numeric" autocomplete="off"
-                                        class="w-full rounded-xl border border-gray-200 text-lg px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono"
+                                        class="w-full rounded-xl border border-gray-200 text-lg px-3 py-2.5 focus:border-[#ffb3c1] focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono"
                                         placeholder="••••">
                                     @error('withdrawal_pin')
                                         <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
@@ -388,7 +388,7 @@
                                 <div>
                                     <label class="block text-xs text-gray-500 font-medium mb-1">Confirmer le PIN</label>
                                     <input type="password" name="withdrawal_pin_confirmation" required maxlength="4" pattern="\d{4}" inputmode="numeric" autocomplete="off"
-                                        class="w-full rounded-xl border border-gray-200 text-lg px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono"
+                                        class="w-full rounded-xl border border-gray-200 text-lg px-3 py-2.5 focus:border-[#ffb3c1] focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono"
                                         placeholder="••••">
                                 </div>
                             </div>
@@ -427,7 +427,7 @@
                             <div>
                                 <label class="block text-xs text-gray-500 font-medium mb-1">Mot de passe actuel</label>
                                 <input type="password" name="current_password" required autocomplete="current-password"
-                                    class="w-full rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50"
+                                    class="w-full rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-[#ffb3c1] focus:ring focus:ring-orange-100 bg-gray-50/50"
                                     placeholder="Votre mot de passe de connexion">
                                 @error('current_password')
                                     <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
@@ -437,7 +437,7 @@
                                 <div>
                                     <label class="block text-xs text-gray-500 font-medium mb-1">Nouveau PIN (4 chiffres)</label>
                                     <input type="password" name="withdrawal_pin" required maxlength="4" pattern="\d{4}" inputmode="numeric" autocomplete="off"
-                                        class="w-full rounded-xl border border-gray-200 text-lg px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono"
+                                        class="w-full rounded-xl border border-gray-200 text-lg px-3 py-2.5 focus:border-[#ffb3c1] focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono"
                                         placeholder="••••">
                                     @error('withdrawal_pin')
                                         <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
@@ -446,7 +446,7 @@
                                 <div>
                                     <label class="block text-xs text-gray-500 font-medium mb-1">Confirmer</label>
                                     <input type="password" name="withdrawal_pin_confirmation" required maxlength="4" pattern="\d{4}" inputmode="numeric" autocomplete="off"
-                                        class="w-full rounded-xl border border-gray-200 text-lg px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono"
+                                        class="w-full rounded-xl border border-gray-200 text-lg px-3 py-2.5 focus:border-[#ffb3c1] focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono"
                                         placeholder="••••">
                                 </div>
                             </div>
@@ -506,7 +506,7 @@
                                         <input type="number" name="amount" x-model="amount" required
                                             min="{{ $minWithdrawal }}" max="{{ (int) $balance->available_balance }}"
                                             step="500" value="{{ old('amount') }}"
-                                            class="w-full rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50"
+                                            class="w-full rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-[#ffb3c1] focus:ring focus:ring-orange-100 bg-gray-50/50"
                                             placeholder="Ex: {{ number_format($minWithdrawal, 0, ',', ' ') }}">
                                         <p class="text-[11px] text-gray-400 mt-1">
                                             Disponible : {{ $balance->formatted_available }} &bull;
@@ -521,7 +521,7 @@
                                     <div>
                                         <label class="block text-xs text-gray-500 font-medium mb-1">Méthode de retrait</label>
                                         <select name="payout_method" x-model="payoutMethod" required
-                                            class="w-full rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50">
+                                            class="w-full rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-[#ffb3c1] focus:ring focus:ring-orange-100 bg-gray-50/50">
                                             <option value="wave">Wave</option>
                                             <option value="orange_money">Orange Money</option>
                                             <option value="mtn_money">MTN Money</option>
@@ -537,7 +537,7 @@
                                     <div x-show="!isBankTransfer" x-transition>
                                         <label class="block text-xs text-gray-500 font-medium mb-1">Numéro de téléphone</label>
                                         <input type="tel" name="phone_number" value="{{ old('phone_number', auth()->user()->phone) }}"
-                                            class="w-full rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50"
+                                            class="w-full rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-[#ffb3c1] focus:ring focus:ring-orange-100 bg-gray-50/50"
                                             placeholder="+225 07 XX XX XX XX">
                                         @error('phone_number')
                                             <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
@@ -549,7 +549,7 @@
                                         <div>
                                             <label class="block text-xs text-gray-500 font-medium mb-1">Nom de la banque</label>
                                             <input type="text" name="bank_name" value="{{ old('bank_name') }}"
-                                                class="w-full rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50"
+                                                class="w-full rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-[#ffb3c1] focus:ring focus:ring-orange-100 bg-gray-50/50"
                                                 placeholder="Ex: SGBCI, BICICI, Ecobank...">
                                             @error('bank_name')
                                                 <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
@@ -558,7 +558,7 @@
                                         <div>
                                             <label class="block text-xs text-gray-500 font-medium mb-1">Numéro de compte / IBAN</label>
                                             <input type="text" name="bank_account" value="{{ old('bank_account') }}"
-                                                class="w-full rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50"
+                                                class="w-full rounded-xl border border-gray-200 text-sm px-3 py-2.5 focus:border-[#ffb3c1] focus:ring focus:ring-orange-100 bg-gray-50/50"
                                                 placeholder="CI XX XXXX XXXX XXXX XXXX XXXX">
                                             @error('bank_account')
                                                 <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
@@ -570,7 +570,7 @@
                                     <div>
                                         <label class="block text-xs text-gray-500 font-medium mb-1">PIN de retrait</label>
                                         <input type="password" name="withdrawal_pin" required maxlength="4" pattern="\d{4}" inputmode="numeric" autocomplete="off"
-                                            class="w-full sm:w-48 rounded-xl border border-gray-200 text-lg px-3 py-2.5 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono"
+                                            class="w-full sm:w-48 rounded-xl border border-gray-200 text-lg px-3 py-2.5 focus:border-[#ffb3c1] focus:ring focus:ring-orange-100 bg-gray-50/50 tracking-[0.5em] text-center font-mono"
                                             placeholder="••••">
                                         @error('withdrawal_pin')
                                             <p class="text-xs text-red-500 mt-1">{{ $message }}</p>

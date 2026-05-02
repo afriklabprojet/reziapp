@@ -105,7 +105,7 @@
         @dragover.prevent="isDragging = true"
         @dragleave.prevent="isDragging = false"
         @drop.prevent="handleDrop($event)"
-        :class="isDragging ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-gray-300'"
+        :class="isDragging ? 'border-[#ff385c] bg-[#fff0f3]' : 'border-gray-200 hover:border-gray-300'"
         class="relative border-2 border-dashed rounded-xl p-8 text-center transition-colors cursor-pointer"
         @click="$refs.fileInput.click()"
     >
@@ -120,14 +120,14 @@
         >
         
         <div class="flex flex-col items-center">
-            <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-4" :class="isDragging ? 'bg-orange-100' : ''">
-                <svg class="w-6 h-6" :class="isDragging ? 'text-orange-500' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-4" :class="isDragging ? 'bg-[#ffd1da]' : ''">
+                <svg class="w-6 h-6" :class="isDragging ? 'text-[#ff385c]' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
             </div>
             
             <p class="text-sm text-gray-600 mb-1">
-                <span class="font-medium text-orange-600">Cliquez pour télécharger</span>
+                <span class="font-medium text-[#e00b41]">Cliquez pour télécharger</span>
                 ou glissez-déposez
             </p>
             <p class="text-xs text-gray-500">

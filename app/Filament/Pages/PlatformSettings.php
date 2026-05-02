@@ -29,6 +29,7 @@ class PlatformSettings extends Page implements HasForms
     public ?array $commissionData = [];
     public ?array $paymentData = [];
     public ?array $bookingData = [];
+    public ?array $pricingData = [];
     public ?array $generalData = [];
 
     public function mount(): void
@@ -58,6 +59,10 @@ class PlatformSettings extends Page implements HasForms
             'advance_booking_days' => $settings->get('advance_booking_days')?->value ?? 180,
         ];
 
+        $this->pricingData = [
+            'state_tax' => $settings->get('state_tax')?->value ?? config('rezi.pricing.state_tax', 1000),
+        ];
+
         $this->generalData = [
             'platform_name' => $settings->get('platform_name')?->value ?? 'REZI',
             'platform_email' => $settings->get('platform_email')?->value ?? '',
@@ -72,6 +77,7 @@ class PlatformSettings extends Page implements HasForms
             'commissionForm',
             'paymentForm',
             'bookingForm',
+            'pricingForm',
             'generalForm',
         ];
     }
@@ -246,6 +252,40 @@ class PlatformSettings extends Page implements HasForms
 
         Notification::make()
             ->title('Paramètres de réservation enregistrés')
+            ->success()
+            ->send();
+    }
+
+    public function pricingForm(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Forms\Components\Section::make('Tarification')
+                    ->description('Taxes et frais applicables aux réservations')
+                    ->icon('heroicon-o-banknotes')
+                    ->schema([
+                        Forms\Components\TextInput::make('state_tax')
+                            ->label('Taxe d\'État')
+                            ->numeric()
+                            ->minValue(0)
+                            ->suffix('FCFA')
+                            ->required()
+                            ->helperText('Montant fixe de la taxe d\'État facturée au locataire par réservation'),
+                    ])->columns(1),
+            ])
+            ->statePath('pricingData');
+    }
+
+    public function savePricing(): void
+    {
+        $data = $this->pricingForm->getState();
+
+        foreach ($data as $key => $value) {
+            PlatformSetting::setValue($key, $value);
+        }
+
+        Notification::make()
+            ->title('Paramètres de tarification enregistrés')
             ->success()
             ->send();
     }

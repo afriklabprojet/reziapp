@@ -1,7 +1,11 @@
-<nav x-data="{ open: false }" class="bg-white/95 backdrop-blur-md border-b border-gray-100 sticky top-0 z-30">
+<nav x-data="{ open: false, scrolled: false }"
+    x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 8 })"
+    :class="scrolled ? 'border-transparent' : 'border-[#dddddd]'"
+    :style="scrolled ? 'box-shadow: rgba(0,0,0,0.02) 0 0 0 1px, rgba(0,0,0,0.04) 0 2px 6px, rgba(0,0,0,0.08) 0 4px 8px;' : ''"
+    class="bg-white border-b sticky top-0 z-30 transition-all duration-200">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
+        <div class="flex justify-between h-20">
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
@@ -36,20 +40,39 @@
                 <x-theme-toggle />
 
                 @auth
-                    <x-dropdown align="right" width="48">
+                    {{-- CTA "Publier" uniquement pour les propriétaires (accès rapide création annonce) --}}
+                    @if (Auth::user()->isOwner())
+                        <a href="{{ route('owner.residences.create') }}"
+                            class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 bg-[#ff385c] hover:bg-[#e00b41] text-white text-sm font-medium rounded-lg transition-colors duration-200">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Publier
+                        </a>
+                    @endif
+
+                    <x-dropdown align="right" width="52">
                         <x-slot name="trigger">
                             <button
-                                class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-50 focus:outline-none transition-colors duration-200">
-                                <div>{{ Auth::user()->name }}</div>
-
-                                <div>
-                                    <svg aria-hidden="true" class="fill-current h-4 w-4 text-gray-400"
-                                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                            clip-rule="evenodd" />
-                                    </svg>
+                                class="inline-flex items-center gap-2.5 px-2.5 py-1.5 text-sm font-medium rounded-full border border-[#dddddd] hover:shadow-md focus:outline-none transition-all duration-200 group">
+                                {{-- Avatar circulaire --}}
+                                @php $avatarUrl = Auth::user()->getAvatarUrl(); $hasPhoto = Auth::user()->avatar || Auth::user()->profile_photo; @endphp
+                                <div class="w-8 h-8 rounded-full shrink-0 overflow-hidden bg-[#ff385c] flex items-center justify-center">
+                                    @if ($hasPhoto)
+                                        <img src="{{ $avatarUrl }}" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
+                                    @else
+                                        <span class="text-white text-xs font-bold leading-none">
+                                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}{{ strtoupper(substr(strstr(Auth::user()->name, ' ') ?: ' ', 1, 1)) }}
+                                        </span>
+                                    @endif
                                 </div>
+                                <span class="hidden lg:block text-[#222222] max-w-[120px] truncate">{{ Auth::user()->name }}</span>
+                                <svg aria-hidden="true" class="fill-current h-3.5 w-3.5 text-gray-400 group-hover:text-gray-600 transition-colors"
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                        clip-rule="evenodd" />
+                                </svg>
                             </button>
                         </x-slot>
 
@@ -158,9 +181,9 @@
                 @else
                     <div class="flex items-center space-x-3">
                         <a href="{{ route('login') }}"
-                            class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200">Connexion</a>
+                            class="text-sm font-medium text-[#222222] hover:underline transition-colors duration-200">Connexion</a>
                         <a href="{{ route('register') }}"
-                            class="inline-flex items-center px-4 py-2 bg-orange-500 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-wide hover:bg-orange-600 active:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:ring-offset-2 transition-all duration-200">
+                            class="inline-flex items-center px-5 py-2.5 bg-[#222222] hover:bg-[#1a1a1a] rounded-lg text-sm font-medium text-white transition-colors duration-200">
                             Inscription
                         </a>
                     </div>
@@ -170,7 +193,7 @@
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open"
-                    class="inline-flex items-center justify-center p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 active:bg-gray-200 transition-colors duration-200">
+                    class="inline-flex items-center justify-center p-2 rounded-full text-[#222222] hover:bg-[#f7f7f7] focus:outline-none transition-colors duration-200">
                     <svg aria-hidden="true" class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{ 'hidden': open, 'inline-flex': !open }" class="inline-flex"
                             stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

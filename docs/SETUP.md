@@ -254,7 +254,7 @@ Le modèle `Residence` inclut:
 
 ### Exemple d'utilisation:
 ```php
-// Trouver toutes les résidences dans un rayon de 500m
+// Trouver toutes les résidences dans un rayon de 2km
 $residences = Residence::approved()
     ->available()
     ->withinRadius($latitude, $longitude, 500)

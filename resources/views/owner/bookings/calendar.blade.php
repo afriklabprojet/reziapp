@@ -8,15 +8,15 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <a href="{{ route('owner.bookings.index') }}"
-                    class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-orange-500 transition mb-2">
+                    class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#ff385c] transition mb-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                     Retour aux réservations
                 </a>
                 <h1 class="text-xl font-extrabold text-gray-900 flex items-center gap-2">
-                    <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-8 h-8 bg-[#ffd1da] rounded-lg flex items-center justify-center">
+                        <svg class="w-4 h-4 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
@@ -37,7 +37,7 @@
                 </a>
                 <button type="button"
                     onclick="document.getElementById('blockDatesModal').classList.remove('hidden'); document.getElementById('blockDatesModal').style.display = 'flex';"
-                    class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-orange-500 rounded-xl hover:bg-orange-600 transition">
+                    class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-[#ff385c] rounded-xl hover:bg-[#e00b41] transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
@@ -87,7 +87,7 @@
                                     .available && !day.isEmpty,
                                 'bg-red-50 border border-red-200/50': day.hasBooking && !day.isEmpty,
                                 'bg-gray-100 border border-gray-200/50': day.isBlocked && !day.isEmpty,
-                                'ring-2 ring-orange-500 ring-offset-1': day.isSelected,
+                                'ring-2 ring-[#ff385c] ring-offset-1': day.isSelected,
                             }"
                                 @click="day.available && selectDate(day)"
                                 class="aspect-square rounded-xl p-2 relative transition-all">
@@ -124,7 +124,7 @@
                             <span class="text-xs text-gray-600">Bloqué</span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="w-4 h-4 rounded-lg ring-2 ring-orange-500 ring-offset-1"></span>
+                            <span class="w-4 h-4 rounded-lg ring-2 ring-[#ff385c] ring-offset-1"></span>
                             <span class="text-xs text-gray-600">Sélectionné</span>
                         </div>
                     </div>
@@ -151,7 +151,7 @@
                             <span class="text-sm text-gray-500">Occupation</span>
                             <div class="flex items-center gap-2">
                                 <div class="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                                    <div class="h-full bg-orange-500 rounded-full"
+                                    <div class="h-full bg-[#ff385c] rounded-full"
                                         style="width: {{ min(round(($bookings->sum('nights') / 30) * 100), 100) }}%"></div>
                                 </div>
                                 <span
@@ -176,7 +176,7 @@
                                     <img loading="lazy" src="{{ $booking->user->avatar }}"
                                         alt="{{ $booking->user->name }}" class="w-8 h-8 rounded-full object-cover">
                                 @else
-                                    @php $colors = ['from-orange-400 to-pink-500', 'from-blue-400 to-purple-500', 'from-green-400 to-cyan-500', 'from-amber-400 to-red-500']; @endphp
+                                    @php $colors = ['from-[#ff4d6d] to-pink-500', 'from-blue-400 to-purple-500', 'from-green-400 to-cyan-500', 'from-amber-400 to-red-500']; @endphp
                                     <div
                                         class="w-8 h-8 rounded-full bg-linear-to-br {{ $colors[$booking->user->id % 4] }} flex items-center justify-center">
                                         <span
@@ -200,7 +200,7 @@
 
                             <div class="flex items-center justify-between mt-2">
                                 <span
-                                    class="text-sm font-bold text-orange-600">{{ number_format($booking->total_amount, 0, ',', ' ') }}
+                                    class="text-sm font-bold text-[#e00b41]">{{ number_format($booking->total_amount, 0, ',', ' ') }}
                                     F</span>
                                 @if ($booking->status === 'pending')
                                     <span
@@ -259,19 +259,19 @@
                         <label class="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Date de
                             début</label>
                         <input type="date" name="start_date" required min="{{ now()->format('Y-m-d') }}"
-                            class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition">
+                            class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#ff385c]/20 focus:border-[#ff385c] transition">
                     </div>
                     <div>
                         <label class="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Date de
                             fin</label>
                         <input type="date" name="end_date" required
-                            class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition">
+                            class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#ff385c]/20 focus:border-[#ff385c] transition">
                     </div>
                     <div>
                         <label
                             class="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Raison</label>
                         <select name="reason"
-                            class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition">
+                            class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#ff385c]/20 focus:border-[#ff385c] transition">
                             <option value="personal">Usage personnel</option>
                             <option value="maintenance">Maintenance</option>
                             <option value="renovation">Rénovation</option>
@@ -283,7 +283,7 @@
                         <label class="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Notes
                             (optionnel)</label>
                         <textarea name="notes" rows="2"
-                            class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition resize-none"
+                            class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#ff385c]/20 focus:border-[#ff385c] transition resize-none"
                             placeholder="Ajoutez une note..."></textarea>
                     </div>
                 </div>
@@ -295,7 +295,7 @@
                         Annuler
                     </button>
                     <button type="submit"
-                        class="flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-orange-500 rounded-xl hover:bg-orange-600 transition">
+                        class="flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-[#ff385c] rounded-xl hover:bg-[#e00b41] transition">
                         Bloquer
                     </button>
                 </div>

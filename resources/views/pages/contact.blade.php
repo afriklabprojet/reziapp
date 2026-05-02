@@ -15,7 +15,7 @@
         {{-- HERO --}}
         <section class="relative overflow-hidden bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
             <div class="absolute inset-0 opacity-10" aria-hidden="true">
-                <div class="absolute -top-12 -right-12 w-48 h-48 sm:-top-24 sm:-right-24 sm:w-96 sm:h-96 rounded-full bg-orange-500 blur-3xl"></div>
+                <div class="absolute -top-12 -right-12 w-48 h-48 sm:-top-24 sm:-right-24 sm:w-96 sm:h-96 rounded-full bg-[#ff385c] blur-3xl"></div>
                 <div class="absolute bottom-0 left-0 w-40 h-40 sm:w-72 sm:h-72 rounded-full bg-blue-400 blur-3xl"></div>
             </div>
 
@@ -24,12 +24,12 @@
                     <nav class="text-sm text-gray-400 mb-6" aria-label="Breadcrumb">
                         <a href="{{ route('home') }}" class="hover:text-white transition">Accueil</a>
                         <span class="mx-2">›</span>
-                        <span class="text-orange-400">Nous contacter</span>
+                        <span class="text-[#ff4d6d]">Nous contacter</span>
                     </nav>
                     <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
                         {{ $hero['title'] ?? '' }}
                         <span
-                            class="text-transparent bg-clip-text bg-linear-to-r from-orange-400 to-orange-500">{{ $hero['highlight'] ?? '' }}</span>
+                            class="text-transparent bg-clip-text bg-linear-to-r from-[#ff4d6d] to-[#ff385c]">{{ $hero['highlight'] ?? '' }}</span>
                     </h1>
                     <p class="mt-6 text-lg sm:text-xl text-gray-300 leading-relaxed max-w-2xl">
                         {{ $hero['description'] ?? '' }}
@@ -46,15 +46,15 @@
                     <a href="mailto:{{ $cards['email'] ?? config('rezi.company.email') }}"
                         class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group block">
                         <div
-                            class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-orange-500 transition-colors">
-                            <svg class="w-6 h-6 text-orange-500 group-hover:text-white transition-colors" fill="none"
+                            class="w-12 h-12 bg-[#ffd1da] rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#ff385c] transition-colors">
+                            <svg class="w-6 h-6 text-[#ff385c] group-hover:text-white transition-colors" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
                         </div>
                         <h3 class="font-bold text-gray-900 mb-1">Email</h3>
-                        <p class="text-orange-500 text-sm font-medium group-hover:underline">
+                        <p class="text-[#ff385c] text-sm font-medium group-hover:underline">
                             {{ $cards['email'] ?? config('rezi.company.email') }}</p>
                         <p class="text-xs text-gray-400 mt-2">{{ $cards['email_subtitle'] ?? 'Réponse sous 24h' }}</p>
                     </a>
@@ -125,7 +125,7 @@
                 {{-- Intro colonne --}}
                 <div class="lg:col-span-2">
                     <div
-                        class="inline-flex items-center gap-2 bg-orange-100 text-orange-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
+                        class="inline-flex items-center gap-2 bg-[#ffd1da] text-[#b5083a] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd"
                                 d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
@@ -140,7 +140,7 @@
                         {{ $faq['subtitle'] ?? 'Retrouvez les réponses aux questions les plus courantes.' }}
                     </p>
                     <a href="{{ route('pages.faq') }}"
-                        class="inline-flex items-center gap-2 text-orange-500 font-semibold hover:text-orange-600 transition group">
+                        class="inline-flex items-center gap-2 text-[#ff385c] font-semibold hover:text-[#e00b41] transition group">
                         Voir toute la FAQ
                         <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
@@ -154,14 +154,14 @@
                 <div class="lg:col-span-3 space-y-3" x-data="{ open: 1 }">
                     @foreach ($faq['items'] ?? [] as $i => $faqItem)
                         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-shadow"
-                            :class="open === {{ $i + 1 }} ? 'shadow-md border-orange-200' : ''">
+                            :class="open === {{ $i + 1 }} ? 'shadow-md border-[#ffb3c1]' : ''">
                             <button class="w-full flex items-center justify-between p-5 sm:p-6 text-left gap-4"
                                 @click="open = open === {{ $i + 1 }} ? null : {{ $i + 1 }}"
                                 :aria-expanded="open === {{ $i + 1 }}">
                                 <span class="font-semibold text-gray-900">{{ $faqItem['question'] }}</span>
                                 <span
                                     class="shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
-                                    :class="open === {{ $i + 1 }} ? 'bg-orange-500 text-white' :
+                                    :class="open === {{ $i + 1 }} ? 'bg-[#ff385c] text-white' :
                                         'bg-gray-100 text-gray-400'">
                                     <svg class="w-4 h-4 transition-transform duration-200"
                                         :class="open === {{ $i + 1 }} ? 'rotate-180' : ''" fill="none"
@@ -215,15 +215,15 @@
                         </div>
 
                         @if (!empty($hours['note']))
-                            <div class="mt-6 p-4 bg-orange-50 rounded-xl border border-orange-100">
+                            <div class="mt-6 p-4 bg-[#fff0f3] rounded-xl border border-[#ffd1da]">
                                 <div class="flex gap-3">
-                                    <svg class="w-5 h-5 text-orange-500 shrink-0 mt-0.5" fill="currentColor"
+                                    <svg class="w-5 h-5 text-[#ff385c] shrink-0 mt-0.5" fill="currentColor"
                                         viewBox="0 0 20 20">
                                         <path fill-rule="evenodd"
                                             d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
                                             clip-rule="evenodd" />
                                     </svg>
-                                    <p class="text-sm text-orange-700">{{ $hours['note'] }}</p>
+                                    <p class="text-sm text-[#b5083a]">{{ $hours['note'] }}</p>
                                 </div>
                             </div>
                         @endif
@@ -337,7 +337,7 @@
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div
                     class="relative overflow-hidden bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-8 sm:p-14 text-center text-white">
-                    <div class="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl"
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-[#ff385c]/10 rounded-full blur-3xl"
                         aria-hidden="true"></div>
                     <div class="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl"
                         aria-hidden="true"></div>
@@ -347,7 +347,7 @@
                         <p class="text-gray-300 mb-8 max-w-xl mx-auto text-lg">{{ $cta['description'] ?? '' }}</p>
                         <div class="flex flex-col sm:flex-row gap-4 justify-center">
                             <a href="{{ route('pages.guide-proprietaire') }}"
-                                class="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-semibold transition-all shadow-lg shadow-orange-500/25 active:scale-95">
+                                class="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-[#ff385c] hover:bg-[#e00b41] text-white rounded-xl font-semibold transition-all shadow-lg shadow-none active:scale-95">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />

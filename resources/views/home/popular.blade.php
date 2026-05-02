@@ -1,5 +1,5 @@
                 {{-- 5. SECTION LES PLUS POPULAIRES --}}
-                <section class="py-10 sm:py-16 bg-sand-100">
+                <section class="py-10 sm:py-16 bg-[#f7f7f7]">
                     <div class="max-w-7xl mx-auto px-4 sm:px-6">
                         {{-- Section Header --}}
                         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10 reveal-hidden"
@@ -16,11 +16,11 @@
                                     </svg>
                                     Tendances
                                 </div>
-                                <h2 class="font-display text-2xl sm:text-3xl font-bold text-gray-900">Les plus populaires 🔥</h2>
+                                <h2 class="font-sans text-2xl sm:text-3xl font-bold text-gray-900">Les plus populaires 🔥</h2>
                                 <p class="mt-2 text-sm text-gray-500">Les résidences les plus consultées cette semaine</p>
                             </div>
                             <a href="{{ route('residences.index') }}?sort=popular"
-                                class="inline-flex items-center gap-2 text-sm font-semibold text-orange-500 hover:text-orange-600 transition group">
+                                class="inline-flex items-center gap-2 text-sm font-semibold text-[#ff385c] hover:text-[#e00b41] transition group">
                                 Voir le classement complet
                                 <svg aria-hidden="true" class="w-4 h-4 group-hover:translate-x-1 transition-transform"
                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,7 +98,7 @@
                                             </div>
                                         </div>
                                         <div class="mt-3 flex items-center justify-between">
-                                            <span class="text-xs text-orange-500 font-semibold">Voir les résidences →</span>
+                                            <span class="text-xs text-[#ff385c] font-semibold">Voir les résidences →</span>
                                         </div>
                                     </div>
                                 </a>
@@ -108,55 +108,6 @@
                                 </div>
                             @endforelse
 
-                        </div>
-
-                        {{-- Stats Bar — Compteurs animés --}}
-                        <div class="mt-8 sm:mt-10 bg-white rounded-2xl p-4 sm:p-6 border border-gray-100 shadow-sm"
-                            x-data="{
-                                r: 0, o: 0, c: 0, ct: 0, animated: false,
-                                startCounting() {
-                                    if (this.animated) return;
-                                    this.animated = true;
-                                    const items = [
-                                        ['r', {{ $stats['residences'] ?? 0 }}],
-                                        ['o', {{ $stats['owners'] ?? 0 }}],
-                                        ['c', {{ $stats['communes'] ?? 0 }}],
-                                        ['ct', {{ $stats['contacts'] ?? 0 }}]
-                                    ];
-                                    items.forEach(([k, t]) => {
-                                        let cur = 0;
-                                        const inc = Math.max(1, Math.ceil(t / 55));
-                                        const id = setInterval(() => {
-                                            cur = Math.min(cur + inc, t);
-                                            this[k] = cur;
-                                            if (cur >= t) clearInterval(id);
-                                        }, 25);
-                                    });
-                                }
-                            }"
-                            x-intersect.once="startCounting()">
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-center">
-                                <div>
-                                    <div class="text-2xl sm:text-3xl font-bold text-gray-900" x-text="r.toLocaleString('fr-FR')">
-                                        {{ number_format($stats['residences'] ?? 0) }}</div>
-                                    <div class="text-xs text-gray-500 mt-1">Résidences disponibles</div>
-                                </div>
-                                <div>
-                                    <div class="text-2xl sm:text-3xl font-bold text-orange-500" x-text="o.toLocaleString('fr-FR')">{{ $stats['owners'] ?? 0 }}
-                                    </div>
-                                    <div class="text-xs text-gray-500 mt-1">Propriétaires actifs</div>
-                                </div>
-                                <div>
-                                    <div class="text-2xl sm:text-3xl font-bold text-gray-900" x-text="c.toLocaleString('fr-FR')">{{ $stats['communes'] ?? 0 }}
-                                    </div>
-                                    <div class="text-xs text-gray-500 mt-1">Zones couvertes</div>
-                                </div>
-                                <div>
-                                    <div class="text-2xl sm:text-3xl font-bold text-amber-500" x-text="ct.toLocaleString('fr-FR')">
-                                        {{ number_format($stats['contacts'] ?? 0) }}</div>
-                                    <div class="text-xs text-gray-500 mt-1">Demandes de contact</div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </section>

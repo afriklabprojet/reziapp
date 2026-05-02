@@ -168,11 +168,17 @@ class JekoPaymentService
         }
 
         $reference = 'REZI-BK-'.$booking->id.'-'.Str::random(8);
-        // Pour XOF, amountCents = montant en XOF directement (pas × 100)
-        // Jeko docs: amountCents:10000 → amount:10000 XOF (mapping 1:1), minimum 100 XOF
-        $amountCents = (int) round($booking->total_amount);
+        // Pour XOF, Jeko attend amountCents = montant × 100 (1 FCFA = 100 "centimes" Jeko)
+        // Comportement observé : amountCents:201000 → Jeko affiche 2 010 FCFA (÷100)
+        // Donc pour afficher N FCFA, envoyer N × 100 en amountCents.
+        // Paiement fractionné : si payment_split=true, ne prélever que le dépôt (50%)
+        $chargeAmount = ($booking->payment_split && $booking->deposit_amount > 0)
+            ? $booking->deposit_amount
+            : $booking->total_amount;
+        $amountCents = (int) round($chargeAmount * 100);
 
-        if ($amountCents < 100) {
+        // Minimum 100 FCFA → amountCents = 10 000
+        if ($chargeAmount < 100) {
             return [
                 'success' => false,
                 'error' => 'Le montant minimum est de 100 FCFA.',

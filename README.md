@@ -2,7 +2,7 @@
 
 
 
-🏠 **Trouvez une résidence meublée à moins de 500 m, instantanément.**<p align="center">
+🏠 **Trouvez une résidence meublée à moins de 2 km, instantanément.**<p align="center">
 
 <a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
 
@@ -22,7 +22,7 @@ REZI est une plateforme SaaS permettant de trouver rapidement des résidences me
 
 - ✅ Géolocalisation automatiqueLaravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- ✅ Recherche par rayon (100m, 300m, 500m)
+- ✅ Recherche par rayon (2km, 5km, 10km)
 
 - ✅ Carte interactive avec pins géolocalisés- [Simple, fast routing engine](https://laravel.com/docs/routing).
 

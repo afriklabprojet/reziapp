@@ -16,8 +16,8 @@
                 Retour aux détails
             </a>
             <div class="flex items-center gap-3">
-                <div class="p-2.5 bg-orange-100 rounded-xl">
-                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-2.5 bg-[#ffd1da] rounded-xl">
+                    <svg class="w-6 h-6 text-[#e00b41]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
@@ -77,7 +77,7 @@
                                     <div class="relative flex-1">
                                         <input type="text" name="code" id="code" x-model="code" required
                                             maxlength="50"
-                                            class="w-full border-gray-200 rounded-xl focus:ring-orange-500 focus:border-orange-500 uppercase tracking-wider font-mono text-lg pl-4 pr-10 py-3 bg-gray-50 focus:bg-white transition">
+                                            class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] uppercase tracking-wider font-mono text-lg pl-4 pr-10 py-3 bg-gray-50 focus:bg-white transition">
                                         <div x-show="code.length > 0" x-transition
                                             class="absolute right-3 top-1/2 -translate-y-1/2">
                                             <button type="button" @click="code = ''"
@@ -111,7 +111,7 @@
                                 </label>
                                 <textarea name="description" id="description" x-model="description" rows="2" maxlength="500"
                                     placeholder="Ex: Code pour la campagne d'été 2025..."
-                                    class="w-full border-gray-200 rounded-xl focus:ring-orange-500 focus:border-orange-500 py-3 bg-gray-50 focus:bg-white transition resize-none">{{ old('description', $coupon->description) }}</textarea>
+                                    class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] py-3 bg-gray-50 focus:bg-white transition resize-none">{{ old('description', $coupon->description) }}</textarea>
                                 <div class="flex justify-between mt-1">
                                     <p class="text-xs text-gray-400">Visible uniquement par vous</p>
                                     <p class="text-xs text-gray-400" x-text="description.length + '/500'"></p>
@@ -137,19 +137,19 @@
                                     <label
                                         class="relative flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all"
                                         :class="discountType === 'percentage' ?
-                                            'border-orange-500 bg-orange-50 ring-1 ring-orange-500/20' :
+                                            'border-[#ff385c] bg-[#fff0f3] ring-1 ring-[#ff385c]/20' :
                                             'border-gray-200 bg-white hover:border-gray-300'">
                                         <input type="radio" name="discount_type" value="percentage"
                                             x-model="discountType" class="sr-only">
                                         <div class="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-colors"
-                                            :class="discountType === 'percentage' ? 'bg-orange-100' : 'bg-gray-100'">%
+                                            :class="discountType === 'percentage' ? 'bg-[#ffd1da]' : 'bg-gray-100'">%
                                         </div>
                                         <div>
                                             <p class="font-semibold text-sm text-gray-900">Pourcentage</p>
                                             <p class="text-xs text-gray-500">Réduction en %</p>
                                         </div>
                                         <div x-show="discountType === 'percentage'"
-                                            class="absolute top-2 right-2 text-orange-500">
+                                            class="absolute top-2 right-2 text-[#ff385c]">
                                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd"
                                                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -160,18 +160,18 @@
                                     <label
                                         class="relative flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all"
                                         :class="discountType === 'fixed' ?
-                                            'border-orange-500 bg-orange-50 ring-1 ring-orange-500/20' :
+                                            'border-[#ff385c] bg-[#fff0f3] ring-1 ring-[#ff385c]/20' :
                                             'border-gray-200 bg-white hover:border-gray-300'">
                                         <input type="radio" name="discount_type" value="fixed" x-model="discountType"
                                             class="sr-only">
                                         <div class="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-colors"
-                                            :class="discountType === 'fixed' ? 'bg-orange-100' : 'bg-gray-100'">F</div>
+                                            :class="discountType === 'fixed' ? 'bg-[#ffd1da]' : 'bg-gray-100'">F</div>
                                         <div>
                                             <p class="font-semibold text-sm text-gray-900">Montant fixe</p>
                                             <p class="text-xs text-gray-500">Réduction en FCFA</p>
                                         </div>
                                         <div x-show="discountType === 'fixed'"
-                                            class="absolute top-2 right-2 text-orange-500">
+                                            class="absolute top-2 right-2 text-[#ff385c]">
                                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd"
                                                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -191,7 +191,7 @@
                                         x-model="discountValue" required min="1"
                                         :max="discountType === 'percentage' ? 90 : 999999" step="1"
                                         :placeholder="discountType === 'percentage' ? 'Ex: 15' : 'Ex: 5000'"
-                                        class="w-full border-gray-200 rounded-xl focus:ring-orange-500 focus:border-orange-500 py-3 bg-gray-50 focus:bg-white transition pl-4 pr-16 text-lg font-semibold">
+                                        class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] py-3 bg-gray-50 focus:bg-white transition pl-4 pr-16 text-lg font-semibold">
                                     <div
                                         class="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-400">
                                         <span x-text="discountType === 'percentage' ? '%' : 'FCFA'"></span>
@@ -219,7 +219,7 @@
                                 <div class="relative">
                                     <input type="number" name="max_discount" id="max_discount" x-model="maxDiscount"
                                         min="0" placeholder="Pas de limite"
-                                        class="w-full border-gray-200 rounded-xl focus:ring-orange-500 focus:border-orange-500 py-3 bg-gray-50 focus:bg-white transition pl-4 pr-16">
+                                        class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] py-3 bg-gray-50 focus:bg-white transition pl-4 pr-16">
                                     <div
                                         class="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-400">
                                         FCFA</div>
@@ -246,7 +246,7 @@
                                 <div class="relative">
                                     <input type="number" name="min_amount" id="min_amount" x-model="minAmount"
                                         min="0" placeholder="Aucun minimum"
-                                        class="w-full border-gray-200 rounded-xl focus:ring-orange-500 focus:border-orange-500 py-3 bg-gray-50 focus:bg-white transition pl-4 pr-16">
+                                        class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] py-3 bg-gray-50 focus:bg-white transition pl-4 pr-16">
                                     <div
                                         class="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-400">
                                         FCFA</div>
@@ -259,14 +259,14 @@
                                         class="block text-sm font-medium text-gray-700 mb-1.5">Utilisations totales</label>
                                     <input type="number" name="max_uses" id="max_uses" x-model="maxUses"
                                         min="1" placeholder="♾️ Illimité"
-                                        class="w-full border-gray-200 rounded-xl focus:ring-orange-500 focus:border-orange-500 py-3 bg-gray-50 focus:bg-white transition">
+                                        class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] py-3 bg-gray-50 focus:bg-white transition">
                                 </div>
                                 <div>
                                     <label for="max_uses_per_user"
                                         class="block text-sm font-medium text-gray-700 mb-1.5">Par client</label>
                                     <input type="number" name="max_uses_per_user" id="max_uses_per_user"
                                         x-model="maxUsesPerUser" min="1" placeholder="1 par défaut"
-                                        class="w-full border-gray-200 rounded-xl focus:ring-orange-500 focus:border-orange-500 py-3 bg-gray-50 focus:bg-white transition">
+                                        class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] py-3 bg-gray-50 focus:bg-white transition">
                                 </div>
                             </div>
 
@@ -301,14 +301,14 @@
                                     <label for="starts_at"
                                         class="block text-sm font-medium text-gray-700 mb-1.5">Début</label>
                                     <input type="date" name="starts_at" id="starts_at" x-model="startsAt"
-                                        class="w-full border-gray-200 rounded-xl focus:ring-orange-500 focus:border-orange-500 py-3 bg-gray-50 focus:bg-white transition">
+                                        class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] py-3 bg-gray-50 focus:bg-white transition">
                                     <p class="mt-1 text-xs text-gray-400">Vide = immédiat</p>
                                 </div>
                                 <div>
                                     <label for="expires_at"
                                         class="block text-sm font-medium text-gray-700 mb-1.5">Expiration</label>
                                     <input type="date" name="expires_at" id="expires_at" x-model="expiresAt"
-                                        class="w-full border-gray-200 rounded-xl focus:ring-orange-500 focus:border-orange-500 py-3 bg-gray-50 focus:bg-white transition">
+                                        class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] py-3 bg-gray-50 focus:bg-white transition">
                                     <p class="mt-1 text-xs text-gray-400">Vide = jamais</p>
                                 </div>
                             </div>
@@ -400,7 +400,7 @@
 
                             <div class="p-5">
                                 <div class="relative rounded-2xl p-5 text-white overflow-hidden"
-                                    :class="isActive ? 'bg-linear-to-br from-orange-500 to-orange-600' :
+                                    :class="isActive ? 'bg-linear-to-br from-[#ff385c] to-[#e00b41]' :
                                         'bg-linear-to-br from-gray-300 to-gray-400'">
                                     <div class="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full">
                                     </div>
@@ -476,7 +476,7 @@
                                 </div>
                                 <div class="flex items-center justify-between py-2 border-b border-gray-50">
                                     <span class="text-sm text-gray-500">Réduction</span>
-                                    <span class="text-sm font-semibold text-orange-600"
+                                    <span class="text-sm font-semibold text-[#e00b41]"
                                         x-text="previewDiscountLabel || '—'"></span>
                                 </div>
                                 <div class="flex items-center justify-between py-2 border-b border-gray-50">

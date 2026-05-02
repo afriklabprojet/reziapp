@@ -140,7 +140,7 @@
                             </span>
                         </div>
                         <div class="absolute bottom-2 left-2">
-                            <span class="px-2 py-1 bg-orange-500 text-white text-xs font-semibold rounded">
+                            <span class="px-2 py-1 bg-[#ff385c] text-white text-xs font-semibold rounded">
                                 <span x-text="formatPrice(selectedResidence.price)"></span> FCFA
                             </span>
                         </div>
@@ -166,7 +166,7 @@
                         </p>
                         <a :href="'/residences/' + selectedResidence.id"
                             class="mt-3 block w-full text-center py-2 rounded-lg text-sm font-medium transition-colors"
-                            :class="selectedResidence.is_available !== false ? 'bg-orange-500 text-white hover:bg-orange-600' :
+                            :class="selectedResidence.is_available !== false ? 'bg-[#ff385c] text-white hover:bg-[#e00b41]' :
                                 'bg-gray-200 text-gray-600 hover:bg-gray-300'">
                             <span
                                 x-text="selectedResidence.is_available !== false ? 'Voir les détails' : 'Voir la fiche'"></span>

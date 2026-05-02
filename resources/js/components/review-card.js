@@ -25,9 +25,9 @@ export function toggleHelpful(reviewId) {
 
                 if (data.has_voted) {
                     btn.classList.remove('text-gray-500');
-                    btn.classList.add('text-orange-500');
+                    btn.classList.add('text-[#ff385c]');
                 } else {
-                    btn.classList.remove('text-orange-500');
+                    btn.classList.remove('text-[#ff385c]');
                     btn.classList.add('text-gray-500');
                 }
             }

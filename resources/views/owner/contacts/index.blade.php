@@ -67,8 +67,8 @@
                         </div>
                     </div>
                     <div class="bg-gray-50 rounded-xl p-3 flex items-center gap-3">
-                        <div class="w-9 h-9 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
-                            <svg class="w-4.5 h-4.5 text-orange-600" fill="none" stroke="currentColor" stroke-width="2"
+                        <div class="w-9 h-9 bg-[#ffd1da] rounded-lg flex items-center justify-center shrink-0">
+                            <svg class="w-4.5 h-4.5 text-[#e00b41]" fill="none" stroke="currentColor" stroke-width="2"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
@@ -101,10 +101,10 @@
                             </svg>
                             <input type="text" name="search" value="{{ request('search') }}"
                                 placeholder="Rechercher un nom, résidence, message..."
-                                class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors">
+                                class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#ff385c]/20 focus:border-[#ff385c] transition-colors">
                         </div>
                         <button type="submit"
-                            class="px-4 py-2.5 bg-orange-500 text-white rounded-xl text-sm font-semibold hover:bg-orange-600 transition-colors shrink-0">
+                            class="px-4 py-2.5 bg-[#ff385c] text-white rounded-xl text-sm font-semibold hover:bg-[#e00b41] transition-colors shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
@@ -142,7 +142,7 @@
                         @php
                             $isPending = $contact->status === 'pending';
                             $avatarColors = [
-                                'bg-linear-to-br from-orange-400 to-orange-500',
+                                'bg-linear-to-br from-[#ff4d6d] to-[#ff385c]',
                                 'bg-linear-to-br from-blue-400 to-blue-500',
                                 'bg-linear-to-br from-purple-400 to-purple-500',
                                 'bg-linear-to-br from-green-400 to-green-500',
@@ -151,7 +151,7 @@
                             ];
                             $avatarColor = $avatarColors[($contact->user?->id ?? 0) % count($avatarColors)];
                         @endphp
-                        <div class="p-4 sm:p-5 hover:bg-gray-50/50 transition-colors {{ $isPending ? 'bg-orange-50/20' : '' }}"
+                        <div class="p-4 sm:p-5 hover:bg-gray-50/50 transition-colors {{ $isPending ? 'bg-[#fff0f3]/20' : '' }}"
                             x-data="{ showMessage: false }">
                             <div class="flex items-start gap-3 sm:gap-4">
                                 {{-- Avatar --}}
@@ -190,7 +190,7 @@
                                             <p class="text-xs text-gray-500 mt-0.5 truncate">
                                                 Pour :
                                                 <a href="{{ route('owner.residences.show', $contact->residence) }}"
-                                                    class="text-orange-600 hover:text-orange-700 font-medium">{{ $contact->residence->name ?? 'Résidence' }}</a>
+                                                    class="text-[#e00b41] hover:text-[#b5083a] font-medium">{{ $contact->residence->name ?? 'Résidence' }}</a>
                                                 @if ($contact->residence?->commune)
                                                     <span class="text-gray-400">·
                                                         {{ $contact->residence->commune }}</span>
@@ -287,7 +287,7 @@
                                                     @csrf
                                                     @method('PATCH')
                                                     <button type="submit"
-                                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-700 text-[11px] font-semibold rounded-lg hover:bg-orange-100 transition-colors"
+                                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#fff0f3] text-[#b5083a] text-[11px] font-semibold rounded-lg hover:bg-[#ffd1da] transition-colors"
                                                         title="Marquer comme répondu">
                                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
                                                             stroke-width="2" viewBox="0 0 24 24">
@@ -337,8 +337,8 @@
                 {{-- Empty state --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 sm:p-16 text-center">
                     <div
-                        class="w-20 h-20 bg-linear-to-br from-orange-100 to-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                        <svg class="w-10 h-10 text-orange-400" fill="none" stroke="currentColor" stroke-width="1.5"
+                        class="w-20 h-20 bg-linear-to-br from-[#ffd1da] to-[#fff0f3] rounded-2xl flex items-center justify-center mx-auto mb-5">
+                        <svg class="w-10 h-10 text-[#ff4d6d]" fill="none" stroke="currentColor" stroke-width="1.5"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />

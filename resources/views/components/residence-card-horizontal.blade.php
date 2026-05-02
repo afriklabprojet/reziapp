@@ -40,7 +40,7 @@
                     </span>
                 @endif
                 @if ($residence->is_featured ?? false)
-                    <span class="px-2 py-1 bg-orange-500 text-white text-xs font-semibold rounded-lg">En vedette</span>
+                    <span class="px-2 py-1 bg-[#ff385c] text-white text-xs font-semibold rounded-lg">En vedette</span>
                 @endif
                 @if ($residence->is_new ?? false)
                     <span class="px-2 py-1 bg-emerald-500 text-white text-xs font-semibold rounded-lg">Nouveau</span>
@@ -87,7 +87,7 @@
                             <span>{{ $residence->quartier }}</span>
                         @endif
                     </div>
-                    <h3 class="text-lg font-semibold text-gray-900 group-hover:text-orange-600 transition-colors">
+                    <h3 class="text-lg font-semibold text-gray-900 group-hover:text-[#e00b41] transition-colors">
                         <a href="{{ route('residences.show', $residence) }}">{{ $residence->title }}</a>
                     </h3>
                 </div>
@@ -164,7 +164,7 @@
                         </span>
                     @endforeach
                     @if ($residence->amenities->count() > 4)
-                        <span class="text-xs text-orange-600 px-2 py-1">
+                        <span class="text-xs text-[#e00b41] px-2 py-1">
                             +{{ $residence->amenities->count() - 4 }} autres
                         </span>
                     @endif
@@ -179,7 +179,7 @@
                     <span class="text-gray-600"> FCFA/{{ $residence->price_label }}</span>
                 </div>
                 <a href="{{ route('residences.show', $residence) }}"
-                    class="px-5 py-2.5 bg-orange-500 text-white font-medium rounded-xl hover:bg-orange-600 transition-colors">
+                    class="px-5 py-2.5 bg-[#ff385c] text-white font-medium rounded-xl hover:bg-[#e00b41] transition-colors">
                     Voir les détails
                 </a>
             </div>

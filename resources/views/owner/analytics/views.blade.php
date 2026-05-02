@@ -7,7 +7,7 @@
         {{-- En-tête --}}
         <div>
             <a href="{{ route('owner.analytics.index') }}"
-                class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-orange-500 transition mb-4">
+                class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#ff385c] transition mb-4">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
@@ -115,8 +115,8 @@
                 {{-- Taux de conversion --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
                     <div class="flex items-center justify-between mb-3">
-                        <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
-                            <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-10 h-10 bg-[#ffd1da] rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                             </svg>
@@ -177,7 +177,7 @@
                                     <div class="flex items-center justify-between mb-1.5">
                                         <div class="flex items-center gap-2">
                                             <div
-                                                class="w-2 h-2 rounded-full {{ ['bg-purple-500', 'bg-blue-500', 'bg-green-500', 'bg-orange-500', 'bg-pink-500'][$loop->index % 5] }}">
+                                                class="w-2 h-2 rounded-full {{ ['bg-purple-500', 'bg-blue-500', 'bg-green-500', 'bg-[#ff385c]', 'bg-pink-500'][$loop->index % 5] }}">
                                             </div>
                                             <span
                                                 class="text-sm font-medium text-gray-700">{{ Str::limit($item['name'] ?? 'N/A', 30) }}</span>
@@ -186,7 +186,7 @@
                                             class="text-sm font-bold text-gray-900">{{ number_format($item['views'] ?? 0, 0, ',', ' ') }}</span>
                                     </div>
                                     <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                                        <div class="h-full {{ ['bg-purple-500', 'bg-blue-500', 'bg-green-500', 'bg-orange-500', 'bg-pink-500'][$loop->index % 5] }} rounded-full transition-all duration-700"
+                                        <div class="h-full {{ ['bg-purple-500', 'bg-blue-500', 'bg-green-500', 'bg-[#ff385c]', 'bg-pink-500'][$loop->index % 5] }} rounded-full transition-all duration-700"
                                             style="width: {{ (($item['views'] ?? 0) / $maxViews) * 100 }}%"></div>
                                     </div>
                                 </div>

@@ -32,7 +32,7 @@
         {{-- ====== Header ====== --}}
         <div class="mb-8">
             <a href="{{ route('owner.marketing.promotions.index') }}"
-                class="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-orange-600 transition-colors mb-5 group">
+                class="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-[#e00b41] transition-colors mb-5 group">
                 <svg class="w-4 h-4 transition-transform group-hover:-translate-x-0.5" fill="none" stroke="currentColor"
                     stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
@@ -42,7 +42,7 @@
             <div class="flex items-start justify-between gap-4">
                 <div class="flex items-center gap-4">
                     <div
-                        class="w-12 h-12 rounded-2xl bg-linear-to-br from-orange-500 to-red-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/20">
+                        class="w-12 h-12 rounded-2xl bg-linear-to-br from-[#ff385c] to-red-500 text-white flex items-center justify-center shadow-lg shadow-none">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Z" />
@@ -126,8 +126,8 @@
 
             <div class="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center">
-                        <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" stroke-width="2"
+                    <div class="w-9 h-9 rounded-xl bg-[#fff0f3] flex items-center justify-center">
+                        <svg class="w-4 h-4 text-[#e00b41]" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -199,8 +199,8 @@
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                         <div class="px-6 py-4 border-b border-gray-50 bg-gray-50/50">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor"
+                                <div class="w-8 h-8 rounded-lg bg-[#ffd1da] flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-[#e00b41]" fill="none" stroke="currentColor"
                                         stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
@@ -215,7 +215,7 @@
                         <div class="p-6">
                             <div class="flex items-center gap-4 bg-gray-50 rounded-xl p-4 border border-gray-100">
                                 <div
-                                    class="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
+                                    class="w-12 h-12 rounded-xl bg-[#ffd1da] text-[#e00b41] flex items-center justify-center shrink-0">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -269,7 +269,7 @@
                                 <input type="text" name="title" id="title" x-model="title"
                                     value="{{ old('title', $promotion->title) }}" required
                                     placeholder="Ex: Promo Noël, Offre Week-end, Flash -30%…"
-                                    class="w-full text-base border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 py-3 {{ $errors->has('title') ? 'border-red-400 bg-red-50' : '' }}">
+                                    class="w-full text-base border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-[#ff385c]/20 focus:border-[#ff385c] py-3 {{ $errors->has('title') ? 'border-red-400 bg-red-50' : '' }}">
                                 @error('title')
                                     <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -286,21 +286,21 @@
                                     <button type="button" @click="discountType = 'percentage'"
                                         class="relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all text-center"
                                         :class="discountType === 'percentage' ?
-                                            'border-orange-500 bg-orange-50 shadow-sm shadow-orange-500/10' :
+                                            'border-[#ff385c] bg-[#fff0f3] shadow-sm shadow-none/10' :
                                             'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'">
                                         <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold transition-colors"
-                                            :class="discountType === 'percentage' ? 'bg-orange-500 text-white' :
+                                            :class="discountType === 'percentage' ? 'bg-[#ff385c] text-white' :
                                                 'bg-gray-100 text-gray-500'">
                                             %
                                         </div>
                                         <div>
                                             <p class="text-sm font-semibold"
-                                                :class="discountType === 'percentage' ? 'text-orange-700' : 'text-gray-700'">
+                                                :class="discountType === 'percentage' ? 'text-[#b5083a]' : 'text-gray-700'">
                                                 Pourcentage</p>
                                             <p class="text-xs text-gray-400 mt-0.5">Ex: -20%</p>
                                         </div>
                                         <div x-show="discountType === 'percentage'"
-                                            class="absolute top-2 right-2 w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center">
+                                            class="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#ff385c] text-white flex items-center justify-center">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -313,21 +313,21 @@
                                     <button type="button" @click="discountType = 'fixed'"
                                         class="relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all text-center"
                                         :class="discountType === 'fixed' ?
-                                            'border-orange-500 bg-orange-50 shadow-sm shadow-orange-500/10' :
+                                            'border-[#ff385c] bg-[#fff0f3] shadow-sm shadow-none/10' :
                                             'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'">
                                         <div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold transition-colors"
-                                            :class="discountType === 'fixed' ? 'bg-orange-500 text-white' :
+                                            :class="discountType === 'fixed' ? 'bg-[#ff385c] text-white' :
                                                 'bg-gray-100 text-gray-500'">
                                             F
                                         </div>
                                         <div>
                                             <p class="text-sm font-semibold"
-                                                :class="discountType === 'fixed' ? 'text-orange-700' : 'text-gray-700'">
+                                                :class="discountType === 'fixed' ? 'text-[#b5083a]' : 'text-gray-700'">
                                                 Montant fixe</p>
                                             <p class="text-xs text-gray-400 mt-0.5">Ex: -5 000 FCFA</p>
                                         </div>
                                         <div x-show="discountType === 'fixed'"
-                                            class="absolute top-2 right-2 w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center">
+                                            class="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#ff385c] text-white flex items-center justify-center">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -340,10 +340,10 @@
                                     <button type="button" @click="discountType = 'free_nights'"
                                         class="relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all text-center"
                                         :class="discountType === 'free_nights' ?
-                                            'border-orange-500 bg-orange-50 shadow-sm shadow-orange-500/10' :
+                                            'border-[#ff385c] bg-[#fff0f3] shadow-sm shadow-none/10' :
                                             'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'">
                                         <div class="w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
-                                            :class="discountType === 'free_nights' ? 'bg-orange-500 text-white' :
+                                            :class="discountType === 'free_nights' ? 'bg-[#ff385c] text-white' :
                                                 'bg-gray-100 text-gray-500'">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
                                                 viewBox="0 0 24 24">
@@ -353,13 +353,13 @@
                                         </div>
                                         <div>
                                             <p class="text-sm font-semibold"
-                                                :class="discountType === 'free_nights' ? 'text-orange-700' :
+                                                :class="discountType === 'free_nights' ? 'text-[#b5083a]' :
                                                     'text-gray-700'">
                                                 Nuits offertes</p>
                                             <p class="text-xs text-gray-400 mt-0.5">Ex: 1 nuit gratuite</p>
                                         </div>
                                         <div x-show="discountType === 'free_nights'"
-                                            class="absolute top-2 right-2 w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center">
+                                            class="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#ff385c] text-white flex items-center justify-center">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -380,7 +380,7 @@
                                         x-model="discountValue"
                                         value="{{ old('discount_value', $promotion->discount_value) }}" required
                                         min="1" step="1"
-                                        class="w-full text-base border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 py-3 pr-20 {{ $errors->has('discount_value') ? 'border-red-400 bg-red-50' : '' }}"
+                                        class="w-full text-base border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-[#ff385c]/20 focus:border-[#ff385c] py-3 pr-20 {{ $errors->has('discount_value') ? 'border-red-400 bg-red-50' : '' }}"
                                         :placeholder="discountType === 'percentage' ? 'Ex: 20' : (
                                             discountType ===
                                             'fixed' ?
@@ -411,7 +411,7 @@
                                 </label>
                                 <textarea name="description" id="description" rows="3" x-model="description"
                                     placeholder="Décrivez les conditions de votre offre…"
-                                    class="w-full text-base border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 resize-none py-3">{{ old('description', $promotion->description) }}</textarea>
+                                    class="w-full text-base border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-[#ff385c]/20 focus:border-[#ff385c] resize-none py-3">{{ old('description', $promotion->description) }}</textarea>
                                 <p class="mt-1.5 text-xs text-gray-400">Visible par les clients sur la page de la
                                     résidence</p>
                             </div>
@@ -447,7 +447,7 @@
                                         <input type="date" name="starts_at" id="starts_at" x-model="startsAt"
                                             value="{{ old('starts_at', $promotion->starts_at?->format('Y-m-d')) }}"
                                             required
-                                            class="w-full text-base border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 py-3 {{ $errors->has('starts_at') ? 'border-red-400 bg-red-50' : '' }}">
+                                            class="w-full text-base border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-[#ff385c]/20 focus:border-[#ff385c] py-3 {{ $errors->has('starts_at') ? 'border-red-400 bg-red-50' : '' }}">
                                         @error('starts_at')
                                             <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
                                         @enderror
@@ -457,7 +457,7 @@
                                             de fin</label>
                                         <input type="date" name="ends_at" id="ends_at" x-model="endsAt"
                                             value="{{ old('ends_at', $promotion->ends_at?->format('Y-m-d')) }}" required
-                                            class="w-full text-base border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 py-3 {{ $errors->has('ends_at') ? 'border-red-400 bg-red-50' : '' }}">
+                                            class="w-full text-base border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-[#ff385c]/20 focus:border-[#ff385c] py-3 {{ $errors->has('ends_at') ? 'border-red-400 bg-red-50' : '' }}">
                                         @error('ends_at')
                                             <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
                                         @enderror
@@ -485,7 +485,7 @@
                                         <input type="number" name="min_nights" id="min_nights" x-model="minNights"
                                             value="{{ old('min_nights', $promotion->min_nights) }}" min="1"
                                             placeholder="Aucun minimum"
-                                            class="w-full text-base border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 py-3">
+                                            class="w-full text-base border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-[#ff385c]/20 focus:border-[#ff385c] py-3">
                                         <p class="mt-1.5 text-xs text-gray-400">Séjour minimum requis</p>
                                     </div>
                                     <div>
@@ -495,7 +495,7 @@
                                         <input type="number" name="max_uses" id="max_uses" x-model="maxUses"
                                             value="{{ old('max_uses', $promotion->max_uses) }}" min="1"
                                             placeholder="Illimité"
-                                            class="w-full text-base border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 py-3">
+                                            class="w-full text-base border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-[#ff385c]/20 focus:border-[#ff385c] py-3">
                                         <p class="mt-1.5 text-xs text-gray-400">Laisser vide = illimité</p>
                                     </div>
                                 </div>
@@ -523,7 +523,7 @@
                         <div class="p-6">
                             <label class="flex items-center justify-between cursor-pointer group">
                                 <div>
-                                    <p class="text-base font-semibold group-hover:text-orange-600 transition-colors"
+                                    <p class="text-base font-semibold group-hover:text-[#e00b41] transition-colors"
                                         :class="isActive ? 'text-green-700' : 'text-gray-700'">
                                         <span x-text="isActive ? 'Promotion active' : 'Promotion désactivée'"></span>
                                     </p>
@@ -605,7 +605,7 @@
                                 Annuler
                             </a>
                             <button type="submit"
-                                class="flex-1 px-5 py-3 bg-linear-to-r from-orange-500 to-orange-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/30 active:scale-[0.98] transition-all">
+                                class="flex-1 px-5 py-3 bg-linear-to-r from-[#ff385c] to-[#e00b41] text-white rounded-xl font-bold text-sm shadow-lg shadow-none hover:shadow-xl hover:shadow-none active:scale-[0.98] transition-all">
                                 Enregistrer
                             </button>
                         </div>
@@ -620,7 +620,7 @@
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                             <div class="px-5 py-3.5 border-b border-gray-100 bg-gray-50/80">
                                 <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
-                                    <svg class="w-4.5 h-4.5 text-orange-500" fill="none" stroke="currentColor"
+                                    <svg class="w-4.5 h-4.5 text-[#ff385c]" fill="none" stroke="currentColor"
                                         stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
@@ -636,7 +636,7 @@
                                 <div x-show="discountValue" x-transition
                                     class="rounded-2xl p-6 text-center text-white shadow-lg mb-5"
                                     :class="isActive ?
-                                        'bg-linear-to-br from-red-500 to-orange-500 shadow-red-500/20' :
+                                        'bg-linear-to-br from-red-500 to-[#ff385c] shadow-red-500/20' :
                                         'bg-linear-to-br from-gray-400 to-gray-500 shadow-gray-500/20'">
                                     <p class="text-4xl font-extrabold leading-none drop-shadow-sm" x-text="discountLabel">
                                     </p>
@@ -650,8 +650,8 @@
                                 <div class="space-y-4">
                                     <div class="flex items-center gap-3">
                                         <div
-                                            class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center shrink-0">
-                                            <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor"
+                                            class="w-8 h-8 rounded-lg bg-[#fff0f3] flex items-center justify-center shrink-0">
+                                            <svg class="w-4 h-4 text-[#ff385c]" fill="none" stroke="currentColor"
                                                 stroke-width="2" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
@@ -739,7 +739,7 @@
                                                 / {{ $promotion->max_uses }}</span>
                                         </div>
                                         <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                                            <div class="h-full rounded-full transition-all duration-500 {{ $progressPercent >= 80 ? 'bg-red-500' : ($progressPercent >= 50 ? 'bg-orange-400' : 'bg-green-500') }}"
+                                            <div class="h-full rounded-full transition-all duration-500 {{ $progressPercent >= 80 ? 'bg-red-500' : ($progressPercent >= 50 ? 'bg-[#ff4d6d]' : 'bg-green-500') }}"
                                                 style="width: {{ $progressPercent }}%"></div>
                                         </div>
                                     </div>
@@ -750,7 +750,7 @@
                         {{-- Submit (desktop) --}}
                         <div class="space-y-3">
                             <button type="submit"
-                                class="w-full px-5 py-3.5 bg-linear-to-r from-orange-500 to-orange-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/30 hover:from-orange-600 hover:to-orange-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                class="w-full px-5 py-3.5 bg-linear-to-r from-[#ff385c] to-[#e00b41] text-white rounded-xl font-bold text-sm shadow-lg shadow-none hover:shadow-xl hover:shadow-none hover:from-[#e00b41] hover:to-[#b5083a] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />

@@ -18,7 +18,7 @@ class ResidenceSearchTest extends TestCase
         // Centre: Cocody (5.3600, -4.0083)
         $nearResidence = Residence::factory()->create([
             'name' => 'XNearResidenceUnique',
-            'latitude' => 5.3650, // ~500m
+            'latitude' => 5.3650, // ~550m (dans limite 2km)
             'longitude' => -4.0100,
             'status' => 'approved',
             'is_available' => true,

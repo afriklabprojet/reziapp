@@ -6,7 +6,7 @@
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {{-- Retour --}}
         <a href="{{ route('owner.auto-replies.index') }}"
-            class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-orange-500 transition mb-6">
+            class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#ff385c] transition mb-6">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
@@ -26,7 +26,7 @@
                         <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Nom de la réponse <span class="text-red-500">*</span></label>
                         <input type="text" name="name" id="name" value="{{ old('name') }}" required
                             placeholder="Ex : Message de bienvenue"
-                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition">
+                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] transition">
                         @error('name')
                             <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                         @enderror
@@ -35,7 +35,7 @@
                     <div>
                         <label for="residence_id" class="block text-sm font-semibold text-gray-700 mb-2">Résidence concernée</label>
                         <select name="residence_id" id="residence_id"
-                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition">
+                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] transition">
                             <option value="">Toutes mes résidences</option>
                             @foreach ($residences as $residence)
                                 <option value="{{ $residence->id }}" {{ old('residence_id') == $residence->id ? 'selected' : '' }}>
@@ -62,8 +62,8 @@
                     @endphp
                     @foreach ($triggerTypes as $key => $type)
                         <label class="flex items-start gap-4 p-4 border-2 rounded-xl cursor-pointer transition"
-                            :class="triggerType === '{{ $key }}' ? 'border-orange-500 bg-orange-50/50' : 'border-gray-200 hover:border-gray-300'">
-                            <input type="radio" name="trigger_type" value="{{ $key }}" x-model="triggerType" class="mt-1 w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500">
+                            :class="triggerType === '{{ $key }}' ? 'border-[#ff385c] bg-[#fff0f3]/50' : 'border-gray-200 hover:border-gray-300'">
+                            <input type="radio" name="trigger_type" value="{{ $key }}" x-model="triggerType" class="mt-1 w-4 h-4 text-[#ff385c] border-gray-300 focus:ring-[#ff385c]">
                             <div class="flex items-start gap-3 flex-1">
                                 <div class="w-9 h-9 rounded-lg {{ $type['bg'] }} flex items-center justify-center shrink-0 mt-0.5">
                                     <svg class="w-4 h-4 {{ $type['text'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,7 +102,7 @@
                 <div class="flex gap-2">
                     <input type="text" x-model="newKeyword" @keydown.enter.prevent="addKeyword()"
                         placeholder="Tapez un mot-clé et appuyez Entrée"
-                        class="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                        class="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
                     <button type="button" @click="addKeyword()"
                         class="px-4 py-2.5 bg-purple-600 text-white text-sm font-semibold rounded-xl hover:bg-purple-700 transition">
                         Ajouter
@@ -120,22 +120,22 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-2">De</label>
                         <input type="time" name="trigger_conditions[start_time]"
                             value="{{ old('trigger_conditions.start_time', '22:00') }}"
-                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">À</label>
                         <input type="time" name="trigger_conditions[end_time]"
                             value="{{ old('trigger_conditions.end_time', '08:00') }}"
-                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
                     </div>
                 </div>
 
                 <p class="text-sm font-semibold text-gray-700 mb-2">Jours actifs :</p>
                 <div class="flex flex-wrap gap-2">
                     @foreach (['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'] as $index => $day)
-                        <label class="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg cursor-pointer text-sm hover:bg-gray-50 has-checked:bg-orange-50 has-checked:border-orange-500 transition">
+                        <label class="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg cursor-pointer text-sm hover:bg-gray-50 has-checked:bg-[#fff0f3] has-checked:border-[#ff385c] transition">
                             <input type="checkbox" name="trigger_conditions[days][]" value="{{ $index }}" checked
-                                class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                class="w-4 h-4 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
                             {{ $day }}
                         </label>
                     @endforeach
@@ -147,7 +147,7 @@
                 <h2 class="text-base font-bold text-gray-900 mb-4">Message</h2>
 
                 <textarea name="message" rows="6" required placeholder="Écrivez votre message automatique ici..."
-                    class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition resize-y">{{ old('message') }}</textarea>
+                    class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] transition resize-y">{{ old('message') }}</textarea>
 
                 {{-- Variables disponibles --}}
                 <div class="mt-4 p-4 bg-gray-50 rounded-xl">
@@ -155,8 +155,8 @@
                     <div class="flex flex-wrap gap-2">
                         @foreach (['{guest_name}' => 'Nom du client', '{residence_name}' => 'Nom de la résidence', '{owner_name}' => 'Votre nom', '{checkin_time}' => 'Heure check-in', '{checkout_time}' => 'Heure check-out'] as $var => $desc)
                             <button type="button" @click="insertVariable('{{ $var }}')"
-                                class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg text-[11px] hover:border-orange-400 hover:bg-orange-50 transition">
-                                <code class="text-orange-500 font-semibold">{{ $var }}</code>
+                                class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg text-[11px] hover:border-[#ff4d6d] hover:bg-[#fff0f3] transition">
+                                <code class="text-[#ff385c] font-semibold">{{ $var }}</code>
                                 <span class="text-gray-400">{{ $desc }}</span>
                             </button>
                         @endforeach
@@ -173,7 +173,7 @@
                     </div>
                     <div class="flex items-center gap-2">
                         <input type="number" name="delay_minutes" value="{{ old('delay_minutes', 0) }}" min="0" max="60"
-                            class="w-20 px-3 py-2 border border-gray-200 rounded-xl text-sm text-center focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                            class="w-20 px-3 py-2 border border-gray-200 rounded-xl text-sm text-center focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
                         <span class="text-sm text-gray-500">min</span>
                     </div>
                 </div>
@@ -186,7 +186,7 @@
                     Annuler
                 </a>
                 <button type="submit"
-                    class="flex-1 px-6 py-3 bg-orange-500 text-white text-sm font-semibold rounded-xl hover:bg-orange-600 transition shadow-sm">
+                    class="flex-1 px-6 py-3 bg-[#ff385c] text-white text-sm font-semibold rounded-xl hover:bg-[#e00b41] transition shadow-sm">
                     Créer la réponse
                 </button>
             </div>

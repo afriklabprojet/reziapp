@@ -72,7 +72,7 @@
                     <tr class="hover:bg-gray-50">
                         <td class="px-4 py-3 text-sm text-gray-900">{{ $reading->residence?->name }}</td>
                         <td class="px-4 py-3">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase {{ $reading->utility_type === 'electricity' ? 'bg-yellow-100 text-yellow-700' : ($reading->utility_type === 'water' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700') }}">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase {{ $reading->utility_type === 'electricity' ? 'bg-yellow-100 text-yellow-700' : ($reading->utility_type === 'water' ? 'bg-blue-100 text-blue-700' : 'bg-[#ffd1da] text-[#b5083a]') }}">
                                 {{ \App\Models\UtilityReading::TYPES[$reading->utility_type] ?? $reading->utility_type }}
                             </span>
                         </td>

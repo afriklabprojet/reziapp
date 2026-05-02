@@ -4,7 +4,7 @@
     <div class="min-h-[calc(100vh-64px)] flex">
         {{-- Left Side - Branding (Desktop only) --}}
         <div
-            class="hidden lg:flex lg:w-1/2 bg-linear-to-br from-orange-500 via-orange-500 to-cyan-700 relative overflow-hidden">
+            class="hidden lg:flex lg:w-1/2 bg-linear-to-br from-[#ff385c] via-[#ff385c] to-cyan-700 relative overflow-hidden">
             {{-- Background Pattern --}}
             <div class="absolute inset-0 opacity-10">
                 <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -32,13 +32,13 @@
                 <div class="mb-8">
                     <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-2xl">
                         <span
-                            class="text-3xl font-bold bg-linear-to-r from-orange-500 to-orange-500 bg-clip-text text-transparent">R</span>
+                            class="text-3xl font-bold bg-linear-to-r from-[#ff385c] to-[#ff385c] bg-clip-text text-transparent">R</span>
                     </div>
                 </div>
 
                 {{-- Headline --}}
                 <h1 class="text-4xl font-bold text-center mb-4">Pas de panique !</h1>
-                <p class="text-xl text-orange-100 text-center mb-12 max-w-md">
+                <p class="text-xl text-[#ffd1da] text-center mb-12 max-w-md">
                     Nous allons vous aider à récupérer l'accès à votre compte en quelques secondes.
                 </p>
 
@@ -58,7 +58,7 @@
                             1</div>
                         <div>
                             <div class="font-semibold">Entrez votre email</div>
-                            <div class="text-sm text-orange-100">Celui utilisé à l'inscription</div>
+                            <div class="text-sm text-[#ffd1da]">Celui utilisé à l'inscription</div>
                         </div>
                     </div>
                     <div class="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-xl p-4">
@@ -67,7 +67,7 @@
                             2</div>
                         <div>
                             <div class="font-semibold">Vérifiez votre boîte mail</div>
-                            <div class="text-sm text-orange-100">Un lien vous sera envoyé</div>
+                            <div class="text-sm text-[#ffd1da]">Un lien vous sera envoyé</div>
                         </div>
                     </div>
                     <div class="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-xl p-4">
@@ -76,7 +76,7 @@
                             3</div>
                         <div>
                             <div class="font-semibold">Créez un nouveau mot de passe</div>
-                            <div class="text-sm text-orange-100">Et reconnectez-vous !</div>
+                            <div class="text-sm text-[#ffd1da]">Et reconnectez-vous !</div>
                         </div>
                     </div>
                 </div>
@@ -91,7 +91,7 @@
                     {{-- Mobile logo --}}
                     <div class="lg:hidden mb-6 flex justify-center">
                         <div
-                            class="w-16 h-16 bg-linear-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-xl">
+                            class="w-16 h-16 bg-linear-to-br from-[#ff385c] to-[#e00b41] rounded-2xl flex items-center justify-center shadow-xl">
                             <span class="text-2xl font-bold text-white">R</span>
                         </div>
                     </div>
@@ -120,7 +120,7 @@
                             </div>
                             <input id="email" name="email" type="email" value="{{ old('email') }}" required
                                 autofocus autocomplete="email" placeholder="vous@exemple.com"
-                                class="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all">
+                                class="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff385c] focus:border-transparent transition-all">
                         </div>
                         @error('email')
                             <p class="mt-2 text-sm text-red-600 flex items-center gap-1">
@@ -136,7 +136,7 @@
 
                     {{-- Submit --}}
                     <button type="submit"
-                        class="w-full bg-linear-to-r from-orange-500 to-orange-500 hover:from-orange-600 hover:to-teal-700 text-white font-semibold py-3.5 px-4 rounded-xl transition-all duration-200 shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 flex items-center justify-center gap-2">
+                        class="w-full bg-linear-to-r from-[#ff385c] to-[#ff385c] hover:from-[#e00b41] hover:to-teal-700 text-white font-semibold py-3.5 px-4 rounded-xl transition-all duration-200 shadow-lg shadow-none hover:shadow-xl hover:shadow-none/40 flex items-center justify-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -149,7 +149,7 @@
                 <p class="mt-8 text-center text-gray-600">
                     Vous vous souvenez ?
                     <a href="{{ route('login') }}"
-                        class="font-semibold text-orange-500 hover:text-orange-600 transition-colors">
+                        class="font-semibold text-[#ff385c] hover:text-[#e00b41] transition-colors">
                         Se connecter
                     </a>
                 </p>

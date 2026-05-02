@@ -6,23 +6,23 @@
                             x-intersect.once="$el.classList.add('reveal-visible')">
                             <div>
                                 <div
-                                    class="inline-flex items-center gap-2 bg-linear-to-r from-amber-100 to-orange-100 text-amber-700 px-3 py-1.5 rounded-full text-xs font-bold mb-3">
+                                    class="inline-flex items-center gap-2 bg-linear-to-r from-amber-100 to-[#ffd1da] text-amber-700 px-3 py-1.5 rounded-full text-xs font-bold mb-3">
                                     <svg aria-hidden="true" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                         <path
                                             d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                                     </svg>
                                     Sélection Premium
                                 </div>
-                                <h2 class="font-display text-2xl sm:text-3xl font-bold text-gray-900">
+                                <h2 class="font-sans text-2xl sm:text-3xl font-bold text-gray-900">
                                     Résidences Vedettes
                                     @if (isset($userLocation) && !empty($userLocation['city']))
-                                        <span class="text-orange-500">à {{ $userLocation['city'] }}</span>
+                                        <span class="text-[#ff385c]">à {{ $userLocation['city'] }}</span>
                                     @endif
                                 </h2>
                                 <p class="mt-2 text-sm text-gray-500">Les logements les mieux notés et les plus populaires</p>
                             </div>
                             <a href="{{ route('residences.index') }}"
-                                class="inline-flex items-center gap-2 text-sm font-semibold text-orange-500 hover:text-orange-600 transition group">
+                                class="inline-flex items-center gap-2 text-sm font-semibold text-[#ff385c] hover:text-[#e00b41] transition group">
                                 Voir toutes les résidences
                                 <svg aria-hidden="true" class="w-4 h-4 group-hover:translate-x-1 transition-transform"
                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,11 +40,11 @@
                             @forelse($featuredResidences as $index => $residence)
                                 {{-- Featured Card --}}
                                 <div x-intersect.once="$el.classList.add('reveal-visible')"
-                                    class="group relative reveal-card card-lift {{ $staggerClasses[$index] ?? '' }} bg-white rounded-2xl {{ $index === 0 ? 'border-2 border-amber-200 shadow-lg shadow-amber-100/50' : 'border border-gray-200 shadow-md' }} overflow-hidden {{ $index === 0 ? 'hover:border-amber-300' : 'hover:border-orange-200' }} transition-all duration-300">
+                                    class="group relative reveal-card card-lift {{ $staggerClasses[$index] ?? '' }} bg-white rounded-2xl {{ $index === 0 ? 'border-2 border-amber-200 shadow-lg shadow-amber-100/50' : 'border border-gray-200 shadow-md' }} overflow-hidden {{ $index === 0 ? 'hover:border-amber-300' : 'hover:border-[#ffb3c1]' }} transition-all duration-300">
                                     {{-- Boost Badge --}}
                                     @if ($index === 0)
                                         <div
-                                            class="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-linear-to-r from-amber-500 to-orange-500 text-white px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide shadow-lg">
+                                            class="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-linear-to-r from-amber-500 to-[#ff385c] text-white px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide shadow-lg">
                                             <svg aria-hidden="true" class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
                                                 <path
                                                     d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -53,13 +53,9 @@
                                         </div>
                                     @else
                                         <div
-                                            class="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-orange-500 text-white px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide shadow">
-                                            <svg aria-hidden="true" class="w-3 h-3" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                            </svg>
-                                            Nouveau
+                                            class="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-green-700 border border-green-200 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide shadow">
+                                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                                            Disponible
                                         </div>
                                     @endif
                                     @if($residence->owner?->isSuperhost())
@@ -72,13 +68,13 @@
                                     @endif
 
                                     {{-- Image --}}
-                                    <div class="relative h-52 overflow-hidden">
+                                    <div class="relative h-60 overflow-hidden">
                                         @if ($residence->photos->isNotEmpty())
-                                            <img loading="lazy" src="{{ storage_url($residence->photos->first()?->path) }}"
-                                                alt="{{ $residence->name }}"
-                                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                                        @else
-                                            <img loading="lazy" src="{{ asset('images/placeholder-residence.jpg') }}"
+                                        <img loading="{{ $index === 0 ? 'eager' : 'lazy' }}" {{ $index === 0 ? 'fetchpriority="high"' : '' }} src="{{ storage_url($residence->photos->first()?->path) }}"
+                                            alt="{{ $residence->name }}"
+                                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                    @else
+                                        <img loading="{{ $index === 0 ? 'eager' : 'lazy' }}" src="{{ asset('images/placeholder-residence.jpg') }}"
                                                 alt="{{ $residence->name }}"
                                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                                         @endif
@@ -88,7 +84,7 @@
 
                                         {{-- Price Tag --}}
                                         <div
-                                            class="absolute bottom-4 right-4 bg-white/95 backdrop-blur px-3 py-1.5 rounded-lg shadow-lg">
+                                            class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl shadow-xl ring-1 ring-white/50">
                                             @if (($residence->price_per_day ?? 0) > 0)
                                                 <span
                                                     class="text-lg font-bold text-gray-900">{{ number_format($residence->price_per_day) }}</span>
@@ -142,7 +138,7 @@
                                                 class="p-2 rounded-full hover:bg-gray-100 transition"
                                                 aria-label="Voir les détails">
                                                 <svg aria-hidden="true"
-                                                    class="w-5 h-5 text-gray-400 hover:text-orange-500 transition"
+                                                    class="w-5 h-5 text-gray-400 hover:text-[#ff385c] transition"
                                                     fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                                     aria-hidden="true">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -180,7 +176,7 @@
 
                                         {{-- CTA --}}
                                         <a href="{{ route('residences.show', $residence) }}"
-                                            class="block w-full {{ $index === 0 ? 'bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg shadow-amber-500/25' : 'bg-orange-500 hover:bg-orange-600 shadow' }} text-white text-center py-2.5 rounded-xl font-semibold text-sm transition-all">
+                                            class="block w-full {{ $index === 0 ? 'bg-linear-to-r from-amber-500 to-[#ff385c] hover:from-amber-600 hover:to-[#e00b41] shadow-lg shadow-amber-500/25' : 'bg-[#ff385c] hover:bg-[#e00b41] shadow' }} text-white text-center py-2.5 rounded-xl font-semibold text-sm transition-all">
                                             Voir les détails
                                         </a>
                                     </div>
@@ -194,7 +190,7 @@
                                     </svg>
                                     <p class="text-gray-500">Aucune résidence vedette pour le moment</p>
                                     <a href="{{ route('residences.index') }}"
-                                        class="mt-4 inline-flex items-center gap-2 text-orange-500 hover:text-orange-600 font-semibold">
+                                        class="mt-4 inline-flex items-center gap-2 text-[#ff385c] hover:text-[#e00b41] font-semibold">
                                         Voir toutes les résidences
                                         <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -207,37 +203,6 @@
 
                         </div>
 
-                        {{-- CTA for Owners --}}
-                        <div class="mt-8 sm:mt-12 bg-linear-to-r from-orange-50 via-orange-50 to-cyan-50 rounded-2xl p-4 sm:p-8 border border-orange-100 reveal-scale"
-                            x-intersect.once="$el.classList.add('reveal-visible')">
-                            <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
-                                <div class="text-center sm:text-left">
-                                    <h3 class="text-lg sm:text-xl font-bold text-gray-900">Vous êtes propriétaire ?</h3>
-                                    <p class="mt-1 text-sm text-gray-600">Boostez votre résidence et obtenez jusqu'à <span
-                                            class="font-bold text-orange-500">5x plus de visibilité</span></p>
-                                </div>
-                                <div class="flex flex-col sm:flex-row gap-3">
-                                    <a href="{{ route('owner.residences.create') }}"
-                                        class="inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-semibold text-sm shadow-lg shadow-orange-500/25 transition-all">
-                                        <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M12 4v16m8-8H4" />
-                                        </svg>
-                                        Publier gratuitement
-                                    </a>
-                                    <a href="{{ route('pages.guide-proprietaire') }}"
-                                        class="inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-6 py-3 rounded-xl font-semibold text-sm border border-gray-200 transition-all">
-                                        <svg aria-hidden="true" class="w-4 h-4 text-amber-500" fill="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path
-                                                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                                        </svg>
-                                        Voir les offres Boost
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </section>
 

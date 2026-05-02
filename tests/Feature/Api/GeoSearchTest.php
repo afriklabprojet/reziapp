@@ -20,6 +20,9 @@ class GeoSearchTest extends TestCase
 
     private User $owner;
 
+    // Endpoint API principal
+    private const GEO_SEARCH_API = '/api/v1/geo/search';
+
     // Coordonnées de test (Centre de Cocody, Abidjan)
     private const COCODY_CENTER = [
         'latitude' => 5.3477,
@@ -89,7 +92,7 @@ class GeoSearchTest extends TestCase
             'is_available' => true,
         ]);
 
-        // Résidence 5: ~600m du centre (hors limite 500m)
+        // Résidence 5: ~600m du centre (dans limite 2km)
         Residence::factory()->create([
             'owner_id' => $this->owner->id,
             'latitude' => 5.3540,
@@ -131,7 +134,7 @@ class GeoSearchTest extends TestCase
      */
     public function test_search_returns_residences_within_radius(): void
     {
-        $response = $this->postJson('/api/v1/geo/search', [
+        $response = $this->postJson(self::GEO_SEARCH_API, [
             'latitude' => self::COCODY_CENTER['latitude'],
             'longitude' => self::COCODY_CENTER['longitude'],
             'radius' => 5000,
@@ -152,11 +155,11 @@ class GeoSearchTest extends TestCase
     }
 
     /**
-     * Test: Recherche avec rayon 500m retourne plus de résultats
+     * Test: Recherche avec rayon 10km retourne plus de résultats que 2km
      */
-    public function test_search_with_500m_radius_returns_more_results(): void
+    public function test_search_with_larger_radius_returns_more_results(): void
     {
-        $response = $this->postJson('/api/v1/geo/search', [
+        $response = $this->postJson(self::GEO_SEARCH_API, [
             'latitude' => self::COCODY_CENTER['latitude'],
             'longitude' => self::COCODY_CENTER['longitude'],
             'radius' => 10000,
@@ -173,7 +176,7 @@ class GeoSearchTest extends TestCase
      */
     public function test_search_only_returns_approved_and_available(): void
     {
-        $response = $this->postJson('/api/v1/geo/search', [
+        $response = $this->postJson(self::GEO_SEARCH_API, [
             'latitude' => self::COCODY_CENTER['latitude'],
             'longitude' => self::COCODY_CENTER['longitude'],
             'radius' => 5000,
@@ -197,7 +200,7 @@ class GeoSearchTest extends TestCase
      */
     public function test_results_are_sorted_by_distance(): void
     {
-        $response = $this->postJson('/api/v1/geo/search', [
+        $response = $this->postJson(self::GEO_SEARCH_API, [
             'latitude' => self::COCODY_CENTER['latitude'],
             'longitude' => self::COCODY_CENTER['longitude'],
             'radius' => 5000,
@@ -225,7 +228,7 @@ class GeoSearchTest extends TestCase
      */
     public function test_search_filters_by_price(): void
     {
-        $response = $this->postJson('/api/v1/geo/search', [
+        $response = $this->postJson(self::GEO_SEARCH_API, [
             'latitude' => self::COCODY_CENTER['latitude'],
             'longitude' => self::COCODY_CENTER['longitude'],
             'radius' => 5000,
@@ -248,9 +251,9 @@ class GeoSearchTest extends TestCase
      */
     public function test_rejects_coordinates_outside_coverage(): void
     {
-        $response = $this->postJson('/api/v1/geo/search', [
+        $response = $this->postJson(self::GEO_SEARCH_API, [
             'latitude' => 48.8566, // Paris — hors zone
-            'longitude' => 12.3522, // Hors limites CI/BF
+            'longitude' => 2.3522, // Paris — hors limites CI/BF
             'radius' => 5000,
         ]);
 
@@ -263,7 +266,7 @@ class GeoSearchTest extends TestCase
      */
     public function test_rejects_invalid_radius(): void
     {
-        $response = $this->postJson('/api/v1/geo/search', [
+        $response = $this->postJson(self::GEO_SEARCH_API, [
             'latitude' => self::COCODY_CENTER['latitude'],
             'longitude' => self::COCODY_CENTER['longitude'],
             'radius' => 750, // Non autorisé
@@ -279,7 +282,7 @@ class GeoSearchTest extends TestCase
     #[DataProvider('validRadiiProvider')]
     public function test_accepts_valid_radii(int $radius): void
     {
-        $response = $this->postJson('/api/v1/geo/search', [
+        $response = $this->postJson(self::GEO_SEARCH_API, [
             'latitude' => self::COCODY_CENTER['latitude'],
             'longitude' => self::COCODY_CENTER['longitude'],
             'radius' => $radius,
@@ -291,8 +294,6 @@ class GeoSearchTest extends TestCase
     public static function validRadiiProvider(): array
     {
         return [
-            '500m' => [500],
-            '1km' => [1000],
             '2km' => [2000],
             '5km' => [5000],
             '10km' => [10000],
@@ -407,10 +408,11 @@ class GeoSearchTest extends TestCase
 
         // Vérifier que les comptages sont cohérents (plus de résidences avec rayon plus grand)
         $counts = collect($response->json('data'));
-        $count500 = $counts->firstWhere('radius', 500)['count'] ?? 0;
+        $count2000 = $counts->firstWhere('radius', 2000)['count'] ?? 0;
         $count5000 = $counts->firstWhere('radius', 5000)['count'] ?? 0;
 
-        $this->assertGreaterThanOrEqual($count500, $count5000);
+        // Un rayon plus grand doit contenir au moins autant de résidences qu'un rayon plus petit
+        $this->assertGreaterThanOrEqual($count2000, $count5000);
     }
 
     /**
@@ -418,7 +420,7 @@ class GeoSearchTest extends TestCase
      */
     public function test_sort_by_price_ascending(): void
     {
-        $response = $this->postJson('/api/v1/geo/search', [
+        $response = $this->postJson(self::GEO_SEARCH_API, [
             'latitude' => self::COCODY_CENTER['latitude'],
             'longitude' => self::COCODY_CENTER['longitude'],
             'radius' => 5000,
@@ -430,9 +432,9 @@ class GeoSearchTest extends TestCase
         $prices = collect($response->json('data'))->pluck('price')->toArray();
 
         for ($i = 1; $i < count($prices); $i++) {
-            $this->assertGreaterThanOrEqual(
-                $prices[$i - 1],
+            $this->assertLessThanOrEqual(
                 $prices[$i],
+                $prices[$i - 1],
                 'Les prix doivent être triés par ordre croissant',
             );
         }
@@ -443,7 +445,7 @@ class GeoSearchTest extends TestCase
      */
     public function test_sort_by_price_descending(): void
     {
-        $response = $this->postJson('/api/v1/geo/search', [
+        $response = $this->postJson(self::GEO_SEARCH_API, [
             'latitude' => self::COCODY_CENTER['latitude'],
             'longitude' => self::COCODY_CENTER['longitude'],
             'radius' => 5000,
@@ -455,9 +457,9 @@ class GeoSearchTest extends TestCase
         $prices = collect($response->json('data'))->pluck('price')->toArray();
 
         for ($i = 1; $i < count($prices); $i++) {
-            $this->assertLessThanOrEqual(
-                $prices[$i - 1],
+            $this->assertGreaterThanOrEqual(
                 $prices[$i],
+                $prices[$i - 1],
                 'Les prix doivent être triés par ordre décroissant',
             );
         }
@@ -481,7 +483,7 @@ class GeoSearchTest extends TestCase
             ]);
         }
 
-        $response = $this->postJson('/api/v1/geo/search', [
+        $response = $this->postJson(self::GEO_SEARCH_API, [
             'latitude' => self::COCODY_CENTER['latitude'],
             'longitude' => self::COCODY_CENTER['longitude'],
             'radius' => 5000,
@@ -501,7 +503,7 @@ class GeoSearchTest extends TestCase
      */
     public function test_response_structure_is_correct(): void
     {
-        $response = $this->postJson('/api/v1/geo/search', [
+        $response = $this->postJson(self::GEO_SEARCH_API, [
             'latitude' => self::COCODY_CENTER['latitude'],
             'longitude' => self::COCODY_CENTER['longitude'],
             'radius' => 5000,

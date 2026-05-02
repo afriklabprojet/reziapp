@@ -43,7 +43,7 @@
                                         <span class="text-sm text-gray-600">{{ $label }}</span>
                                         <div class="flex items-center gap-2">
                                             <div class="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                                <div class="h-full bg-orange-500 rounded-full" style="width: {{ (($stats['categories'][$key] ?? 0) / 5) * 100 }}%"></div>
+                                                <div class="h-full bg-[#ff385c] rounded-full" style="width: {{ (($stats['categories'][$key] ?? 0) / 5) * 100 }}%"></div>
                                             </div>
                                             <span class="text-sm font-medium text-gray-900 w-8">{{ number_format($stats['categories'][$key] ?? 0, 1) }}</span>
                                         </div>
@@ -56,7 +56,7 @@
                         @auth
                             @if(!$userHasReviewed)
                                 <a href="{{ route('reviews.create', $residence) }}" 
-                                   class="mt-6 w-full inline-flex items-center justify-center gap-2 bg-orange-600 text-white px-4 py-3 rounded-xl hover:bg-orange-700 transition-colors">
+                                   class="mt-6 w-full inline-flex items-center justify-center gap-2 bg-[#e00b41] text-white px-4 py-3 rounded-xl hover:bg-[#b5083a] transition-colors">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                     </svg>
@@ -66,7 +66,7 @@
                                 <p class="mt-6 text-sm text-gray-500 text-center">Vous avez déjà laissé un avis</p>
                             @endif
                         @else
-                            <a href="{{ route('login') }}" class="mt-6 w-full inline-flex items-center justify-center gap-2 border border-orange-600 text-orange-600 px-4 py-3 rounded-xl hover:bg-orange-50 transition-colors">
+                            <a href="{{ route('login') }}" class="mt-6 w-full inline-flex items-center justify-center gap-2 border border-[#e00b41] text-[#e00b41] px-4 py-3 rounded-xl hover:bg-[#fff0f3] transition-colors">
                                 Connectez-vous pour laisser un avis
                             </a>
                         @endauth
@@ -97,7 +97,7 @@
                                             @if($review->user->avatar)
                                                 <img loading="lazy" src="{{ $review->user->getAvatarUrl() }}" alt="{{ $review->user->name }}" class="w-10 h-10 rounded-full object-cover">
                                             @else
-                                                <div class="w-10 h-10 bg-linear-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                                <div class="w-10 h-10 bg-linear-to-br from-[#ff385c] to-[#e00b41] rounded-full flex items-center justify-center text-white font-semibold">
                                                     {{ strtoupper(substr($review->user->name, 0, 1)) }}
                                                 </div>
                                             @endif
@@ -132,12 +132,12 @@
 
                                     <!-- Réponse du propriétaire -->
                                     @if($review->owner_response)
-                                        <div class="mt-4 bg-gray-50 rounded-xl p-4 border-l-4 border-orange-500">
+                                        <div class="mt-4 bg-gray-50 rounded-xl p-4 border-l-4 border-[#ff385c]">
                                             <div class="flex items-center gap-2 mb-2">
-                                                <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg class="w-4 h-4 text-[#e00b41]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                                                 </svg>
-                                                <span class="text-sm font-semibold text-orange-600">Réponse du propriétaire</span>
+                                                <span class="text-sm font-semibold text-[#e00b41]">Réponse du propriétaire</span>
                                             </div>
                                             <p class="text-sm text-gray-700">{{ $review->owner_response }}</p>
                                             <p class="text-xs text-gray-400 mt-2">{{ $review->owner_responded_at?->format('d M Y') }}</p>

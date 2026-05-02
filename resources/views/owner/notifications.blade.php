@@ -12,7 +12,7 @@
                     <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Notifications</h1>
                     <p class="mt-1 text-sm text-gray-500">
                         @if ($newCount > 0)
-                            <span class="text-orange-600 font-semibold">{{ $newCount }} nouvelle(s)</span>
+                            <span class="text-[#e00b41] font-semibold">{{ $newCount }} nouvelle(s)</span>
                             · {{ $counts['all'] }} au total
                         @else
                             {{ $counts['all'] }} notification(s) récentes
@@ -36,10 +36,10 @@
                     @foreach ($typeFilters as $key => $tf)
                         @if ($tf['count'] > 0 || $key === 'all')
                             <a href="{{ route('owner.notifications', ['type' => $key]) }}"
-                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors {{ $filter === $key ? 'bg-orange-500 text-white shadow-sm' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50' }}">
+                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors {{ $filter === $key ? 'bg-[#ff385c] text-white shadow-sm' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50' }}">
                                 {{ $tf['label'] }}
                                 <span
-                                    class="ml-1 {{ $filter === $key ? 'text-orange-200' : 'text-gray-400' }}">{{ $tf['count'] }}</span>
+                                    class="ml-1 {{ $filter === $key ? 'text-[#ffb3c1]' : 'text-gray-400' }}">{{ $tf['count'] }}</span>
                             </a>
                         @endif
                     @endforeach
@@ -58,9 +58,9 @@
                                     'icon_color' => 'text-blue-500',
                                 ],
                                 'booking' => [
-                                    'bg' => 'bg-orange-50',
-                                    'icon_bg' => 'bg-orange-100',
-                                    'icon_color' => 'text-orange-500',
+                                    'bg' => 'bg-[#fff0f3]',
+                                    'icon_bg' => 'bg-[#ffd1da]',
+                                    'icon_color' => 'text-[#ff385c]',
                                 ],
                                 'approval' => [
                                     'bg' => 'bg-green-50',
@@ -80,7 +80,7 @@
                             };
                         @endphp
                         <a href="{{ $notification['action_url'] }}"
-                            class="block bg-white rounded-2xl border {{ $notification['is_new'] ? 'border-orange-200 shadow-sm' : 'border-gray-100' }} hover:shadow-md transition-all duration-200 p-4 group">
+                            class="block bg-white rounded-2xl border {{ $notification['is_new'] ? 'border-[#ffb3c1] shadow-sm' : 'border-gray-100' }} hover:shadow-md transition-all duration-200 p-4 group">
                             <div class="flex items-start gap-3">
                                 {{-- Icon --}}
                                 <div
@@ -117,14 +117,14 @@
                                     <div class="flex items-center gap-2">
                                         <h3 class="text-sm font-bold text-gray-900">{{ $notification['title'] }}</h3>
                                         @if ($notification['is_new'])
-                                            <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse shrink-0"></span>
+                                            <span class="w-2 h-2 rounded-full bg-[#ff385c] animate-pulse shrink-0"></span>
                                         @endif
                                     </div>
                                     <p class="text-sm text-gray-600 mt-0.5 line-clamp-2">{{ $notification['message'] }}
                                     </p>
                                     <div class="flex items-center gap-3 mt-2">
                                         <span
-                                            class="text-xs font-semibold text-orange-500 group-hover:text-orange-600 transition-colors inline-flex items-center gap-1">
+                                            class="text-xs font-semibold text-[#ff385c] group-hover:text-[#e00b41] transition-colors inline-flex items-center gap-1">
                                             {{ $notification['action_text'] }}
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2"
                                                 viewBox="0 0 24 24">

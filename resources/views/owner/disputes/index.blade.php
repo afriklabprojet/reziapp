@@ -84,7 +84,7 @@
             <div class="space-y-3">
                 @foreach ($disputes as $dispute)
                     <a href="{{ route('disputes.show', $dispute) }}"
-                        class="block bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:border-orange-300 transition group">
+                        class="block bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:border-[#ffb3c1] transition group">
                         <div class="flex items-start justify-between gap-4">
                             <div class="flex items-start gap-4 flex-1 min-w-0">
                                 {{-- Icône statut --}}
@@ -125,7 +125,7 @@
 
                                 <div class="min-w-0">
                                     <p
-                                        class="font-bold text-sm text-gray-900 group-hover:text-orange-600 transition truncate">
+                                        class="font-bold text-sm text-gray-900 group-hover:text-[#e00b41] transition truncate">
                                         {{ $dispute->subject ?? 'Litige #' . $dispute->id }}
                                     </p>
                                     <p class="text-xs text-gray-500 mt-0.5">

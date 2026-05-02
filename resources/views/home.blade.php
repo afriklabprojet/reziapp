@@ -226,7 +226,7 @@
                 residences.forEach(r => {
                     if (!r.lat || !r.lng) return;
                     const el = document.createElement('div');
-                    el.innerHTML = `<div class='bg-orange-500 text-white px-2 py-1 rounded-lg text-xs font-bold shadow-lg whitespace-nowrap'>${r.price}<span class='font-normal text-white/80'>/j</span></div><div class='w-2 h-2 bg-orange-400 rounded-full mx-auto mt-0.5 shadow'></div>`;
+                    el.innerHTML = `<div class='bg-[#ff385c] text-white px-2 py-1 rounded-lg text-xs font-bold shadow-lg whitespace-nowrap'>${r.price}<span class='font-normal text-white/80'>/j</span></div><div class='w-2 h-2 bg-[#ff4d6d] rounded-full mx-auto mt-0.5 shadow'></div>`;
                     el.className = 'pointer-events-none';
                     new mapboxgl.Marker({ element: el, anchor: 'bottom' })
                         .setLngLat([r.lng, r.lat])
@@ -240,7 +240,7 @@
                     .setLngLat([this.userLocation.lng, this.userLocation.lat])
                     .addTo(this.heroMap);
             }
-        }" class="relative bg-sand-50 flex flex-col">
+        }" class="relative bg-white flex flex-col">
 
             {{-- 1. HERO IMMERSIF - MAP INTERFACE --}}
             <div class="relative min-h-[85vh] lg:min-h-[90vh] w-full overflow-hidden bg-gray-900 flex flex-col"
@@ -265,15 +265,11 @@
                         style="background-image: linear-gradient(rgba(247, 147, 30, 0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(247, 147, 30, 0.25) 1px, transparent 1px); background-size: 50px 50px;">
                     </div>
 
-                    {{-- Cercles de radar animés --}}
+                    {{-- Cercle de radar animé --}}
                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
                         x-show="gpsState === 'locating'">
-                        <div class="w-64 h-64 sm:w-96 sm:h-96 rounded-full border border-orange-500/30 animate-ping"
-                            style="animation-duration: 3s;"></div>
-                        <div class="absolute inset-0 w-64 h-64 sm:w-96 sm:h-96 rounded-full border border-orange-500/20 animate-ping"
-                            style="animation-duration: 4s; animation-delay: 1s;"></div>
-                        <div class="absolute inset-0 w-64 h-64 sm:w-96 sm:h-96 rounded-full border border-orange-500/10 animate-ping"
-                            style="animation-duration: 5s; animation-delay: 2s;"></div>
+                        <div class="w-64 h-64 sm:w-80 sm:h-80 rounded-full border-2 border-[#ff385c]/40 animate-ping"
+                            style="animation-duration: 2s;"></div>
                     </div>
                 </div>
 
@@ -292,14 +288,13 @@
                             </div>
                         @endif
 
-                        <h1 class="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-4">
-                            Trouvez un logement
-                            <span class="block text-transparent bg-clip-text bg-linear-to-r from-orange-300 to-amber-400">à
-                                côté de vous</span>
+                        <h1 class="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-4">
+                            Résidences meublées vérifiées
+                            <span class="block text-transparent bg-clip-text bg-linear-to-r from-[#ff385c] to-[#ff4d6d]">à {{ $userLocation['city'] ?? 'Abidjan' }}</span>
                         </h1>
                         <p class="text-base sm:text-lg text-gray-300 max-w-lg mx-auto">
                             Résidences meublées vérifiées dans un rayon de <span
-                                class="text-orange-400 font-semibold">500m</span>.
+                                class="text-[#ff4d6d] font-semibold">2km</span>.
                             Réservation directe, sans intermédiaire.
                         </p>
                     </div>
@@ -318,7 +313,7 @@
                             {{-- Tab Switcher --}}
                             <div class="flex border-b border-gray-100" x-show="gpsState === 'prompt'">
                                 <button
-                                    class="flex-1 py-4 text-sm font-semibold text-orange-500 border-b-2 border-orange-500 bg-orange-50/50 flex items-center justify-center gap-2">
+                                    class="flex-1 py-4 text-sm font-semibold text-[#ff385c] border-b-2 border-[#ff385c] bg-[#fff0f3]/50 flex items-center justify-center gap-2">
                                     <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -342,11 +337,11 @@
                                 <div class="text-center space-y-6">
                                     {{-- Animated Location Icon --}}
                                     <div class="relative inline-flex items-center justify-center">
-                                        <div class="absolute w-24 h-24 bg-orange-100 rounded-full animate-ping opacity-50">
+                                        <div class="absolute w-24 h-24 bg-[#ffd1da] rounded-full animate-ping opacity-50">
                                         </div>
-                                        <div class="absolute w-20 h-20 bg-orange-50 rounded-full"></div>
+                                        <div class="absolute w-20 h-20 bg-[#fff0f3] rounded-full"></div>
                                         <div
-                                            class="relative w-16 h-16 bg-linear-to-br from-orange-500 to-orange-500 rounded-full flex items-center justify-center shadow-lg shadow-orange-500/30">
+                                            class="relative w-16 h-16 bg-[#ff385c] rounded-full flex items-center justify-center shadow-lg">
                                             <svg aria-hidden="true" class="w-8 h-8 text-white" fill="none"
                                                 stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -359,7 +354,7 @@
 
                                     {{-- CTA Button --}}
                                     <button @click="startGeoloc()"
-                                        class="w-full bg-linear-to-r from-orange-500 to-orange-500 hover:from-orange-600 hover:to-teal-700 text-white font-bold py-4 px-8 rounded-2xl shadow-xl shadow-orange-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-3 text-lg">
+                                        class="w-full bg-[#ff385c] hover:bg-[#e00b41] text-white font-bold py-4 px-8 rounded-2xl shadow-xl transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-3 text-lg">
                                         <svg aria-hidden="true" class="w-6 h-6" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -368,33 +363,11 @@
                                         Activer ma position
                                     </button>
 
-                                    {{-- Trust Badges --}}
-                                    <div class="flex items-center justify-center gap-4 text-xs text-gray-500">
-                                        <span class="flex items-center gap-1">
-                                            <svg aria-hidden="true" class="w-4 h-4 text-orange-500" fill="none"
-                                                stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                            </svg>
-                                            Données sécurisées
-                                        </span>
-                                        <span class="flex items-center gap-1">
-                                            <svg aria-hidden="true" class="w-4 h-4 text-blue-500" fill="none"
-                                                stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                            </svg>
-                                            Instantané
-                                        </span>
-                                        <span class="flex items-center gap-1">
-                                            <svg aria-hidden="true" class="w-4 h-4 text-amber-500" fill="none"
-                                                stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            100% Gratuit
-                                        </span>
-                                    </div>
+                                    {{-- Lien fallback sans géoloc --}}
+                                    <a href="{{ route('residences.index') }}"
+                                        class="block text-center text-sm text-gray-400 hover:text-gray-700 transition-colors">
+                                        Parcourir sans géolocalisation →
+                                    </a>
                                 </div>
                             </div>
 
@@ -413,10 +386,10 @@
                                     </div>
 
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Choisir une
+                                        <label for="commune-select" class="block text-sm font-medium text-gray-700 mb-2">Choisir une
                                             zone</label>
-                                        <select x-model="selectedCommune"
-                                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900">
+                                        <select id="commune-select" x-model="selectedCommune"
+                                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] text-gray-900">
                                             <option value="">Sélectionner une zone...</option>
                                             <template x-for="commune in communes" :key="commune">
                                                 <option :value="commune" x-text="commune"></option>
@@ -425,7 +398,7 @@
                                     </div>
 
                                     <button @click="searchByCommune()" :disabled="!selectedCommune"
-                                        :class="selectedCommune ? 'bg-orange-500 hover:bg-orange-600' :
+                                        :class="selectedCommune ? 'bg-[#ff385c] hover:bg-[#e00b41]' :
                                             'bg-gray-300 cursor-not-allowed'"
                                         class="w-full text-white font-bold py-4 px-8 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2">
                                         <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor"
@@ -447,7 +420,7 @@
                                             Retour
                                         </button>
                                         <a href="{{ route('residences.map') }}"
-                                            class="text-orange-500 hover:text-orange-600 text-sm py-2 font-medium transition flex items-center gap-1">
+                                            class="text-[#ff385c] hover:text-[#e00b41] text-sm py-2 font-medium transition flex items-center gap-1">
                                             Voir la carte
                                             <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
@@ -464,13 +437,13 @@
                                 <div class="flex flex-col items-center justify-center text-center space-y-4">
                                     {{-- Radar Animation --}}
                                     <div class="relative w-24 h-24">
-                                        <div class="absolute inset-0 border-4 border-orange-200 rounded-full"></div>
+                                        <div class="absolute inset-0 border-4 border-[#ffb3c1] rounded-full"></div>
                                         <div class="absolute inset-2 border-4 border-emerald-300 rounded-full animate-ping"
                                             style="animation-duration: 1.5s;"></div>
-                                        <div class="absolute inset-4 border-4 border-orange-400 rounded-full animate-ping"
+                                        <div class="absolute inset-4 border-4 border-[#ff4d6d] rounded-full animate-ping"
                                             style="animation-duration: 2s;"></div>
                                         <div class="absolute inset-0 flex items-center justify-center">
-                                            <div class="w-4 h-4 bg-orange-500 rounded-full shadow-lg shadow-orange-500/50">
+                                            <div class="w-4 h-4 bg-[#ff385c] rounded-full shadow-lg shadow-none/50">
                                             </div>
                                         </div>
                                     </div>
@@ -482,7 +455,7 @@
 
                                     {{-- Progress Steps --}}
                                     <div class="flex items-center gap-2 text-xs text-gray-500">
-                                        <span class="flex items-center gap-1 text-orange-500">
+                                        <span class="flex items-center gap-1 text-[#ff385c]">
                                             <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -491,7 +464,7 @@
                                             Position
                                         </span>
                                         <span>→</span>
-                                        <span class="animate-pulse text-orange-500">Recherche...</span>
+                                        <span class="animate-pulse text-[#ff385c]">Recherche...</span>
                                         <span>→</span>
                                         <span>Résultats</span>
                                     </div>
@@ -514,10 +487,10 @@
                                     </svg>
                                     Seules les résidences disponibles sont affichées
                                 </div>
-                                <div class="flex items-center gap-3 bg-orange-50 rounded-xl p-3 mb-4">
+                                <div class="flex items-center gap-3 bg-[#fff0f3] rounded-xl p-3 mb-4">
                                     <div
-                                        class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center shrink-0">
-                                        <svg aria-hidden="true" class="w-5 h-5 text-orange-500" fill="none"
+                                        class="w-10 h-10 bg-[#ffd1da] rounded-full flex items-center justify-center shrink-0">
+                                        <svg aria-hidden="true" class="w-5 h-5 text-[#ff385c]" fill="none"
                                             stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -525,37 +498,37 @@
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm font-semibold text-emerald-900">Position confirmée</p>
-                                        <p class="text-xs text-orange-500 truncate"
+                                        <p class="text-xs text-[#ff385c] truncate"
                                             x-text="selectedCommune ? selectedCommune : 'Votre position actuelle'">
                                         </p>
                                         {{-- Indicateur de précision GPS --}}
                                         <p x-show="gpsAccuracy !== null" x-cloak class="text-[10px] mt-0.5"
                                             :class="gpsAccuracy <= 20 ? 'text-emerald-600' : (gpsAccuracy <= 100 ?
-                                                'text-orange-500' : 'text-red-500')"
+                                                'text-[#ff385c]' : 'text-red-500')"
                                             x-text="'Précision : ±' + gpsAccuracy + 'm' + (gpsAccuracy <= 20 ? ' — Excellente' : (gpsAccuracy <= 100 ? ' — Bonne' : ' — Faible, activez le GPS'))">
                                         </p>
                                     </div>
                                     <button @click="gpsState = 'prompt'; showResidences = false; heroExpanded = true"
-                                        class="text-orange-500 hover:text-orange-600 text-xs font-medium underline">
+                                        class="text-[#ff385c] hover:text-[#e00b41] text-xs font-medium underline">
                                         Modifier
                                     </button>
                                 </div>
 
                                 {{-- Radius Selector --}}
                                 <div class="space-y-3">
-                                    <label class="block text-sm font-medium text-gray-700">Rayon de recherche</label>
-                                    <div class="grid grid-cols-3 gap-2">
-                                        <button @click="setRadius(500)"
-                                            :class="radius === 500 ?
-                                                'bg-orange-500 text-white border-orange-500 shadow-lg shadow-orange-500/30' :
+                                        <label for="radius-selector" class="block text-sm font-medium text-gray-700">Rayon de recherche</label>
+                                        <div class="grid grid-cols-3 gap-2">
+                                            <button @click="setRadius(500)"
+                                                :class="radius === 500 ?
+                                                    'bg-[#ff385c] text-white border-[#ff385c] shadow-lg' :
                                                 'bg-white text-gray-700 border-gray-200 hover:border-emerald-300'"
                                             class="py-3 px-4 rounded-xl border-2 font-semibold transition-all">
-                                            <span class="block text-lg">500m</span>
+                                            <span class="block text-lg">2km</span>
                                             <span class="block text-xs opacity-70">🚶 5 min à pied</span>
                                         </button>
                                         <button @click="setRadius(2000)"
                                             :class="radius === 2000 ?
-                                                'bg-orange-500 text-white border-orange-500 shadow-lg shadow-orange-500/30' :
+                                                    'bg-[#ff385c] text-white border-[#ff385c] shadow-lg' :
                                                 'bg-white text-gray-700 border-gray-200 hover:border-emerald-300'"
                                             class="py-3 px-4 rounded-xl border-2 font-semibold transition-all">
                                             <span class="block text-lg">2 km</span>
@@ -563,7 +536,7 @@
                                         </button>
                                         <button @click="setRadius(5000)"
                                             :class="radius === 5000 ?
-                                                'bg-orange-500 text-white border-orange-500 shadow-lg shadow-orange-500/30' :
+                                                    'bg-[#ff385c] text-white border-[#ff385c] shadow-lg' :
                                                 'bg-white text-gray-700 border-gray-200 hover:border-emerald-300'"
                                             class="py-3 px-4 rounded-xl border-2 font-semibold transition-all">
                                             <span class="block text-lg">5 km</span>
@@ -600,7 +573,7 @@
                                     <a :href="mapUrl()"
                                         class="flex items-center gap-3 w-full p-3 bg-linear-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 rounded-xl text-white transition-all group shadow-lg">
                                         <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
-                                            <svg aria-hidden="true" class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg aria-hidden="true" class="w-5 h-5 text-[#ff4d6d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                                             </svg>
@@ -628,17 +601,17 @@
                                 {{-- Compact radius pills + count --}}
                                 <div class="flex items-center gap-2 mb-2">
                                     <button @click="setRadius(500)"
-                                        :class="radius === 500 ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-600'"
+                                        :class="radius === 500 ? 'bg-[#ff385c] text-white' : 'bg-gray-100 text-gray-600'"
                                         class="px-3 py-1.5 rounded-full text-xs font-bold transition-all">
-                                        500m
+                                        2km
                                     </button>
                                     <button @click="setRadius(2000)"
-                                        :class="radius === 2000 ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-600'"
+                                        :class="radius === 2000 ? 'bg-[#ff385c] text-white' : 'bg-gray-100 text-gray-600'"
                                         class="px-3 py-1.5 rounded-full text-xs font-bold transition-all">
                                         2 km
                                     </button>
                                     <button @click="setRadius(5000)"
-                                        :class="radius === 5000 ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-600'"
+                                        :class="radius === 5000 ? 'bg-[#ff385c] text-white' : 'bg-gray-100 text-gray-600'"
                                         class="px-3 py-1.5 rounded-full text-xs font-bold transition-all">
                                         5 km
                                     </button>
@@ -665,14 +638,14 @@
                                 <div class="flex gap-2">
                                     <a :href="mapUrl()"
                                         class="flex-1 flex items-center justify-center gap-2 py-2.5 bg-linear-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 rounded-xl text-white text-sm font-semibold transition-all shadow-lg">
-                                        <svg aria-hidden="true" class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg aria-hidden="true" class="w-4 h-4 text-[#ff4d6d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                                         </svg>
                                         Explorer la carte
                                     </a>
                                     <button @click="document.getElementById('nearby-residences')?.scrollIntoView({ behavior: 'smooth' })"
-                                        class="flex items-center justify-center gap-1.5 px-4 py-2.5 bg-orange-500 hover:bg-orange-600 rounded-xl text-white text-sm font-semibold transition-all shadow-lg">
+                                        class="flex items-center justify-center gap-1.5 px-4 py-2.5 bg-[#ff385c] hover:bg-[#e00b41] rounded-xl text-white text-sm font-semibold transition-all shadow-lg">
                                         <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                                         </svg>
@@ -682,26 +655,6 @@
                             </div>
                         </div>
 
-                        {{-- Quick Stats (visible on prompt) --}}
-                        <div x-show="gpsState === 'prompt'" class="mt-6 grid grid-cols-3 gap-4 text-center">
-                            <div class="bg-white/10 backdrop-blur rounded-xl p-3 border border-white/10">
-                                <div class="text-2xl font-bold text-white">{{ $stats['residences'] ?? 0 }}</div>
-                                <div class="text-xs text-gray-400">Résidences</div>
-                            </div>
-                            <div class="bg-white/10 backdrop-blur rounded-xl p-3 border border-white/10">
-                                <div class="text-2xl font-bold text-orange-400">{{ $stats['communes'] ?? 0 }}</div>
-                                <div class="text-xs text-gray-400">Zones</div>
-                            </div>
-                            <div class="bg-white/10 backdrop-blur rounded-xl p-3 border border-white/10">
-                                <div class="text-2xl font-bold text-white">{{ $stats['owners'] ?? 0 }}</div>
-                                <div class="text-xs text-gray-400">Propriétaires</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Scroll Indicator --}}
-                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20" x-show="showResidences">
                     <div class="animate-bounce text-white/60">
                         <svg aria-hidden="true" class="w-6 h-6" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
@@ -715,7 +668,7 @@
             {{-- 2. BOTTOM SHEET - RESULTS --}}
             <div x-show="showResidences" x-transition:enter="transition ease-out duration-500"
                 x-transition:enter-start="translate-y-full opacity-0" x-transition:enter-end="translate-y-0 opacity-100"
-                class="relative z-30 -mt-8 bg-sand-100 rounded-t-3xl pt-4 pb-20 lg:pb-8" x-cloak id="nearby-residences">
+                class="relative z-30 -mt-8 bg-[#f7f7f7] rounded-t-3xl pt-4 pb-20 lg:pb-8" x-cloak id="nearby-residences">
 
                 {{-- Drag Handle --}}
                 <div class="flex justify-center mb-4">
@@ -731,7 +684,7 @@
                         </div>
                         <a :href="mapUrl()"
                             class="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm font-semibold rounded-xl shadow-lg hover:bg-gray-800 transition-all">
-                            <svg aria-hidden="true" class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg aria-hidden="true" class="w-4 h-4 text-[#ff4d6d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                             </svg>
@@ -762,7 +715,7 @@
                                     @endif
                                     <div class="absolute inset-0 bg-linear-to-t from-black/50 to-transparent"></div>
                                     <div
-                                        class="absolute top-3 left-3 bg-orange-500 text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow flex items-center gap-1">
+                                        class="absolute top-3 left-3 bg-[#ff385c] text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow flex items-center gap-1">
                                         <svg aria-hidden="true" class="w-3 h-3" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -835,7 +788,7 @@
                                     </div>
                                     <div class="flex gap-2">
                                         <span
-                                            class="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2.5 rounded-xl text-sm font-semibold shadow text-center transition">Voir
+                                            class="flex-1 bg-[#ff385c] hover:bg-[#e00b41] text-white py-2.5 rounded-xl text-sm font-semibold shadow text-center transition">Voir
                                             détails</span>
                                     </div>
                                 </div>
@@ -854,138 +807,20 @@
                         @if ($featuredResidences->count() > 4)
                             {{-- See More Card --}}
                             <a href="{{ route('residences.index') }}"
-                                class="snap-center shrink-0 w-45 bg-linear-to-br from-orange-50 to-orange-50 rounded-2xl border-2 border-dashed border-orange-200 flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-orange-400 hover:from-orange-100 hover:to-orange-100 transition-all">
+                                class="snap-center shrink-0 w-45 bg-linear-to-br from-[#fff0f3] to-[#fff0f3] rounded-2xl border-2 border-dashed border-[#dddddd] flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-[#ff4d6d] hover:from-[#ffd1da] hover:to-[#ffd1da] transition-all">
                                 <div
-                                    class="w-14 h-14 rounded-full bg-white shadow-md flex items-center justify-center text-orange-500">
+                                    class="w-14 h-14 rounded-full bg-white shadow-md flex items-center justify-center text-[#ff385c]">
                                     <span class="text-xl font-bold">+{{ $featuredResidences->count() - 4 }}</span>
                                 </div>
                                 <div class="text-center">
-                                    <span class="text-sm font-semibold text-orange-600">Voir plus</span>
-                                    <p class="text-xs text-orange-500/70">de résidences</p>
+                                    <span class="text-sm font-semibold text-[#e00b41]">Voir plus</span>
+                                    <p class="text-xs text-[#ff385c]/70">de résidences</p>
                                 </div>
                             </a>
                         @endif
                     </div>
 
-                    {{-- Mini-carte interactive (après géoloc) --}}
-                    <div x-show="userLocation" x-cloak class="mt-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <h4 class="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                                <svg aria-hidden="true" class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                                </svg>
-                                Votre zone
-                            </h4>
-                            <a :href="mapUrl()"
-                                class="text-xs font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-1">
-                                Agrandir
-                                <svg aria-hidden="true" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                                </svg>
-                            </a>
-                        </div>
-                        <div x-ref="miniMapContainer" class="w-full h-48 sm:h-56 rounded-2xl overflow-hidden bg-gray-200 shadow-inner border border-gray-200"
-                            x-init="$watch('userLocation', async (loc) => {
-                                if (!loc || $refs.miniMapContainer._mapInit) return;
-                                $refs.miniMapContainer._mapInit = true;
-                                const token = '{{ config('services.mapbox.access_token') }}';
-                                if (!window.mapboxgl) {
-                                    let tries = 0;
-                                    while (!window.mapboxgl && tries < 40) { await new Promise(r => setTimeout(r, 150)); tries++; }
-                                }
-                                if (!window.mapboxgl) return;
-                                mapboxgl.accessToken = token;
-                                const miniMap = new mapboxgl.Map({
-                                    container: $refs.miniMapContainer,
-                                    style: '{{ config('services.mapbox.style', 'mapbox://styles/mapbox/streets-v12') }}',
-                                    center: [loc.lng, loc.lat],
-                                    zoom: 14,
-                                    attributionControl: false,
-                                    interactive: true,
-                                });
-                                miniMap.scrollZoom.disable();
-                                miniMap.on('load', () => {
-                                    // Marqueur utilisateur
-                                    const uel = document.createElement('div');
-                                    uel.innerHTML = '<div class=&quot;relative&quot;><div class=&quot;w-4 h-4 bg-blue-600 rounded-full border-2 border-white shadow-lg&quot;></div><div class=&quot;absolute inset-0 w-4 h-4 bg-blue-500 rounded-full animate-ping opacity-50&quot;></div></div>';
-                                    new mapboxgl.Marker({ element: uel }).setLngLat([loc.lng, loc.lat]).addTo(miniMap);
-                                    // Marqueurs résidences
-                                    const residences = @js($featuredResidences->take(8)->map(fn($r) => ['lat' => $r->latitude, 'lng' => $r->longitude, 'price' => ($r->price_per_day ?? 0) > 0 ? number_format($r->price_per_day / 1000) . 'k' : '—', 'id' => $r->id]));
-                                    residences.forEach(r => {
-                                        if (!r.lat || !r.lng) return;
-                                        const mel = document.createElement('a');
-                                        mel.href = '/residences/' + r.id;
-                                        mel.innerHTML = '<div class=&quot;bg-orange-500 text-white px-1.5 py-0.5 rounded text-[10px] font-bold shadow whitespace-nowrap&quot;>' + r.price + '</div>';
-                                        new mapboxgl.Marker({ element: mel, anchor: 'bottom' }).setLngLat([r.lng, r.lat]).addTo(miniMap);
-                                    });
-                                });
-                            })">
-                            {{-- Placeholder avant chargement de la carte --}}
-                            <div class="w-full h-full bg-gray-100 flex items-center justify-center">
-                                <svg class="animate-spin h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            {{-- 3. SECTION MICRO-RASSURANCE —— Icônes premium avec gradient --}}
-            <div class="bg-white py-10 sm:py-16 border-t border-gray-100">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-10">
-                        <div class="flex flex-col items-center text-center gap-4 reveal-hidden"
-                            x-intersect.once="$el.classList.add('reveal-visible')">
-                            <div class="w-16 h-16 rounded-2xl bg-linear-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/25 transition-transform duration-300 hover:scale-110">
-                                <svg aria-hidden="true" class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="font-bold text-gray-900">Logements vérifiés</div>
-                                <div class="text-sm text-gray-500 mt-1">Chaque annonce est contrôlée par notre équipe REZI.</div>
-                            </div>
-                        </div>
-                        <div class="flex flex-col items-center text-center gap-4 reveal-hidden reveal-delay-1"
-                            x-intersect.once="$el.classList.add('reveal-visible')">
-                            <div class="w-16 h-16 rounded-2xl bg-linear-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/25 transition-transform duration-300 hover:scale-110">
-                                <svg aria-hidden="true" class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="font-bold text-gray-900">Disponibilité en temps réel</div>
-                                <div class="text-sm text-gray-500 mt-1">Consultez les disponibilités à jour, sans surprise.</div>
-                            </div>
-                        </div>
-                        <div class="flex flex-col items-center text-center gap-4 reveal-hidden reveal-delay-2"
-                            x-intersect.once="$el.classList.add('reveal-visible')">
-                            <div class="w-16 h-16 rounded-2xl bg-linear-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/25 transition-transform duration-300 hover:scale-110">
-                                <svg aria-hidden="true" class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="font-bold text-gray-900">Contact direct</div>
-                                <div class="text-sm text-gray-500 mt-1">Discutez directement avec le propriétaire, sans commission.</div>
-                            </div>
-                        </div>
-                        <div class="flex flex-col items-center text-center gap-4 reveal-hidden reveal-delay-3"
-                            x-intersect.once="$el.classList.add('reveal-visible')">
-                            <div class="w-16 h-16 rounded-2xl bg-linear-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-lg shadow-violet-500/25 transition-transform duration-300 hover:scale-110">
-                                <svg aria-hidden="true" class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="font-bold text-gray-900">Carte interactive</div>
-                                <div class="text-sm text-gray-500 mt-1">Explorez Abidjan par quartier avec notre carte géolocalisée.</div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -996,14 +831,14 @@
 
             {{-- 3.5 BARRE DE CATÉGORIES — Airbnb-style sticky horizontal scroll --}}
             @if($categories->isNotEmpty())
-            <nav class="sticky top-14 z-30 bg-white border-b border-gray-200 shadow-sm">
+            <nav class="bg-white border-b border-gray-200 shadow-sm">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6">
-                    <div class="flex flex-wrap justify-center gap-6 sm:gap-8 py-3">
+                    <div class="flex justify-center overflow-x-auto scrollbar-hide gap-6 sm:gap-8 py-3">
                         @foreach($categories as $category)
                             <a href="{{ route('residences.index', ['category' => $category->slug]) }}"
                                class="shrink-0 flex flex-col items-center gap-1 group cursor-pointer min-w-14">
                                 {{-- Icône --}}
-                                <div class="w-6 h-6 text-gray-500 group-hover:text-orange-500 transition-colors duration-200">
+                                <div class="w-6 h-6 text-gray-500 group-hover:text-[#ff385c] transition-colors duration-200">
                                     @switch($category->icon)
                                         @case('building')
                                             <svg aria-hidden="true" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1052,16 +887,16 @@
                                     @endswitch
                                 </div>
                                 {{-- Label + compteur --}}
-                                <span class="text-[10px] sm:text-xs font-medium text-gray-500 group-hover:text-orange-500 transition-colors duration-200 whitespace-nowrap">
+                                <span class="text-[10px] sm:text-xs font-medium text-gray-500 group-hover:text-[#ff385c] transition-colors duration-200 whitespace-nowrap">
                                     {{ $category->name }}
                                 </span>
                                 @if($category->residences_count > 0)
-                                    <span class="text-[9px] sm:text-[10px] font-semibold text-orange-500 leading-none">
+                                    <span class="text-[9px] sm:text-[10px] font-semibold text-[#ff385c] leading-none">
                                         {{ $category->residences_count }}
                                     </span>
                                 @endif
                                 {{-- Active indicator --}}
-                                <div class="h-0.5 w-full bg-transparent group-hover:bg-orange-500 transition-colors duration-200 rounded-full"></div>
+                                <div class="h-0.5 w-full bg-transparent group-hover:bg-[#ff385c] transition-colors duration-200 rounded-full"></div>
                             </a>
                         @endforeach
                     </div>
@@ -1073,11 +908,9 @@
 
                 @include('home.popular')
 
-                @include('home.how-it-works')
-
                 @include('home.testimonials')
 
-                @include('home.owners')
+                {{-- Section propriétaires supprimée --}}
 
                 @include('home.cta-mobile')
 

@@ -256,7 +256,7 @@
                         <div class="mb-4 p-3 rounded-lg text-sm flex items-center gap-2"
                             :class="{
                                 'bg-blue-50 text-blue-700': typeLocation === 'apartment',
-                                'bg-orange-50 text-orange-700': typeLocation === 'residence_meublee',
+                                'bg-[#fff0f3] text-[#b5083a]': typeLocation === 'residence_meublee',
                                 'bg-purple-50 text-purple-700': typeLocation === 'hotel'
                             }">
                             <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">

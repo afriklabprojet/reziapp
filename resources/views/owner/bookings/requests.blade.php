@@ -53,7 +53,7 @@
                     @foreach ($requests as $request)
                         @php
                             $avatarColors = [
-                                'from-orange-400 to-orange-500',
+                                'from-[#ff4d6d] to-[#ff385c]',
                                 'from-blue-400 to-blue-500',
                                 'from-purple-400 to-purple-500',
                                 'from-green-400 to-green-500',

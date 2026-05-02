@@ -22,13 +22,13 @@
                 <div class="flex items-center gap-3">
                     <div class="relative">
                         <div
-                            class="w-12 h-12 rounded-full overflow-hidden bg-linear-to-br from-orange-50 to-orange-100 flex items-center justify-center shrink-0 ring-2 ring-white shadow-sm">
+                            class="w-12 h-12 rounded-full overflow-hidden bg-linear-to-br from-[#fff0f3] to-[#ffd1da] flex items-center justify-center shrink-0 ring-2 ring-white shadow-sm">
                             @if (auth()->user()->profile_photo || auth()->user()->avatar)
                                 <img loading="lazy" src="{{ auth()->user()->getAvatarUrl() }}"
                                     alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
                             @else
                                 <span
-                                    class="text-lg font-semibold text-orange-600">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                                    class="text-lg font-semibold text-[#e00b41]">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
                             @endif
                         </div>
                         {{-- Online indicator --}}
@@ -38,7 +38,7 @@
                     <div class="min-w-0 flex-1">
                         <p class="font-semibold text-[15px] text-gray-900 truncate">{{ auth()->user()->name }}</p>
                         <p class="text-xs text-gray-500 flex items-center gap-1">
-                            <svg class="w-3 h-3 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-3 h-3 text-[#ff385c]" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                                 <path fill-rule="evenodd"
                                     d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
@@ -278,13 +278,13 @@
         <div class="px-5 py-3 border-b border-gray-100">
             <div class="flex items-center gap-3">
                 <div
-                    class="w-10 h-10 rounded-full overflow-hidden bg-linear-to-br from-orange-50 to-orange-100 flex items-center justify-center shrink-0">
+                    class="w-10 h-10 rounded-full overflow-hidden bg-linear-to-br from-[#fff0f3] to-[#ffd1da] flex items-center justify-center shrink-0">
                     @if (auth()->user()->profile_photo || auth()->user()->avatar)
                         <img loading="lazy" src="{{ auth()->user()->getAvatarUrl() }}"
                             alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
                     @else
                         <span
-                            class="text-base font-semibold text-orange-600">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                            class="text-base font-semibold text-[#e00b41]">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
                     @endif
                 </div>
                 <div>

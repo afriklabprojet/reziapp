@@ -55,6 +55,11 @@ Schedule::command('rezi:manage-vacation-modes')->dailyAt('00:05')
     ->withoutOverlapping()
     ->runInBackground();
 
+// Synchroniser l'occupation des résidences selon les réservations confirmées (chaque jour à 00h10)
+Schedule::command('rezi:sync-residence-occupancy')->dailyAt('00:10')
+    ->withoutOverlapping()
+    ->runInBackground();
+
 // ============================================
 // Nouvelles commandes d'automatisation
 // ============================================

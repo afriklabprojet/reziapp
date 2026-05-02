@@ -85,7 +85,7 @@
                         <div class="flex gap-2">
                             <form method="POST" action="{{ route('owner.rent-reminders.send', $reminder) }}">
                                 @csrf
-                                <button class="px-3 py-1.5 text-xs font-semibold bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors">Relancer</button>
+                                <button class="px-3 py-1.5 text-xs font-semibold bg-[#fff0f3] text-[#e00b41] rounded-lg hover:bg-[#ffd1da] transition-colors">Relancer</button>
                             </form>
                             <form method="POST" action="{{ route('owner.rent-reminders.mark-paid', $reminder) }}">
                                 @csrf

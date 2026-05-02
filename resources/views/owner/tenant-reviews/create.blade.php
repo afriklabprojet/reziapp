@@ -18,7 +18,7 @@
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Résidence *</label>
-                <select name="residence_id" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" required>
+                <select name="residence_id" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" required>
                     <option value="">Sélectionner</option>
                     @foreach($residences as $r) <option value="{{ $r->id }}" {{ old('residence_id') == $r->id ? 'selected' : '' }}>{{ $r->name }}</option> @endforeach
                 </select>
@@ -26,7 +26,7 @@
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Locataire (email) *</label>
-                <input type="email" name="tenant_email" value="{{ old('tenant_email') }}" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" placeholder="locataire@email.com" required>
+                <input type="email" name="tenant_email" value="{{ old('tenant_email') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" placeholder="locataire@email.com" required>
                 @error('tenant_email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 @error('tenant_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
@@ -56,7 +56,7 @@
 
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Commentaire</label>
-            <textarea name="comment" rows="3" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" placeholder="Votre expérience avec ce locataire...">{{ old('comment') }}</textarea>
+            <textarea name="comment" rows="3" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" placeholder="Votre expérience avec ce locataire...">{{ old('comment') }}</textarea>
             @error('comment') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
         </div>
 

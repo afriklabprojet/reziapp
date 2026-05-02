@@ -204,7 +204,7 @@
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <div class="w-10 h-10 bg-[#ffd1da] rounded-lg flex items-center justify-center">
                             <span class="text-xl">✅</span>
                         </div>
                         <div>
@@ -229,7 +229,7 @@
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2 mb-1">
                                         <span
-                                            class="px-2 py-0.5 bg-orange-100 text-orange-600 text-xs font-medium rounded">Disponible</span>
+                                            class="px-2 py-0.5 bg-[#ffd1da] text-[#e00b41] text-xs font-medium rounded">Disponible</span>
                                     </div>
                                     <h3 class="font-medium text-gray-900 truncate">
                                         {{ $favorite->residence->title }}</h3>
@@ -256,22 +256,22 @@
         {{-- Sidebar --}}
         <div class="space-y-6">
             {{-- Activer les notifications --}}
-            <div class="bg-orange-50 rounded-xl p-6 border border-orange-100">
+            <div class="bg-[#fff0f3] rounded-xl p-6 border border-[#ffd1da]">
                 <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-10 h-10 bg-[#ffd1da] rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                         </svg>
                     </div>
-                    <h3 class="font-semibold text-orange-700">Notifications push</h3>
+                    <h3 class="font-semibold text-[#b5083a]">Notifications push</h3>
                 </div>
-                <p class="text-sm text-orange-600 mb-4">
+                <p class="text-sm text-[#e00b41] mb-4">
                     Activez les notifications pour être alerté en temps réel des nouvelles résidences correspondant
                     à vos critères.
                 </p>
                 <button onclick="requestNotificationPermission()"
-                    class="w-full px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition">
+                    class="w-full px-4 py-2 bg-[#ff385c] hover:bg-[#e00b41] text-white font-medium rounded-lg transition">
                     Activer les notifications
                 </button>
             </div>
@@ -281,21 +281,21 @@
                 <h3 class="font-semibold text-gray-900 mb-4">💡 Conseils</h3>
                 <ul class="space-y-3 text-sm text-gray-600">
                     <li class="flex items-start gap-2">
-                        <svg class="w-5 h-5 text-orange-500 shrink-0 mt-0.5" fill="none" stroke="currentColor"
+                        <svg class="w-5 h-5 text-[#ff385c] shrink-0 mt-0.5" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
                         <span>Ajoutez des résidences en favoris pour être alerté des changements de prix</span>
                     </li>
                     <li class="flex items-start gap-2">
-                        <svg class="w-5 h-5 text-orange-500 shrink-0 mt-0.5" fill="none" stroke="currentColor"
+                        <svg class="w-5 h-5 text-[#ff385c] shrink-0 mt-0.5" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
                         <span>Explorez différentes communes pour élargir vos possibilités</span>
                     </li>
                     <li class="flex items-start gap-2">
-                        <svg class="w-5 h-5 text-orange-500 shrink-0 mt-0.5" fill="none" stroke="currentColor"
+                        <svg class="w-5 h-5 text-[#ff385c] shrink-0 mt-0.5" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
@@ -320,7 +320,7 @@
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-gray-600">Favoris disponibles</span>
-                        <span class="font-semibold text-orange-500">{{ $availabilityAlerts->count() }}</span>
+                        <span class="font-semibold text-[#ff385c]">{{ $availabilityAlerts->count() }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-gray-600">Alertes prix</span>

@@ -14,7 +14,7 @@
                         <div class="w-20 h-20 rounded-full border-4 border-gray-100"></div>
                         <div class="absolute inset-0 w-20 h-20 rounded-full border-4 border-transparent border-t-orange-500 animate-spin"></div>
                         <div class="absolute inset-0 flex items-center justify-center">
-                            <svg class="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <svg class="w-8 h-8 text-[#ff385c]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
                             </svg>
@@ -32,9 +32,9 @@
 
                 {{-- Progress dots --}}
                 <div class="flex items-center justify-center gap-2">
-                    <div class="w-2 h-2 rounded-full bg-orange-500 animate-bounce" style="animation-delay: 0s"></div>
-                    <div class="w-2 h-2 rounded-full bg-orange-500 animate-bounce" style="animation-delay: 0.2s"></div>
-                    <div class="w-2 h-2 rounded-full bg-orange-500 animate-bounce" style="animation-delay: 0.4s"></div>
+                    <div class="w-2 h-2 rounded-full bg-[#ff385c] animate-bounce" style="animation-delay: 0s"></div>
+                    <div class="w-2 h-2 rounded-full bg-[#ff385c] animate-bounce" style="animation-delay: 0.2s"></div>
+                    <div class="w-2 h-2 rounded-full bg-[#ff385c] animate-bounce" style="animation-delay: 0.4s"></div>
                 </div>
 
                 {{-- Details --}}

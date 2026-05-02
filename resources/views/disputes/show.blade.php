@@ -80,7 +80,7 @@
                                        placeholder="Description..."
                                        class="flex-1 px-3 py-1 border rounded text-sm">
                                 <button type="submit" 
-                                        class="px-4 py-1 bg-orange-600 text-white rounded text-sm hover:bg-orange-700">
+                                        class="px-4 py-1 bg-[#e00b41] text-white rounded text-sm hover:bg-[#b5083a]">
                                     Ajouter
                                 </button>
                             </div>
@@ -194,8 +194,8 @@
 
                     @if($dispute->escalated_at)
                         <div class="flex items-start">
-                            <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mr-3">
-                                <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-8 h-8 bg-[#ffd1da] rounded-full flex items-center justify-center mr-3">
+                                <svg class="w-4 h-4 text-[#e00b41]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                                 </svg>
                             </div>

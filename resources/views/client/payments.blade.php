@@ -77,7 +77,7 @@
     {{-- Filtres --}}
     <div class="flex flex-wrap gap-2 mb-6">
         @foreach ([
-            'all'        => ['label' => 'Tous', 'color' => 'bg-orange-500 text-white', 'inactive' => 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'],
+            'all'        => ['label' => 'Tous', 'color' => 'bg-[#ff385c] text-white', 'inactive' => 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'],
             'completed'  => ['label' => 'Payés', 'color' => 'bg-green-500 text-white', 'inactive' => 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'],
             'pending'    => ['label' => 'En attente', 'color' => 'bg-amber-500 text-white', 'inactive' => 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'],
             'failed'     => ['label' => 'Échoués', 'color' => 'bg-red-500 text-white', 'inactive' => 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'],
@@ -120,9 +120,9 @@
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition">
                     <div class="flex flex-col sm:flex-row sm:items-center gap-4">
                         {{-- Icône type --}}
-                        <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center shrink-0">
+                        <div class="w-12 h-12 bg-[#fff0f3] rounded-xl flex items-center justify-center shrink-0">
                             @if ($payment->type === 'deposit')
-                                <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-6 h-6 text-[#ff4d6d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                 </svg>
@@ -132,7 +132,7 @@
                                         d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                                 </svg>
                             @else
-                                <svg class="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-6 h-6 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
                                 </svg>
@@ -234,7 +234,7 @@
                 </a>
             @else
                 <a href="{{ route('residences.index') }}"
-                    class="inline-flex items-center px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition">
+                    class="inline-flex items-center px-6 py-3 bg-[#ff385c] hover:bg-[#e00b41] text-white font-medium rounded-lg transition">
                     Explorer les résidences
                 </a>
             @endif

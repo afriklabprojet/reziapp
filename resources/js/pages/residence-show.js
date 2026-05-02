@@ -126,6 +126,7 @@ export function bookingForm(config) {
         residenceId: config.residenceId || 0,
         unavailableDates: config.unavailableDates || [],
         cleaningFee: config.cleaningFee || 0,
+        stateTaxConfig: config.stateTax || 0,
         isAuthenticated: config.isAuthenticated || false,
 
         // UI State
@@ -199,7 +200,12 @@ export function bookingForm(config) {
 
         get serviceFee() {
             if (this.serverPrice?.service_fee !== undefined) return this.serverPrice.service_fee;
-            return Math.round(this.subtotal * 0.10);
+            return 0;
+        },
+
+        get stateTax() {
+            if (this.serverPrice?.taxes !== undefined) return this.serverPrice.taxes;
+            return this.stateTaxConfig;
         },
 
         get totalCleaningFee() {
@@ -226,8 +232,8 @@ export function bookingForm(config) {
         },
 
         get total() {
-            if (this.serverPrice?.total) return this.serverPrice.total;
-            return this.subtotal + this.serviceFee + this.totalCleaningFee - this.discount;
+            if (this.serverPrice?.total_amount) return this.serverPrice.total_amount;
+            return this.subtotal + this.serviceFee + this.stateTax + this.totalCleaningFee - this.discount;
         },
 
         get canSubmit() {

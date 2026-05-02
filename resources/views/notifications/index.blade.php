@@ -20,7 +20,7 @@
             @if ($unreadCount > 0)
                 <form action="{{ route('notifications.read-all') }}" method="POST">
                     @csrf
-                    <button type="submit" class="text-sm text-orange-600 hover:text-orange-700 font-medium">
+                    <button type="submit" class="text-sm text-[#e00b41] hover:text-[#b5083a] font-medium">
                         Tout marquer comme lu
                     </button>
                 </form>
@@ -43,7 +43,7 @@
             <!-- Liste des notifications -->
             <div class="bg-white rounded-2xl shadow-sm overflow-hidden divide-y divide-gray-100">
                 @foreach ($notifications as $notification)
-                    <div class="relative {{ is_null($notification->read_at) ? 'bg-orange-50' : '' }}">
+                    <div class="relative {{ is_null($notification->read_at) ? 'bg-[#fff0f3]' : '' }}">
                         <a href="{{ $notification->action_url ?? '#' }}"
                             class="flex items-start gap-4 p-4 hover:bg-gray-50 transition-colors"
                             @if ($notification->action_url) onclick="markAsRead('{{ $notification->id }}')" @endif>
@@ -133,7 +133,7 @@
                             <!-- Indicateur non lu -->
                             @if (is_null($notification->read_at))
                                 <div class="shrink-0">
-                                    <span class="w-2 h-2 bg-orange-600 rounded-full block"></span>
+                                    <span class="w-2 h-2 bg-[#e00b41] rounded-full block"></span>
                                 </div>
                             @endif
                         </a>
@@ -143,7 +143,7 @@
                             @if (is_null($notification->read_at))
                                 <form action="{{ route('notifications.read', $notification) }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="p-1 text-gray-400 hover:text-orange-600 transition-colors"
+                                    <button type="submit" class="p-1 text-gray-400 hover:text-[#e00b41] transition-colors"
                                         title="Marquer comme lu" aria-label="Marquer comme lu">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                             aria-hidden="true">

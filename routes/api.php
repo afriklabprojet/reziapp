@@ -150,7 +150,7 @@ Route::prefix('v1')->group(function () {
         | API Recherche Géolocalisée v2 (optimisée avec cache)
         |--------------------------------------------------------------------------
         | Routes dédiées pour la recherche par rayon avec cache géohash
-        | Cœur de REZI : recherche ≤ 500m
+        | Cœur de REZI : recherche ≤ 2km
         */
         Route::prefix('geo')->name('api.geo.')->middleware('throttle:geo-search')->group(function () {
             // Recherche principale avec filtres

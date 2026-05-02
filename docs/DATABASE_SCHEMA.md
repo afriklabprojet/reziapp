@@ -5,7 +5,7 @@
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────┐
 │                            REZI DATABASE SCHEMA                                          │
-│                     Optimisé pour recherche géolocalisée ≤ 500m                         │
+│                     Optimisé pour recherche géolocalisée ≤ 2km                         │
 └─────────────────────────────────────────────────────────────────────────────────────────┘
 
                                     ┌──────────────────┐
@@ -250,7 +250,7 @@ CREATE TABLE statistics (
 
 ## 🗺️ Index Géographiques et Optimisation
 
-### Stratégie d'indexation pour rayon ≤ 500m
+### Stratégie d'indexation pour rayon ≤ 2km
 
 ```php
 // Index composite dans la migration

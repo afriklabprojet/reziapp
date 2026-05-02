@@ -13,7 +13,7 @@
             default => ['bg-gray-100 text-gray-600 border-gray-200', ucfirst($booking->status), 'gray'],
         };
         $avatarColors = [
-            'from-orange-400 to-orange-500',
+            'from-[#ff4d6d] to-[#ff385c]',
             'from-blue-400 to-blue-500',
             'from-purple-400 to-purple-500',
             'from-green-400 to-green-500',
@@ -256,7 +256,7 @@
                                 @endif
                                 <div class="flex-1 min-w-0">
                                     <p
-                                        class="text-sm font-bold text-gray-900 group-hover:text-orange-600 transition-colors truncate">
+                                        class="text-sm font-bold text-gray-900 group-hover:text-[#e00b41] transition-colors truncate">
                                         {{ $booking->residence->name }}
                                     </p>
                                     @if ($booking->residence->commune)
@@ -266,7 +266,7 @@
                                         </p>
                                     @endif
                                 </div>
-                                <svg class="w-4 h-4 text-gray-400 group-hover:text-orange-500 transition-colors shrink-0"
+                                <svg class="w-4 h-4 text-gray-400 group-hover:text-[#ff385c] transition-colors shrink-0"
                                     fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                                 </svg>
@@ -434,7 +434,7 @@
 
                             <div class="flex justify-between pt-3 border-t border-gray-100">
                                 <span class="text-sm font-bold text-gray-900">Total</span>
-                                <span class="text-base font-extrabold text-orange-600">
+                                <span class="text-base font-extrabold text-[#e00b41]">
                                     {{ number_format($booking->total_amount ?? 0, 0, ',', ' ') }}
                                     <span class="text-xs font-bold">FCFA</span>
                                 </span>

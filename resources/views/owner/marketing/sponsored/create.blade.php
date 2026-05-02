@@ -16,7 +16,7 @@
             </a>
             <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2.5">
                 <span
-                    class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 text-white shadow-sm">
+                    class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-linear-to-br from-amber-500 to-[#e00b41] text-white shadow-sm">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
@@ -64,7 +64,7 @@
                 <div>
                     <p class="font-medium">Aucune résidence disponible</p>
                     <p class="text-xs mt-0.5">Vous devez avoir au moins une résidence approuvée pour créer une campagne sponsorisée.
-                        <a href="{{ route('owner.residences.create') }}" class="text-orange-600 hover:underline font-semibold">Créer une résidence</a>
+                        <a href="{{ route('owner.residences.create') }}" class="text-[#e00b41] hover:underline font-semibold">Créer une résidence</a>
                     </p>
                 </div>
             </div>
@@ -80,7 +80,7 @@
                         <h3 class="text-base font-bold text-gray-900">Sélectionnez une résidence</h3>
                     </div>
                     <select name="residence_id" required x-model="residenceId"
-                        class="w-full text-sm border-gray-200 rounded-xl bg-gray-50 focus:ring-orange-500 focus:border-orange-500 transition-colors">
+                        class="w-full text-sm border-gray-200 rounded-xl bg-gray-50 focus:ring-[#ff385c] focus:border-[#ff385c] transition-colors">
                         <option value="">Choisir une résidence</option>
                         @foreach ($residences as $residence)
                             <option value="{{ $residence->id }}" {{ old('residence_id') == $residence->id ? 'selected' : '' }}>
@@ -115,7 +115,7 @@
                         $packageGradients = [
                             'featured_home' => 'from-purple-500 to-indigo-500',
                             'top_search' => 'from-blue-500 to-cyan-500',
-                            'highlighted' => 'from-orange-500 to-red-500',
+                            'highlighted' => 'from-[#ff385c] to-red-500',
                             'premium_listing' => 'from-amber-500 to-yellow-500',
                         ];
                     @endphp
@@ -124,7 +124,7 @@
                             <input type="radio" name="type" value="{{ $key }}" x-model="type"
                                 class="sr-only peer" {{ old('type', 'highlighted') === $key ? 'checked' : '' }}>
                             <div
-                                class="border-2 rounded-2xl p-4 transition-all peer-checked:border-orange-500 peer-checked:bg-orange-50/50 peer-checked:shadow-sm border-gray-100 hover:border-gray-200">
+                                class="border-2 rounded-2xl p-4 transition-all peer-checked:border-[#ff385c] peer-checked:bg-[#fff0f3]/50 peer-checked:shadow-sm border-gray-100 hover:border-gray-200">
                                 @if ($key === 'premium_listing')
                                     <span
                                         class="absolute -top-2.5 right-3 bg-linear-to-r from-amber-500 to-yellow-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-sm">POPULAIRE</span>
@@ -138,7 +138,7 @@
                                         <div class="flex items-center justify-between gap-2">
                                             <h4 class="font-bold text-sm text-gray-900">{{ $package['name'] }}</h4>
                                             <span
-                                                class="text-sm font-bold text-orange-600 whitespace-nowrap">{{ number_format($package['price'], 0, ',', ' ') }}
+                                                class="text-sm font-bold text-[#e00b41] whitespace-nowrap">{{ number_format($package['price'], 0, ',', ' ') }}
                                                 F<span class="text-[10px] text-gray-400 font-normal">/sem</span></span>
                                         </div>
                                         <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">
@@ -184,7 +184,7 @@
                             <input type="radio" name="duration" value="{{ $opt['val'] }}" x-model="duration"
                                 class="sr-only peer" {{ old('duration', '7') == $opt['val'] ? 'checked' : '' }}>
                             <div
-                                class="border-2 rounded-2xl p-4 text-center transition-all peer-checked:border-orange-500 peer-checked:bg-orange-50/50 peer-checked:shadow-sm border-gray-100 hover:border-gray-200">
+                                class="border-2 rounded-2xl p-4 text-center transition-all peer-checked:border-[#ff385c] peer-checked:bg-[#fff0f3]/50 peer-checked:shadow-sm border-gray-100 hover:border-gray-200">
                                 <p class="text-2xl font-bold text-gray-900">{{ $opt['val'] }}</p>
                                 <p class="text-xs text-gray-500 mt-0.5">jours</p>
                                 @if ($opt['discount'])
@@ -213,7 +213,7 @@
                             <input type="number" name="daily_budget" id="daily_budget"
                                 value="{{ old('daily_budget') }}" min="500" step="500"
                                 placeholder="Pas de limite"
-                                class="w-full text-sm border-gray-200 rounded-xl bg-gray-50 focus:ring-orange-500 focus:border-orange-500 pr-16 transition-colors">
+                                class="w-full text-sm border-gray-200 rounded-xl bg-gray-50 focus:ring-[#ff385c] focus:border-[#ff385c] pr-16 transition-colors">
                             <span
                                 class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-medium">FCFA</span>
                         </div>
@@ -225,7 +225,7 @@
                             <input type="number" name="total_budget" id="total_budget"
                                 value="{{ old('total_budget') }}" min="5000" step="1000"
                                 placeholder="Pas de limite"
-                                class="w-full text-sm border-gray-200 rounded-xl bg-gray-50 focus:ring-orange-500 focus:border-orange-500 pr-16 transition-colors">
+                                class="w-full text-sm border-gray-200 rounded-xl bg-gray-50 focus:ring-[#ff385c] focus:border-[#ff385c] pr-16 transition-colors">
                             <span
                                 class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-medium">FCFA</span>
                         </div>
@@ -273,7 +273,7 @@
                     <div class="border-t border-gray-200 pt-3 mt-3">
                         <div class="flex justify-between items-center">
                             <span class="text-base font-bold text-gray-900">Total</span>
-                            <span class="text-xl font-bold text-orange-600"
+                            <span class="text-xl font-bold text-[#e00b41]"
                                 x-text="formatPrice(getTotalPrice()) + ' FCFA'">-</span>
                         </div>
                     </div>

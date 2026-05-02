@@ -272,12 +272,12 @@ class Booking extends Model
     }
 
     /**
-     * Upcoming bookings
+     * Upcoming bookings (confirmed only — pending bookings not yet validated should not appear)
      */
     public function scopeUpcoming($query)
     {
         return $query->where('check_in', '>', now())
-                     ->whereIn('status', ['pending', 'confirmed']);
+                     ->where('status', 'confirmed');
     }
 
     /**
@@ -348,11 +348,14 @@ class Booking extends Model
     public function getStatusLabelAttribute(): string
     {
         return match($this->status) {
-            'pending' => 'En attente',
-            'confirmed' => 'Confirmée',
-            'cancelled' => 'Annulée',
-            'completed' => 'Terminée',
-            'rejected' => 'Refusée',
+            'pending'            => 'En attente',
+            'pending_payment'    => 'Paiement en cours',
+            'confirmed'          => 'Confirmée',
+            'cancelled'          => 'Annulée',
+            'cancelled_by_user'  => 'Annulée',
+            'cancelled_by_owner' => 'Annulée par l\'hôte',
+            'completed'          => 'Terminée',
+            'rejected'           => 'Refusée',
             default => $this->status,
         };
     }

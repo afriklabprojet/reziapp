@@ -26,7 +26,7 @@
 
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Résidence *</label>
-            <select name="residence_id" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" required>
+            <select name="residence_id" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" required>
                 <option value="">Sélectionner</option>
                 @foreach($residences as $r) <option value="{{ $r->id }}" {{ old('residence_id') == $r->id ? 'selected' : '' }}>{{ $r->name }}</option> @endforeach
             </select>
@@ -36,18 +36,18 @@
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Date et heure *</label>
-                <input type="datetime-local" name="scheduled_date" value="{{ old('scheduled_date') }}" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" required>
+                <input type="datetime-local" name="scheduled_date" value="{{ old('scheduled_date') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" required>
                 @error('scheduled_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Nom du prestataire</label>
-                <input type="text" name="cleaner_name" value="{{ old('cleaner_name') }}" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" placeholder="Ex: Marie Koné">
+                <input type="text" name="cleaner_name" value="{{ old('cleaner_name') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" placeholder="Ex: Marie Koné">
             </div>
         </div>
 
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Téléphone du prestataire</label>
-            <input type="text" name="cleaner_phone" value="{{ old('cleaner_phone') }}" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" placeholder="+225 07 XX XX XX XX">
+            <input type="text" name="cleaner_phone" value="{{ old('cleaner_phone') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" placeholder="+225 07 XX XX XX XX">
         </div>
 
         <div>
@@ -56,21 +56,21 @@
                 <template x-for="(item, index) in checklist" :key="index">
                     <div class="flex items-center gap-2">
                         <input type="hidden" :name="'checklist['+index+'][done]'" value="0">
-                        <input type="text" :name="'checklist['+index+'][label]'" x-model="item.label" class="flex-1 rounded-xl border-gray-200 focus:ring-orange-500 text-sm py-2" placeholder="Tâche...">
+                        <input type="text" :name="'checklist['+index+'][label]'" x-model="item.label" class="flex-1 rounded-xl border-gray-200 focus:ring-[#ff385c] text-sm py-2" placeholder="Tâche...">
                         <button type="button" @click="checklist.splice(index, 1)" class="p-2 text-red-400 hover:text-red-600 transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
                         </button>
                     </div>
                 </template>
             </div>
-            <button type="button" @click="checklist.push({label: '', done: false})" class="mt-2 text-sm text-orange-600 hover:text-orange-700 font-medium">
+            <button type="button" @click="checklist.push({label: '', done: false})" class="mt-2 text-sm text-[#e00b41] hover:text-[#b5083a] font-medium">
                 + Ajouter une tâche
             </button>
         </div>
 
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Notes</label>
-            <textarea name="notes" rows="2" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" placeholder="Instructions spéciales...">{{ old('notes') }}</textarea>
+            <textarea name="notes" rows="2" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" placeholder="Instructions spéciales...">{{ old('notes') }}</textarea>
         </div>
 
         <div class="flex gap-3 pt-2">

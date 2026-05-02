@@ -16,7 +16,7 @@
                 </div>
                 <div class="flex items-center gap-3">
                     <a href="{{ route('owner.bookings.requests') }}"
-                        class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-orange-500 text-white text-sm font-semibold rounded-xl hover:bg-orange-600 transition-colors shadow-sm">
+                        class="relative inline-flex items-center gap-2 px-4 py-2.5 bg-[#ff385c] text-white text-sm font-semibold rounded-xl hover:bg-[#e00b41] transition-colors shadow-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
@@ -81,8 +81,8 @@
                 </div>
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center">
-                            <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" stroke-width="1.5"
+                        <div class="w-10 h-10 bg-[#fff0f3] rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor" stroke-width="1.5"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -133,7 +133,7 @@
                             </svg>
                             <input type="text" name="search" value="{{ $search }}"
                                 placeholder="Référence, nom du client, résidence…"
-                                class="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-gray-200 focus:border-orange-300 focus:ring focus:ring-orange-100 bg-gray-50/50">
+                                class="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-gray-200 focus:border-[#ffb3c1] focus:ring focus:ring-orange-100 bg-gray-50/50">
                         </div>
                         <button type="submit"
                             class="px-4 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-colors">
@@ -145,7 +145,7 @@
                     <div class="flex items-center gap-2">
                         <select
                             onchange="window.location.href='{{ route('owner.bookings.index') }}?status={{ $status }}&search={{ $search }}&sort='+this.value+'&dir={{ $dir }}'"
-                            class="text-sm rounded-xl border border-gray-200 px-3 py-2.5 bg-gray-50/50 focus:border-orange-300 focus:ring focus:ring-orange-100">
+                            class="text-sm rounded-xl border border-gray-200 px-3 py-2.5 bg-gray-50/50 focus:border-[#ffb3c1] focus:ring focus:ring-orange-100">
                             <option value="created_at" {{ $sort === 'created_at' ? 'selected' : '' }}>Date</option>
                             <option value="check_in" {{ $sort === 'check_in' ? 'selected' : '' }}>Arrivée</option>
                             <option value="total_amount" {{ $sort === 'total_amount' ? 'selected' : '' }}>Montant
@@ -185,10 +185,10 @@
                     @endphp
                     @foreach ($filters as $key => $filter)
                         <a href="{{ route('owner.bookings.index', ['status' => $key, 'search' => $search, 'sort' => $sort, 'dir' => $dir]) }}"
-                            class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors {{ $status === $key ? 'bg-orange-500 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                            class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors {{ $status === $key ? 'bg-[#ff385c] text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
                             {{ $filter['label'] }}
                             <span
-                                class="ml-1 {{ $status === $key ? 'text-orange-200' : 'text-gray-400' }}">{{ $filter['count'] }}</span>
+                                class="ml-1 {{ $status === $key ? 'text-[#ffb3c1]' : 'text-gray-400' }}">{{ $filter['count'] }}</span>
                         </a>
                     @endforeach
                 </div>
@@ -240,7 +240,7 @@
                                 default => ['bg-gray-100 text-gray-600', ucfirst($booking->status), 'bg-gray-500'],
                             };
                             $avatarColors = [
-                                'from-orange-400 to-orange-500',
+                                'from-[#ff4d6d] to-[#ff385c]',
                                 'from-blue-400 to-blue-500',
                                 'from-purple-400 to-purple-500',
                                 'from-green-400 to-green-500',
@@ -414,7 +414,7 @@
                                     </div>
 
                                     <a href="{{ route('owner.bookings.show', $booking) }}"
-                                        class="inline-flex items-center gap-1.5 text-xs font-bold text-orange-500 hover:text-orange-600 transition-colors">
+                                        class="inline-flex items-center gap-1.5 text-xs font-bold text-[#ff385c] hover:text-[#e00b41] transition-colors">
                                         Voir détails
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
                                             viewBox="0 0 24 24">

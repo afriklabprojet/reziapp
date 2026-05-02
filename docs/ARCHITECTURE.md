@@ -169,7 +169,7 @@ app/
 
 **Features**:
 - ✅ Calcul Haversine
-- ✅ Recherche par rayon (100m, 300m, 500m)
+- ✅ Recherche par rayon (2km, 5km, 10km)
 - ✅ Tri par distance
 - ✅ Cache des requêtes fréquentes
 - ✅ API endpoints pour carte interactive

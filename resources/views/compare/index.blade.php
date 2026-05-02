@@ -37,8 +37,8 @@
 
             @if ($residences->isEmpty())
                 <div class="bg-white rounded-2xl shadow-sm p-8 text-center">
-                    <div class="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-16 h-16 bg-[#fff0f3] rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-[#ff4d6d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
                         </svg>
@@ -47,7 +47,7 @@
                     <p class="text-gray-500 mb-4">Ajoutez des résidences à la comparaison depuis leur page de détail.
                     </p>
                     <a href="{{ route('residences.index') }}"
-                        class="inline-flex items-center gap-2 bg-orange-600 text-white px-4 py-2 rounded-xl hover:bg-orange-700 transition-colors">
+                        class="inline-flex items-center gap-2 bg-[#e00b41] text-white px-4 py-2 rounded-xl hover:bg-[#b5083a] transition-colors">
                         Parcourir les résidences
                     </a>
                 </div>
@@ -99,7 +99,7 @@
                                                 </form>
                                             </div>
                                             <a href="{{ route('residences.show', $residence) }}"
-                                                class="font-semibold text-gray-900 hover:text-orange-600">
+                                                class="font-semibold text-gray-900 hover:text-[#e00b41]">
                                                 {{ Str::limit($residence->title, 30) }}
                                             </a>
                                         </th>
@@ -112,7 +112,7 @@
                                     <td class="p-4 font-medium text-gray-700 bg-gray-50 sticky left-0">Prix / jour</td>
                                     @foreach ($residences as $residence)
                                         <td class="p-4 text-center">
-                                            <span class="text-lg font-bold text-orange-600">
+                                            <span class="text-lg font-bold text-[#e00b41]">
                                                 {{ number_format($residence->price, 0, ',', ' ') }}
                                                 FCFA/{{ $residence->price_label }}
                                             </span>
@@ -217,7 +217,7 @@
                                     @foreach ($residences as $residence)
                                         <td class="p-4 text-center">
                                             <a href="{{ route('residences.show', $residence) }}"
-                                                class="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 text-sm">
+                                                class="inline-flex items-center gap-2 px-4 py-2 bg-[#e00b41] text-white rounded-lg hover:bg-[#b5083a] text-sm">
                                                 Voir détails
                                             </a>
                                         </td>

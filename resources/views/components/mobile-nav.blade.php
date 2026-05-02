@@ -9,7 +9,7 @@
         {{-- Accueil --}}
         <a href="{{ route('home') }}"
             class="flex flex-col items-center justify-center flex-1 h-full min-w-12 group transition-colors duration-200"
-            :class="activeTab === 'home' ? 'text-orange-600' : 'text-gray-400 hover:text-gray-600'">
+            :class="activeTab === 'home' ? 'text-[#e00b41]' : 'text-gray-400 hover:text-gray-600'">
             <div class="relative">
                 <svg aria-hidden="true" class="w-6 h-6 transition-all duration-200 group-active:scale-90" fill="none"
                     stroke="currentColor" viewBox="0 0 24 24"
@@ -24,7 +24,7 @@
         {{-- Rechercher --}}
         <a href="{{ route('residences.index') }}"
             class="flex flex-col items-center justify-center flex-1 h-full min-w-12 group transition-colors duration-200"
-            :class="activeTab === 'search' ? 'text-orange-600' : 'text-gray-400 hover:text-gray-600'">
+            :class="activeTab === 'search' ? 'text-[#e00b41]' : 'text-gray-400 hover:text-gray-600'">
             <div class="relative">
                 <svg aria-hidden="true" class="w-6 h-6 transition-all duration-200 group-active:scale-90" fill="none"
                     stroke="currentColor" viewBox="0 0 24 24"
@@ -40,7 +40,7 @@
         @auth
             <a href="{{ route('favorites.index') }}"
                 class="flex flex-col items-center justify-center flex-1 h-full min-w-12 group transition-colors duration-200"
-                :class="activeTab === 'favorites' ? 'text-orange-600' : 'text-gray-400 hover:text-gray-600'">
+                :class="activeTab === 'favorites' ? 'text-[#e00b41]' : 'text-gray-400 hover:text-gray-600'">
                 <div class="relative">
                     <svg aria-hidden="true" class="w-6 h-6 transition-all duration-200 group-active:scale-90" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24"
@@ -57,7 +57,7 @@
         @auth
             <a href="{{ route('chat.index') }}"
                 class="flex flex-col items-center justify-center flex-1 h-full min-w-12 group transition-colors duration-200"
-                :class="activeTab === 'messages' ? 'text-orange-600' : 'text-gray-400 hover:text-gray-600'">
+                :class="activeTab === 'messages' ? 'text-[#e00b41]' : 'text-gray-400 hover:text-gray-600'">
                 <div class="relative">
                     <svg aria-hidden="true" class="w-6 h-6 transition-all duration-200 group-active:scale-90" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24"
@@ -78,12 +78,12 @@
         @auth
             <a href="{{ route('profile.edit') }}"
                 class="flex flex-col items-center justify-center flex-1 h-full min-w-12 group transition-colors duration-200"
-                :class="activeTab === 'profile' ? 'text-orange-600' : 'text-gray-400 hover:text-gray-600'">
+                :class="activeTab === 'profile' ? 'text-[#e00b41]' : 'text-gray-400 hover:text-gray-600'">
                 <div class="relative">
                     @if (auth()->user()->profile_photo || auth()->user()->avatar)
                         <img loading="lazy" src="{{ auth()->user()->getAvatarUrl() }}" alt="{{ auth()->user()->name }}"
                             class="w-6 h-6 rounded-full object-cover transition-all duration-200"
-                            :class="activeTab === 'profile' ? 'ring-2 ring-orange-500 ring-offset-1' : ''">
+                            :class="activeTab === 'profile' ? 'ring-2 ring-[#ff385c] ring-offset-1' : ''">
                     @else
                         <svg aria-hidden="true" class="w-6 h-6 transition-all duration-200 group-active:scale-90"
                             fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -94,7 +94,7 @@
                     @endif
                     {{-- Badge notifications --}}
                     <span x-show="hasNotifications" x-cloak
-                        class="absolute -top-1.5 -right-1.5 w-2.5 h-2.5 bg-orange-500 rounded-full ring-2 ring-white"></span>
+                        class="absolute -top-1.5 -right-1.5 w-2.5 h-2.5 bg-[#ff385c] rounded-full ring-2 ring-white"></span>
                 </div>
                 <span class="text-[11px] mt-0.5 font-medium tracking-tight">Profil</span>
             </a>

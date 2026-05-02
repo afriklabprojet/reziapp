@@ -14,7 +14,7 @@
             <div>
                 <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2.5">
                     <span
-                        class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 text-white shadow-sm">
+                        class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-linear-to-br from-amber-500 to-[#e00b41] text-white shadow-sm">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
@@ -73,8 +73,8 @@
             </div>
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
-                        <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" stroke-width="2"
+                    <div class="w-9 h-9 rounded-xl bg-[#fff0f3] flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4 text-[#e00b41]" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
@@ -141,7 +141,7 @@
                 <form method="GET" class="flex flex-wrap items-center gap-3 flex-1">
                     <div class="min-w-48 flex-1">
                         <select name="residence_id"
-                            class="w-full text-sm border-gray-200 rounded-lg focus:ring-orange-500 focus:border-orange-500 bg-gray-50">
+                            class="w-full text-sm border-gray-200 rounded-lg focus:ring-[#ff385c] focus:border-[#ff385c] bg-gray-50">
                             <option value="">Toutes les résidences</option>
                             @foreach ($residences as $residence)
                                 <option value="{{ $residence->id }}"
@@ -153,7 +153,7 @@
                     </div>
                     <div class="min-w-36">
                         <select name="status"
-                            class="w-full text-sm border-gray-200 rounded-lg focus:ring-orange-500 focus:border-orange-500 bg-gray-50">
+                            class="w-full text-sm border-gray-200 rounded-lg focus:ring-[#ff385c] focus:border-[#ff385c] bg-gray-50">
                             <option value="">Tous les statuts</option>
                             <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Actives</option>
                             <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>En attente
@@ -175,7 +175,7 @@
                 </form>
                 <div class="flex items-center bg-gray-100 rounded-lg p-0.5">
                     <button @click="setView('cards')" type="button" class="p-2 rounded-md transition-all"
-                        :class="view === 'cards' ? 'bg-white shadow-sm text-orange-600' :
+                        :class="view === 'cards' ? 'bg-white shadow-sm text-[#e00b41]' :
                             'text-gray-400 hover:text-gray-600'">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -183,7 +183,7 @@
                         </svg>
                     </button>
                     <button @click="setView('table')" type="button" class="p-2 rounded-md transition-all"
-                        :class="view === 'table' ? 'bg-white shadow-sm text-orange-600' :
+                        :class="view === 'table' ? 'bg-white shadow-sm text-[#e00b41]' :
                             'text-gray-400 hover:text-gray-600'">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -254,7 +254,7 @@
                             'premium_listing' => 'from-amber-500 to-yellow-500 shadow-amber-500/20',
                             'featured_home' => 'from-purple-500 to-indigo-500 shadow-purple-500/20',
                             'top_search' => 'from-blue-500 to-cyan-500 shadow-blue-500/20',
-                            'highlighted' => 'from-orange-500 to-red-500 shadow-orange-500/20',
+                            'highlighted' => 'from-[#ff385c] to-red-500 shadow-none',
                         ];
                         $badgeColor = $typeColors[$sponsored->type] ?? $typeColors['highlighted'];
                         $isLive = $sponsored->status === 'active';
@@ -313,8 +313,8 @@
                                         </span>
                                     @elseif ($sponsored->status === 'pending')
                                         <span
-                                            class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-orange-50 text-orange-700 border border-orange-200">
-                                            <span class="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>En attente
+                                            class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-[#fff0f3] text-[#b5083a] border border-[#ffb3c1]">
+                                            <span class="w-1.5 h-1.5 bg-[#ff385c] rounded-full"></span>En attente
                                         </span>
                                     @elseif ($sponsored->status === 'paused')
                                         <span
@@ -389,7 +389,7 @@
                                                 / {{ number_format($sponsored->total_budget, 0, ',', ' ') }} F</span>
                                         </div>
                                         <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                                            <div class="h-full rounded-full transition-all duration-500 {{ $budgetPercent >= 90 ? 'bg-red-500' : ($budgetPercent >= 60 ? 'bg-orange-400' : 'bg-green-500') }}"
+                                            <div class="h-full rounded-full transition-all duration-500 {{ $budgetPercent >= 90 ? 'bg-red-500' : ($budgetPercent >= 60 ? 'bg-[#ff4d6d]' : 'bg-green-500') }}"
                                                 style="width: {{ $budgetPercent }}%"></div>
                                         </div>
                                     </div>
@@ -398,7 +398,7 @@
 
                             {{-- Arrow --}}
                             <div class="hidden sm:flex shrink-0">
-                                <svg class="w-5 h-5 text-gray-300 group-hover:text-orange-500 transition-colors"
+                                <svg class="w-5 h-5 text-gray-300 group-hover:text-[#ff385c] transition-colors"
                                     fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                                 </svg>
@@ -452,7 +452,7 @@
                                                     'premium_listing' => 'bg-amber-50 text-amber-700',
                                                     'featured_home' => 'bg-purple-50 text-purple-700',
                                                     'top_search' => 'bg-blue-50 text-blue-700',
-                                                    'highlighted' => 'bg-orange-50 text-orange-700',
+                                                    'highlighted' => 'bg-[#fff0f3] text-[#b5083a]',
                                                 ];
                                             @endphp
                                             <span
@@ -487,7 +487,7 @@
                                                         class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>Active</span>
                                             @elseif ($sponsored->status === 'pending')
                                                 <span
-                                                    class="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-full bg-orange-50 text-orange-700">En
+                                                    class="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-full bg-[#fff0f3] text-[#b5083a]">En
                                                     attente</span>
                                             @elseif ($sponsored->status === 'paused')
                                                 <span
@@ -503,7 +503,7 @@
                                         <td class="px-5 py-3.5">
                                             <div class="flex items-center justify-end gap-1">
                                                 <a href="{{ route('owner.marketing.sponsored.show', $sponsored) }}"
-                                                    class="p-1.5 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                                                    class="p-1.5 text-gray-400 hover:text-[#e00b41] hover:bg-[#fff0f3] rounded-lg transition-colors"
                                                     title="Détails">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                         stroke-width="2" viewBox="0 0 24 24">
@@ -515,7 +515,7 @@
                                                 </a>
                                                 @if ($sponsored->status === 'pending' && !$sponsored->is_paid)
                                                     <a href="{{ route('owner.marketing.sponsored.payment', $sponsored) }}"
-                                                        class="p-1.5 text-orange-500 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-colors"
+                                                        class="p-1.5 text-[#ff385c] hover:text-[#b5083a] hover:bg-[#fff0f3] rounded-lg transition-colors"
                                                         title="Payer">
                                                         <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                             stroke-width="2" viewBox="0 0 24 24">

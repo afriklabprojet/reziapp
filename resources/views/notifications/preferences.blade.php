@@ -38,7 +38,7 @@
                     <p class="text-gray-500 text-sm mt-1">Gérez comment et quand vous recevez des notifications</p>
                 </div>
                 <a href="{{ route('notifications.index') }}"
-                    class="text-orange-500 hover:text-orange-600 text-sm font-medium flex items-center gap-1">
+                    class="text-[#ff385c] hover:text-[#e00b41] text-sm font-medium flex items-center gap-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
@@ -87,7 +87,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
             <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
                 <h2 class="font-semibold text-gray-900 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -115,17 +115,17 @@
                             <div class="flex flex-wrap gap-4 mt-4">
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" x-model="preferences.messages_email" @change="savePreferences()"
-                                        class="w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                        class="w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
                                     <span class="text-sm text-gray-700">Email</span>
                                 </label>
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" x-model="preferences.messages_push" @change="savePreferences()"
-                                        class="w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                        class="w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
                                     <span class="text-sm text-gray-700">Push</span>
                                 </label>
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" x-model="preferences.messages_sms" @change="savePreferences()"
-                                        class="w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                        class="w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
                                     <span class="text-sm text-gray-700">SMS</span>
                                 </label>
                             </div>
@@ -149,17 +149,17 @@
                             <div class="flex flex-wrap gap-4 mt-4">
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" x-model="preferences.visits_email" @change="savePreferences()"
-                                        class="w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                        class="w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
                                     <span class="text-sm text-gray-700">Email</span>
                                 </label>
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" x-model="preferences.visits_push" @change="savePreferences()"
-                                        class="w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                        class="w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
                                     <span class="text-sm text-gray-700">Push</span>
                                 </label>
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" x-model="preferences.visits_sms" @change="savePreferences()"
-                                        class="w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                        class="w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
                                     <span class="text-sm text-gray-700">SMS</span>
                                 </label>
                             </div>
@@ -185,18 +185,18 @@
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" x-model="preferences.payments_email"
                                         @change="savePreferences()"
-                                        class="w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                        class="w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
                                     <span class="text-sm text-gray-700">Email</span>
                                 </label>
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" x-model="preferences.payments_push"
                                         @change="savePreferences()"
-                                        class="w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                        class="w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
                                     <span class="text-sm text-gray-700">Push</span>
                                 </label>
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" x-model="preferences.payments_sms" @change="savePreferences()"
-                                        class="w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                        class="w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
                                     <span class="text-sm text-gray-700">SMS</span>
                                 </label>
                             </div>
@@ -207,8 +207,8 @@
                 {{-- Marketing --}}
                 <div class="p-5 hover:bg-gray-50 transition">
                     <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
-                            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor"
+                        <div class="w-12 h-12 rounded-xl bg-[#ffd1da] flex items-center justify-center shrink-0">
+                            <svg class="w-6 h-6 text-[#e00b41]" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
@@ -221,19 +221,19 @@
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" x-model="preferences.marketing_email"
                                         @change="savePreferences()"
-                                        class="w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                        class="w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
                                     <span class="text-sm text-gray-700">Email</span>
                                 </label>
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" x-model="preferences.marketing_push"
                                         @change="savePreferences()"
-                                        class="w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                        class="w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
                                     <span class="text-sm text-gray-700">Push</span>
                                 </label>
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" x-model="preferences.marketing_sms"
                                         @change="savePreferences()"
-                                        class="w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                        class="w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
                                     <span class="text-sm text-gray-700">SMS</span>
                                 </label>
                             </div>
@@ -258,18 +258,18 @@
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" x-model="preferences.security_email"
                                         @change="savePreferences()"
-                                        class="w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                        class="w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
                                     <span class="text-sm text-gray-700">Email</span>
                                 </label>
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" x-model="preferences.security_push"
                                         @change="savePreferences()"
-                                        class="w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                        class="w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
                                     <span class="text-sm text-gray-700">Push</span>
                                 </label>
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" x-model="preferences.security_sms" @change="savePreferences()"
-                                        class="w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                                        class="w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
                                     <span class="text-sm text-gray-700">SMS</span>
                                 </label>
                             </div>
@@ -285,7 +285,7 @@
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
                     <h2 class="font-semibold text-gray-900 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                         </svg>
@@ -300,19 +300,19 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">De</label>
                             <input type="time" x-model="preferences.quiet_hours_start" @change="savePreferences()"
-                                class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                                class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">À</label>
                             <input type="time" x-model="preferences.quiet_hours_end" @change="savePreferences()"
-                                class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                                class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Fuseau horaire</label>
                         <select x-model="preferences.timezone" @change="savePreferences()"
-                            class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                            class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
                             <option value="Africa/Abidjan">Abidjan (GMT)</option>
                             <option value="Africa/Dakar">Dakar (GMT)</option>
                             <option value="Africa/Ouagadougou">Ouagadougou (GMT)</option>
@@ -339,7 +339,7 @@
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
                     <h2 class="font-semibold text-gray-900 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                         </svg>
@@ -354,7 +354,7 @@
                         </template>
                         <template x-if="isPushSupported && !isPushSubscribed">
                             <button @click="subscribeToPush()"
-                                class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg transition">
+                                class="px-4 py-2 bg-[#ff385c] hover:bg-[#e00b41] text-white text-sm font-medium rounded-lg transition">
                                 Activer
                             </button>
                         </template>

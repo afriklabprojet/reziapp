@@ -25,7 +25,7 @@
                 @error('description') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
             <div class="flex items-center">
-                <input type="checkbox" name="is_public" id="is_public" value="1" class="rounded border-gray-300 text-orange-500 focus:ring-orange-500" {{ old('is_public') ? 'checked' : '' }}>
+                <input type="checkbox" name="is_public" id="is_public" value="1" class="rounded border-gray-300 text-[#ff385c] focus:ring-[#ff385c]" {{ old('is_public') ? 'checked' : '' }}>
                 <label for="is_public" class="ml-2 text-sm text-gray-700">Rendre cette collection publique (partageable)</label>
             </div>
             <div class="flex justify-end space-x-3">

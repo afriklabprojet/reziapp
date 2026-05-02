@@ -28,7 +28,7 @@
                     </a>
                 @else
                     <a href="{{ route('owner.listing-score.show', $residence) }}"
-                        class="inline-flex items-center gap-1 mt-2 text-xs text-gray-400 hover:text-orange-500 transition-colors">
+                        class="inline-flex items-center gap-1 mt-2 text-xs text-gray-400 hover:text-[#ff385c] transition-colors">
                         ⭐ Calculer le score qualité →
                     </a>
                 @endif
@@ -378,7 +378,7 @@
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold text-gray-900">Co-hôtes</h3>
                         <a href="{{ route('owner.cohosts.create', $residence) }}"
-                            class="inline-flex items-center gap-1 text-xs font-semibold text-orange-600 hover:text-orange-700 transition-colors">
+                            class="inline-flex items-center gap-1 text-xs font-semibold text-[#e00b41] hover:text-[#b5083a] transition-colors">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -396,9 +396,9 @@
                             @foreach ($cohosts->take(3) as $cohost)
                                 <div class="flex items-center gap-3">
                                     <div
-                                        class="w-8 h-8 rounded-full bg-linear-to-br from-orange-100 to-amber-100 flex items-center justify-center shrink-0">
+                                        class="w-8 h-8 rounded-full bg-linear-to-br from-[#ffd1da] to-amber-100 flex items-center justify-center shrink-0">
                                         <span
-                                            class="text-xs font-bold text-orange-700">{{ strtoupper(substr($cohost->user->name ?? $cohost->email, 0, 1)) }}</span>
+                                            class="text-xs font-bold text-[#b5083a]">{{ strtoupper(substr($cohost->user->name ?? $cohost->email, 0, 1)) }}</span>
                                     </div>
                                     <div class="min-w-0 flex-1">
                                         <p class="text-sm font-medium text-gray-900 truncate">
@@ -438,7 +438,7 @@
                             </div>
                             <p class="text-sm text-gray-500 mb-2">Aucun co-hôte</p>
                             <a href="{{ route('owner.cohosts.create', $residence) }}"
-                                class="text-sm font-semibold text-orange-600 hover:text-orange-700 transition-colors">
+                                class="text-sm font-semibold text-[#e00b41] hover:text-[#b5083a] transition-colors">
                                 Inviter un co-hôte →
                             </a>
                         </div>

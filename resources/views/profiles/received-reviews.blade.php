@@ -23,8 +23,8 @@
         <div class="bg-white rounded-xl shadow-sm border p-6">
             <div class="flex items-start justify-between mb-3">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                        <span class="text-orange-600 font-bold">{{ substr($review->user->name ?? '?', 0, 1) }}</span>
+                    <div class="w-10 h-10 bg-[#ffd1da] rounded-full flex items-center justify-center">
+                        <span class="text-[#e00b41] font-bold">{{ substr($review->user->name ?? '?', 0, 1) }}</span>
                     </div>
                     <div>
                         <p class="font-medium text-gray-900">{{ $review->user->name ?? 'Utilisateur' }}</p>
@@ -39,7 +39,7 @@
             </div>
             <p class="text-gray-700">{{ $review->comment }}</p>
             @if($review->residence)
-            <a href="{{ route('residences.show', $review->residence) }}" class="inline-flex items-center text-sm text-orange-600 hover:text-orange-700 mt-3">
+            <a href="{{ route('residences.show', $review->residence) }}" class="inline-flex items-center text-sm text-[#e00b41] hover:text-[#b5083a] mt-3">
                 {{ $review->residence->title }} →
             </a>
             @endif

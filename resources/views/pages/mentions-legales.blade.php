@@ -7,7 +7,7 @@
         <div class="bg-white border-b border-gray-200">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <nav class="text-sm text-gray-500 mb-4">
-                    <a href="{{ route('home') }}" class="hover:text-orange-500 transition">Accueil</a>
+                    <a href="{{ route('home') }}" class="hover:text-[#ff385c] transition">Accueil</a>
                     <span class="mx-2">›</span>
                     <span class="text-gray-900">Mentions légales</span>
                 </nav>

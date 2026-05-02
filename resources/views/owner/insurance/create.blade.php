@@ -17,7 +17,7 @@
 
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Résidence *</label>
-            <select name="residence_id" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" required>
+            <select name="residence_id" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" required>
                 <option value="">Sélectionner</option>
                 @foreach($residences as $r) <option value="{{ $r->id }}" {{ old('residence_id') == $r->id ? 'selected' : '' }}>{{ $r->name }}</option> @endforeach
             </select>
@@ -27,19 +27,19 @@
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Assureur *</label>
-                <input type="text" name="provider" value="{{ old('provider') }}" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" placeholder="Ex: NSIA, Allianz CI" required>
+                <input type="text" name="provider" value="{{ old('provider') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" placeholder="Ex: NSIA, Allianz CI" required>
                 @error('provider') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">N° de police</label>
-                <input type="text" name="policy_number" value="{{ old('policy_number') }}" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" placeholder="POL-XXXXXXXXX">
+                <input type="text" name="policy_number" value="{{ old('policy_number') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" placeholder="POL-XXXXXXXXX">
                 @error('policy_number') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
         </div>
 
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Type de couverture *</label>
-            <select name="coverage_type" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" required>
+            <select name="coverage_type" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" required>
                 @foreach(\App\Models\InsuranceSubscription::COVERAGE_TYPES as $key => $label)
                     <option value="{{ $key }}" {{ old('coverage_type') === $key ? 'selected' : '' }}>{{ $label }}</option>
                 @endforeach
@@ -49,26 +49,26 @@
 
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Prime mensuelle (FCFA) *</label>
-            <input type="number" name="monthly_premium" value="{{ old('monthly_premium') }}" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" placeholder="25000" required>
+            <input type="number" name="monthly_premium" value="{{ old('monthly_premium') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" placeholder="25000" required>
             @error('monthly_premium') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
         </div>
 
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Date de début *</label>
-                <input type="date" name="start_date" value="{{ old('start_date') }}" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" required>
+                <input type="date" name="start_date" value="{{ old('start_date') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" required>
                 @error('start_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Date de fin *</label>
-                <input type="date" name="end_date" value="{{ old('end_date') }}" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" required>
+                <input type="date" name="end_date" value="{{ old('end_date') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" required>
                 @error('end_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
         </div>
 
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Notes</label>
-            <textarea name="notes" rows="2" class="w-full rounded-xl border-gray-200 focus:ring-orange-500 focus:border-orange-500 text-sm" placeholder="Informations complémentaires...">{{ old('notes') }}</textarea>
+            <textarea name="notes" rows="2" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" placeholder="Informations complémentaires...">{{ old('notes') }}</textarea>
         </div>
 
         <div class="flex gap-3 pt-2">

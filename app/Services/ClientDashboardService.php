@@ -30,20 +30,26 @@ class ClientDashboardService
     public function getDashboardData(User $user): array
     {
         $upcomingBookings = $this->getUpcomingBookings($user);
-        $ongoingBooking = $this->getOngoingBooking($user);
+        $ongoingBooking   = $this->getOngoingBooking($user);
+        $heroBooking      = $this->getHeroBooking($user);
 
         return [
-            'stats'                    => $this->getStats($user, $upcomingBookings),
-            'upcomingBookings'         => $upcomingBookings,
-            'ongoingBooking'           => $ongoingBooking,
-            'recentCompletedBookings'  => $this->getRecentCompletedBookings($user),
-            'recentViews'              => $this->getRecentViews($user),
-            'recentConversations'      => $this->getRecentConversations($user),
-            'recentSearches'           => $this->getRecentSearches($user),
-            'recommendations'          => $this->getRecommendations($user, 6),
-            'pendingContacts'          => $this->getPendingContacts($user),
-            'newInFavoriteAreas'       => $this->getNewInFavoriteAreas($user, 4),
-            'profileCompletion'        => $this->getProfileCompletion($user),
+            'stats'                   => $this->getStats($user, $upcomingBookings),
+            'upcomingBookings'        => $upcomingBookings,
+            'ongoingBooking'          => $ongoingBooking,
+            'heroBooking'             => $heroBooking,
+            'recentCompletedBookings' => $this->getRecentCompletedBookings($user),
+            'recentViews'             => $this->getRecentViews($user),
+            'recentConversations'     => $this->getRecentConversations($user),
+            'recentSearches'          => $this->getRecentSearches($user),
+            'recommendations'         => $this->getRecommendations($user, 6),
+            'pendingContacts'         => $this->getPendingContacts($user),
+            'newInFavoriteAreas'      => $this->getNewInFavoriteAreas($user, 4),
+            'profileCompletion'       => $this->getProfileCompletion($user),
+            'activityStats'           => $this->getActivityStats($user),
+            'reviewsAwaitingFeedback' => $this->getReviewsAwaitingFeedback($user),
+            'isTrustedTenant'         => $this->isTrustedTenant($user),
+            'lastSearch'              => $this->getRecentSearches($user, 1)->first(),
         ];
     }
 
@@ -71,7 +77,7 @@ class ClientDashboardService
     {
         return $user->bookings()
             ->completed()
-            ->with(['residence.photos'])
+            ->with(['residence.photos', 'review'])
             ->orderBy('check_out', 'desc')
             ->take($limit)
             ->get();
@@ -82,7 +88,7 @@ class ClientDashboardService
     public function getStats(User $user, ?Collection $upcomingBookings = null): array
     {
         return [
-            'bookings_upcoming'    => ($upcomingBookings ?? $this->getUpcomingBookings($user))->count(),
+            'bookings_upcoming' => ($upcomingBookings ?? $this->getUpcomingBookings($user))->count(),
             'favorites_count'      => $user->favorites()->count(),
             'messages_unread'      => $user->unreadMessagesCount(),
             'notifications_unread' => $user->unreadNotifications()->count(),
@@ -227,5 +233,63 @@ class ClientDashboardService
             'total'      => $total,
             'percentage' => $total > 0 ? round(($completed / $total) * 100) : 0,
         ];
+    }
+
+    // ─── Hero Booking ─────────────────────────────────────────
+
+    /**
+     * Renvoie la prochaine réservation confirmée dont le check-in est dans ≤ 14 jours.
+     */
+    public function getHeroBooking(User $user)
+    {
+        return $user->bookings()
+            ->upcoming()
+            ->where('check_in', '<=', now()->addDays(14))
+            ->with(['residence.photos', 'residence'])
+            ->orderBy('check_in')
+            ->first();
+    }
+
+    // ─── Activity Stats ───────────────────────────────────────
+
+    /**
+     * Synthèse parcours : séjours terminés, nuits totales, montant investi.
+     */
+    public function getActivityStats(User $user): array
+    {
+        $completed = $user->bookings()->completed()->get(['nights', 'total_amount']);
+
+        return [
+            'stays'       => $completed->count(),
+            'nights'      => (int) $completed->sum('nights'),
+            'total_spent' => (int) $completed->sum('total_amount'),
+        ];
+    }
+
+    // ─── Reviews Awaiting Feedback ────────────────────────────
+
+    /**
+     * Nombre de réservations terminées sans avis, encore éligibles (≤ 14 jours après check-out).
+     */
+    public function getReviewsAwaitingFeedback(User $user): int
+    {
+        return $user->bookings()
+            ->completed()
+            ->whereDoesntHave('review')
+            ->where('check_out', '>=', now()->subDays(14))
+            ->count();
+    }
+
+    // ─── Trusted Tenant ──────────────────────────────────────
+
+    /**
+     * Le locataire est "Vérifié" s'il a vérifié son email + phone + identité + ≥ 1 séjour terminé.
+     */
+    public function isTrustedTenant(User $user): bool
+    {
+        return $user->hasVerifiedEmail()
+            && !empty($user->phone)
+            && $user->identityVerifications()->where('status', 'approved')->exists()
+            && $user->bookings()->completed()->exists();
     }
 }

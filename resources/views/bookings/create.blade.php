@@ -418,7 +418,7 @@
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                             <template x-for="method in [
                                 { id: 'wave', label: 'Wave', icon: '🌊', color: 'bg-blue-50 border-blue-300 text-blue-700' },
-                                { id: 'orange', label: 'Orange Money', icon: '🟠', color: 'bg-orange-50 border-orange-300 text-orange-700' },
+                                { id: 'orange', label: 'Orange Money', icon: '🟠', color: 'bg-[#fff0f3] border-[#ffb3c1] text-[#b5083a]' },
                                 { id: 'mtn', label: 'MTN MoMo', icon: '🟡', color: 'bg-yellow-50 border-yellow-300 text-yellow-700' },
                                 { id: 'moov', label: 'Moov Money', icon: '🔵', color: 'bg-cyan-50 border-cyan-300 text-cyan-700' },
                                 { id: 'djamo', label: 'Djamo', icon: '💳', color: 'bg-purple-50 border-purple-300 text-purple-700' },
@@ -451,8 +451,8 @@
                                     Disponible car votre arrivée est dans plus de 30 jours.
                                 </div>
                                 <div class="text-xs text-emerald-900 mt-2 space-y-0.5" x-show="paymentSplit" x-cloak>
-                                    <div>• Aujourd'hui : <strong x-text="formatCurrency(Math.round((price?.total ?? 0) * 0.5))"></strong></div>
-                                    <div>• Solde dû le <strong x-text="balanceDueLabel"></strong> : <strong x-text="formatCurrency(Math.round((price?.total ?? 0) * 0.5))"></strong></div>
+                                    <div>• Aujourd'hui : <strong x-text="formatCurrency(Math.round((price?.total_amount ?? 0) * 0.5))"></strong></div>
+                                    <div>• Solde dû le <strong x-text="balanceDueLabel"></strong> : <strong x-text="formatCurrency(Math.round((price?.total_amount ?? 0) * 0.5))"></strong></div>
                                 </div>
                             </div>
                         </label>

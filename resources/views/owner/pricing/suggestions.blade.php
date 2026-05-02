@@ -8,9 +8,9 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <nav class="text-sm text-gray-500 mb-2">
-                    <a href="{{ route('owner.residences.index') }}" class="hover:text-orange-600">Mes résidences</a>
+                    <a href="{{ route('owner.residences.index') }}" class="hover:text-[#e00b41]">Mes résidences</a>
                     <span class="mx-2">›</span>
-                    <a href="{{ route('owner.pricing.index', $residence) }}" class="hover:text-orange-600">Tarification</a>
+                    <a href="{{ route('owner.pricing.index', $residence) }}" class="hover:text-[#e00b41]">Tarification</a>
                     <span class="mx-2">›</span>
                     <span class="text-gray-700">Suggestions IA</span>
                 </nav>
@@ -66,7 +66,7 @@
             <span x-text="toast.message"></span>
         </div>
         <!-- Résumé -->
-        <div class="bg-linear-to-r from-purple-600 to-orange-500 rounded-2xl p-6 text-white">
+        <div class="bg-linear-to-r from-purple-600 to-[#ff385c] rounded-2xl p-6 text-white">
             <div class="flex items-start gap-4">
                 <div class="p-3 bg-white/20 rounded-xl">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -151,11 +151,11 @@
                                 <div class="text-sm text-gray-500 line-through">
                                     {{ number_format($suggestion['base_price'], 0, ',', ' ') }} F</div>
                                 <div
-                                    class="text-lg font-bold {{ $suggestion['adjustment'] >= 0 ? 'text-green-600' : 'text-orange-600' }}">
+                                    class="text-lg font-bold {{ $suggestion['adjustment'] >= 0 ? 'text-green-600' : 'text-[#e00b41]' }}">
                                     {{ number_format($suggestion['suggested_price'], 0, ',', ' ') }} F
                                 </div>
                                 <div
-                                    class="text-xs {{ $suggestion['adjustment'] >= 0 ? 'text-green-600' : 'text-orange-600' }}">
+                                    class="text-xs {{ $suggestion['adjustment'] >= 0 ? 'text-green-600' : 'text-[#e00b41]' }}">
                                     {{ $suggestion['adjustment'] >= 0 ? '+' : '' }}{{ $suggestion['adjustment'] }}%
                                 </div>
                             </div>
@@ -171,8 +171,8 @@
                 <div class="p-6 border-b border-gray-100">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
-                                <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor"
+                            <div class="w-10 h-10 bg-[#ffd1da] rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-[#e00b41]" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -210,11 +210,11 @@
                                 </div>
                                 <div class="text-right">
                                     <div
-                                        class="text-lg font-bold {{ $suggestion['adjustment'] >= 0 ? 'text-green-600' : 'text-orange-600' }}">
+                                        class="text-lg font-bold {{ $suggestion['adjustment'] >= 0 ? 'text-green-600' : 'text-[#e00b41]' }}">
                                         {{ number_format($suggestion['suggested_price'], 0, ',', ' ') }} F
                                     </div>
                                     <div
-                                        class="text-xs {{ $suggestion['adjustment'] >= 0 ? 'text-green-600' : 'text-orange-600' }}">
+                                        class="text-xs {{ $suggestion['adjustment'] >= 0 ? 'text-green-600' : 'text-[#e00b41]' }}">
                                         {{ $suggestion['adjustment'] >= 0 ? '+' : '' }}{{ $suggestion['adjustment'] }}%
                                     </div>
                                 </div>
@@ -291,7 +291,7 @@
                                     <div class="text-2xl font-bold text-gray-900">
                                         {{ number_format($season['suggested_price'], 0, ',', ' ') }} F</div>
                                     <div
-                                        class="text-sm {{ $season['avg_adjustment'] >= 0 ? 'text-green-600' : 'text-orange-600' }}">
+                                        class="text-sm {{ $season['avg_adjustment'] >= 0 ? 'text-green-600' : 'text-[#e00b41]' }}">
                                         {{ $season['avg_adjustment'] >= 0 ? '+' : '' }}{{ $season['avg_adjustment'] }}% vs
                                         prix de base
                                     </div>

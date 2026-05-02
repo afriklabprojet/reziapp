@@ -96,8 +96,8 @@ class PricingService
         // Pas de frais de service côté locataire — la commission est prélevée sur le propriétaire
         $serviceFee = 0;
 
-        // Taxe d'État fixe : 1 000 FCFA par réservation (locataire uniquement)
-        $taxes = (int) config('rezi.pricing.state_tax', 1000);
+        // Taxe d'État fixe : configurable depuis l'admin, défaut 1 000 FCFA
+        $taxes = (int) \App\Models\PlatformSetting::getValue('state_tax', config('rezi.pricing.state_tax', 1000));
 
         // Total final
         $totalAmount = $subtotalAfterDiscount + $cleaningFee + $taxes;

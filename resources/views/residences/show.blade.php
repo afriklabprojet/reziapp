@@ -43,10 +43,10 @@
 
 @push('styles')
     <style>
-        /* ── Photo Grid 70/30 (Airbnb) ── */
+        /* ── Photo Grid Airbnb (main large + 2×2 side) ── */
         .photo-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 2fr 1fr 1fr;
             grid-template-rows: 1fr 1fr;
             gap: 8px;
             height: 56vh;
@@ -58,7 +58,8 @@
         }
 
         .photo-grid .photo-main {
-            grid-row: 1 / -1;
+            grid-column: 1;
+            grid-row: 1 / -1; /* span both rows on the left */
         }
 
         .photo-grid .photo-item {
@@ -100,30 +101,31 @@
         .booking-card {
             position: sticky;
             top: 88px;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+            border: 1.5px solid transparent;
+            background: linear-gradient(#fff, #fff) padding-box,
+                        linear-gradient(135deg, #F97316 0%, #F59E0B 100%) border-box;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(249, 115, 22, 0.12), 0 2px 8px rgba(0,0,0,0.06);
             padding: 24px;
-            background: #fff;
             transition: box-shadow 0.3s;
         }
 
         .booking-card:hover {
-            box-shadow: 0 6px 28px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 12px 40px rgba(249, 115, 22, 0.2), 0 4px 12px rgba(0,0,0,0.08);
         }
 
         /* ── Rating Bar ── */
         .rating-bar {
-            height: 4px;
-            border-radius: 2px;
+            height: 5px;
+            border-radius: 3px;
             background: #e5e7eb;
             overflow: hidden;
         }
 
         .rating-bar-fill {
             height: 100%;
-            border-radius: 2px;
-            background: #111827;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #F97316, #F59E0B);
         }
 
         /* ── Responsive ── */
@@ -160,6 +162,29 @@
                 height: 240px;
             }
         }
+
+        /* ── Sticky Section Nav ── */
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+
+        .section-nav-link {
+            position: relative;
+            flex-shrink: 0;
+            padding: 18px 4px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+            transition: color 0.15s, border-color 0.15s;
+            background: none;
+            cursor: pointer;
+        }
+        .section-nav-link:hover { color: #111827; }
+        .section-nav-link.active {
+            color: #111827;
+            border-bottom-color: #111827;
+        }
     </style>
 @endpush
 
@@ -167,7 +192,7 @@
     @php
         $photos = $residence->photos;
         $mainPhoto = $photos->first();
-        $sidePhotos = $photos->skip(1)->take(4);
+        $sidePhotos = $photos->skip(1)->take(4); // Airbnb: 1 main + 4 side (2×2 right)
         $totalPhotos = $photos->count();
 
         // Résolution du prix : toujours le tarif journalier
@@ -193,11 +218,51 @@
     <div class="bg-white min-h-screen" x-data="residencePage(@js(['totalPhotos' => $totalPhotos, 'title' => $residence->title, 'photoUrls' => $photos->map(fn($p) => storage_url($p->path))->values()->all()]))">
 
         {{-- ═══════════════════════════════════
+         Sticky Section Navigation (Airbnb)
+        ═══════════════════════════════════ --}}
+        <div x-data="stickyNav()" x-init="init()"
+             x-show="visible"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-y-1"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-1"
+             class="fixed top-16 left-0 right-0 z-20 bg-white border-b border-gray-200 hidden md:block"
+             x-cloak>
+            <div class="max-w-280 mx-auto px-6">
+                <nav class="flex items-center gap-8 hide-scrollbar overflow-x-auto">
+                    <button @click="navScrollTo('photos')" class="section-nav-link" :class="{ active: navActive === 'photos' }">Photos</button>
+                    <button @click="navScrollTo('equipements')" class="section-nav-link" :class="{ active: navActive === 'equipements' }">Équipements</button>
+                    <button @click="navScrollTo('calendrier')" class="section-nav-link" :class="{ active: navActive === 'calendrier' }">Disponibilités</button>
+                    <button @click="navScrollTo('avis')" class="section-nav-link" :class="{ active: navActive === 'avis' }">Avis</button>
+                    <button @click="navScrollTo('emplacement')" class="section-nav-link" :class="{ active: navActive === 'emplacement' }">Emplacement</button>
+                    <button @click="navScrollTo('hote')" class="section-nav-link" :class="{ active: navActive === 'hote' }">Hôte</button>
+                </nav>
+            </div>
+        </div>
+
+        {{-- ═══════════════════════════════════
          SECTION 1 — Title + Actions
     ═══════════════════════════════════ --}}
-        <div class="max-w-280 mx-auto px-4 sm:px-6 pt-4 sm:pt-6 pb-3 sm:pb-4">
+        {{-- Breadcrumb localisation --}}
+        <div class="max-w-280 mx-auto px-4 sm:px-6 pt-4 sm:pt-3">
+            <nav class="flex items-center gap-1.5 text-sm text-gray-500 flex-wrap" aria-label="Breadcrumb">
+                <a href="{{ route('home') }}" class="hover:text-[#e00b41] transition-colors">Accueil</a>
+                <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                <a href="{{ route('residences.index', ['city' => $residence->city]) }}" class="hover:text-[#e00b41] transition-colors">{{ $residence->city ?? 'Abidjan' }}</a>
+                @if ($residence->commune)
+                    <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    <a href="{{ route('residences.index', ['commune' => $residence->commune]) }}" class="hover:text-[#e00b41] transition-colors">{{ $residence->commune }}</a>
+                @endif
+                <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                <span class="text-gray-900 font-medium truncate max-w-48 sm:max-w-xs">{{ Str::limit($residence->title, 40) }}</span>
+            </nav>
+        </div>
+
+        <div class="max-w-280 mx-auto px-4 sm:px-6 pt-2 sm:pt-3 pb-3 sm:pb-4">
             <div class="flex items-center gap-3 flex-wrap">
-                <h1 class="text-xl sm:text-[26px] font-semibold text-gray-900 leading-tight">{{ $residence->title }}</h1>
+                <h1 class="font-sans text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight tracking-tight">{{ $residence->title }}</h1>
                 @if ($isSponsored ?? false)
                     <span
                         class="inline-flex items-center gap-1 px-3 py-1 bg-amber-500 text-white text-xs font-semibold rounded-full shadow-sm">
@@ -219,10 +284,10 @@
             @if (($activeViewers ?? 0) > 0 || ($bookingsThisMonth ?? 0) > 0 || ($lastBookedDaysAgo ?? 0) > 0)
                 <div class="flex flex-wrap items-center gap-2 mt-2.5">
                     @if (($activeViewers ?? 0) >= 3)
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-orange-50 text-orange-700 text-xs font-semibold rounded-full border border-orange-200">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#fff0f3] text-[#b5083a] text-xs font-semibold rounded-full border border-[#ffb3c1]">
                             <span class="relative flex h-2 w-2">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff4d6d] opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-[#ff385c]"></span>
                             </span>
                             {{ $activeViewers }} personnes regardent ce logement
                         </span>
@@ -244,19 +309,19 @@
             <div class="flex flex-wrap items-center justify-between mt-2 gap-2">
                 <div class="flex flex-wrap items-center gap-1 text-sm">
                     @if ($residence->reviews_count > 0)
-                        <svg aria-hidden="true" class="w-4 h-4 text-gray-900" fill="currentColor" viewBox="0 0 20 20">
+                        <svg aria-hidden="true" class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
                             <path
                                 d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
-                        <span class="font-semibold">{{ number_format($residence->average_rating, 1) }}</span>
+                        <span class="font-bold text-gray-900">{{ number_format($residence->average_rating, 1) }}</span>
                         <span class="text-gray-400 mx-0.5">·</span>
                         <a href="#avis"
-                            class="underline font-medium text-gray-900 hover:text-gray-600">{{ $residence->reviews_count }}
+                            class="underline font-medium text-gray-900 hover:text-[#e00b41]">{{ $residence->reviews_count }}
                             commentaire{{ $residence->reviews_count > 1 ? 's' : '' }}</a>
                         <span class="text-gray-400 mx-0.5">·</span>
                     @endif
                     @if ($residence->is_verified)
-                        <svg aria-hidden="true" class="w-4 h-4 text-gray-900" fill="none" stroke="currentColor"
+                        <svg aria-hidden="true" class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -314,7 +379,7 @@
         {{-- ═══════════════════════════════════
          SECTION 2 — Photo Grid (70/30)
     ═══════════════════════════════════ --}}
-        <div class="max-w-280 mx-auto px-0 sm:px-6">
+        <div class="max-w-280 mx-auto px-0 sm:px-6" id="photo-section">
             <div class="photo-grid" id="photos">
                 @if ($mainPhoto)
                     <div class="photo-item photo-main" @click="openGallery(0)">
@@ -344,13 +409,13 @@
                 @endfor
                 @if ($totalPhotos > 5)
                     <button @click="openGallery(0)"
-                        class="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg text-sm font-medium text-gray-900 border border-gray-900 hover:bg-gray-50 transition flex items-center gap-2">
+                        class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-900 border border-white/60 shadow-lg hover:bg-white transition-all duration-200 hover:scale-105 flex items-center gap-2">
                         <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                         </svg>
-                        Afficher toutes les photos
+                        <span>Voir les {{ $totalPhotos }} photos</span>
                     </button>
                 @endif
             </div>
@@ -428,13 +493,14 @@
                             </p>
                         </div>
                         <div class="shrink-0 ml-4 relative">
-                            @if ($residence->owner && $residence->owner->avatar)
-                                <img loading="lazy" src="{{ storage_url($residence->owner->avatar) }}"
+                            @if ($residence->owner)
+                                @php $ownerAvatarUrl = $residence->owner->getAvatarUrl(); @endphp
+                                <img loading="lazy" src="{{ $ownerAvatarUrl }}"
                                     alt="{{ $residence->owner->name }}" class="w-14 h-14 rounded-full object-cover">
                             @else
                                 <div
                                     class="w-14 h-14 rounded-full bg-gray-900 flex items-center justify-center text-white text-xl font-bold">
-                                    {{ substr($residence->owner->name ?? 'H', 0, 1) }}
+                                    H
                                 </div>
                             @endif
                             @if ($residence->owner?->identity_verified)
@@ -450,18 +516,18 @@
                     </div>
 
                     {{-- Highlights --}}
-                    <div class="py-8 border-b border-gray-200 space-y-6">
+                    <div class="py-8 border-b border-gray-200 space-y-4">
                         @if ($residence->reviews_count > 0 && $residence->average_rating >= 4.5)
-                            <div class="flex gap-4 items-start">
-                                <div class="shrink-0 mt-0.5">
-                                    <svg aria-hidden="true" class="w-6 h-6 text-gray-900" fill="currentColor"
+                            <div class="flex gap-4 items-start p-4 bg-amber-50 rounded-2xl border border-amber-100">
+                                <div class="shrink-0 w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                                    <svg aria-hidden="true" class="w-5 h-5 text-amber-500" fill="currentColor"
                                         viewBox="0 0 20 20">
                                         <path
                                             d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="font-medium text-gray-900">Très bien noté par les voyageurs</p>
+                                    <p class="font-semibold text-gray-900">Très bien noté par les voyageurs</p>
                                     <p class="text-gray-500 text-sm mt-0.5">{{ $residence->reviews_count }}
                                         voyageur{{ $residence->reviews_count > 1 ? 's' : '' }}
                                         {{ $residence->reviews_count > 1 ? 'ont' : 'a' }} attribué une note de
@@ -470,9 +536,9 @@
                             </div>
                         @endif
                         @if ($residence->commune || $residence->city)
-                            <div class="flex gap-4 items-start">
-                                <div class="shrink-0 mt-0.5">
-                                    <svg aria-hidden="true" class="w-6 h-6 text-gray-900" fill="none"
+                            <div class="flex gap-4 items-start p-4 bg-[#fff0f3] rounded-2xl border border-[#ffd1da]">
+                                <div class="shrink-0 w-10 h-10 bg-[#ffd1da] rounded-xl flex items-center justify-center">
+                                    <svg aria-hidden="true" class="w-5 h-5 text-[#ff385c]" fill="none"
                                         stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -481,7 +547,7 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="font-medium text-gray-900">Très bien situé</p>
+                                    <p class="font-semibold text-gray-900">Très bien situé</p>
                                     <p class="text-gray-500 text-sm mt-0.5">Situé à {{ $residence->commune ?? $residence->city }}{{ $residence->commune && $residence->city ? ', ' . $residence->city : '' }}.</p>
                                 </div>
                             </div>
@@ -494,16 +560,16 @@
                             $isFlex48 = $cancelPolicy && in_array($cancelPolicy->name, ['flexible_48h', 'flexible'], true);
                         @endphp
                         @if ($cancelLabel)
-                            <div class="flex gap-4 items-start">
-                                <div class="shrink-0 mt-0.5">
+                            <div class="flex gap-4 items-start p-4 {{ $isFlex48 ? 'bg-emerald-50 border-emerald-100' : 'bg-white border-sand-200' }} rounded-2xl border">
+                                <div class="shrink-0 w-10 h-10 {{ $isFlex48 ? 'bg-emerald-100' : 'bg-[#f7f7f7]' }} rounded-xl flex items-center justify-center">
                                     @if ($isFlex48)
-                                        <svg aria-hidden="true" class="w-6 h-6 text-emerald-600" fill="none"
+                                        <svg aria-hidden="true" class="w-5 h-5 text-emerald-600" fill="none"
                                             stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                     @else
-                                        <svg aria-hidden="true" class="w-6 h-6 text-gray-900" fill="none"
+                                        <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="none"
                                             stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
@@ -511,10 +577,10 @@
                                     @endif
                                 </div>
                                 <div>
-                                    <p class="font-medium text-gray-900">
+                                    <p class="font-semibold text-gray-900">
                                         {{ $isFlex48 ? 'Annulation gratuite' : "Politique d'annulation" }}
                                         @if ($isFlex48)
-                                            <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200">48h</span>
+                                            <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">48h</span>
                                         @endif
                                     </p>
                                     <p class="text-gray-500 text-sm mt-0.5">
@@ -528,16 +594,16 @@
                             </div>
                         @endif
                         @if ($residence->instant_book)
-                            <div class="flex gap-4 items-start">
-                                <div class="shrink-0 mt-0.5">
-                                    <svg aria-hidden="true" class="w-6 h-6 text-gray-900" fill="none"
+                            <div class="flex gap-4 items-start p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                                <div class="shrink-0 w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                                    <svg aria-hidden="true" class="w-5 h-5 text-blue-500" fill="none"
                                         stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="font-medium text-gray-900">Réservation instantanée</p>
+                                    <p class="font-semibold text-gray-900">Réservation instantanée</p>
                                     <p class="text-gray-500 text-sm mt-0.5">Réservez immédiatement sans attendre la
                                         confirmation de l'hôte.</p>
                                 </div>
@@ -703,8 +769,8 @@
                         dayClass(d, m, y) {
                             if (this.isBlocked(d, m, y)) return 'text-gray-300 line-through cursor-not-allowed';
                             if (this.isCheckIn(d,m,y) || this.isCheckOut(d,m,y)) return 'bg-gray-900 text-white font-semibold cursor-pointer rounded-full';
-                            if (this.inRange(d,m,y)) return 'bg-orange-100 text-orange-800 cursor-pointer rounded-none';
-                            if (this.isT(d,m,y)) return 'ring-2 ring-orange-400 text-gray-900 font-semibold cursor-pointer rounded-full hover:bg-gray-100';
+                            if (this.inRange(d,m,y)) return 'bg-[#ffd1da] text-[#8e0730] cursor-pointer rounded-none';
+                            if (this.isT(d,m,y)) return 'ring-2 ring-[#ff4d6d] text-gray-900 font-semibold cursor-pointer rounded-full hover:bg-gray-100';
                             return 'text-gray-700 hover:bg-gray-100 cursor-pointer rounded-full';
                         }
                     }">
@@ -796,14 +862,14 @@
                         @if ($residence->reviews_count > 0)
                             <div class="flex flex-col items-center mb-10">
                                 <div class="flex items-center gap-2 mb-1">
-                                    <svg aria-hidden="true" class="w-8 h-8 text-gray-900" fill="currentColor"
+                                    <svg aria-hidden="true" class="w-8 h-8 text-amber-400" fill="currentColor"
                                         viewBox="0 0 20 20">
                                         <path
                                             d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                     </svg>
                                     <span
                                         class="text-5xl font-bold text-gray-900">{{ number_format($residence->average_rating, 1) }}</span>
-                                    <svg aria-hidden="true" class="w-8 h-8 text-gray-900" fill="currentColor"
+                                    <svg aria-hidden="true" class="w-8 h-8 text-amber-400" fill="currentColor"
                                         viewBox="0 0 20 20">
                                         <path
                                             d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -854,7 +920,7 @@
                                                     class="w-10 h-10 rounded-full object-cover">
                                             @else
                                                 <div
-                                                    class="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-white font-semibold">
+                                                    class="w-10 h-10 rounded-full bg-gradient-to-br from-[#ff4d6d] to-[#e00b41] flex items-center justify-center text-white font-semibold">
                                                     {{ substr($review->user->name ?? 'A', 0, 1) }}</div>
                                             @endif
                                             <div>
@@ -863,7 +929,7 @@
                                                 <p class="text-gray-400 text-xs flex items-center gap-0.5">
                                                     @for ($s = 0; $s < 5; $s++)
                                                         <svg aria-hidden="true"
-                                                            class="w-2.5 h-2.5 {{ $s < ($review->rating ?? 5) ? 'text-gray-900' : 'text-gray-300' }}"
+                                                            class="w-2.5 h-2.5 {{ $s < ($review->rating ?? 5) ? 'text-amber-400' : 'text-gray-300' }}"
                                                             fill="currentColor" viewBox="0 0 20 20">
                                                             <path
                                                                 d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -1070,138 +1136,173 @@
                         </div>
                     @endif
 
-                    {{-- Host Profile --}}
-                    <div id="hote" class="py-8 border-b border-gray-200">
-                        <h2 class="text-[22px] font-semibold text-gray-900 mb-6">Faites connaissance avec votre hôte</h2>
-                        <div class="flex flex-col md:flex-row gap-8">
-                            <div class="bg-gray-50 rounded-2xl p-6 md:p-8 text-center md:min-w-70">
-                                @if ($residence->owner && $residence->owner->avatar)
-                                    <img loading="lazy" src="{{ storage_url($residence->owner->avatar) }}"
-                                        alt="{{ $residence->owner->name }}"
-                                        class="w-24 h-24 rounded-full object-cover mx-auto mb-3">
-                                @else
-                                    <div
-                                        class="w-24 h-24 rounded-full bg-gray-900 flex items-center justify-center text-white text-3xl font-bold mx-auto mb-3">
-                                        {{ substr($residence->owner->name ?? 'H', 0, 1) }}</div>
-                                @endif
-                                <h3 class="text-xl font-bold text-gray-900">{{ $residence->owner->name ?? 'Hôte' }}</h3>
-                                @if (!empty($isSuperhost))
-                                    <div class="inline-flex items-center gap-1 mt-1.5 px-2.5 py-1 bg-rose-50 rounded-full">
-                                        <svg class="w-3.5 h-3.5 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12 2l2.39 7.36H22l-6.19 4.5L18.2 22 12 17.27 5.8 22l2.39-8.14L2 9.36h7.61z"/>
-                                        </svg>
-                                        <span class="text-xs font-bold text-rose-700">Superhôte</span>
+                    {{-- Host Profile — layout Airbnb --}}
+                    <div id="hote" class="py-10 border-b border-gray-200">
+                        <h2 class="text-[22px] font-semibold text-gray-900 mb-8">Faites connaissance avec votre hôte</h2>
+
+                        <div class="flex flex-col md:flex-row gap-10">
+
+                            {{-- Colonne gauche : carte hôte --}}
+                            <div class="md:w-64 shrink-0">
+                                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 text-center">
+                                    @php
+                                        $ownerAvatarLarge = $residence->owner?->getAvatarUrl() ?? '';
+                                        $monthsOnRezi = (int) ($residence->owner?->created_at?->diffInMonths(now()) ?? 0) ?: 1;
+                                    @endphp
+
+                                    {{-- Photo + badge vérifié --}}
+                                    <div class="relative inline-block mb-4">
+                                        @if ($ownerAvatarLarge)
+                                            <img loading="lazy" src="{{ $ownerAvatarLarge }}"
+                                                alt="{{ $residence->owner->name }}"
+                                                class="w-28 h-28 rounded-full object-cover ring-2 ring-gray-100">
+                                        @else
+                                            <div class="w-28 h-28 rounded-full bg-gray-900 flex items-center justify-center text-white text-4xl font-bold">
+                                                {{ substr($residence->owner->name ?? 'H', 0, 1) }}
+                                            </div>
+                                        @endif
+                                        @if ($residence->owner?->identity_verified)
+                                            <div class="absolute bottom-1 right-1 w-7 h-7 bg-rose-500 rounded-full flex items-center justify-center ring-2 ring-white">
+                                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                                                </svg>
+                                            </div>
+                                        @endif
                                     </div>
-                                @endif
-                                @if ($residence->owner?->identity_verified)
-                                    <div
-                                        class="inline-flex items-center gap-1 mt-1.5 px-2.5 py-1 bg-emerald-50 rounded-full">
-                                        <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor"
-                                            stroke-width="2.5" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-                                        </svg>
-                                        <span class="text-xs font-semibold text-emerald-700">Identité vérifiée</span>
-                                    </div>
-                                @else
-                                    <p class="text-sm text-gray-500 mt-1">Hôte</p>
-                                @endif
-                                <div class="flex items-center justify-center gap-6 mt-4">
-                                    <div class="text-center">
-                                        <p class="text-lg font-bold text-gray-900">{{ $ownerResidencesCount }}</p>
-                                        <p class="text-xs text-gray-500">Annonce{{ $ownerResidencesCount > 1 ? 's' : '' }}
+
+                                    {{-- Nom + Superhôte --}}
+                                    <h3 class="text-2xl font-bold text-gray-900 leading-tight">{{ $residence->owner->name ?? 'Hôte' }}</h3>
+                                    @if (!empty($isSuperhost))
+                                        <p class="text-sm text-gray-500 mt-0.5 flex items-center justify-center gap-1">
+                                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.39 7.36H22l-6.19 4.5 2.39 8.14L12 17.27 5.8 22l2.39-8.14L2 9.36h7.61z"/></svg>
+                                            Superhôte
                                         </p>
-                                    </div>
-                                    @if ($residence->reviews_count > 0)
-                                        <div class="text-center">
-                                            <p class="text-lg font-bold text-gray-900">
-                                                {{ number_format($residence->average_rating, 1) }}★</p>
-                                            <p class="text-xs text-gray-500">Évaluation</p>
-                                        </div>
                                     @endif
-                                    <div class="text-center">
-                                        @php $yearsOnRezi = (int) ($residence->owner->created_at?->diffInYears(now()) ?? 0) ?: 1; @endphp
-                                        <p class="text-lg font-bold text-gray-900">{{ $yearsOnRezi }}</p>
-                                        <p class="text-xs text-gray-500">
-                                            An{{ $yearsOnRezi > 1 ? 's' : '' }} sur REZI</p>
+
+                                    <div class="border-t border-gray-100 my-4"></div>
+
+                                    {{-- Stats verticaux (comme Airbnb) --}}
+                                    <div class="space-y-3 text-left">
+                                        @if ($residence->reviews_count > 0)
+                                            <div>
+                                                <p class="text-xl font-bold text-gray-900">{{ $residence->reviews_count }}</p>
+                                                <p class="text-xs text-gray-500">Évaluation{{ $residence->reviews_count > 1 ? 's' : '' }}</p>
+                                            </div>
+                                            <div class="border-t border-gray-100"></div>
+                                            <div>
+                                                <p class="text-xl font-bold text-gray-900">{{ number_format($residence->average_rating, 2) }}<span class="text-amber-400">★</span></p>
+                                                <p class="text-xs text-gray-500">Note globale</p>
+                                            </div>
+                                            <div class="border-t border-gray-100"></div>
+                                        @endif
+                                        <div>
+                                            <p class="text-xl font-bold text-gray-900">{{ $monthsOnRezi }}</p>
+                                            <p class="text-xs text-gray-500">Mois d'expérience en tant qu'hôte</p>
+                                        </div>
                                     </div>
+                                </div>
+
+                                {{-- Infos sous la carte --}}
+                                <div class="mt-4 space-y-2 text-sm text-gray-700 px-1">
+                                    @if ($residence->owner?->languages)
+                                        @php $langs = is_array($residence->owner->languages) ? implode(', ', $residence->owner->languages) : $residence->owner->languages; @endphp
+                                        @if ($langs)
+                                            <p class="flex items-start gap-2">
+                                                <svg class="w-4 h-4 mt-0.5 shrink-0 text-gray-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3"/></svg>
+                                                Langues : {{ $langs }}
+                                            </p>
+                                        @endif
+                                    @endif
+                                    @if ($residence->owner?->city)
+                                        <p class="flex items-start gap-2">
+                                            <svg class="w-4 h-4 mt-0.5 shrink-0 text-gray-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+                                            Je vis à : {{ $residence->owner->city }}
+                                        </p>
+                                    @endif
                                 </div>
                             </div>
-                            <div class="flex-1">
-                                <div class="space-y-3 text-[15px] text-gray-700">
-                                    @if (!is_null($responseRate ?? null))
-                                        <p class="flex items-center gap-2">
-                                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                                            Taux de réponse : <strong>{{ (int) $responseRate }} %</strong>
-                                        </p>
-                                    @endif
-                                    @if (!empty($avgResponseTime))
-                                        <p class="flex items-center gap-2">
-                                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+
+                            {{-- Colonne droite : infos + contact --}}
+                            <div class="flex-1 min-w-0">
+
+                                @if (!empty($isSuperhost))
+                                    <div class="mb-6">
+                                        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ $residence->owner->name ?? 'Votre hôte' }} est Superhôte</h3>
+                                        <p class="text-gray-600 text-[15px] leading-relaxed">Les Superhôtes sont des hôtes expérimentés qui bénéficient de très bonnes évaluations et qui s'engagent à offrir d'excellents séjours aux voyageurs.</p>
+                                    </div>
+                                @endif
+
+                                <div class="mb-6">
+                                    <h3 class="text-base font-semibold text-gray-900 mb-3">Informations sur l'hôte</h3>
+                                    <div class="space-y-1 text-[15px] text-gray-700">
+                                        @if (!is_null($responseRate ?? null))
+                                            <p>Taux de réponse : <strong>{{ (int) $responseRate }} %</strong></p>
+                                        @endif
+                                        @if (!empty($avgResponseTime))
                                             @if ($avgResponseTime < 1)
-                                                Répond <strong>en moins d'une heure</strong>
+                                                <p>Répond <strong>dans l'heure</strong></p>
                                             @elseif ($avgResponseTime <= 3)
-                                                Répond <strong>en {{ (int) $avgResponseTime }}h</strong>
+                                                <p>Répond <strong>en {{ (int) $avgResponseTime }}h</strong></p>
                                             @elseif ($avgResponseTime <= 24)
-                                                Répond <strong>dans la journée</strong>
+                                                <p>Répond <strong>dans la journée</strong></p>
                                             @else
-                                                Répond <strong>en {{ (int) round($avgResponseTime / 24) }} jour(s)</strong>
+                                                <p>Répond <strong>en {{ (int) round($avgResponseTime / 24) }} jour(s)</strong></p>
                                             @endif
-                                        </p>
-                                    @elseif (!is_null($responseRate ?? null))
-                                        <p class="flex items-center gap-2 text-gray-500 text-sm">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                            Délai de réponse en cours de calcul
-                                        </p>
-                                    @endif
+                                        @endif
+                                    </div>
                                 </div>
+
                                 @auth
                                     @if (auth()->id() !== $residence->owner_id)
                                         @if ($canContact)
-                                            <div x-data="{ showMsgForm: false, message: '' }" class="mt-6">
+                                            <div x-data="{ showMsgForm: false, message: '' }" class="mb-6">
                                                 <button @click="showMsgForm = !showMsgForm"
-                                                    class="px-6 py-3 bg-gray-900 text-white rounded-lg text-sm font-semibold hover:bg-gray-800 transition">
-                                                    Contacter l'hôte
+                                                    class="inline-flex items-center px-6 py-3.5 bg-gray-900 text-white rounded-xl text-sm font-semibold hover:bg-gray-800 transition">
+                                                    Envoyer un message à l'hôte
                                                 </button>
                                                 <form x-show="showMsgForm" x-transition x-cloak
                                                     action="{{ route('chat.start') }}" method="POST" class="mt-4 space-y-3">
                                                     @csrf
                                                     <input type="hidden" name="residence_id" value="{{ $residence->id }}">
                                                     <textarea x-model="message" name="message" rows="3" required
-                                                        class="w-full rounded-lg border-gray-300 text-sm focus:border-orange-500 focus:ring-orange-500"
+                                                        class="w-full rounded-lg border-gray-300 text-sm focus:border-[#ff385c] focus:ring-[#ff385c]"
                                                         placeholder="Bonjour, je suis intéressé(e) par votre résidence..."></textarea>
                                                     <button type="submit" :disabled="!message.trim()"
-                                                        class="px-5 py-2.5 bg-orange-500 text-white rounded-lg text-sm font-semibold hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                                        class="px-5 py-2.5 bg-[#ff385c] text-white rounded-lg text-sm font-semibold hover:bg-[#e00b41] transition disabled:opacity-50 disabled:cursor-not-allowed">
                                                         Envoyer
                                                     </button>
                                                 </form>
                                             </div>
                                         @else
-                                            <div class="mt-6 p-4 bg-orange-50 border border-orange-100 rounded-lg">
-                                                <p class="text-sm text-orange-800 font-medium mb-1">
-                                                    Réservation requise
-                                                </p>
-                                                <p class="text-sm text-orange-700 mb-3">
-                                                    Pour contacter le propriétaire, vous devez d'abord effectuer une réservation.
-                                                </p>
+                                            <div class="mb-6 p-4 bg-[#fff0f3] border border-[#ffd1da] rounded-xl">
+                                                <p class="text-sm text-[#8e0730] font-medium mb-1">Réservation requise</p>
+                                                <p class="text-sm text-[#b5083a] mb-3">Pour contacter le propriétaire, vous devez d'abord effectuer une réservation.</p>
                                                 <a href="{{ route('bookings.create', $residence) }}"
-                                                    class="inline-flex items-center px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg transition">
-                                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                                    </svg>
+                                                    class="inline-flex items-center px-5 py-2.5 bg-[#ff385c] hover:bg-[#e00b41] text-white text-sm font-semibold rounded-lg transition">
+                                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                                     Réserver maintenant
                                                 </a>
                                             </div>
                                         @endif
                                     @endif
                                 @else
-                                    <a href="{{ route('login') }}"
-                                        class="inline-block mt-6 px-6 py-3 bg-gray-900 text-white rounded-lg text-sm font-semibold hover:bg-gray-800 transition">
-                                        Connectez-vous pour contacter l'hôte
-                                    </a>
+                                    <div class="mb-6">
+                                        <a href="{{ route('login') }}"
+                                            class="inline-flex items-center px-6 py-3.5 bg-gray-900 text-white rounded-xl text-sm font-semibold hover:bg-gray-800 transition">
+                                            Envoyer un message à l'hôte
+                                        </a>
+                                    </div>
                                 @endauth
-                                <p class="text-xs text-gray-400 mt-4 leading-relaxed max-w-md">Pour protéger votre
-                                    paiement, ne transférez jamais d'argent et ne communiquez pas en dehors de REZI.</p>
+
+                                <div class="border-t border-gray-100 pt-5">
+                                    <div class="flex items-start gap-3">
+                                        <svg class="w-8 h-8 shrink-0 text-rose-400 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
+                                        </svg>
+                                        <p class="text-sm text-gray-500 leading-relaxed">Pour protéger votre paiement, ne transférez jamais d'argent et ne communiquez pas en dehors de REZI.</p>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -1264,18 +1365,18 @@
     'residenceId' => $residence->id,
     'unavailableDates' => $unavailableDates ?? [],
     'cleaningFee' => $residence->cleaning_fee ?? 0,
+    'stateTax' => (int) config('rezi.pricing.state_tax', 1000),
     'isAuthenticated' => auth()->check(),
 ]))">
 
                         {{-- Prix principal --}}
                         <div class="flex items-baseline gap-1.5 mb-1">
                             @if ($displayPrice > 0)
-                                <span class="text-[22px] font-semibold text-gray-900">
-                                    {{ number_format($displayPrice, 0, ',', ' ') }} FCFA
-                                </span>
-                                <span class="text-gray-500 text-sm">{{ $priceLabel }}</span>
+                                <span class="stat-number text-3xl">{{ number_format($displayPrice, 0, ',', ' ') }}</span>
+                                <span class="text-gray-600 font-semibold text-sm">FCFA</span>
+                                <span class="text-gray-400 text-sm">{{ $priceLabel }}</span>
                             @else
-                                <span class="text-[22px] font-semibold text-gray-900">Prix sur demande</span>
+                                <span class="text-xl font-semibold text-gray-900">Prix sur demande</span>
                             @endif
                         </div>
 
@@ -1296,14 +1397,14 @@
                         {{-- Note + Avis --}}
                         @if ($residence->reviews_count > 0)
                             <div class="flex items-center gap-1.5 mb-5 text-sm">
-                                <svg aria-hidden="true" class="w-4 h-4 text-gray-900" fill="currentColor"
+                                <svg aria-hidden="true" class="w-4 h-4 text-amber-400" fill="currentColor"
                                     viewBox="0 0 20 20">
                                     <path
                                         d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                 </svg>
-                                <span class="font-semibold">{{ number_format($residence->average_rating, 1) }}</span>
+                                <span class="font-bold text-gray-900">{{ number_format($residence->average_rating, 1) }}</span>
                                 <span class="text-gray-300">·</span>
-                                <a href="#avis" class="underline text-gray-500 hover:text-gray-700">
+                                <a href="#avis" class="underline text-gray-500 hover:text-[#e00b41]">
                                     {{ $residence->reviews_count }}
                                     commentaire{{ $residence->reviews_count > 1 ? 's' : '' }}
                                 </a>
@@ -1317,11 +1418,10 @@
                             @submit.prevent="canSubmit && $el.submit()">
 
                             {{-- Dates ARRIVÉE / DÉPART --}}
-                            <div class="border border-gray-300 rounded-xl overflow-hidden mb-4 transition-all"
+                            <div class="border border-gray-300 rounded-xl mb-4 transition-all"
                                 :class="{
-                                    'border-gray-900 ring-1 ring-gray-900': false,
-                                    'border-red-400 ring-1 ring-red-400': available ===
-                                        false
+                                    'overflow-hidden': !showGuestPicker,
+                                    'border-red-400 ring-1 ring-red-400': available === false
                                 }">
                                 <div class="grid grid-cols-2">
                                     <div
@@ -1502,11 +1602,11 @@
                                     class="w-full py-3.5 rounded-xl font-semibold text-base transition-all duration-200 relative overflow-hidden"
                                     :class="canSubmit
                                         ?
-                                        'bg-linear-to-r from-[#E61E4D] to-[#D70466] text-white hover:shadow-lg hover:shadow-pink-500/25 active:scale-[0.98]' :
+                                        'btn-premium text-white' :
                                         'bg-gray-200 text-gray-400 cursor-not-allowed'"
                                     :disabled="!canSubmit">
                                     <span x-show="!loading && !checking">
-                                        {{ $residence->instant_book ? 'Réserver' : 'Demander une réservation' }}
+                                        {{ $residence->instant_book ? 'Réserver maintenant' : 'Demander une réservation' }}
                                     </span>
                                     <span x-show="loading || checking" class="flex items-center justify-center gap-2" x-cloak>
                                         <svg aria-hidden="true" class="w-5 h-5 animate-spin" fill="none"
@@ -1521,7 +1621,7 @@
                                 </button>
                             @else
                                 <a href="{{ route('login', ['redirect' => url()->current()]) }}"
-                                    class="w-full py-3.5 rounded-xl font-semibold text-base bg-linear-to-r from-[#E61E4D] to-[#D70466] text-white hover:shadow-lg hover:shadow-pink-500/25 active:scale-[0.98] transition-all duration-200 block text-center">
+                                    class="btn-premium w-full py-3.5 rounded-xl font-semibold text-base text-white active:scale-[0.98] transition-all duration-200 block text-center">
                                     Connectez-vous pour réserver
                                 </a>
                             @endauth
@@ -1559,11 +1659,13 @@
                                     </div>
                                 </template>
 
-                                {{-- Frais de service --}}
-                                <div class="flex justify-between text-sm text-gray-600">
-                                    <span class="underline">Frais de service REZI</span>
-                                    <span x-text="formatPrice(serviceFee)"></span>
-                                </div>
+                                {{-- Taxe d'État --}}
+                                <template x-if="stateTax > 0">
+                                    <div class="flex justify-between text-sm text-gray-600">
+                                        <span class="underline">Taxe d'État</span>
+                                        <span x-text="formatPrice(stateTax)"></span>
+                                    </div>
+                                </template>
 
                                 {{-- Total --}}
                                 <div
@@ -1645,7 +1747,7 @@
                                             ">
                                             <label class="block text-sm font-medium text-gray-700 mb-1">Type de problème</label>
                                             <select name="fraud_type" required
-                                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-3 focus:ring-orange-500 focus:border-orange-500">
+                                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-3 focus:ring-[#ff385c] focus:border-[#ff385c]">
                                                 <option value="">-- Sélectionnez --</option>
                                                 <option value="fake_listing">Annonce fictive / fausse</option>
                                                 <option value="misleading_photos">Photos trompeuses</option>
@@ -1659,7 +1761,7 @@
                                             <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
                                             <textarea name="description" required rows="3" minlength="10" maxlength="1000"
                                                 placeholder="Décrivez le problème en détail..."
-                                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-4 focus:ring-orange-500 focus:border-orange-500"></textarea>
+                                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-4 focus:ring-[#ff385c] focus:border-[#ff385c]"></textarea>
 
                                             <div class="flex gap-3 justify-end">
                                                 <button type="button" @click="showReportModal = false"
@@ -1705,7 +1807,7 @@
                             <p class="mt-1 text-sm text-gray-500">D'autres logements qui pourraient vous intéresser</p>
                         </div>
                         <a href="{{ route('residences.index', ['commune' => $residence->commune]) }}"
-                            class="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-orange-500 hover:text-orange-600 transition group">
+                            class="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-[#ff385c] hover:text-[#e00b41] transition group">
                             Voir tout à {{ $residence->commune }}
                             <svg aria-hidden="true" class="w-4 h-4 group-hover:translate-x-1 transition-transform"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1724,7 +1826,7 @@
                     {{-- Mobile link --}}
                     <div class="mt-6 text-center sm:hidden">
                         <a href="{{ route('residences.index', ['commune' => $residence->commune]) }}"
-                            class="inline-flex items-center gap-2 text-sm font-semibold text-orange-500 hover:text-orange-600 transition">
+                            class="inline-flex items-center gap-2 text-sm font-semibold text-[#ff385c] hover:text-[#e00b41] transition">
                             Voir tout à {{ $residence->commune }}
                             <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -1740,8 +1842,28 @@
         {{-- ═══════════════════════════════════
          Mobile Bottom Bar
     ═══════════════════════════════════ --}}
-        <div x-data="{ showBar: false }" x-init="const bc = document.querySelector('.booking-card');
-        if (bc) { new IntersectionObserver(([e]) => { showBar = !e.isIntersecting }, { threshold: 0 }).observe(bc) } else { showBar = true }" x-show="showBar"
+        <div x-data="{
+                showBar: false,
+                checkIn: '',
+                checkOut: '',
+                get bookingUrl() {
+                    let url = '{{ route('bookings.create', $residence) }}';
+                    const params = new URLSearchParams();
+                    if (this.checkIn)  params.set('check_in',  this.checkIn);
+                    if (this.checkOut) params.set('check_out', this.checkOut);
+                    const qs = params.toString();
+                    return qs ? url + '?' + qs : url;
+                }
+            }"
+            x-init="
+                const bc = document.querySelector('.booking-card');
+                if (bc) { new IntersectionObserver(([e]) => { showBar = !e.isIntersecting }, { threshold: 0 }).observe(bc) } else { showBar = true }
+                window.addEventListener('calendar-dates-selected', e => {
+                    this.checkIn  = e.detail.checkIn  || '';
+                    this.checkOut = e.detail.checkOut || '';
+                });
+            "
+            x-show="showBar"
             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-y-full opacity-0"
             x-transition:enter-end="translate-y-0 opacity-100" x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="translate-y-0 opacity-100" x-transition:leave-end="translate-y-full opacity-0"
@@ -1771,7 +1893,7 @@
                         </div>
                     @endif
                 </div>
-                <a href="{{ route('bookings.create', $residence) }}"
+                <a :href="bookingUrl"
                     class="px-6 py-3 bg-linear-to-r from-[#E61E4D] to-[#D70466] text-white rounded-lg font-semibold text-sm active:scale-95 transition-all">
                     Réserver
                 </a>
@@ -2003,4 +2125,49 @@
             }
         </script>
     @endif
+
+    {{-- Sticky Section Navigation Alpine component --}}
+    <script>
+        function stickyNav() {
+            return {
+                visible: false,
+                navActive: '',
+                sectionIds: ['photos', 'equipements', 'calendrier', 'avis', 'emplacement', 'hote'],
+                sentinel: null,
+                ticking: false,
+                init() {
+                    this.sentinel = document.getElementById('photo-section');
+                    window.addEventListener('scroll', () => {
+                        if (!this.ticking) {
+                            requestAnimationFrame(() => {
+                                this.onScroll();
+                                this.ticking = false;
+                            });
+                            this.ticking = true;
+                        }
+                    }, { passive: true });
+                },
+                onScroll() {
+                    if (this.sentinel) {
+                        const rect = this.sentinel.getBoundingClientRect();
+                        this.visible = rect.bottom < 80;
+                    }
+                    let current = '';
+                    for (const id of this.sectionIds) {
+                        const el = document.getElementById(id);
+                        if (el && el.getBoundingClientRect().top <= 140) {
+                            current = id;
+                        }
+                    }
+                    this.navActive = current;
+                },
+                navScrollTo(id) {
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    const y = el.getBoundingClientRect().top + window.scrollY - 140;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
+                }
+            };
+        }
+    </script>
 @endpush

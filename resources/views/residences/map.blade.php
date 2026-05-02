@@ -155,8 +155,8 @@
                 <div class="flex items-center gap-3 sm:gap-5 overflow-x-auto scrollbar-hide">
                     {{-- Total --}}
                     <div class="flex items-center gap-1.5 shrink-0">
-                        <div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center">
-                            <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-8 h-8 rounded-lg bg-[#fff0f3] flex items-center justify-center">
+                            <svg class="w-4 h-4 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
                         </div>
@@ -207,13 +207,13 @@
                 <div class="flex items-center gap-2 shrink-0">
                     <button @click="showFilters = !showFilters"
                         class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all border"
-                        :class="showFilters ? 'bg-orange-50 text-orange-600 border-orange-200' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'">
+                        :class="showFilters ? 'bg-[#fff0f3] text-[#e00b41] border-[#ffb3c1]' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                         </svg>
                         <span class="hidden sm:inline">Filtres</span>
                         <span x-show="activeFilterCount > 0"
-                            class="w-5 h-5 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center"
+                            class="w-5 h-5 rounded-full bg-[#ff385c] text-white text-[10px] font-bold flex items-center justify-center"
                             x-text="activeFilterCount"></span>
                     </button>
                     <button @click="showSidebar = !showSidebar"
@@ -255,14 +255,14 @@
                     </svg>
                     <input type="text" x-model.debounce.300ms="searchQuery"
                         placeholder="Rechercher par nom, commune, quartier..."
-                        class="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-gray-50">
+                        class="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff385c] focus:border-transparent bg-gray-50">
                 </div>
             </div>
 
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                 <div>
                     <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Commune</label>
-                    <select x-model="filterCommune" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white">
+                    <select x-model="filterCommune" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff385c] bg-white">
                         <option value="">Toutes</option>
                         @foreach ($communes as $commune)
                             <option value="{{ $commune }}">{{ $commune }}</option>
@@ -271,7 +271,7 @@
                 </div>
                 <div>
                     <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Type</label>
-                    <select x-model="filterType" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white">
+                    <select x-model="filterType" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff385c] bg-white">
                         <option value="">Tous</option>
                         @foreach ($types as $type)
                             <option value="{{ $type }}">{{ ucfirst($type) }}</option>
@@ -280,7 +280,7 @@
                 </div>
                 <div>
                     <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Chambres</label>
-                    <select x-model="filterBedrooms" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white">
+                    <select x-model="filterBedrooms" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff385c] bg-white">
                         <option value="">Toutes</option>
                         <option value="1">1+</option>
                         <option value="2">2+</option>
@@ -290,7 +290,7 @@
                 </div>
                 <div>
                     <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Note min.</label>
-                    <select x-model="filterRating" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white">
+                    <select x-model="filterRating" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff385c] bg-white">
                         <option value="">Toutes</option>
                         <option value="3">3+ &#9733;</option>
                         <option value="4">4+ &#9733;</option>
@@ -333,7 +333,7 @@
                     </button>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button @click="resetFilters()" class="text-xs text-orange-500 hover:text-orange-600 font-semibold px-2 py-1">Réinitialiser</button>
+                    <button @click="resetFilters()" class="text-xs text-[#ff385c] hover:text-[#e00b41] font-semibold px-2 py-1">Réinitialiser</button>
                     <button @click="showFilters = false" class="text-xs text-gray-400 hover:text-gray-600 font-medium px-2 py-1">Fermer</button>
                 </div>
             </div>
@@ -351,7 +351,7 @@
                 <div class="flex items-center justify-between px-4 py-2.5 border-b border-gray-100 bg-gray-50/50 shrink-0">
                     <div class="flex items-center gap-2">
                         <span class="text-sm text-gray-600">
-                            <span x-text="filteredResidences.length" class="font-bold text-orange-500"></span>
+                            <span x-text="filteredResidences.length" class="font-bold text-[#ff385c]"></span>
                             résultat<span x-show="filteredResidences.length > 1">s</span>
                         </span>
                         <span x-show="activeFilterCount > 0" class="text-[10px] text-gray-400">
@@ -359,7 +359,7 @@
                         </span>
                     </div>
                     <select x-model="sortBy"
-                        class="text-xs border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white font-medium">
+                        class="text-xs border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#ff385c] bg-white font-medium">
                         <option value="price_asc">Prix croissant</option>
                         <option value="price_desc">Prix décroissant</option>
                         <option value="rating">Meilleures notes</option>
@@ -370,9 +370,9 @@
                 <div class="flex-1 overflow-y-auto p-3 space-y-2 relative">
                     <template x-for="residence in filteredResidences" :key="residence.id">
                         <a :href="'/residences/' + residence.id"
-                            class="block bg-white rounded-xl border border-gray-100 hover:border-orange-200 hover:shadow-md transition-all duration-200 overflow-hidden group"
+                            class="block bg-white rounded-xl border border-gray-100 hover:border-[#ffb3c1] hover:shadow-md transition-all duration-200 overflow-hidden group"
                             :class="{
-                                'border-orange-400 shadow-md ring-2 ring-orange-100': hoveredId === residence.id,
+                                'border-[#ff4d6d] shadow-md ring-2 ring-orange-100': hoveredId === residence.id,
                                 'opacity-50': !residence.is_available,
                             }"
                             @mouseenter="highlightOnMap(residence.id)"
@@ -431,7 +431,7 @@
                                         </div>
                                     </div>
                                     <div class="mt-2 flex items-center justify-between">
-                                        <span class="text-orange-500 font-bold text-sm">
+                                        <span class="text-[#ff385c] font-bold text-sm">
                                             <span x-text="formatPrice(residence.price)"></span>
                                             <span class="text-[10px] font-normal text-gray-400">FCFA/jour</span>
                                         </span>
@@ -452,7 +452,7 @@
                         </div>
                         <p class="text-gray-500 text-sm font-medium">Aucune résidence trouvée</p>
                         <p class="text-gray-400 text-xs mt-1">Essayez de modifier vos filtres</p>
-                        <button @click="resetFilters()" class="mt-3 text-orange-500 text-sm font-semibold hover:underline inline-flex items-center gap-1">
+                        <button @click="resetFilters()" class="mt-3 text-[#ff385c] text-sm font-semibold hover:underline inline-flex items-center gap-1">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                             Réinitialiser les filtres
                         </button>

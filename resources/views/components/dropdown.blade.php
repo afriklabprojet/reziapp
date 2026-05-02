@@ -25,10 +25,10 @@ $width = match ($width) {
             x-transition:leave="transition ease-in duration-100"
             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
             x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
-            class="absolute z-50 mt-2.5 {{ $width }} rounded-xl shadow-lg shadow-gray-200/50 {{ $alignmentClasses }}"
-            style="display: none;"
+            class="absolute z-50 mt-2.5 {{ $width }} rounded-[14px] {{ $alignmentClasses }}"
+            style="display: none; box-shadow: rgba(0,0,0,0.02) 0 0 0 1px, rgba(0,0,0,0.04) 0 2px 6px, rgba(0,0,0,0.15) 0 8px 24px;"
             @click="open = false">
-        <div class="rounded-xl ring-1 ring-gray-200 {{ $contentClasses }}">
+        <div class="rounded-[14px] ring-1 ring-[#dddddd] {{ $contentClasses }}">
             {{ $content }}
         </div>
     </div>

@@ -55,13 +55,13 @@
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div class="flex items-center gap-4">
                         <div
-                            class="w-14 h-14 rounded-full overflow-hidden bg-orange-100 flex items-center justify-center lg:hidden">
+                            class="w-14 h-14 rounded-full overflow-hidden bg-[#ffd1da] flex items-center justify-center lg:hidden">
                             @if (auth()->user()->profile_photo || auth()->user()->avatar)
                                 <img loading="lazy" src="{{ auth()->user()->getAvatarUrl() }}"
                                     alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
                             @else
                                 <span
-                                    class="text-xl font-bold text-orange-500">{{ substr(auth()->user()->name, 0, 1) }}</span>
+                                    class="text-xl font-bold text-[#ff385c]">{{ substr(auth()->user()->name, 0, 1) }}</span>
                             @endif
                         </div>
                         <div>
@@ -69,7 +69,17 @@
                                 {{ now()->hour < 18 ? 'Bonjour' : 'Bonsoir' }}, {{ explode(' ', auth()->user()->name)[0] }}
                                 👋
                             </h1>
-                            <p class="text-gray-600">Bienvenue dans votre espace personnel</p>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <p class="text-gray-600">Bienvenue dans votre espace personnel</p>
+                                @if ($isTrustedTenant)
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+                                        </svg>
+                                        Locataire Vérifié
+                                    </span>
+                                @endif
+                            </div>
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
@@ -102,7 +112,7 @@
                             @endif
                         </a>
                         <a href="{{ route('residences.index') }}"
-                            class="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition">
+                            class="inline-flex items-center px-4 py-2 bg-[#ff385c] hover:bg-[#e00b41] text-white font-medium rounded-lg transition">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -145,8 +155,8 @@
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6" x-data="{ showSteps: false }">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
-                                <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-10 h-10 bg-[#ffd1da] rounded-lg flex items-center justify-center shrink-0">
+                                <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                                 </svg>
@@ -156,13 +166,13 @@
                                 <p class="text-xs text-gray-500">{{ $profileCompletion['completed'] }}/{{ $profileCompletion['total'] }} étapes — {{ $profileCompletion['percentage'] }}%</p>
                             </div>
                         </div>
-                        <button @click="showSteps = !showSteps" class="text-orange-500 hover:text-orange-600 text-sm font-medium transition">
+                        <button @click="showSteps = !showSteps" class="text-[#ff385c] hover:text-[#e00b41] text-sm font-medium transition">
                             <span x-text="showSteps ? 'Masquer' : 'Voir les étapes'"></span>
                         </button>
                     </div>
                     {{-- Barre de progression --}}
                     <div class="w-full bg-gray-100 rounded-full h-2 mb-1">
-                        <div class="bg-orange-500 h-2 rounded-full transition-all duration-500" style="width: {{ $profileCompletion['percentage'] }}%"></div>
+                        <div class="bg-[#ff385c] h-2 rounded-full transition-all duration-500" style="width: {{ $profileCompletion['percentage'] }}%"></div>
                     </div>
                     {{-- Détails des étapes --}}
                     <div x-show="showSteps" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-cloak class="mt-4 space-y-2">
@@ -177,9 +187,9 @@
                                 @endif
                                 <span class="text-sm {{ $step['done'] ? 'text-gray-500 line-through' : 'text-gray-900 font-medium' }}">{{ $step['label'] }}</span>
                                 @if (!$step['done'] && $key !== 'first_search')
-                                    <a href="{{ route('profile.edit') }}" class="ml-auto text-xs text-orange-500 hover:text-orange-600 font-medium">Compléter</a>
+                                    <a href="{{ route('profile.edit') }}" class="ml-auto text-xs text-[#ff385c] hover:text-[#e00b41] font-medium">Compléter</a>
                                 @elseif (!$step['done'] && $key === 'first_search')
-                                    <a href="{{ route('residences.index') }}" class="ml-auto text-xs text-orange-500 hover:text-orange-600 font-medium">Rechercher</a>
+                                    <a href="{{ route('residences.index') }}" class="ml-auto text-xs text-[#ff385c] hover:text-[#e00b41] font-medium">Rechercher</a>
                                 @endif
                             </div>
                         @endforeach
@@ -187,10 +197,80 @@
                 </div>
             @endif
 
+            {{-- ────────────── HERO CARD : Prochain séjour ────────────── --}}
+            @if ($heroBooking)
+                @php
+                    $heroDays = (int) now()->startOfDay()->diffInDays($heroBooking->check_in->startOfDay(), false);
+                    $heroPhoto = $heroBooking->residence->photos->first()?->path;
+                    $heroMapUrl = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($heroBooking->residence->address ?? $heroBooking->residence->commune ?? 'Abidjan');
+                @endphp
+                <div class="relative rounded-2xl overflow-hidden mb-6 h-64 sm:h-72 shadow-lg">
+                    {{-- Image de fond --}}
+                    @if ($heroPhoto)
+                        <img loading="lazy" src="{{ storage_url($heroPhoto) }}" alt="{{ $heroBooking->residence->title }}"
+                            class="absolute inset-0 w-full h-full object-cover">
+                    @else
+                        <div class="absolute inset-0 bg-gradient-to-br from-[#ff4d6d] to-amber-500"></div>
+                    @endif
+                    {{-- Gradient overlay --}}
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                    {{-- Badge haut-gauche --}}
+                    <div class="absolute top-4 left-4">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-[#ff385c] text-white text-xs font-bold rounded-full shadow">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            Prochain séjour
+                        </span>
+                    </div>
+                    {{-- Contenu bas de la carte --}}
+                    <div class="absolute bottom-0 left-0 right-0 p-5">
+                        <p class="text-white/80 text-sm mb-1">
+                            @if ($heroDays === 0)
+                                Votre séjour commence <strong class="text-white">aujourd'hui</strong> !
+                            @elseif ($heroDays === 1)
+                                Votre séjour commence <strong class="text-white">demain</strong> !
+                            @else
+                                Votre séjour commence dans <strong class="text-2xl text-white font-bold">{{ $heroDays }}</strong> jours
+                            @endif
+                        </p>
+                        <h2 class="text-white font-bold text-xl leading-tight truncate mb-1">{{ $heroBooking->residence->title }}</h2>
+                        <div class="flex flex-wrap items-center gap-3 text-white/70 text-sm mb-4">
+                            <span>{{ $heroBooking->check_in->translatedFormat('d M') }} → {{ $heroBooking->check_out->translatedFormat('d M Y') }}</span>
+                            @if ($heroBooking->residence->commune)
+                                <span class="flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    </svg>
+                                    {{ $heroBooking->residence->commune }}
+                                </span>
+                            @endif
+                            <span class="text-[#ff7a96] font-semibold">{{ number_format($heroBooking->total_amount, 0, ',', ' ') }} FCFA</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <a href="{{ $heroMapUrl }}" target="_blank" rel="noopener"
+                                class="inline-flex items-center gap-1.5 px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur text-white text-sm font-medium rounded-lg transition border border-white/20">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                </svg>
+                                Itinéraire
+                            </a>
+                            <a href="{{ route('bookings.show', $heroBooking) }}"
+                                class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#ff385c] hover:bg-[#e00b41] text-white text-sm font-medium rounded-lg transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                Voir ma réservation
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             {{-- Statistiques rapides (clickables) --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
                 <a href="{{ route('bookings.index') }}"
-                    class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-orange-200 transition group">
+                    class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-[#ffb3c1] transition group">
                     <div class="flex items-center gap-3">
                         <div
                             class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition">
@@ -200,14 +280,16 @@
                             </svg>
                         </div>
                         <div>
-                            <p class="text-2xl font-bold text-gray-900">{{ $stats['bookings_upcoming'] }}</p>
-                            <p class="text-xs text-gray-500">Réservations</p>
+                            <div class="flex items-center gap-1.5">
+                                <p class="text-2xl font-bold text-gray-900">{{ $stats['bookings_upcoming'] }}</p>
+                            </div>
+                            <p class="text-xs text-gray-500">À venir</p>
                         </div>
                     </div>
                 </a>
 
                 <a href="{{ route('favorites.index') }}"
-                    class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-orange-200 transition group">
+                    class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-[#ffb3c1] transition group">
                     <div class="flex items-center gap-3">
                         <div
                             class="w-10 h-10 bg-rose-100 rounded-lg flex items-center justify-center group-hover:bg-rose-200 transition">
@@ -224,7 +306,7 @@
                 </a>
 
                 <a href="{{ route('chat.index') }}"
-                    class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-orange-200 transition group">
+                    class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-[#ffb3c1] transition group">
                     <div class="flex items-center gap-3">
                         <div
                             class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition">
@@ -241,7 +323,7 @@
                 </a>
 
                 <a href="{{ route('client.view-history') }}"
-                    class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-orange-200 transition group">
+                    class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-[#ffb3c1] transition group">
                     <div class="flex items-center gap-3">
                         <div
                             class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition">
@@ -261,11 +343,11 @@
                 </a>
 
                 <a href="{{ route('client.reviews') }}"
-                    class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-orange-200 transition group">
+                    class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-[#ffb3c1] transition group">
                     <div class="flex items-center gap-3">
                         <div
-                            class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center group-hover:bg-orange-200 transition">
-                            <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor"
+                            class="w-10 h-10 bg-[#ffd1da] rounded-lg flex items-center justify-center group-hover:bg-[#ffb3c1] transition">
+                            <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
@@ -279,7 +361,7 @@
                 </a>
 
                 <a href="{{ route('client.alerts') }}"
-                    class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-orange-200 transition group">
+                    class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-[#ffb3c1] transition group">
                     <div class="flex items-center gap-3">
                         <div
                             class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center group-hover:bg-amber-200 transition">
@@ -296,6 +378,31 @@
                 </a>
             </div>
 
+            {{-- ────────────── BANNIÈRE AVIS EN ATTENTE ────────────── --}}
+            @if ($reviewsAwaitingFeedback > 0)
+                <div class="flex items-center gap-4 bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+                    <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-amber-800">
+                            {{ $reviewsAwaitingFeedback === 1 ? 'Vous avez 1 séjour à noter' : "Vous avez {$reviewsAwaitingFeedback} séjours à noter" }}
+                        </p>
+                        <p class="text-xs text-amber-700 mt-0.5">Partagez votre expérience — votre avis aide la communauté REZI</p>
+                    </div>
+                    <a href="{{ route('bookings.index', ['status' => 'completed']) }}"
+                        class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-lg transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                        Laisser mes avis
+                    </a>
+                </div>
+            @endif
+
             {{-- Empty state / Onboarding pour nouveaux utilisateurs --}}
             @if (
                 $stats['favorites_count'] == 0 &&
@@ -303,9 +410,9 @@
                     $stats['bookings_upcoming'] == 0 &&
                     $recentSearches->isEmpty())
                 <div
-                    class="bg-linear-to-br from-orange-50 to-amber-50 border border-orange-100 rounded-xl p-8 mb-8 text-center">
-                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="bg-linear-to-br from-[#fff0f3] to-amber-50 border border-[#ffd1da] rounded-xl p-8 mb-8 text-center">
+                    <div class="w-16 h-16 bg-[#ffd1da] rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                         </svg>
@@ -317,7 +424,7 @@
                     </p>
                     <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
                         <a href="{{ route('residences.index') }}"
-                            class="inline-flex items-center px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition">
+                            class="inline-flex items-center px-6 py-3 bg-[#ff385c] hover:bg-[#e00b41] text-white font-medium rounded-lg transition">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -338,10 +445,6 @@
 
             {{-- Réservations à venir --}}
             @if ($upcomingBookings->count() > 0)
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8">
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
                                 <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -351,15 +454,21 @@
                             <h2 class="font-semibold text-gray-900">Réservations à venir</h2>
                         </div>
                         <a href="{{ route('bookings.index') }}"
-                            class="text-sm text-orange-500 hover:text-orange-600 font-medium">
+                            class="text-sm text-[#ff385c] hover:text-[#e00b41] font-medium">
                             Tout voir →
                         </a>
                     </div>
                     <div class="divide-y divide-gray-100">
                         @foreach ($upcomingBookings as $booking)
+                            @php
+                                $daysUntil = (int) now()->startOfDay()->diffInDays($booking->check_in->startOfDay(), false);
+                                $urgentClass = $daysUntil <= 3 ? 'text-[#e00b41]' : ($daysUntil <= 7 ? 'text-amber-600' : 'text-green-600');
+                                $urgentBg   = $daysUntil <= 3 ? 'bg-[#fff0f3] text-[#b5083a]' : ($daysUntil <= 7 ? 'bg-amber-50 text-amber-700' : 'bg-green-50 text-green-700');
+                                $countdownLabel = $daysUntil === 0 ? "Aujourd'hui" : ($daysUntil === 1 ? 'Demain' : "Dans {$daysUntil} jours");
+                            @endphp
                             <a href="{{ route('bookings.show', $booking) }}"
                                 class="flex items-center gap-4 p-4 hover:bg-gray-50 transition">
-                                <div class="w-20 h-16 rounded-lg overflow-hidden bg-gray-200 shrink-0">
+                                <div class="w-24 h-20 rounded-xl overflow-hidden bg-gray-200 shrink-0 relative">
                                     @if ($booking->residence->photos->count() > 0)
                                         <img loading="lazy"
                                             src="{{ storage_url($booking->residence->photos->first()?->path) }}"
@@ -375,6 +484,12 @@
                                     @endif
                                 </div>
                                 <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Confirmé</span>
+                                        @if ($booking->residence->commune)
+                                            <span class="text-xs text-gray-400">{{ $booking->residence->commune }}</span>
+                                        @endif
+                                    </div>
                                     <h3 class="font-medium text-gray-900 truncate">{{ $booking->residence->title }}</h3>
                                     <p class="text-sm text-gray-500">
                                         {{ $booking->check_in->translatedFormat('d M') }} →
@@ -382,10 +497,8 @@
                                     </p>
                                 </div>
                                 <div class="text-right shrink-0">
-                                    <p class="text-sm font-semibold text-gray-900">
-                                        {{ number_format($booking->total_price, 0, ',', ' ') }} FCFA</p>
-                                    <p class="text-xs text-green-600 font-medium">
-                                        {{ $booking->check_in->diffForHumans() }}</p>
+                                    <span class="inline-block px-2.5 py-1 {{ $urgentBg }} text-xs font-semibold rounded-full">{{ $countdownLabel }}</span>
+                                    <p class="text-xs text-gray-400 mt-1">{{ number_format($booking->total_amount, 0, ',', ' ') }} FCFA</p>
                                 </div>
                             </a>
                         @endforeach
@@ -407,41 +520,52 @@
                             <h2 class="font-semibold text-gray-900">Séjours passés</h2>
                         </div>
                         <a href="{{ route('bookings.index', ['status' => 'completed']) }}"
-                            class="text-sm text-orange-500 hover:text-orange-600 font-medium">
+                            class="text-sm text-[#ff385c] hover:text-[#e00b41] font-medium">
                             Tout voir →
                         </a>
                     </div>
                     <div class="divide-y divide-gray-100">
                         @foreach ($recentCompletedBookings as $booking)
-                            <a href="{{ route('bookings.show', $booking) }}"
-                                class="flex items-center gap-4 p-4 hover:bg-gray-50 transition">
-                                <div class="w-20 h-16 rounded-lg overflow-hidden bg-gray-200 shrink-0">
-                                    @if ($booking->residence->photos->count() > 0)
-                                        <img loading="lazy"
-                                            src="{{ storage_url($booking->residence->photos->first()?->path) }}"
-                                            alt="{{ $booking->residence->title }}"
-                                            class="w-full h-full object-cover grayscale-[30%]">
-                                    @else
-                                        <div class="w-full h-full flex items-center justify-center">
-                                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                                            </svg>
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-medium text-gray-900 truncate">{{ $booking->residence->title }}</h3>
-                                    <p class="text-sm text-gray-500">
-                                        {{ $booking->check_in->translatedFormat('d M') }} →
-                                        {{ $booking->check_out->translatedFormat('d M Y') }}
-                                    </p>
-                                </div>
-                                <div class="text-right shrink-0">
-                                    <span class="inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">Terminé</span>
-                                    <p class="text-xs text-gray-400 mt-1">{{ $booking->check_out->diffForHumans() }}</p>
-                                </div>
-                            </a>
+                            <div class="flex items-center gap-4 p-4">
+                                <a href="{{ route('bookings.show', $booking) }}" class="flex items-center gap-4 flex-1 min-w-0 hover:bg-gray-50 rounded-lg transition -m-1 p-1">
+                                    <div class="w-20 h-16 rounded-lg overflow-hidden bg-gray-200 shrink-0">
+                                        @if ($booking->residence->photos->count() > 0)
+                                            <img loading="lazy"
+                                                src="{{ storage_url($booking->residence->photos->first()?->path) }}"
+                                                alt="{{ $booking->residence->title }}"
+                                                class="w-full h-full object-cover grayscale">
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center">
+                                                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                                </svg>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="font-medium text-gray-900 truncate">{{ $booking->residence->title }}</h3>
+                                        <p class="text-sm text-gray-500">
+                                            {{ $booking->check_in->translatedFormat('d M') }} →
+                                            {{ $booking->check_out->translatedFormat('d M Y') }}
+                                        </p>
+                                    </div>
+                                    <div class="text-right shrink-0 mr-2">
+                                        <span class="inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">Terminé</span>
+                                        <p class="text-xs text-gray-400 mt-1">{{ $booking->check_out->diffForHumans() }}</p>
+                                    </div>
+                                </a>
+                                @if ($booking->canBeReviewed())
+                                    <a href="{{ route('reviews.create', $booking->residence) }}"
+                                        class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#ff385c] hover:bg-[#e00b41] text-white text-xs font-semibold rounded-lg transition whitespace-nowrap">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                                        </svg>
+                                        Laisser un avis
+                                    </a>
+                                @endif
+                            </div>
                         @endforeach
                     </div>
                 </div>
@@ -450,18 +574,38 @@
             <div class="grid lg:grid-cols-3 gap-8">
                 {{-- Colonne principale (2/3) --}}
                 <div class="lg:col-span-2 space-y-8">
+                    {{-- Raccourci reprendre recherche --}}
+                    @if ($lastSearch)
+                        <a href="{{ $lastSearch->search_url }}"
+                            class="flex items-center gap-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-[#ffb3c1] hover:shadow-md p-4 transition group">
+                            <div class="w-10 h-10 bg-[#ffd1da] rounded-lg flex items-center justify-center shrink-0 group-hover:bg-[#ffb3c1] transition">
+                                <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs text-gray-500 mb-0.5">Reprendre ma recherche</p>
+                                <p class="text-sm font-semibold text-gray-900 truncate group-hover:text-[#e00b41]">{{ $lastSearch->description }}</p>
+                                <p class="text-xs text-gray-400">{{ $lastSearch->results_count }} résultats · {{ $lastSearch->created_at->diffForHumans() }}</p>
+                            </div>
+                            <svg class="w-5 h-5 text-gray-400 group-hover:text-[#ff385c] transition shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    @endif
+
                     {{-- Recommandations personnalisées --}}
                     @if ($recommendations->count() > 0)
                         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                             <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                                    <div class="w-8 h-8 bg-[#ffd1da] rounded-lg flex items-center justify-center">
                                         <span class="text-lg">✨</span>
                                     </div>
                                     <h2 class="font-semibold text-gray-900">Recommandé pour vous</h2>
                                 </div>
                                 <a href="{{ route('residences.index') }}"
-                                    class="text-sm text-orange-500 hover:text-orange-600 font-medium">
+                                    class="text-sm text-[#ff385c] hover:text-[#e00b41] font-medium">
                                     Voir plus →
                                 </a>
                             </div>
@@ -487,13 +631,13 @@
                                                     </div>
                                                 @endif
                                                 <div
-                                                    class="absolute top-2 left-2 px-2 py-1 bg-orange-500 text-white text-xs font-medium rounded">
+                                                    class="absolute top-2 left-2 px-2 py-1 bg-[#ff385c] text-white text-xs font-medium rounded">
                                                     {{ number_format($residence->price, 0, ',', ' ') }}
                                                     FCFA/{{ $residence->price_label }}
                                                 </div>
                                             </div>
                                             <h3
-                                                class="font-medium text-gray-900 text-sm truncate group-hover:text-orange-500">
+                                                class="font-medium text-gray-900 text-sm truncate group-hover:text-[#ff385c]">
                                                 {{ $residence->title }}</h3>
                                             <p class="text-xs text-gray-500">{{ $residence->commune }}</p>
                                         </a>
@@ -518,7 +662,7 @@
                                     <h2 class="font-semibold text-gray-900">Récemment consultés</h2>
                                 </div>
                                 <a href="{{ route('client.view-history') }}"
-                                    class="text-sm text-orange-500 hover:text-orange-600 font-medium">
+                                    class="text-sm text-[#ff385c] hover:text-[#e00b41] font-medium">
                                     Tout voir →
                                 </a>
                             </div>
@@ -551,7 +695,7 @@
                                                     </div>
                                                 </div>
                                                 <h3
-                                                    class="font-medium text-gray-900 text-sm truncate group-hover:text-orange-500">
+                                                    class="font-medium text-gray-900 text-sm truncate group-hover:text-[#ff385c]">
                                                     {{ $view->residence->title }}</h3>
                                                 <p class="text-xs text-gray-500">
                                                     {{ number_format($view->residence->price, 0, ',', ' ') }}
@@ -618,7 +762,7 @@
                             <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                                 <h3 class="font-semibold text-gray-900">Recherches récentes</h3>
                                 <a href="{{ route('client.search-history') }}"
-                                    class="text-xs text-orange-500 hover:text-orange-600 font-medium">
+                                    class="text-xs text-[#ff385c] hover:text-[#e00b41] font-medium">
                                     Voir tout
                                 </a>
                             </div>
@@ -651,8 +795,8 @@
                         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                             <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-6 h-6 bg-orange-100 rounded-md flex items-center justify-center">
-                                        <svg class="w-3.5 h-3.5 text-orange-600" fill="none" stroke="currentColor"
+                                    <div class="w-6 h-6 bg-[#ffd1da] rounded-md flex items-center justify-center">
+                                        <svg class="w-3.5 h-3.5 text-[#e00b41]" fill="none" stroke="currentColor"
                                             stroke-width="1.8" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
@@ -661,7 +805,7 @@
                                     <h3 class="font-semibold text-gray-900">Conversations</h3>
                                 </div>
                                 <a href="{{ route('chat.index') }}"
-                                    class="text-xs text-orange-500 hover:text-orange-600 font-medium">
+                                    class="text-xs text-[#ff385c] hover:text-[#e00b41] font-medium">
                                     Voir tout
                                 </a>
                             </div>
@@ -677,9 +821,9 @@
                                                         class="w-full h-full object-cover">
                                                 @else
                                                     <div
-                                                        class="w-full h-full flex items-center justify-center bg-orange-100">
+                                                        class="w-full h-full flex items-center justify-center bg-[#ffd1da]">
                                                         <span
-                                                            class="text-sm font-medium text-orange-500">{{ strtoupper(substr($conversation->owner->name, 0, 1)) }}</span>
+                                                            class="text-sm font-medium text-[#ff385c]">{{ strtoupper(substr($conversation->owner->name, 0, 1)) }}</span>
                                                     </div>
                                                 @endif
                                             </div>
@@ -692,7 +836,7 @@
                                         <div class="flex-1 min-w-0">
                                             <div class="flex items-center justify-between gap-2 mb-0.5">
                                                 <p
-                                                    class="text-sm font-medium text-gray-900 truncate group-hover:text-orange-600">
+                                                    class="text-sm font-medium text-gray-900 truncate group-hover:text-[#e00b41]">
                                                     {{ $conversation->owner->name }}</p>
                                                 @if ($conversation->last_message_at)
                                                     <span
@@ -713,6 +857,34 @@
                                         @endif
                                     </a>
                                 @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                {{-- Récapitulatif activité REZI --}}
+                    @if ($activityStats['stays'] > 0)
+                        <div class="bg-gradient-to-br from-[#fff0f3] to-amber-50 rounded-xl border border-[#ffd1da] p-5">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-8 h-8 bg-[#ffd1da] rounded-lg flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                    </svg>
+                                </div>
+                                <h3 class="font-semibold text-gray-900">Votre parcours REZI</h3>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3">
+                                <div class="text-center">
+                                    <p class="text-2xl font-bold text-[#ff385c]">{{ $activityStats['stays'] }}</p>
+                                    <p class="text-xs text-gray-600 mt-0.5">{{ Str::plural('séjour', $activityStats['stays']) }}</p>
+                                </div>
+                                <div class="text-center border-x border-[#ffb3c1]">
+                                    <p class="text-2xl font-bold text-[#ff385c]">{{ $activityStats['nights'] }}</p>
+                                    <p class="text-xs text-gray-600 mt-0.5">{{ Str::plural('nuit', $activityStats['nights']) }}</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-lg font-bold text-[#ff385c]">{{ number_format($activityStats['total_spent'], 0, ',', ' ') }}</p>
+                                    <p class="text-xs text-gray-600 mt-0.5">FCFA investis</p>
+                                </div>
                             </div>
                         </div>
                     @endif
@@ -750,5 +922,36 @@
             </div>
 
         </div>{{-- end x-show="loaded" --}}
+
+            {{-- ────────────── CTA DEVENEZ HÔTE ────────────── --}}
+            @if (auth()->user()->role !== 'owner' && auth()->user()->role !== 'admin')
+                <div x-show="loaded" x-cloak class="mt-10">
+                    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#ff385c] to-amber-500 p-8 text-white shadow-lg">
+                        {{-- Décoration --}}
+                        <div class="absolute -top-8 -right-8 w-40 h-40 bg-white/10 rounded-full"></div>
+                        <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-white/10 rounded-full"></div>
+                        <div class="relative flex flex-col sm:flex-row items-center justify-between gap-6">
+                            <div>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <svg class="w-6 h-6 text-[#ffb3c1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                    </svg>
+                                    <span class="text-[#ffb3c1] text-sm font-medium uppercase tracking-wider">Pour les propriétaires</span>
+                                </div>
+                                <h3 class="text-2xl font-bold mb-1">Vous avez un bien à louer à Abidjan ?</h3>
+                                <p class="text-white/80">Rejoignez les propriétaires REZI et commencez à générer des revenus dès maintenant.</p>
+                            </div>
+                            <a href="{{ route('owner.onboarding.index') }}"
+                                class="shrink-0 inline-flex items-center gap-2 px-6 py-3 bg-white text-[#e00b41] hover:bg-[#fff0f3] font-bold rounded-xl transition shadow-md whitespace-nowrap">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                                Mettre mon bien en location
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
     </div>{{-- end x-data --}}
 @endsection

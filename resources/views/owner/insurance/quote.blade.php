@@ -21,7 +21,7 @@
         <form method="GET" class="flex items-end gap-3">
             <div class="flex-1">
                 <label class="block text-sm font-semibold text-gray-700 mb-1.5">Choisir une résidence</label>
-                <select name="residence_id" class="w-full rounded-xl border-gray-200 text-sm focus:ring-orange-500 focus:border-orange-500">
+                <select name="residence_id" class="w-full rounded-xl border-gray-200 text-sm focus:ring-[#ff385c] focus:border-[#ff385c]">
                     <option value="">— Sélectionner une résidence —</option>
                     @foreach($residences as $r)
                     <option value="{{ $r->id }}" {{ request('residence_id') == $r->id ? 'selected' : '' }}>{{ $r->name }}</option>

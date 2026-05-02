@@ -148,8 +148,8 @@ return [
     */
 
     'search' => [
-        'allowed_radii' => [500, 1000, 2000, 5000, 10000, 25000, 50000],
-        'default_radius' => 5000,
+        'allowed_radii' => [2000, 5000, 10000, 25000, 50000],
+        'default_radius' => 2000,
         'budget_threshold' => 100000,  // Seuil "budget" en FCFA
     ],
 

@@ -8,8 +8,8 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <h1 class="text-xl font-extrabold text-gray-900 flex items-center gap-2">
-                    <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-8 h-8 bg-[#ffd1da] rounded-lg flex items-center justify-center">
+                        <svg class="w-4 h-4 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
@@ -21,7 +21,7 @@
             </div>
             <div class="flex items-center gap-3">
                 <a href="{{ route('owner.analytics.index') }}"
-                    class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-orange-600 bg-orange-50 rounded-xl hover:bg-orange-100 transition">
+                    class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-[#e00b41] bg-[#fff0f3] rounded-xl hover:bg-[#ffd1da] transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
@@ -101,8 +101,8 @@
             {{-- Annonces actives --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
                 <div class="flex items-center justify-between mb-3">
-                    <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
-                        <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-10 h-10 bg-[#ffd1da] rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                         </svg>
@@ -122,7 +122,7 @@
                 <h2 class="text-sm font-bold text-gray-900">Évolution sur 30 jours</h2>
                 <div class="flex items-center gap-4 text-[11px] text-gray-400">
                     <span class="flex items-center gap-1.5">
-                        <span class="w-2.5 h-2.5 bg-orange-500 rounded-full"></span>
+                        <span class="w-2.5 h-2.5 bg-[#ff385c] rounded-full"></span>
                         Vues
                     </span>
                     <span class="flex items-center gap-1.5">
@@ -147,7 +147,7 @@
                                 </div>
                             @endif
                             {{-- Barre vues (orange, dessous) --}}
-                            <div class="w-full bg-orange-500/80 hover:bg-orange-500 rounded-t transition-all cursor-pointer"
+                            <div class="w-full bg-[#ff385c]/80 hover:bg-[#ff385c] rounded-t transition-all cursor-pointer"
                                 style="height: {{ max(($stat->views / $maxViews) * 100, $stat->views > 0 ? 4 : 0) }}%"
                                 title="{{ \Carbon\Carbon::parse($stat->stat_date)->locale('fr')->isoFormat('D MMM') }}: {{ $stat->views }} vue{{ $stat->views > 1 ? 's' : '' }}">
                             </div>
@@ -245,7 +245,7 @@
                         @foreach ($communeStats as $commune)
                             @php
                                 $pct = ($commune->views / $maxViews) * 100;
-                                $dotColor = ['bg-orange-500', 'bg-orange-400', 'bg-amber-500', 'bg-orange-300', 'bg-amber-400'][$loop->index % 5];
+                                $dotColor = ['bg-[#ff385c]', 'bg-[#ff4d6d]', 'bg-amber-500', 'bg-[#ff7a96]', 'bg-amber-400'][$loop->index % 5];
                             @endphp
                             <div>
                                 <div class="flex items-center justify-between mb-1.5">
@@ -262,7 +262,7 @@
                                     </div>
                                 </div>
                                 <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
-                                    <div class="h-full bg-linear-to-r from-orange-400 to-orange-500 rounded-full transition-all duration-700"
+                                    <div class="h-full bg-linear-to-r from-[#ff4d6d] to-[#ff385c] rounded-full transition-all duration-700"
                                         style="width: {{ max($pct, 3) }}%"></div>
                                 </div>
                                 @if ($commune->contacts > 0)
@@ -294,7 +294,7 @@
                             <div class="flex items-center gap-3">
                                 <div
                                     class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold shrink-0
-                                {{ $loop->index === 0 ? 'bg-orange-500 text-white' : ($loop->index === 1 ? 'bg-orange-100 text-orange-700' : 'bg-gray-100 text-gray-600') }}">
+                                {{ $loop->index === 0 ? 'bg-[#ff385c] text-white' : ($loop->index === 1 ? 'bg-[#ffd1da] text-[#b5083a]' : 'bg-gray-100 text-gray-600') }}">
                                     {{ $loop->iteration }}
                                 </div>
                                 <div class="flex-1 min-w-0">
@@ -326,8 +326,8 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
-                        <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
-                            <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor"
+                        <div class="w-8 h-8 bg-[#ffd1da] rounded-lg flex items-center justify-center shrink-0">
+                            <svg class="w-4 h-4 text-[#e00b41]" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />

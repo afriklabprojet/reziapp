@@ -7,7 +7,7 @@
 
         {{-- Fil d'Ariane --}}
         <nav class="text-sm text-gray-400 flex items-center gap-2">
-            <a href="{{ route('client.contracts') }}" class="hover:text-orange-600">Mes contrats</a>
+            <a href="{{ route('client.contracts') }}" class="hover:text-[#e00b41]">Mes contrats</a>
             <span>›</span>
             <span class="text-gray-700 font-mono">{{ $contract->reference }}</span>
         </nav>
@@ -75,8 +75,8 @@
                                 <div class="text-sm text-gray-500">{{ $contract->owner->phone }}</div>
                             @endif
                         </div>
-                        <div class="bg-orange-50 rounded-xl p-4 border border-orange-100">
-                            <div class="text-xs text-orange-500 uppercase tracking-wide mb-1">Locataire (Vous)</div>
+                        <div class="bg-[#fff0f3] rounded-xl p-4 border border-[#ffd1da]">
+                            <div class="text-xs text-[#ff385c] uppercase tracking-wide mb-1">Locataire (Vous)</div>
                             <div class="font-semibold text-gray-900">{{ $contract->tenant->name }}</div>
                             <div class="text-sm text-gray-500">{{ $contract->tenant->email }}</div>
                             @if ($contract->tenant->phone)
@@ -130,7 +130,7 @@
                             </div>
                             <div class="flex justify-between border-t pt-3 mt-3">
                                 <span class="text-gray-900 font-medium">Total mensuel</span>
-                                <span class="font-bold text-orange-600">
+                                <span class="font-bold text-[#e00b41]">
                                     {{ number_format($contract->monthly_rent + $contract->charges_amount, 0, ',', ' ') }}
                                     FCFA
                                 </span>
@@ -167,7 +167,7 @@
                     <h2 class="font-semibold text-gray-800 mb-3">Services inclus</h2>
                     <div class="flex flex-wrap gap-2">
                         @foreach($contract->included_services as $service)
-                            <span class="inline-flex items-center px-3 py-1 bg-orange-50 text-orange-700 rounded-full text-sm font-medium">
+                            <span class="inline-flex items-center px-3 py-1 bg-[#fff0f3] text-[#b5083a] rounded-full text-sm font-medium">
                                 ✓ {{ $service }}
                             </span>
                         @endforeach
@@ -288,7 +288,7 @@
                         <form method="POST" action="{{ route('client.contracts.sign', $contract) }}">
                             @csrf
                             <button type="submit"
-                                class="w-full py-3 bg-orange-500 text-white rounded-xl text-sm font-bold hover:bg-orange-600 transition flex items-center justify-center gap-2"
+                                class="w-full py-3 bg-[#ff385c] text-white rounded-xl text-sm font-bold hover:bg-[#e00b41] transition flex items-center justify-center gap-2"
                                 onclick="return confirm('En signant ce contrat, vous acceptez toutes les conditions mentionnées. Confirmer la signature ?')">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

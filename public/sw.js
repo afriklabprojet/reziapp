@@ -82,7 +82,7 @@ async function warmCache() {
             // Ignorer les erreurs de warm cache
         }
     }
-    
+
     // Pré-cacher les données API statiques
     const apiCache = await caches.open(API_CACHE);
     for (const url of CACHEABLE_API) {
@@ -128,7 +128,7 @@ async function detectNetworkSpeed() {
         const conn = navigator.connection;
         const effectiveType = conn.effectiveType;
         const downlink = conn.downlink;
-        
+
         if (effectiveType === 'slow-2g' || effectiveType === '2g' || downlink < 0.5) {
             networkSpeed = 'slow';
             isLiteMode = true;
@@ -146,7 +146,7 @@ async function detectNetworkSpeed() {
 // Gestion des images en mode lite (thumbnails)
 function getLiteImageUrl(url) {
     if (!isLiteMode) return url;
-    
+
     // Si c'est une URL d'image de résidence, demander la version réduite
     if (url.includes('/storage/residences/')) {
         // Ajouter un paramètre pour demander une version légère
@@ -159,7 +159,7 @@ function getLiteImageUrl(url) {
 // Stratégie de cache pour les images optimisée
 async function handleImageRequest(request) {
     const cache = await caches.open(IMAGES_CACHE);
-    
+
     // Vérifier le cache d'abord
     const cachedResponse = await cache.match(request);
     if (cachedResponse) {
@@ -167,30 +167,30 @@ async function handleImageRequest(request) {
         refreshImageInBackground(request, cache);
         return cachedResponse;
     }
-    
+
     try {
         // En mode lite, modifier l'URL pour demander une image plus petite
         const imageUrl = getLiteImageUrl(request.url);
-        const fetchRequest = imageUrl !== request.url 
+        const fetchRequest = imageUrl !== request.url
             ? new Request(imageUrl, { mode: 'cors' })
             : request;
-        
+
         const networkResponse = await fetch(fetchRequest);
-        
+
         if (networkResponse.ok) {
             // Ne pas bloquer la réponse pour la mise en cache
             cache.put(request, networkResponse.clone()).catch(() => {});
-            
+
             // Nettoyer le cache si trop grand
             limitImageCache(cache);
         }
-        
+
         return networkResponse;
     } catch (error) {
         // Retourner une image placeholder en cas d'erreur
-        return new Response('', { 
-            status: 404, 
-            statusText: 'Image not available offline' 
+        return new Response('', {
+            status: 404,
+            statusText: 'Image not available offline'
         });
     }
 }
@@ -221,7 +221,7 @@ async function limitImageCache(cache) {
 async function handleApiRequest(request) {
     const cache = await caches.open(API_CACHE);
     const cachedResponse = await cache.match(request);
-    
+
     // Vérifier si le cache est encore valide
     if (cachedResponse) {
         const cachedTime = cachedResponse.headers.get('sw-cached-time');
@@ -234,10 +234,10 @@ async function handleApiRequest(request) {
             }
         }
     }
-    
+
     try {
         const response = await fetch(request);
-        
+
         if (response.ok) {
             // Ajouter un timestamp pour l'expiration
             const responseWithTime = new Response(response.body, {
@@ -250,7 +250,7 @@ async function handleApiRequest(request) {
             });
             cache.put(request, responseWithTime).catch(() => {});
         }
-        
+
         return response;
     } catch (error) {
         // Retourner le cache même expiré en cas d'erreur réseau
@@ -293,7 +293,7 @@ self.addEventListener('fetch', (event) => {
     }
 
     const url = new URL(event.request.url);
-    
+
     // Ignorer les requêtes vers d'autres origines (sauf CDN images)
     if (!event.request.url.startsWith(self.location.origin)) {
         // Permettre le cache des images CDN
@@ -357,14 +357,14 @@ self.addEventListener('fetch', (event) => {
 async function staleWhileRevalidate(request) {
     const cache = await caches.open(CACHE_NAME);
     const cachedResponse = await cache.match(request);
-    
+
     const fetchPromise = fetch(request).then(response => {
         if (response.ok) {
             cache.put(request, response.clone());
         }
         return response;
     }).catch(() => null);
-    
+
     return cachedResponse || fetchPromise;
 }
 
@@ -448,20 +448,20 @@ async function queueOfflineRequest(request) {
             body: await request.text(),
             timestamp: Date.now()
         };
-        
+
         await db.add('offline-queue', data);
-        
-        return new Response(JSON.stringify({ 
-            queued: true, 
-            message: 'Requête enregistrée pour synchronisation' 
+
+        return new Response(JSON.stringify({
+            queued: true,
+            message: 'Requête enregistrée pour synchronisation'
         }), {
             status: 202,
             headers: { 'Content-Type': 'application/json' }
         });
     } catch (e) {
-        return new Response(JSON.stringify({ 
-            error: true, 
-            message: 'Impossible de sauvegarder la requête' 
+        return new Response(JSON.stringify({
+            error: true,
+            message: 'Impossible de sauvegarder la requête'
         }), {
             status: 503,
             headers: { 'Content-Type': 'application/json' }
@@ -473,10 +473,10 @@ async function queueOfflineRequest(request) {
 function openOfflineDB() {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open('rezi-offline', 1);
-        
+
         request.onerror = () => reject(request.error);
         request.onsuccess = () => resolve(request.result);
-        
+
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
             if (!db.objectStoreNames.contains('offline-queue')) {
@@ -511,7 +511,7 @@ self.addEventListener('push', (event) => {
         try {
             const data = event.data.json();
             notificationData = { ...notificationData, ...data };
-            
+
             // Ajouter des actions contextuelles
             if (data.type === 'message') {
                 notificationData.actions = [
@@ -550,7 +550,7 @@ self.addEventListener('notificationclick', (event) => {
     event.notification.close();
 
     let urlToOpen = event.notification.data?.url || '/notifications';
-    
+
     // Actions spécifiques
     switch (event.action) {
         case 'reply':
@@ -619,7 +619,7 @@ self.addEventListener('sync', (event) => {
 // Synchroniser les favoris
 async function syncFavorites() {
     console.log('[ServiceWorker] Synchronisation des favoris');
-    
+
     try {
         const db = await openOfflineDB();
         const tx = db.transaction('favorites', 'readonly');
@@ -629,7 +629,7 @@ async function syncFavorites() {
             request.onsuccess = () => resolve(request.result);
             request.onerror = () => reject(request.error);
         });
-        
+
         for (const fav of favorites) {
             if (fav.pendingSync) {
                 await fetch('/api/favorites', {
@@ -639,12 +639,12 @@ async function syncFavorites() {
                 });
             }
         }
-        
+
         // Nettoyer après sync
         const txWrite = db.transaction('favorites', 'readwrite');
         const storeWrite = txWrite.objectStore('favorites');
         storeWrite.clear();
-        
+
     } catch (e) {
         console.error('[ServiceWorker] Erreur sync favoris:', e);
     }
@@ -653,18 +653,18 @@ async function syncFavorites() {
 // Synchroniser la file d'attente offline
 async function syncOfflineQueue() {
     console.log('[ServiceWorker] Synchronisation de la file offline');
-    
+
     try {
         const db = await openOfflineDB();
         const tx = db.transaction('offline-queue', 'readwrite');
         const store = tx.objectStore('offline-queue');
-        
+
         const requests = await new Promise((resolve, reject) => {
             const request = store.getAll();
             request.onsuccess = () => resolve(request.result);
             request.onerror = () => reject(request.error);
         });
-        
+
         for (const req of requests) {
             try {
                 await fetch(req.url, {
@@ -686,18 +686,18 @@ async function syncOfflineQueue() {
 // Synchroniser les résidences consultées (analytics)
 async function syncViewedResidences() {
     console.log('[ServiceWorker] Synchronisation des vues');
-    
+
     try {
         const db = await openOfflineDB();
         const tx = db.transaction('viewed-residences', 'readwrite');
         const store = tx.objectStore('viewed-residences');
-        
+
         const viewed = await new Promise((resolve, reject) => {
             const request = store.getAll();
             request.onsuccess = () => resolve(request.result);
             request.onerror = () => reject(request.error);
         });
-        
+
         if (viewed.length > 0) {
             await fetch('/api/analytics/batch-views', {
                 method: 'POST',
@@ -714,32 +714,32 @@ async function syncViewedResidences() {
 // Message du client
 self.addEventListener('message', (event) => {
     console.log('[ServiceWorker] Message reçu:', event.data);
-    
+
     switch (event.data?.type) {
         case 'SKIP_WAITING':
             self.skipWaiting();
             break;
-            
+
         case 'ENABLE_LITE_MODE':
             isLiteMode = true;
             break;
-            
+
         case 'DISABLE_LITE_MODE':
             isLiteMode = false;
             break;
-            
+
         case 'GET_CACHE_STATUS':
             getCacheStatus().then(status => {
                 event.source.postMessage({ type: 'CACHE_STATUS', data: status });
             });
             break;
-            
+
         case 'CLEAR_CACHE':
             clearAllCaches().then(() => {
                 event.source.postMessage({ type: 'CACHE_CLEARED' });
             });
             break;
-            
+
         case 'PREFETCH_RESIDENCE':
             prefetchResidence(event.data.residenceId);
             break;
@@ -751,13 +751,13 @@ async function getCacheStatus() {
     const cacheNames = await caches.keys();
     let totalSize = 0;
     let itemCount = 0;
-    
+
     for (const name of cacheNames) {
         const cache = await caches.open(name);
         const keys = await cache.keys();
         itemCount += keys.length;
     }
-    
+
     return {
         caches: cacheNames,
         itemCount,
@@ -780,10 +780,10 @@ async function prefetchResidence(residenceId) {
             `/api/residences/${residenceId}`,
             `/api/residences/${residenceId}/photos`
         ];
-        
+
         const cache = await caches.open(CACHE_NAME);
         const imageCache = await caches.open(IMAGES_CACHE);
-        
+
         for (const url of urls) {
             const response = await fetch(url);
             if (response.ok) {

@@ -106,7 +106,7 @@
                             @csrf
                             <textarea name="message" 
                                       rows="3" 
-                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]"
                                       placeholder="Écrivez votre réponse..."
                                       required></textarea>
                             
@@ -119,7 +119,7 @@
                                     <input type="file" name="attachments[]" multiple class="sr-only">
                                 </label>
                                 <button type="submit" 
-                                        class="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">
+                                        class="px-6 py-2 bg-[#e00b41] text-white rounded-lg hover:bg-[#b5083a]">
                                     Envoyer
                                 </button>
                             </div>
@@ -130,7 +130,7 @@
                         Ce ticket est fermé. 
                         <form action="{{ route('support.reopen', $ticket) }}" method="POST" class="inline">
                             @csrf
-                            <button type="submit" class="text-orange-600 hover:underline">Réouvrir</button>
+                            <button type="submit" class="text-[#e00b41] hover:underline">Réouvrir</button>
                         </form>
                         pour répondre.
                     </div>

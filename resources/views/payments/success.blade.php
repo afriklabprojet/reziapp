@@ -16,7 +16,7 @@
 
             <h1 class="text-2xl font-bold text-gray-900 mb-2">Paiement réussi !</h1>
             <p class="text-gray-600 mb-8">
-                Votre paiement de <span class="font-semibold text-orange-600">{{ $payment->formatted_total }}</span> a été effectué avec succès.
+                Votre paiement de <span class="font-semibold text-[#e00b41]">{{ $payment->formatted_total }}</span> a été effectué avec succès.
             </p>
 
             <!-- Détails du paiement -->
@@ -47,7 +47,7 @@
 
             <!-- Résidence réservée -->
             @if($payment->booking && $payment->booking->residence)
-            <div class="bg-orange-50 rounded-xl p-6 mb-8 text-left">
+            <div class="bg-[#fff0f3] rounded-xl p-6 mb-8 text-left">
                 <div class="flex items-start space-x-4">
                     @if($payment->booking->residence->photos->first())
                     <img loading="lazy" src="{{ $payment->booking->residence->photos->first()?->url }}" 
@@ -82,7 +82,7 @@
                 
                 @if($payment->booking)
                 <a href="{{ route('bookings.show', $payment->booking) }}" 
-                   class="flex-1 inline-flex items-center justify-center px-4 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 font-medium transition-colors">
+                   class="flex-1 inline-flex items-center justify-center px-4 py-3 bg-[#e00b41] text-white rounded-lg hover:bg-[#b5083a] font-medium transition-colors">
                     Voir ma réservation
                     <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -90,7 +90,7 @@
                 </a>
                 @else
                 <a href="{{ route('payments.history') }}" 
-                   class="flex-1 inline-flex items-center justify-center px-4 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 font-medium transition-colors">
+                   class="flex-1 inline-flex items-center justify-center px-4 py-3 bg-[#e00b41] text-white rounded-lg hover:bg-[#b5083a] font-medium transition-colors">
                     Voir mes paiements
                 </a>
                 @endif

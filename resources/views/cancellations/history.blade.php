@@ -112,12 +112,12 @@
 
                     <div class="bg-gray-50 px-6 py-3 flex justify-between items-center">
                         <a href="{{ route('cancellations.show', $cancellation) }}" 
-                           class="text-orange-600 hover:text-orange-700 text-sm font-medium">
+                           class="text-[#e00b41] hover:text-[#b5083a] text-sm font-medium">
                             Voir les détails
                         </a>
                         @if($cancellation->canBeDisputed())
                             <a href="{{ route('disputes.create', ['cancellation_id' => $cancellation->id]) }}" 
-                               class="text-orange-600 hover:text-orange-700 text-sm font-medium">
+                               class="text-[#e00b41] hover:text-[#b5083a] text-sm font-medium">
                                 Contester
                             </a>
                         @endif
