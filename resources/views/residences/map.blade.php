@@ -1,269 +1,38 @@
 <x-app-layout>
     @section('title', 'Carte des résidences - REZI')
 
-    @php
-        $allowedRadiusMeters = config('rezi.search.allowed_radii', [2000, 5000, 10000, 25000, 50000]);
-        $requestedRadiusMeters = (int) request()->query('radius', 5000);
-        $initialRadiusKm = in_array($requestedRadiusMeters, $allowedRadiusMeters, true) ? $requestedRadiusMeters / 1000 : 5;
-        $initialLatitude = is_numeric(request()->query('lat')) ? (float) request()->query('lat') : null;
-        $initialLongitude = is_numeric(request()->query('lng')) ? (float) request()->query('lng') : null;
-    @endphp
-
-    <div class="fixed inset-x-0 top-[calc(3.5rem+env(safe-area-inset-top))] bottom-[calc(4rem+env(safe-area-inset-bottom))] z-10 flex flex-col overflow-hidden bg-white md:static md:h-[calc(100vh-64px)]"
-        x-data="{
-            residences: @js(
-                $residences->map(fn($r) => [
-                    'id' => $r->id,
-                    'title' => $r->name,
-                    'price' => $r->price,
-                    'price_label' => '/jour',
-                    'price_per_day' => $r->price_per_day,
-                    'price_per_month' => $r->price_per_month,
-                    'thumbnail' => $r->primaryPhoto?->url,
-                    'commune' => $r->commune,
-                    'quartier' => $r->quartier,
-                    'type' => $r->type,
-                    'type_location' => $r->type_location,
-                    'is_available' => (bool) $r->is_available,
-                    'bedrooms' => $r->bedrooms,
-                    'bathrooms' => $r->bathrooms,
-                    'max_guests' => $r->max_guests,
-                    'average_rating' => (float) $r->average_rating,
-                    'reviews_count' => (int) $r->reviews_count,
-                    'instant_book' => (bool) $r->instant_book,
-                    'is_verified' => (bool) $r->is_verified,
-                    'location' => [
-                        'latitude' => $r->latitude,
-                        'longitude' => $r->longitude,
-                        'commune' => $r->commune,
-                        'quartier' => $r->quartier,
-                    ],
-                ])->toArray()
-            ),
-            filteredResidences: [],
-            filterCommune: '',
-            filterPriceMin: {{ $priceMin }},
-            filterPriceMax: {{ $priceMax }},
-            priceMin: {{ $priceMin }},
-            priceMax: {{ $priceMax }},
-            filterType: '',
-            filterAvailability: 'available',
-            filterBedrooms: '',
-            filterRating: '',
-            filterInstantBook: false,
-            showSidebar: globalThis.innerWidth >= 1024,
-            hoveredId: null,
-            sortBy: 'price_asc',
-            showFilters: false,
-            searchQuery: '',
-            sheetExpanded: false,
-            userLocation: @js($initialLatitude !== null && $initialLongitude !== null ? ['lat' => $initialLatitude, 'lng' => $initialLongitude] : null),
-            locationState: 'idle',
-            locationAccuracy: null,
-            locationMode: @js($initialLatitude !== null && $initialLongitude !== null),
-            radiusKm: @js($initialRadiusKm),
-            radiusOptions: @js(collect($allowedRadiusMeters)->map(fn($radius) => $radius / 1000)->values()),
-
-            init() {
-                this.applyFilters();
-                if (this.hasUserLocation()) {
-                    this.$nextTick(() => {
-                        globalThis.dispatchEvent(new CustomEvent('map:center-on', { detail: { lat: this.userLocation.lat, lng: this.userLocation.lng, zoom: 12 } }));
-                        globalThis.dispatchEvent(new CustomEvent('map:update-radius', { detail: { radius: this.radiusKm } }));
-                    });
-                }
-                const watchers = ['filterCommune','filterPriceMin','filterPriceMax','filterType','filterAvailability','filterBedrooms','filterRating','filterInstantBook','sortBy','searchQuery','radiusKm','locationMode'];
-                watchers.forEach(w => this.$watch(w, () => this.applyFilters()));
-
-                globalThis.addEventListener('map:residence-hover', (e) => this.hoveredId = e.detail.id);
-                globalThis.addEventListener('map:residence-unhover', () => this.hoveredId = null);
-                globalThis.addEventListener('map:user-location', (e) => {
-                    this.setUserLocation(e.detail.lat, e.detail.lng, e.detail.accuracy, false);
-                });
-                this.$watch('showSidebar', () => this.$nextTick(() => {
-                    globalThis.dispatchEvent(new CustomEvent('map:resize'));
-                }));
-                this.$watch('sheetExpanded', () => this.$nextTick(() => {
-                    globalThis.dispatchEvent(new CustomEvent('map:resize'));
-                }));
-            },
-
-            applyFilters() {
-                let result = [...this.residences];
-                const hasLocation = this.hasUserLocation();
-
-                result = result.map((residence) => ({
-                    ...residence,
-                    distanceKm: hasLocation ? this.residenceDistance(residence) : null,
-                }));
-
-                if (this.searchQuery.trim()) {
-                    const q = this.searchQuery.trim().toLowerCase();
-                    result = result.filter(r =>
-                        (r.title?.toLowerCase().includes(q)) ||
-                        (r.commune?.toLowerCase().includes(q)) ||
-                        (r.quartier?.toLowerCase().includes(q))
-                    );
-                }
-                if (this.filterCommune) {
-                    result = result.filter(r => r.commune === this.filterCommune);
-                }
-                if (this.filterType) {
-                    result = result.filter(r => r.type === this.filterType);
-                }
-                if (this.filterAvailability === 'available') {
-                    result = result.filter(r => r.is_available);
-                } else if (this.filterAvailability === 'unavailable') {
-                    result = result.filter(r => !r.is_available);
-                }
-                if (this.filterBedrooms) {
-                    const min = parseInt(this.filterBedrooms);
-                    result = result.filter(r => (r.bedrooms || 0) >= min);
-                }
-                if (this.filterRating) {
-                    const min = parseFloat(this.filterRating);
-                    result = result.filter(r => (r.average_rating || 0) >= min);
-                }
-                if (this.filterInstantBook) {
-                    result = result.filter(r => r.instant_book);
-                }
-                result = result.filter(r => r.price >= this.filterPriceMin && r.price <= this.filterPriceMax);
-                if (this.locationMode && hasLocation) {
-                    result = result.filter(r => r.distanceKm !== null && r.distanceKm <= this.radiusKm);
-                }
-
-                switch (this.sortBy) {
-                    case 'distance': result.sort((a, b) => (a.distanceKm ?? Number.POSITIVE_INFINITY) - (b.distanceKm ?? Number.POSITIVE_INFINITY)); break;
-                    case 'price_asc': result.sort((a, b) => a.price - b.price); break;
-                    case 'price_desc': result.sort((a, b) => b.price - a.price); break;
-                    case 'rating': result.sort((a, b) => (b.average_rating || 0) - (a.average_rating || 0)); break;
-                    case 'newest': result.sort((a, b) => b.id - a.id); break;
-                }
-
-                this.filteredResidences = result;
-                globalThis.dispatchEvent(new CustomEvent('map:update-residences', { detail: { residences: result } }));
-                if (this.locationMode && hasLocation) {
-                    globalThis.dispatchEvent(new CustomEvent('map:fit-residences', {
-                        detail: { residences: result, userLocation: this.userLocation },
-                    }));
-                }
-            },
-
-            resetFilters() {
-                this.filterCommune = '';
-                this.filterType = '';
-                this.filterAvailability = 'available';
-                this.filterPriceMin = this.priceMin;
-                this.filterPriceMax = this.priceMax;
-                this.filterBedrooms = '';
-                this.filterRating = '';
-                this.filterInstantBook = false;
-                this.searchQuery = '';
-                this.locationMode = false;
-            },
-
-            get activeFilterCount() {
-                let count = 0;
-                if (this.filterCommune) count++;
-                if (this.filterType) count++;
-                if (this.filterAvailability !== 'available') count++;
-                if (this.filterBedrooms) count++;
-                if (this.filterRating) count++;
-                if (this.filterInstantBook) count++;
-                if (this.locationMode) count++;
-                if (this.filterPriceMin > this.priceMin || this.filterPriceMax < this.priceMax) count++;
-                if (this.searchQuery.trim()) count++;
-                return count;
-            },
-
-            get stats() {
-                const total = this.filteredResidences.length;
-                const available = this.filteredResidences.filter(r => r.is_available).length;
-                const avgPrice = total > 0 ? Math.round(this.filteredResidences.reduce((sum, r) => sum + r.price, 0) / total) : 0;
-                const avgRating = total > 0 ? (this.filteredResidences.reduce((sum, r) => sum + (r.average_rating || 0), 0) / total).toFixed(1) : '—';
-                const distances = this.filteredResidences.map(r => r.distanceKm).filter(distance => distance !== null);
-                const nearest = distances.length > 0 ? Math.min(...distances) : null;
-                return { total, available, avgPrice, avgRating, nearest };
-            },
-
-            locateMe() {
-                if (!navigator.geolocation) {
-                    this.locationState = 'error';
-                    return;
-                }
-
-                this.locationState = 'loading';
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        this.setUserLocation(
-                            position.coords.latitude,
-                            position.coords.longitude,
-                            Math.round(position.coords.accuracy),
-                            true,
-                        );
-                    },
-                    () => {
-                        this.locationState = 'error';
-                    },
-                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
-                );
-            },
-
-            setUserLocation(lat, lng, accuracy = null, shouldCenter = true) {
-                this.userLocation = { lat: Number(lat), lng: Number(lng) };
-                this.locationAccuracy = accuracy;
-                this.locationState = 'success';
-                this.locationMode = true;
-                this.sortBy = 'distance';
-                this.applyFilters();
-
-                if (shouldCenter && this.filteredResidences.length === 0) {
-                    globalThis.dispatchEvent(new CustomEvent('map:center-on', { detail: { lat: this.userLocation.lat, lng: this.userLocation.lng, zoom: 14 } }));
-                }
-                globalThis.dispatchEvent(new CustomEvent('map:update-radius', { detail: { radius: this.radiusKm } }));
-            },
-
-            setRadius(km) {
-                this.radiusKm = km;
-                if (this.hasUserLocation()) {
-                    globalThis.dispatchEvent(new CustomEvent('map:update-radius', { detail: { radius: km } }));
-                }
-            },
-
-            hasUserLocation() {
-                return this.userLocation !== null && Number.isFinite(this.userLocation.lat) && Number.isFinite(this.userLocation.lng);
-            },
-
-            residenceDistance(residence) {
-                const lat = Number(residence.location?.latitude);
-                const lng = Number(residence.location?.longitude);
-                if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
-                return this.distanceKm(this.userLocation.lat, this.userLocation.lng, lat, lng);
-            },
-
-            distanceKm(lat1, lng1, lat2, lng2) {
-                const earthRadiusKm = 6371;
-                const toRad = value => (value * Math.PI) / 180;
-                const dLat = toRad(lat2 - lat1);
-                const dLng = toRad(lng2 - lng1);
-                const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
-                return earthRadiusKm * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            },
-
-            formatDistance(distanceKm) {
-                if (distanceKm === null || distanceKm === undefined) return '';
-                if (distanceKm < 1) return Math.round(distanceKm * 1000) + ' m';
-                return distanceKm.toFixed(1).replace('.', ',') + ' km';
-            },
-
-            formatPrice(price) {
-                return new Intl.NumberFormat('fr-FR').format(price);
-            },
-
-            highlightOnMap(id) {
-                globalThis.dispatchEvent(new CustomEvent('map:highlight-residence', { detail: { id } }));
-            }
-        }">
+    <div class="h-[calc(100vh-64px)] flex flex-col"
+        x-data="residenceMap(@js([
+            'residences' => $residences->map(fn($r) => [
+                'id'             => $r->id,
+                'title'          => $r->name,
+                'price'          => $r->price,
+                'price_label'    => '/jour',
+                'price_per_day'  => $r->price_per_day,
+                'price_per_month'=> $r->price_per_month,
+                'thumbnail'      => $r->primaryPhoto?->url,
+                'commune'        => $r->commune,
+                'quartier'       => $r->quartier,
+                'type'           => $r->type,
+                'type_location'  => $r->type_location,
+                'is_available'   => (bool) $r->is_available,
+                'bedrooms'       => $r->bedrooms,
+                'bathrooms'      => $r->bathrooms,
+                'max_guests'     => $r->max_guests,
+                'average_rating' => (float) $r->average_rating,
+                'reviews_count'  => (int) $r->reviews_count,
+                'instant_book'   => (bool) $r->instant_book,
+                'is_verified'    => (bool) $r->is_verified,
+                'location'       => [
+                    'latitude'  => $r->latitude,
+                    'longitude' => $r->longitude,
+                    'commune'   => $r->commune,
+                    'quartier'  => $r->quartier,
+                ],
+            ])->toArray(),
+            'priceMin' => $priceMin,
+            'priceMax' => $priceMax,
+        ]))">
 
         {{-- ═══════════════════════════════════════════════════════════════════ --}}
         {{-- TOP BAR — Stats + Contrôles --}}

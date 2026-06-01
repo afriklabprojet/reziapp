@@ -1,16 +1,6 @@
 import './bootstrap';
 
-// TODO(CSP): Remplacer cet import par le build CSP d'Alpine pour supprimer
-// définitivement unsafe-eval de la CSP en production.
-// Étapes :
-//   1. npm install alpinejs@latest   (>= 3.14 inclut le build CSP)
-//   2. Remplacer la ligne ci-dessous par :
-//      import Alpine from '@alpinejs/csp';
-//      (ou : npm install @alpinejs/csp && import Alpine from '@alpinejs/csp')
-// Tant que l'import standard est utilisé, le middleware SecurityHeaders.php
-// NE doit PAS contenir 'unsafe-eval' — Alpine plantera silencieusement sur
-// les expressions x-data complexes ; surveiller Sentry après déploiement.
-import Alpine from 'alpinejs';
+import Alpine from '@alpinejs/csp';
 import intersect from '@alpinejs/intersect';
 import collapse from '@alpinejs/collapse';
 
@@ -59,6 +49,20 @@ import ownerResidenceMap from './pages/owner-residence-show';
 import { confirmEmergency } from './pages/verification-dashboard';
 import recommendationStrip from './components/recommendation-strip';
 import chatbot from './components/chatbot';
+import homeHero from './pages/home-hero';
+import selfieCapture from './pages/selfie-capture';
+import residenceCalendar from './components/residence-calendar';
+import citySelector from './components/city-selector';
+import earningsPayout from './pages/earnings-payout';
+import couponShow from './pages/coupon-show';
+import { leaseTenantSearch, leaseTypeSection, leaseClausesSection } from './pages/lease-contract-create';
+import photoUploadCreate from './components/photo-uploader';
+import residenceCreateForm from './pages/residence-create';
+import stickyBookingBar from './components/sticky-booking-bar';
+import residenceMap from './pages/residence-map';
+import promotionForm from './pages/promotion-form';
+import languageSelector from './components/language-selector';
+import otpInputForm from './components/otp-input';
 
 // Register Alpine components before start
 window.Alpine = Alpine;
@@ -104,6 +108,22 @@ Alpine.data('supportShow', () => supportShow());
 Alpine.data('ownerResidenceMap', (config) => ownerResidenceMap(config));
 Alpine.data('searchPage', (config) => searchPage(config));
 Alpine.data('addressAutocomplete', () => addressAutocomplete());
+Alpine.data('homeHero', (config) => homeHero(config));
+Alpine.data('selfieCapture', () => selfieCapture());
+Alpine.data('residenceCalendar', (config) => residenceCalendar(config));
+Alpine.data('citySelector', (config) => citySelector(config));
+Alpine.data('earningsPayout', () => earningsPayout());
+Alpine.data('couponShow', (config) => couponShow(config));
+Alpine.data('leaseTenantSearch', (config) => leaseTenantSearch(config));
+Alpine.data('leaseTypeSection', (config) => leaseTypeSection(config));
+Alpine.data('leaseClausesSection', (config) => leaseClausesSection(config));
+Alpine.data('photoUploadCreate', () => photoUploadCreate());
+Alpine.data('residenceCreateForm', (config) => residenceCreateForm(config));
+Alpine.data('stickyBookingBar', (config) => stickyBookingBar(config));
+Alpine.data('residenceMap', (config) => residenceMap(config));
+Alpine.data('promotionForm', (config) => promotionForm(config));
+Alpine.data('languageSelector', (config) => languageSelector(config));
+Alpine.data('otpInputForm', () => otpInputForm());
 
 // Expose globals needed by some pages
 window.initBookingStore = initBookingStore;

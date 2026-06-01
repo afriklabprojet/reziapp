@@ -44,30 +44,10 @@
                 </select>
             </div>
 
-            <div x-data="{
-                    search: '',
-                    selectedId: '{{ old('tenant_id') }}',
-                    selectedName: '',
-                    open: false,
-                    tenants: @js($tenants->map(fn($t) => ['id' => $t->id, 'name' => $t->name, 'email' => $t->email])),
-                    get filtered() {
-                        if (!this.search) return this.tenants;
-                        const s = this.search.toLowerCase();
-                        return this.tenants.filter(t => t.name.toLowerCase().includes(s) || t.email.toLowerCase().includes(s));
-                    },
-                    select(t) {
-                        this.selectedId = t.id;
-                        this.selectedName = t.name + ' (' + t.email + ')';
-                        this.search = this.selectedName;
-                        this.open = false;
-                    },
-                    init() {
-                        if (this.selectedId) {
-                            const t = this.tenants.find(t => t.id == this.selectedId);
-                            if (t) this.select(t);
-                        }
-                    }
-                }">
+            <div x-data="leaseTenantSearch(@js([
+                    'selectedId' => old('tenant_id'),
+                    'tenants'    => $tenants->map(fn($t) => ['id' => $t->id, 'name' => $t->name, 'email' => $t->email]),
+                ]))">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Locataire *</label>
                 <input type="hidden" name="tenant_id" :value="selectedId" required>
                 <div class="relative">
@@ -150,8 +130,7 @@
 
         {{-- Conditions financières --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4"
-            x-data="{ leaseType: '{{ old('lease_type', 'short_term') }}' }"
-            x-init="$watch('leaseType', () => {}); document.querySelector('[name=lease_type]').addEventListener('change', e => leaseType = e.target.value)">
+            x-data="leaseTypeSection(@js(['leaseType' => old('lease_type', 'short_term')]))">
             <h2 class="font-semibold text-gray-800 border-b pb-2">Conditions financières</h2>
 
             <div class="grid grid-cols-2 gap-4">
@@ -187,74 +166,13 @@
 
         {{-- Clauses et services avec IA --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4"
-            x-data="{
-                services: @js(old('included_services', [])),
-                newService: '',
-                clauses: @js(old('special_clauses', '')),
-                aiLoading: false,
-                aiServicesLoading: false,
-                aiError: '',
-                add() {
-                    if (this.newService.trim() && !this.services.includes(this.newService.trim())) {
-                        this.services.push(this.newService.trim());
-                        this.newService = '';
-                    }
-                },
-                remove(index) { this.services.splice(index, 1); },
-                async generateClauses() {
-                    this.aiLoading = true;
-                    this.aiError = '';
-                    try {
-                        const form = document.querySelector('form');
-                        const fd = new FormData(form);
-                        const res = await fetch('{{ route('owner.ai.generate-clauses') }}', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
-                            body: JSON.stringify({
-                                lease_type: fd.get('lease_type'),
-                                monthly_rent: fd.get('monthly_rent'),
-                                deposit_amount: fd.get('deposit_amount'),
-                                residence_name: form.querySelector('[name=residence_id] option:checked')?.textContent?.trim() || '',
-                                commune: '',
-                                included_services: this.services,
-                            }),
-                        });
-                        const data = await res.json();
-                        if (data.clauses) {
-                            this.clauses = data.clauses;
-                        } else {
-                            this.aiError = data.error || 'Erreur lors de la génération.';
-                        }
-                    } catch (e) { this.aiError = 'Erreur de connexion.'; }
-                    this.aiLoading = false;
-                },
-                async suggestServices() {
-                    this.aiServicesLoading = true;
-                    this.aiError = '';
-                    try {
-                        const form = document.querySelector('form');
-                        const fd = new FormData(form);
-                        const res = await fetch('{{ route('owner.ai.suggest-services') }}', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
-                            body: JSON.stringify({
-                                lease_type: fd.get('lease_type'),
-                                monthly_rent: fd.get('monthly_rent'),
-                                commune: '',
-                            }),
-                        });
-                        const data = await res.json();
-                        if (data.services) {
-                            data.services.forEach(s => {
-                                if (!this.services.includes(s)) this.services.push(s);
-                            });
-                        } else {
-                            this.aiError = data.error || 'Erreur lors de la suggestion.';
-                        }
-                    } catch (e) { this.aiError = 'Erreur de connexion.'; }
-                    this.aiServicesLoading = false;
-                },
-            }">
+            x-data="leaseClausesSection(@js([
+                'services'    => old('included_services', []),
+                'clauses'     => old('special_clauses', ''),
+                'generateUrl' => route('owner.ai.generate-clauses'),
+                'suggestUrl'  => route('owner.ai.suggest-services'),
+                'csrfToken'   => csrf_token(),
+            ]))">
             <div class="flex items-center justify-between border-b pb-2">
                 <h2 class="font-semibold text-gray-800">Clauses et services (optionnel)</h2>
                 <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full text-[10px] font-bold uppercase tracking-wide">

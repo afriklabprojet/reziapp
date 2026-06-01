@@ -3,30 +3,17 @@
 @section('title', 'Nouvelle Promotion')
 
 @section('owner-content')
-    <div x-data="{
-        discountType: '{{ old('discount_type', 'percentage') }}',
-        discountValue: '{{ old('discount_value', '') }}',
-        title: '{{ old('title', '') }}',
-        startsAt: '{{ old('starts_at', date('Y-m-d')) }}',
-        endsAt: '{{ old('ends_at', '') }}',
-        description: '{{ old('description', '') }}',
-        residenceId: '{{ old('residence_id', '') }}',
-        minNights: '{{ old('min_nights', '') }}',
-        maxUses: '{{ old('max_uses', '') }}',
-        get daysCount() {
-            if (!this.startsAt || !this.endsAt) return 0;
-            const start = new Date(this.startsAt);
-            const end = new Date(this.endsAt);
-            const diff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-            return diff > 0 ? diff : 0;
-        },
-        get discountLabel() {
-            if (!this.discountValue) return '';
-            if (this.discountType === 'percentage') return '-' + this.discountValue + '%';
-            if (this.discountType === 'fixed') return '-' + Number(this.discountValue).toLocaleString('fr-FR') + ' F';
-            return this.discountValue + ' nuit' + (this.discountValue > 1 ? 's' : '') + ' offerte' + (this.discountValue > 1 ? 's' : '');
-        },
-    }">
+    <div x-data="promotionForm(@js([
+        'discountType' => old('discount_type', 'percentage'),
+        'discountValue'=> old('discount_value', ''),
+        'title'        => old('title', ''),
+        'startsAt'     => old('starts_at', date('Y-m-d')),
+        'endsAt'       => old('ends_at', ''),
+        'description'  => old('description', ''),
+        'residenceId'  => old('residence_id', ''),
+        'minNights'    => old('min_nights', ''),
+        'maxUses'      => old('max_uses', ''),
+    ]))">
 
         {{-- ====== Header ====== --}}
         <div class="mb-8">

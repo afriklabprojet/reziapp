@@ -3,15 +3,7 @@
 @section('title', 'Code promo — ' . $coupon->code)
 
 @section('owner-content')
-    <div x-data="{
-        copied: false,
-        copyCode() {
-            navigator.clipboard.writeText('{{ $coupon->code }}');
-            this.copied = true;
-            setTimeout(() => this.copied = false, 2000);
-        },
-        confirmDelete: false
-    }">
+    <div x-data="couponShow(@js(['code' => $coupon->code]))">
 
         {{-- Header --}}
         <div class="mb-6">
