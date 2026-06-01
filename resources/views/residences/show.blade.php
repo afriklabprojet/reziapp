@@ -682,98 +682,7 @@
                     </div>
 
                     {{-- Calendar --}}
-                    <div id="calendrier" class="py-8 border-b border-gray-200" x-data="{
-                        cm: new Date().getMonth(),
-                        cy: new Date().getFullYear(),
-                        checkIn: '',
-                        checkOut: '',
-                        hoverDate: '',
-                        selecting: 'checkin',
-                        unavailable: @js($unavailableDates ?? []),
-                        next() {
-                            if (this.cm === 11) { this.cm = 0; this.cy++; }
-                            else { this.cm++; }
-                        },
-                        prev() {
-                            const t = new Date(); t.setHours(0,0,0,0);
-                            const first = new Date(this.cy, this.cm, 1);
-                            if (first <= t) return;
-                            if (this.cm === 0) { this.cm = 11; this.cy--; }
-                            else { this.cm--; }
-                        },
-                        dim(m, y) { return new Date(y, m + 1, 0).getDate(); },
-                        fdm(m, y) { return new Date(y, m, 1).getDay(); },
-                        mn: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
-                        dn: ['Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa'],
-                        get m2() { return this.cm === 11 ? 0 : this.cm + 1; },
-                        get y2() { return this.cm === 11 ? this.cy + 1 : this.cy; },
-                        fmt(d, m, y) { return y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0'); },
-                        isT(d, m, y) { const t = new Date(); return d === t.getDate() && m === t.getMonth() && y === t.getFullYear(); },
-                        isP(d, m, y) {
-                            const t = new Date(); t.setHours(0,0,0,0);
-                            return new Date(y, m, d) < t;
-                        },
-                        isUnavailable(d, m, y) {
-                            return this.unavailable.includes(this.fmt(d, m, y));
-                        },
-                        isBlocked(d, m, y) { return this.isP(d, m, y) || this.isUnavailable(d, m, y); },
-                        isCheckIn(d, m, y) { return this.checkIn === this.fmt(d, m, y); },
-                        isCheckOut(d, m, y) { return this.checkOut === this.fmt(d, m, y); },
-                        inRange(d, m, y) {
-                            if (!this.checkIn) return false;
-                            const end = this.checkOut || this.hoverDate;
-                            if (!end) return false;
-                            const dt = new Date(y, m, d);
-                            const s = new Date(this.checkIn);
-                            const e = new Date(end);
-                            return dt > s && dt < e;
-                        },
-                        isRangeEdge(d, m, y) {
-                            return this.isCheckIn(d,m,y) || this.isCheckOut(d,m,y);
-                        },
-                        selectDate(d, m, y) {
-                            if (this.isBlocked(d, m, y)) return;
-                            const ds = this.fmt(d, m, y);
-                            if (this.selecting === 'checkin' || !this.checkIn) {
-                                this.checkIn = ds;
-                                this.checkOut = '';
-                                this.selecting = 'checkout';
-                            } else {
-                                if (ds <= this.checkIn) {
-                                    this.checkIn = ds;
-                                    this.checkOut = '';
-                                    this.selecting = 'checkout';
-                                } else {
-                                    // Check no blocked date in range
-                                    const hasBlocked = this.unavailable.some(u => u > this.checkIn && u < ds);
-                                    if (hasBlocked) {
-                                        this.checkIn = ds;
-                                        this.checkOut = '';
-                                        this.selecting = 'checkout';
-                                    } else {
-                                        this.checkOut = ds;
-                                        this.selecting = 'checkin';
-                                        this.$dispatch('calendar-dates-selected', { checkIn: this.checkIn, checkOut: this.checkOut });
-                                        window.dispatchEvent(new CustomEvent('calendar-dates-selected', { detail: { checkIn: this.checkIn, checkOut: this.checkOut } }));
-                                    }
-                                }
-                            }
-                        },
-                        clearDates() {
-                            this.checkIn = '';
-                            this.checkOut = '';
-                            this.selecting = 'checkin';
-                            this.hoverDate = '';
-                            window.dispatchEvent(new CustomEvent('calendar-dates-selected', { detail: { checkIn: '', checkOut: '' } }));
-                        },
-                        dayClass(d, m, y) {
-                            if (this.isBlocked(d, m, y)) return 'text-gray-300 line-through cursor-not-allowed';
-                            if (this.isCheckIn(d,m,y) || this.isCheckOut(d,m,y)) return 'bg-gray-900 text-white font-semibold cursor-pointer rounded-full';
-                            if (this.inRange(d,m,y)) return 'bg-[#ffd1da] text-[#8e0730] cursor-pointer rounded-none';
-                            if (this.isT(d,m,y)) return 'ring-2 ring-[#ff4d6d] text-gray-900 font-semibold cursor-pointer rounded-full hover:bg-gray-100';
-                            return 'text-gray-700 hover:bg-gray-100 cursor-pointer rounded-full';
-                        }
-                    }">
+                    <div id="calendrier" class="py-8 border-b border-gray-200" x-data="residenceCalendar(@js(['unavailable' => $unavailableDates ?? []]))">
                         <h2 class="text-[22px] font-semibold text-gray-900 mb-2">
                             {{ $residence->min_nights ?? 2 }} nuit{{ ($residence->min_nights ?? 2) > 1 ? 's' : '' }}
                             minimum
@@ -1842,27 +1751,7 @@
         {{-- ═══════════════════════════════════
          Mobile Bottom Bar
     ═══════════════════════════════════ --}}
-        <div x-data="{
-                showBar: false,
-                checkIn: '',
-                checkOut: '',
-                get bookingUrl() {
-                    let url = '{{ route('bookings.create', $residence) }}';
-                    const params = new URLSearchParams();
-                    if (this.checkIn)  params.set('check_in',  this.checkIn);
-                    if (this.checkOut) params.set('check_out', this.checkOut);
-                    const qs = params.toString();
-                    return qs ? url + '?' + qs : url;
-                }
-            }"
-            x-init="
-                const bc = document.querySelector('.booking-card');
-                if (bc) { new IntersectionObserver(([e]) => { showBar = !e.isIntersecting }, { threshold: 0 }).observe(bc) } else { showBar = true }
-                window.addEventListener('calendar-dates-selected', e => {
-                    this.checkIn  = e.detail.checkIn  || '';
-                    this.checkOut = e.detail.checkOut || '';
-                });
-            "
+        <div x-data="stickyBookingBar(@js(['bookingBaseUrl' => route('bookings.create', $residence)]))"
             x-show="showBar"
             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-y-full opacity-0"
             x-transition:enter-end="translate-y-0 opacity-100" x-transition:leave="transition ease-in duration-200"

@@ -79,32 +79,7 @@
                     <p class="text-base font-bold text-gray-900 mb-6">{{ auth()->user()->phone }}</p>
 
                     {{-- Formulaire OTP --}}
-                    <form action="{{ route('verification.phone.verify') }}" method="POST" x-data="{
-                        code: ['', '', '', '', '', ''],
-                        submitting: false,
-                        focusNext(index) {
-                            if (this.code[index] && index < 5) {
-                                this.$refs['input' + (index + 1)].focus();
-                            }
-                        },
-                        focusPrev(index, event) {
-                            if (event.key === 'Backspace' && !this.code[index] && index > 0) {
-                                this.$refs['input' + (index - 1)].focus();
-                            }
-                        },
-                        handlePaste(event) {
-                            const pasted = event.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
-                            for (let i = 0; i < 6; i++) {
-                                this.code[i] = pasted[i] || '';
-                            }
-                            if (pasted.length >= 6) {
-                                this.$refs.input5.focus();
-                            }
-                        },
-                        get fullCode() {
-                            return this.code.join('');
-                        }
-                    }"
+                    <form action="{{ route('verification.phone.verify') }}" method="POST" x-data="otpInputForm()"
                         @submit.prevent="if(fullCode.length === 6) { submitting = true; $el.submit(); }">
                         @csrf
 

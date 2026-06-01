@@ -329,13 +329,7 @@
             </div>
 
             {{-- ============================== DEMANDE DE RETRAIT ============================== --}}
-            <div class="mt-8" x-data="{
-                showPinSetup: false,
-                showPayoutForm: false,
-                payoutMethod: 'wave',
-                amount: '',
-                get isBankTransfer() { return this.payoutMethod === 'bank_transfer'; }
-            }">
+            <div class="mt-8" x-data="earningsPayout()">
                 <div class="flex items-center gap-3 mb-4">
                     <h2 class="text-lg font-extrabold text-gray-900">Demander un retrait</h2>
                     <div class="h-px bg-gray-200 flex-1"></div>

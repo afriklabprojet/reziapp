@@ -146,24 +146,7 @@
                     Langues parlées
                 </h2>
             </div>
-            <div class="p-6" x-data="{
-                languages: {{ json_encode(old('languages', $profile->languages ?? ['Français'])) }},
-                newLang: '',
-                suggestions: ['Français', 'Anglais', 'Arabe', 'Espagnol', 'Portugais', 'Dioula', 'Baoulé', 'Bété', 'Wolof', 'Bambara', 'Peul', 'Haoussa', 'Yoruba', 'Lingala', 'Swahili'],
-                addLanguage(lang = null) {
-                    const toAdd = lang || this.newLang.trim();
-                    if (toAdd && !this.languages.includes(toAdd)) {
-                        this.languages.push(toAdd);
-                        this.newLang = '';
-                    }
-                },
-                removeLanguage(lang) {
-                    this.languages = this.languages.filter(l => l !== lang);
-                },
-                get availableSuggestions() {
-                    return this.suggestions.filter(s => !this.languages.includes(s));
-                }
-            }">
+            <div class="p-6" x-data="languageSelector(@js(['languages' => old('languages', $profile->languages ?? ['Français'])]))">
                 {{-- Langues sélectionnées --}}
                 <div class="flex flex-wrap gap-2 mb-4">
                     <template x-for="(lang, index) in languages" :key="index">

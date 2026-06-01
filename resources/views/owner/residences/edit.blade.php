@@ -35,12 +35,8 @@
             x-data="{
                 ...residenceEditForm(@js(['latitude' => old('latitude', $residence->latitude), 'longitude' => old('longitude', $residence->longitude)])),
                 typeLocation: '{{ old('type_location', $residence->type_location ?? 'residence_meublee') }}',
-                get pricePeriod() {
-                    return 'day';
-                },
-                get priceLabel() {
-                    return 'Prix par jour (FCFA)';
-                }
+                pricePeriod: 'day',
+                priceLabel: 'Prix par jour (FCFA)'
             }">
             @csrf
             @method('PUT')
@@ -83,19 +79,12 @@
                     <div class="card">
                         <h2 class="text-xl font-semibold text-gray-900 mb-4">Localisation</h2>
 
-                        <div class="space-y-4" x-data="{
-                            selectedCountry: '{{ old('country_code', $residence->country_code ?? 'CI') }}',
-                            selectedCity: '{{ old('city', $residence->city ?? '') }}',
-                            countries: @js($countries->map(fn($c) => ['code' => $c->code, 'name' => $c->name])),
-                            allCities: @js($cities->map(fn($c) => ['id' => $c->id, 'name' => $c->name, 'country_id' => $c->country_id, 'country_code' => $c->country?->code, 'communes' => $c->communes->pluck('name')])),
-                            get filteredCities() {
-                                return this.allCities.filter(c => c.country_code === this.selectedCountry);
-                            },
-                            get filteredCommunes() {
-                                const city = this.allCities.find(c => c.name === this.selectedCity && c.country_code === this.selectedCountry);
-                                return city ? city.communes : [];
-                            }
-                        }">
+                        <div class="space-y-4" x-data="citySelector(@js([
+                            'selectedCountry' => old('country_code', $residence->country_code ?? 'CI'),
+                            'selectedCity'    => old('city', $residence->city ?? ''),
+                            'countries'       => $countries->map(fn($c) => ['code' => $c->code, 'name' => $c->name]),
+                            'allCities'       => $cities->map(fn($c) => ['id' => $c->id, 'name' => $c->name, 'country_id' => $c->country_id, 'country_code' => $c->country?->code, 'communes' => $c->communes->pluck('name')]),
+                        ]))">
                             <div x-data="addressAutocomplete()">
                                 <label for="address" class="block text-sm font-medium text-gray-700 mb-1">
                                     Adresse complète *

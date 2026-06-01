@@ -30,105 +30,15 @@
             @endif
 
             <form method="POST" action="{{ route('owner.residences.store') }}" enctype="multipart/form-data"
-                x-data="{
-                    description: '{{ old('description', '') }}',
-                    houseRules: '{{ old('house_rules', '') }}',
-                    typeLocation: '{{ old('type_location', 'residence_meublee') }}',
-                    aiLoading: false,
-                    aiTitleLoading: false,
-                    aiImproveLoading: false,
-                    aiError: '',
-                    get pricePeriod() {
-                        return 'day';
-                    },
-                    get priceLabel() {
-                        return 'Prix par jour (FCFA)';
-                    },
-                    get pricePlaceholder() {
-                        return '15000';
-                    },
-                    get priceMin() {
-                        return '1000';
-                    },
-                    get priceFieldName() {
-                        return 'price_per_day';
-                    },
-                    getFormContext() {
-                        const form = this.$root;
-                        const fd = new FormData(form);
-                        return {
-                            type: fd.get('type') || '',
-                            type_location: fd.get('type_location') || '',
-                            commune: fd.get('commune_id') ? (form.querySelector('[name=commune_id] option:checked')?.textContent?.trim() || '') : '',
-                            bedrooms: fd.get('bedrooms') || '',
-                            bathrooms: fd.get('bathrooms') || '',
-                            surface_area: fd.get('surface_area') || '',
-                            max_guests: fd.get('max_guests') || '',
-                            price: fd.get('price_per_day') || fd.get('price_per_month') || '',
-                        };
-                    },
-                    async generateDescription() {
-                        this.aiError = '';
-                        const ctx = this.getFormContext();
-                        if (!ctx.type) { this.aiError = 'Veuillez d\'abord sélectionner le type de résidence.'; return; }
-                        this.aiLoading = true;
-                        try {
-                            const res = await fetch('{{ route('owner.ai.generate-description') }}', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
-                                body: JSON.stringify(ctx),
-                            });
-                            const data = await res.json();
-                            if (data.description) {
-                                this.description = data.description;
-                            } else {
-                                this.aiError = data.error || 'Erreur lors de la génération.';
-                            }
-                        } catch (e) { this.aiError = 'Erreur de connexion.'; }
-                        this.aiLoading = false;
-                    },
-                    async generateTitle() {
-                        this.aiError = '';
-                        const ctx = this.getFormContext();
-                        if (!ctx.type) { this.aiError = 'Veuillez d\'abord sélectionner le type de résidence.'; return; }
-                        this.aiTitleLoading = true;
-                        try {
-                            const res = await fetch('{{ route('owner.ai.generate-title') }}', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
-                                body: JSON.stringify(ctx),
-                            });
-                            const data = await res.json();
-                            if (data.title) {
-                                document.getElementById('name').value = data.title;
-                            } else {
-                                this.aiError = data.error || 'Erreur lors de la génération.';
-                            }
-                        } catch (e) { this.aiError = 'Erreur de connexion.'; }
-                        this.aiTitleLoading = false;
-                    },
-                    async improveDescription() {
-                        if (this.description.length < 10) { this.aiError = 'Écrivez au moins quelques mots avant d\'améliorer.'; return; }
-                        this.aiImproveLoading = true;
-                        this.aiError = '';
-                        try {
-                            const ctx = this.getFormContext();
-                            ctx.description = this.description;
-                            const res = await fetch('{{ route('owner.ai.improve-description') }}', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
-                                body: JSON.stringify(ctx),
-                            });
-                            const data = await res.json();
-                            if (data.description) {
-                                this.description = data.description;
-                            } else {
-                                this.aiError = data.error || 'Erreur lors de l\'amélioration.';
-                            }
-                        } catch (e) { this.aiError = 'Erreur de connexion.'; }
-                        this.aiImproveLoading = false;
-                    },
-                }" class="space-y-6">
+                x-data="residenceCreateForm(@js([
+                    'description'           => old('description', ''),
+                    'houseRules'            => old('house_rules', ''),
+                    'typeLocation'          => old('type_location', 'residence_meublee'),
+                    'generateDescriptionUrl'=> route('owner.ai.generate-description'),
+                    'generateTitleUrl'      => route('owner.ai.generate-title'),
+                    'improveDescriptionUrl' => route('owner.ai.improve-description'),
+                    'csrfToken'             => csrf_token(),
+                ]))" class="space-y-6">
                 @csrf
 
                 {{-- SECTION 1: INFORMATIONS GÉNÉRALES --}}
@@ -423,19 +333,12 @@
                         <h2 class="text-xl font-semibold text-gray-900">Localisation</h2>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" x-data="{
-                        selectedCountry: '{{ old('country_code', 'CI') }}',
-                        selectedCity: '{{ old('city', '') }}',
-                        countries: @js($countries->map(fn($c) => ['code' => $c->code, 'name' => $c->name])),
-                        allCities: @js($cities->map(fn($c) => ['id' => $c->id, 'name' => $c->name, 'country_id' => $c->country_id, 'country_code' => $c->country?->code, 'communes' => $c->communes->pluck('name')])),
-                        get filteredCities() {
-                            return this.allCities.filter(c => c.country_code === this.selectedCountry);
-                        },
-                        get filteredCommunes() {
-                            const city = this.allCities.find(c => c.name === this.selectedCity && c.country_code === this.selectedCountry);
-                            return city ? city.communes : [];
-                        }
-                    }">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" x-data="citySelector(@js([
+                        'selectedCountry' => old('country_code', 'CI'),
+                        'selectedCity'    => old('city', ''),
+                        'countries'       => $countries->map(fn($c) => ['code' => $c->code, 'name' => $c->name]),
+                        'allCities'       => $cities->map(fn($c) => ['id' => $c->id, 'name' => $c->name, 'country_id' => $c->country_id, 'country_code' => $c->country?->code, 'communes' => $c->communes->pluck('name')]),
+                    ]))">
                         {{-- Pays --}}
                         <div>
                             <label for="country_code" class="block text-sm font-medium text-gray-700 mb-2">
@@ -839,43 +742,7 @@
                         <h2 class="text-xl font-semibold text-gray-900">Photos</h2>
                     </div>
 
-                    <div x-data="{
-                        previews: [],
-                        files: [],
-                        isDragging: false,
-                        handlePhotos(fileList) {
-                            const maxFiles = 10;
-                            const maxSize = 5 * 1024 * 1024;
-
-                            for (let i = 0; i < fileList.length && this.files.length < maxFiles; i++) {
-                                const file = fileList[i];
-                                if (!file.type.startsWith('image/')) continue;
-                                if (file.size > maxSize) {
-                                    alert('L\'image ' + file.name + ' dépasse 5 Mo');
-                                    continue;
-                                }
-
-                                this.files.push(file);
-                                const reader = new FileReader();
-                                reader.onload = (e) => {
-                                    this.previews.push(e.target.result);
-                                };
-                                reader.readAsDataURL(file);
-                            }
-
-                            this.updateFileInput();
-                        },
-                        removePhoto(index) {
-                            this.previews.splice(index, 1);
-                            this.files.splice(index, 1);
-                            this.updateFileInput();
-                        },
-                        updateFileInput() {
-                            const dataTransfer = new DataTransfer();
-                            this.files.forEach(file => dataTransfer.items.add(file));
-                            this.$refs.photos.files = dataTransfer.files;
-                        }
-                    }" class="space-y-4">
+                    <div x-data="photoUploadCreate()" class="space-y-4">
                         <div class="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition"
                             :class="isDragging ? 'border-[#ff385c] bg-[#fff0f3]' : 'border-gray-300 hover:border-[#ff4d6d]'"
                             @dragover.prevent="isDragging = true" @dragleave.prevent="isDragging = false"
