@@ -89,7 +89,10 @@ class CacheInvalidationService
 
     /**
      * Forget cache keys matching a prefix.
-     * Works with database cache driver by querying the cache table directly.
+     *
+     * Supports database and Redis drivers. For other drivers (array, file) this
+     * is a no-op — those are typically used in tests where explicit Cache::forget
+     * calls or RefreshDatabase are sufficient for isolation.
      */
     private static function forgetByPattern(string $prefix): void
     {
@@ -97,13 +100,26 @@ class CacheInvalidationService
         $fullPrefix = $cachePrefix ? "{$cachePrefix}:{$prefix}" : $prefix;
 
         try {
-            if (config('cache.default') === 'database') {
+            $driver = config('cache.default');
+
+            if ($driver === 'database') {
                 $table = config('cache.stores.database.table', 'cache');
                 \Illuminate\Support\Facades\DB::table($table)
                     ->where('key', 'like', "{$fullPrefix}%")
                     ->delete();
+
+                return;
             }
-            // For Redis: Cache::getRedis()->keys("{$fullPrefix}*") then delete
+
+            if ($driver === 'redis') {
+                $redis = Cache::getRedis();
+                $pattern = "{$fullPrefix}*";
+                $keys = $redis->keys($pattern);
+
+                foreach ($keys as $key) {
+                    $redis->del($key);
+                }
+            }
         } catch (\Throwable $e) {
             // Cache cleanup failure is non-critical
             \Illuminate\Support\Facades\Log::channel('critical')->warning('Cache pattern invalidation failed', [
