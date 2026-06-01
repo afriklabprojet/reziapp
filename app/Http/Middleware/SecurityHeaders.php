@@ -39,8 +39,11 @@ class SecurityHeaders
     /**
      * Content Security Policy.
      *
-     * NOTE : unsafe-inline et unsafe-eval sont requis pour Livewire, Alpine.js et Filament.
-     * À remplacer progressivement par des nonces CSP pour renforcer la protection.
+     * NOTE : unsafe-inline est requis pour Livewire et Filament.
+     * Alpine.js doit utiliser le build CSP (@alpinejs/csp ou alpinejs >= 3.14
+     * compilé sans Function()) pour que unsafe-eval reste absent de la CSP.
+     * TODO: installer @alpinejs/csp et l'importer dans resources/js/app.js
+     *       pour remplacer l'import 'alpinejs' standard.
      *
      * En développement, le serveur Vite HMR (port 4000 par défaut) est
      * autorisé sur toutes ses variantes d'adresse locale.
@@ -61,9 +64,10 @@ class SecurityHeaders
 
         $directives = [
             "default-src 'self'",
-            // Alpine.js, Livewire et Filament nécessitent inline/eval
+            // Alpine.js (build CSP requis), Livewire et Filament nécessitent unsafe-inline.
+            // unsafe-eval est volontairement absent : le build @alpinejs/csp ne l'exige pas.
             // Mapbox GL JS + Google Maps Places API + Microsoft Clarity
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' {$mapboxCdn} {$googleMaps} {$clarity}",
+            "script-src 'self' 'unsafe-inline' {$mapboxCdn} {$googleMaps} {$clarity}",
             // Tailwind v4 injecte des styles inline ; fonts.bunny.net pour Figtree
             // Mapbox GL CSS + Google Fonts
             "style-src 'self' 'unsafe-inline' {$externalFontHosts} {$mapboxCdn} {$googleFonts}",
