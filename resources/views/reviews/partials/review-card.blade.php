@@ -15,7 +15,7 @@
                         {{ $review->user->name }}
                     </span>
                     @if($review->is_verified)
-                        <span class="inline-flex items-center ml-2 text-xs text-[#ff385c]">
+                        <span class="inline-flex items-center ml-2 text-xs text-[#F16A00]">
                             <svg class="w-4 h-4 mr-0.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
@@ -43,7 +43,7 @@
             <!-- Résidence (si showResidence) -->
             @if(isset($showResidence) && $showResidence && $review->residence)
                 <a href="{{ route('residences.show', $review->residence) }}"
-                   class="flex items-center gap-2 mb-3 text-sm text-gray-600 hover:text-[#ff385c]">
+                   class="flex items-center gap-2 mb-3 text-sm text-gray-600 hover:text-[#F16A00]">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                     </svg>
@@ -68,7 +68,7 @@
 
             <!-- Réponse du propriétaire -->
             @if($review->owner_response)
-                <div class="mt-4 pl-4 border-l-2 border-[#ffb3c1] bg-[#fff0f3] rounded-r-lg p-3">
+                <div class="mt-4 pl-4 border-l-2 border-[#FFD0A3] bg-[#FFF4EB] rounded-r-lg p-3">
                     <div class="flex items-center gap-2 mb-2">
                         <span class="text-sm font-medium text-gray-900">Réponse du propriétaire</span>
                         <span class="text-xs text-gray-500">{{ $review->owner_response_at->translatedFormat('d F Y') }}</span>
@@ -82,7 +82,7 @@
                 @auth
                     <!-- Vote utile -->
                     <button onclick="toggleHelpful({{ $review->id }})"
-                            class="helpful-btn-{{ $review->id }} flex items-center gap-1 text-sm {{ $review->hasUserVoted(Auth::user()) ? 'text-[#ff385c]' : 'text-gray-500 hover:text-[#ff385c]' }} transition"
+                            class="helpful-btn-{{ $review->id }} flex items-center gap-1 text-sm {{ $review->hasUserVoted(Auth::user()) ? 'text-[#F16A00]' : 'text-gray-500 hover:text-[#F16A00]' }} transition"
                             data-voted="{{ $review->hasUserVoted(Auth::user()) ? 'true' : 'false' }}">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>

@@ -6,12 +6,12 @@
     $themeBg = match($themeColor) {
         'blue' => 'bg-blue-500', 'green' => 'bg-emerald-500', 'purple' => 'bg-purple-500',
         'pink' => 'bg-pink-500', 'red' => 'bg-red-500', 'yellow' => 'bg-amber-500', 'teal' => 'bg-teal-500',
-        default => 'bg-[#ff385c]',
+        default => 'bg-[#F16A00]',
     };
     $themeReplyBg = match($themeColor) {
         'blue' => 'bg-blue-600/30', 'green' => 'bg-emerald-600/30', 'purple' => 'bg-purple-600/30',
         'pink' => 'bg-pink-600/30', 'red' => 'bg-red-600/30', 'yellow' => 'bg-amber-600/30', 'teal' => 'bg-teal-600/30',
-        default => 'bg-[#e00b41]/30',
+        default => 'bg-[#CC5A00]/30',
     };
     $themeRing = match($themeColor) {
         'blue' => 'ring-blue-200', 'green' => 'ring-emerald-200', 'purple' => 'ring-purple-200',
@@ -69,7 +69,7 @@
                     @if (!empty($message->metadata['reply_to_content']))
                         <div
                             class="mx-2.5 mt-2.5 mb-0 px-2.5 py-1.5 rounded-lg border-l-2
-                            {{ $isOwn ? $themeReplyBg . ' border-white/50' : 'bg-gray-50 border-[#ff4d6d]' }}">
+                            {{ $isOwn ? $themeReplyBg . ' border-white/50' : 'bg-gray-50 border-[#FF8A1F]' }}">
                             <p class="text-[11px] {{ $isOwn ? 'text-white/70' : 'text-gray-500' }} truncate">
                                 {{ Str::limit($message->metadata['reply_to_content'], 80) }}
                             </p>
@@ -94,11 +94,11 @@
                             <div class="mx-2.5 mt-2.5 {{ !empty($message->content) ? 'mb-0' : 'mb-2.5' }}">
                                 <a href="{{ Storage::url($attachment['path']) }}" target="_blank"
                                     class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-colors
-                                          {{ $isOwn ? 'bg-[#e00b41]/30 hover:bg-[#e00b41]/40' : 'bg-gray-50 hover:bg-gray-100' }}">
+                                          {{ $isOwn ? 'bg-[#CC5A00]/30 hover:bg-[#CC5A00]/40' : 'bg-gray-50 hover:bg-gray-100' }}">
                                     <div
                                         class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0
-                                        {{ $isOwn ? 'bg-white/20' : 'bg-[#ffd1da]' }}">
-                                        <svg class="w-5 h-5 {{ $isOwn ? 'text-white' : 'text-[#e00b41]' }}"
+                                        {{ $isOwn ? 'bg-white/20' : 'bg-[#FFE7D1]' }}">
+                                        <svg class="w-5 h-5 {{ $isOwn ? 'text-white' : 'text-[#CC5A00]' }}"
                                             fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
@@ -167,13 +167,13 @@
                         @php $voiceAttach = $message->attachments[0]; @endphp
                         <div class="px-3 py-2.5 flex items-center gap-3 min-w-40 sm:min-w-50 max-w-full">
                             <button onclick="this.closest('.voice-player').querySelector('audio').paused ? this.closest('.voice-player').querySelector('audio').play() : this.closest('.voice-player').querySelector('audio').pause()"
-                                class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 {{ $isOwn ? 'bg-white/20 hover:bg-white/30' : 'bg-[#ffd1da] hover:bg-[#ffb3c1]' }} transition-colors">
-                                <svg class="w-4 h-4 {{ $isOwn ? 'text-white' : 'text-[#e00b41]' }}" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 {{ $isOwn ? 'bg-white/20 hover:bg-white/30' : 'bg-[#FFE7D1] hover:bg-[#FFD0A3]' }} transition-colors">
+                                <svg class="w-4 h-4 {{ $isOwn ? 'text-white' : 'text-[#CC5A00]' }}" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                             </button>
                             <div class="flex-1 voice-player">
                                 <div class="flex items-center gap-2">
                                     <div class="flex-1 h-1 bg-white/20 rounded-full overflow-hidden">
-                                        <div class="h-full {{ $isOwn ? 'bg-white/60' : 'bg-[#ff4d6d]' }} rounded-full" style="width: 0%"></div>
+                                        <div class="h-full {{ $isOwn ? 'bg-white/60' : 'bg-[#FF8A1F]' }} rounded-full" style="width: 0%"></div>
                                     </div>
                                     <span class="text-[11px] {{ $isOwn ? 'text-white/70' : 'text-gray-500' }} shrink-0 tabular-nums">
                                         {{ gmdate('i:s', $voiceAttach['duration'] ?? 0) }}
@@ -209,7 +209,7 @@
                         @foreach ($message->getGroupedReactions() as $reaction)
                             <button @click="toggleReaction({{ $message->id }}, '{{ $reaction['emoji'] }}')"
                                 class="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-xs rounded-full border transition-all hover:scale-105
-                                {{ in_array(auth()->id(), $reaction['users']) ? 'bg-[#fff0f3] border-[#ffb3c1] text-[#b5083a]' : 'bg-white border-gray-200 text-gray-600' }}">
+                                {{ in_array(auth()->id(), $reaction['users']) ? 'bg-[#FFF4EB] border-[#FFD0A3] text-[#A34700]' : 'bg-white border-gray-200 text-gray-600' }}">
                                 <span>{{ $reaction['emoji'] }}</span>
                                 @if ($reaction['count'] > 1)
                                     <span class="text-[10px] font-medium">{{ $reaction['count'] }}</span>
@@ -260,7 +260,7 @@
                     </div>
                     {{-- Reply --}}
                     <button @click="setReplyTo({{ $message->id }}, @js(Str::limit($message->content, 60)))"
-                        class="flex items-center gap-1 px-2 py-0.5 text-[10px] text-gray-400 hover:text-[#ff385c] rounded-full hover:bg-[#fff0f3] transition-all"
+                        class="flex items-center gap-1 px-2 py-0.5 text-[10px] text-gray-400 hover:text-[#F16A00] rounded-full hover:bg-[#FFF4EB] transition-all"
                         title="Répondre">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -279,7 +279,7 @@
                             class="w-7 h-7 rounded-full object-cover ring-2 ring-orange-200 shadow-sm">
                     @else
                         <div
-                            class="w-7 h-7 rounded-full bg-linear-to-br from-[#ff4d6d] to-[#ff385c] flex items-center justify-center text-white text-[10px] font-bold ring-2 ring-orange-200 shadow-sm">
+                            class="w-7 h-7 rounded-full bg-linear-to-br from-[#FF8A1F] to-[#F16A00] flex items-center justify-center text-white text-[10px] font-bold ring-2 ring-orange-200 shadow-sm">
                             {{ strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}
                         </div>
                     @endif

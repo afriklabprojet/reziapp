@@ -13,8 +13,8 @@
     <div class="grid grid-cols-3 gap-4 mb-8">
         <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-[#ffd1da] rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-12 h-12 bg-[#FFE7D1] rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-[#F16A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                     </svg>
@@ -86,7 +86,7 @@
                             <div class="flex items-start justify-between gap-4 mb-3">
                                 <div>
                                     <a href="{{ route('residences.show', $review->residence) }}" class="block">
-                                        <h3 class="font-semibold text-gray-900 hover:text-[#ff385c]">
+                                        <h3 class="font-semibold text-gray-900 hover:text-[#F16A00]">
                                             {{ $review->residence->title }}</h3>
                                         <p class="text-sm text-gray-500">{{ $review->residence->commune }}</p>
                                     </a>
@@ -113,9 +113,9 @@
 
                             {{-- Réponse du propriétaire --}}
                             @if ($review->owner_response)
-                                <div class="mt-4 p-4 bg-[#fff0f3] rounded-lg border-l-4 border-[#ff385c]">
+                                <div class="mt-4 p-4 bg-[#FFF4EB] rounded-lg border-l-4 border-[#F16A00]">
                                     <div class="flex items-center gap-2 mb-2">
-                                        <div class="w-8 h-8 rounded-full overflow-hidden bg-[#ffd1da]">
+                                        <div class="w-8 h-8 rounded-full overflow-hidden bg-[#FFE7D1]">
                                             @if ($review->residence->owner)
                                                 <img loading="lazy" src="{{ $review->residence->owner->getAvatarUrl() }}"
                                                     alt="" class="w-full h-full object-cover">
@@ -136,7 +136,7 @@
                             {{-- Actions --}}
                             <div class="mt-4 flex items-center gap-3 flex-wrap">
                                 <a href="{{ route('residences.show', $review->residence) }}"
-                                    class="inline-flex items-center px-4 py-2 bg-[#ff385c] hover:bg-[#e00b41] text-white text-sm font-medium rounded-lg transition">
+                                    class="inline-flex items-center px-4 py-2 bg-[#F16A00] hover:bg-[#CC5A00] text-white text-sm font-medium rounded-lg transition">
                                     Voir la résidence
                                 </a>
 
@@ -195,7 +195,7 @@
             <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun avis publié</h3>
             <p class="text-gray-600 mb-6">Partagez votre expérience en laissant des avis sur les résidences visitées</p>
             <a href="{{ route('residences.index') }}"
-                class="inline-flex items-center px-4 py-2 bg-[#ff385c] hover:bg-[#e00b41] text-white font-medium rounded-lg transition">
+                class="inline-flex items-center px-4 py-2 bg-[#F16A00] hover:bg-[#CC5A00] text-white font-medium rounded-lg transition">
                 Explorer les résidences
             </a>
         </div>
@@ -271,7 +271,7 @@
                     x-model="comment"
                     rows="4"
                     placeholder="Décrivez votre expérience… (min. 10 caractères)"
-                    class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm placeholder-gray-400 focus:ring-2 focus:ring-[#ffb3c1] focus:border-[#ff4d6d] resize-none"
+                    class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm placeholder-gray-400 focus:ring-2 focus:ring-[#FFD0A3] focus:border-[#FF8A1F] resize-none"
                     minlength="10"
                     maxlength="2000"
                 ></textarea>
@@ -288,7 +288,7 @@
                 </button>
                 <button type="submit"
                     :disabled="submitting"
-                    class="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-[#ff385c] hover:bg-[#e00b41] disabled:bg-[#ff7a96] disabled:cursor-not-allowed rounded-xl transition">
+                    class="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-[#F16A00] hover:bg-[#CC5A00] disabled:bg-[#FFB46F] disabled:cursor-not-allowed rounded-xl transition">
                     <span x-show="!submitting">Enregistrer</span>
                     <span x-show="submitting">Mise à jour…</span>
                 </button>

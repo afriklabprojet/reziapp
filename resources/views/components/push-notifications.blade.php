@@ -8,8 +8,8 @@
         class="fixed bottom-20 md:bottom-4 left-3 right-3 md:left-auto md:right-4 md:w-96 bg-white rounded-2xl shadow-xl border border-gray-100 p-4 z-50">
         <div class="flex items-start gap-3">
             <div class="shrink-0">
-                <div class="w-10 h-10 bg-[#ffd1da] rounded-full flex items-center justify-center">
-                    <svg class="w-5 h-5 text-[#e00b41]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 bg-[#FFE7D1] rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-[#CC5A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                     </svg>
@@ -21,7 +21,7 @@
                     promotions.</p>
                 <div class="flex items-center gap-2 mt-3">
                     <button @click="subscribe()" :disabled="loading"
-                        class="px-4 py-2.5 bg-[#e00b41] text-white text-sm font-medium rounded-lg hover:bg-[#b5083a] disabled:opacity-50 transition-colors min-h-11">
+                        class="px-4 py-2.5 bg-[#CC5A00] text-white text-sm font-medium rounded-lg hover:bg-[#A34700] disabled:opacity-50 transition-colors min-h-11">
                         <span x-show="!loading">Activer</span>
                         <span x-show="loading" class="flex items-center">
                             <svg class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">

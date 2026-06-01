@@ -34,7 +34,7 @@ class CoHostInvitation extends Notification implements ShouldQueue
     {
         $ownerName = $this->residence->owner?->name ?? 'Un propriétaire';
         $residenceName = $this->residence->name;
-        $acceptUrl = route('cohosts.accept', $this->coHost->invitation_token);
+        $acceptUrl = route('cohost.invitation', $this->coHost->invitation_token);
 
         $permissions = collect([
             'can_manage_calendar' => 'Gérer le calendrier',

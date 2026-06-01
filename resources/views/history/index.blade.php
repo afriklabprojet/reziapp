@@ -54,7 +54,7 @@
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Aucun historique</h3>
                     <p class="text-gray-500 mb-4">Vous n'avez pas encore consulté de résidences.</p>
                     <a href="{{ route('residences.index') }}"
-                        class="inline-flex items-center gap-2 bg-[#e00b41] text-white px-4 py-2 rounded-xl hover:bg-[#b5083a] transition-colors">
+                        class="inline-flex items-center gap-2 bg-[#CC5A00] text-white px-4 py-2 rounded-xl hover:bg-[#A34700] transition-colors">
                         Parcourir les résidences
                     </a>
                 </div>
@@ -105,7 +105,7 @@
                                             <h3 class="font-medium text-gray-900 truncate">{{ $residence->title }}</h3>
                                             <p class="text-sm text-gray-500">{{ $residence->quartier->name ?? '' }}</p>
                                             <div class="flex items-center justify-between mt-2">
-                                                <span class="text-[#e00b41] font-semibold text-sm">
+                                                <span class="text-[#CC5A00] font-semibold text-sm">
                                                     {{ number_format($residence->price, 0, ',', ' ') }}
                                                     FCFA/{{ $residence->price_label }}
                                                 </span>

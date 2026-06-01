@@ -3,11 +3,11 @@
 @section('title', $user->name . ' - Profil')
 
 @section('content')
-    <div class="min-h-screen bg-linear-to-br from-gray-50 via-white to-[#fff0f3]/30">
+    <div class="min-h-screen bg-linear-to-br from-gray-50 via-white to-[#FFF4EB]/30">
         <!-- Hero Header -->
         <div class="relative">
             <!-- Fond avec motif -->
-            <div class="absolute inset-0 bg-linear-to-r from-[#ff385c] via-orange-400 to-amber-500 h-64 sm:h-80">
+            <div class="absolute inset-0 bg-linear-to-r from-[#F16A00] via-orange-400 to-amber-500 h-64 sm:h-80">
                 <div class="absolute inset-0 opacity-10">
                     <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
                         <defs>
@@ -108,7 +108,7 @@
                             @auth
                                 @if (Auth::id() === $user->id)
                                     <a href="{{ route('profile.edit') }}"
-                                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-[#e00b41] hover:bg-[#fff0f3] rounded-xl font-medium shadow-lg shadow-orange-900/20 transition-all hover:scale-105">
+                                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-[#CC5A00] hover:bg-[#FFF4EB] rounded-xl font-medium shadow-lg shadow-orange-900/20 transition-all hover:scale-105">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -135,7 +135,7 @@
                                                     @csrf
                                                     <input type="hidden" name="residence_id" value="{{ $residences->first()->id }}">
                                                     <button type="submit"
-                                                        class="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#e00b41] hover:bg-[#fff0f3] rounded-xl font-semibold shadow-lg shadow-orange-900/20 transition-all hover:scale-105">
+                                                        class="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#CC5A00] hover:bg-[#FFF4EB] rounded-xl font-semibold shadow-lg shadow-orange-900/20 transition-all hover:scale-105">
                                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                                 d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -146,7 +146,7 @@
                                             @else
                                                 {{-- Multiple residences: show picker modal --}}
                                                 <button @click="showContactModal = true"
-                                                    class="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#e00b41] hover:bg-[#fff0f3] rounded-xl font-semibold shadow-lg shadow-orange-900/20 transition-all hover:scale-105">
+                                                    class="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#CC5A00] hover:bg-[#FFF4EB] rounded-xl font-semibold shadow-lg shadow-orange-900/20 transition-all hover:scale-105">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -173,11 +173,11 @@
                                                             <div class="px-5 py-3 max-h-64 overflow-y-auto divide-y divide-gray-50">
                                                                 @foreach ($residences as $residence)
                                                                     <label class="flex items-center gap-3 px-3 py-3 cursor-pointer rounded-lg transition-colors"
-                                                                        :class="selectedResidence == {{ $residence->id }} ? 'bg-[#fff0f3]' : 'hover:bg-gray-50'">
+                                                                        :class="selectedResidence == {{ $residence->id }} ? 'bg-[#FFF4EB]' : 'hover:bg-gray-50'">
                                                                         <input type="radio" name="residence_radio" value="{{ $residence->id }}"
                                                                             @click="selectedResidence = {{ $residence->id }}"
                                                                             :checked="selectedResidence == {{ $residence->id }}"
-                                                                            class="text-[#ff385c] focus:ring-[#ff385c]/30 border-gray-300">
+                                                                            class="text-[#F16A00] focus:ring-[#F16A00]/30 border-gray-300">
                                                                         <div class="flex-1 min-w-0">
                                                                             <p class="text-sm font-medium text-gray-800 truncate">{{ $residence->name ?? $residence->title }}</p>
                                                                             @if ($residence->commune)
@@ -194,7 +194,7 @@
                                                                 </button>
                                                                 <button type="submit" :disabled="!selectedResidence"
                                                                     class="px-5 py-2 text-sm font-semibold rounded-xl transition-all"
-                                                                    :class="selectedResidence ? 'bg-[#ff385c] text-white hover:bg-[#e00b41] shadow-sm' : 'bg-gray-200 text-gray-400 cursor-not-allowed'">
+                                                                    :class="selectedResidence ? 'bg-[#F16A00] text-white hover:bg-[#CC5A00] shadow-sm' : 'bg-gray-200 text-gray-400 cursor-not-allowed'">
                                                                     Contacter
                                                                 </button>
                                                             </div>
@@ -206,7 +206,7 @@
                                     @else
                                         {{-- Non-owner user: redirect to chat index --}}
                                         <a href="{{ route('chat.index') }}"
-                                            class="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#e00b41] hover:bg-[#fff0f3] rounded-xl font-semibold shadow-lg shadow-orange-900/20 transition-all hover:scale-105">
+                                            class="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#CC5A00] hover:bg-[#FFF4EB] rounded-xl font-semibold shadow-lg shadow-orange-900/20 transition-all hover:scale-105">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -226,7 +226,7 @@
                                 @endif
                             @else
                                 <a href="{{ route('login') }}"
-                                    class="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#e00b41] hover:bg-[#fff0f3] rounded-xl font-semibold shadow-lg transition-all hover:scale-105">
+                                    class="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#CC5A00] hover:bg-[#FFF4EB] rounded-xl font-semibold shadow-lg transition-all hover:scale-105">
                                     Connectez-vous pour contacter
                                 </a>
                             @endauth
@@ -270,7 +270,7 @@
 
                     <div
                         class="bg-white rounded-2xl shadow-lg shadow-gray-200/50 p-5 text-center hover:shadow-xl transition-shadow">
-                        <div class="text-2xl font-bold text-[#ff385c] mb-2">{{ $profile->response_rate_formatted }}</div>
+                        <div class="text-2xl font-bold text-[#F16A00] mb-2">{{ $profile->response_rate_formatted }}</div>
                         <p class="text-sm text-gray-500">Taux de réponse</p>
                     </div>
                 </div>
@@ -281,7 +281,7 @@
                 <div class="bg-white rounded-2xl shadow-lg shadow-gray-200/50 p-6 mb-8">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-[#ff385c]" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-[#F16A00]" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd"
                                     d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                                     clip-rule="evenodd" />
@@ -289,7 +289,7 @@
                             Badges & Distinctions
                         </h2>
                         <a href="{{ route('profile.badges', $user) }}"
-                            class="text-[#ff385c] hover:text-[#e00b41] text-sm font-medium flex items-center gap-1">
+                            class="text-[#F16A00] hover:text-[#CC5A00] text-sm font-medium flex items-center gap-1">
                             Voir tout
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -310,7 +310,7 @@
                                     'purple' =>
                                         'bg-linear-to-br from-purple-50 to-violet-100 text-purple-800 border-purple-200 shadow-purple-100',
                                     'orange' =>
-                                        'bg-linear-to-br from-[#fff0f3] to-amber-100 text-[#8e0730] border-[#ffb3c1] shadow-orange-100',
+                                        'bg-linear-to-br from-[#FFF4EB] to-amber-100 text-[#8e0730] border-[#FFD0A3] shadow-orange-100',
                                     'teal' =>
                                         'bg-linear-to-br from-teal-50 to-cyan-100 text-teal-800 border-teal-200 shadow-teal-100',
                                 ];
@@ -364,8 +364,8 @@
                     <!-- À propos -->
                     <div class="bg-white rounded-2xl shadow-lg shadow-gray-200/50 p-6 hover:shadow-xl transition-shadow">
                         <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                            <div class="p-2 bg-[#ffd1da] rounded-lg">
-                                <svg class="w-5 h-5 text-[#e00b41]" fill="none" stroke="currentColor"
+                            <div class="p-2 bg-[#FFE7D1] rounded-lg">
+                                <svg class="w-5 h-5 text-[#CC5A00]" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -436,9 +436,9 @@
 
                             @if ($profile->show_email && $user->email)
                                 <a href="mailto:{{ $user->email }}"
-                                    class="flex items-center gap-3 p-3 bg-[#fff0f3] rounded-xl hover:bg-[#ffd1da] transition group">
+                                    class="flex items-center gap-3 p-3 bg-[#FFF4EB] rounded-xl hover:bg-[#FFE7D1] transition group">
                                     <div class="p-2 bg-white rounded-lg shadow-sm">
-                                        <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor"
+                                        <svg class="w-5 h-5 text-[#F16A00]" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -446,7 +446,7 @@
                                     </div>
                                     <div>
                                         <p class="text-xs text-gray-500 uppercase tracking-wide">Email</p>
-                                        <p class="text-[#e00b41] font-medium group-hover:underline">{{ $user->email }}
+                                        <p class="text-[#CC5A00] font-medium group-hover:underline">{{ $user->email }}
                                         </p>
                                     </div>
                                 </a>
@@ -496,7 +496,7 @@
                                             class="font-bold text-gray-900">{{ $profile->response_rate_formatted }}</span>
                                     </div>
                                     <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
-                                        <div class="h-full rounded-full transition-all duration-500 {{ $profile->response_rate >= 90 ? 'bg-linear-to-r from-green-400 to-emerald-500' : ($profile->response_rate >= 70 ? 'bg-linear-to-r from-yellow-400 to-[#ff385c]' : 'bg-linear-to-r from-red-400 to-red-500') }}"
+                                        <div class="h-full rounded-full transition-all duration-500 {{ $profile->response_rate >= 90 ? 'bg-linear-to-r from-green-400 to-emerald-500' : ($profile->response_rate >= 70 ? 'bg-linear-to-r from-yellow-400 to-[#F16A00]' : 'bg-linear-to-r from-red-400 to-red-500') }}"
                                             style="width: {{ min(100, $profile->response_rate) }}%"></div>
                                     </div>
                                     @if ($profile->response_rate >= 90)
@@ -614,8 +614,8 @@
                                 class="bg-white rounded-2xl shadow-lg shadow-gray-200/50 p-6 hover:shadow-xl transition-shadow">
                                 <div class="flex items-center justify-between mb-6">
                                     <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-                                        <div class="p-2 bg-[#ffd1da] rounded-lg">
-                                            <svg class="w-5 h-5 text-[#e00b41]" fill="currentColor" viewBox="0 0 20 20">
+                                        <div class="p-2 bg-[#FFE7D1] rounded-lg">
+                                            <svg class="w-5 h-5 text-[#CC5A00]" fill="currentColor" viewBox="0 0 20 20">
                                                 <path
                                                     d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
                                             </svg>
@@ -663,7 +663,7 @@
                                             </div>
 
                                             <h3
-                                                class="font-semibold text-gray-900 group-hover:text-[#ff385c] transition mb-1">
+                                                class="font-semibold text-gray-900 group-hover:text-[#F16A00] transition mb-1">
                                                 {{ $residence->title }}</h3>
 
                                             <div class="flex items-center gap-2 text-sm text-gray-500">
@@ -724,7 +724,7 @@
                                         <span class="ml-2 text-sm font-normal text-gray-500">({{ $totalReviews }})</span>
                                     </h2>
                                     <a href="{{ route('profile.received-reviews', $user) }}"
-                                        class="text-[#ff385c] hover:text-[#e00b41] text-sm font-medium flex items-center gap-1">
+                                        class="text-[#F16A00] hover:text-[#CC5A00] text-sm font-medium flex items-center gap-1">
                                         Voir tout
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -759,7 +759,7 @@
                                             class="ml-2 text-sm font-normal text-gray-500">({{ $totalGivenReviews }})</span>
                                     </h2>
                                     <a href="{{ route('profile.given-reviews', $user) }}"
-                                        class="text-[#ff385c] hover:text-[#e00b41] text-sm font-medium flex items-center gap-1">
+                                        class="text-[#F16A00] hover:text-[#CC5A00] text-sm font-medium flex items-center gap-1">
                                         Voir tout
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

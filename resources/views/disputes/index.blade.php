@@ -11,7 +11,7 @@
             <p class="text-gray-600 mt-1">Suivez l'état de vos demandes</p>
         </div>
         <a href="{{ route('disputes.create') }}" 
-           class="inline-flex items-center px-4 py-2 bg-[#e00b41] text-white rounded-lg hover:bg-[#b5083a] transition-colors">
+           class="inline-flex items-center px-4 py-2 bg-[#CC5A00] text-white rounded-lg hover:bg-[#A34700] transition-colors">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
@@ -96,7 +96,7 @@
 
                     <div class="bg-gray-50 px-6 py-3">
                         <a href="{{ route('disputes.show', $dispute) }}" 
-                           class="text-[#e00b41] hover:text-[#b5083a] text-sm font-medium">
+                           class="text-[#CC5A00] hover:text-[#A34700] text-sm font-medium">
                             Voir les détails →
                         </a>
                     </div>

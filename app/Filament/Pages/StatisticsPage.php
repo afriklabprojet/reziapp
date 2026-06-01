@@ -28,6 +28,7 @@ class StatisticsPage extends Page
     public function getViewData(): array
     {
         return Cache::remember('admin.statistics_page', 300, fn () => [
+            'generatedAt' => now(),
             'globalStats' => $this->getGlobalStats(),
             'residencesByCommune' => $this->getResidencesByCommune(),
             'registrationsByDay' => $this->getRegistrationsByDay(),

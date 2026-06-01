@@ -13,7 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 
 /**
- * Service de génération et d'envoi des quittances de loyer.
+ * Service de génération et d'envoi des reçus de location.
  *
  * Responsabilités :
  *  - Création manuelle ou automatique depuis réservation/contrat
@@ -63,7 +63,7 @@ class RentReceiptService
     }
 
     /**
-     * Créer une quittance depuis un contrat de bail (loyer mensuel).
+    * Créer un reçu depuis un contrat de bail (montant mensuel de location).
      */
     public function createFromContract(
         LeaseContract $contract,
@@ -211,9 +211,9 @@ class RentReceiptService
 
     private function buildWhatsAppMessage(RentReceipt $receipt): string
     {
-        return "🏠 *Quittance de loyer - REZI*\n\n"
+        return "🏠 *Reçu de location - REZI*\n\n"
             ."Bonjour {$receipt->tenant->name},\n\n"
-            ."Votre quittance de loyer est disponible :\n"
+            ."Votre reçu de location est disponible :\n"
             ."• *Référence :* {$receipt->reference}\n"
             ."• *Période :* {$receipt->period_label}\n"
             .'• *Montant :* '.number_format((float) $receipt->total_amount, 0, ',', ' ')." {$receipt->currency}\n"

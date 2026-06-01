@@ -37,7 +37,7 @@ $config = json_encode([
         style="max-height: 520px;"
     >
         {{-- Header --}}
-        <div class="flex items-center gap-3 px-4 py-3 bg-[#ff385c] text-white rounded-t-2xl">
+        <div class="flex items-center gap-3 px-4 py-3 bg-[#F16A00] text-white rounded-t-2xl">
             <div class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center shrink-0">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -46,7 +46,7 @@ $config = json_encode([
             </div>
             <div class="flex-1 min-w-0">
                 <p class="font-semibold text-sm leading-tight">Assistant REZI</p>
-                <p class="text-xs text-[#ffd1da]">Disponible 24h/24</p>
+                <p class="text-xs text-[#FFE7D1]">Disponible 24h/24</p>
             </div>
             <button
                 @click="toggle()"
@@ -72,13 +72,13 @@ $config = json_encode([
                         : 'flex justify-start'"
                 >
                     {{-- Avatar assistant --}}
-                    <div x-show="msg.role === 'assistant'" class="w-6 h-6 rounded-full bg-[#ffd1da] flex items-center justify-center shrink-0 mr-2 mt-0.5">
+                    <div x-show="msg.role === 'assistant'" class="w-6 h-6 rounded-full bg-[#FFE7D1] flex items-center justify-center shrink-0 mr-2 mt-0.5">
                         <span class="text-xs">🏠</span>
                     </div>
 
                     <div
                         :class="msg.role === 'user'
-                            ? 'bg-[#ff385c] text-white rounded-2xl rounded-br-sm px-3 py-2 max-w-[75%] text-sm'
+                            ? 'bg-[#F16A00] text-white rounded-2xl rounded-br-sm px-3 py-2 max-w-[75%] text-sm'
                             : msg.error
                                 ? 'bg-red-50 text-red-700 border border-red-200 rounded-2xl rounded-bl-sm px-3 py-2 max-w-[80%] text-sm'
                                 : 'bg-white text-gray-800 shadow-sm border border-gray-100 rounded-2xl rounded-bl-sm px-3 py-2 max-w-[80%] text-sm'"
@@ -89,14 +89,14 @@ $config = json_encode([
 
             {{-- Indicateur de frappe --}}
             <div x-show="loading" class="flex justify-start">
-                <div class="w-6 h-6 rounded-full bg-[#ffd1da] flex items-center justify-center shrink-0 mr-2">
+                <div class="w-6 h-6 rounded-full bg-[#FFE7D1] flex items-center justify-center shrink-0 mr-2">
                     <span class="text-xs">🏠</span>
                 </div>
                 <div class="bg-white shadow-sm border border-gray-100 rounded-2xl rounded-bl-sm px-4 py-3">
                     <div class="flex gap-1">
-                        <span class="w-2 h-2 bg-[#ff4d6d] rounded-full animate-bounce" style="animation-delay:0ms"></span>
-                        <span class="w-2 h-2 bg-[#ff4d6d] rounded-full animate-bounce" style="animation-delay:150ms"></span>
-                        <span class="w-2 h-2 bg-[#ff4d6d] rounded-full animate-bounce" style="animation-delay:300ms"></span>
+                        <span class="w-2 h-2 bg-[#FF8A1F] rounded-full animate-bounce" style="animation-delay:0ms"></span>
+                        <span class="w-2 h-2 bg-[#FF8A1F] rounded-full animate-bounce" style="animation-delay:150ms"></span>
+                        <span class="w-2 h-2 bg-[#FF8A1F] rounded-full animate-bounce" style="animation-delay:300ms"></span>
                     </div>
                 </div>
             </div>
@@ -107,7 +107,7 @@ $config = json_encode([
             <template x-for="s in suggestions" :key="s">
                 <button
                     @click="useSuggestion(s)"
-                    class="text-xs px-2.5 py-1 rounded-full border border-[#ffb3c1] text-[#e00b41] hover:bg-[#fff0f3] transition-colors whitespace-nowrap"
+                    class="text-xs px-2.5 py-1 rounded-full border border-[#FFD0A3] text-[#CC5A00] hover:bg-[#FFF4EB] transition-colors whitespace-nowrap"
                     x-text="s"
                 ></button>
             </template>
@@ -121,7 +121,7 @@ $config = json_encode([
                 @keydown="handleKey($event)"
                 placeholder="Votre message..."
                 rows="1"
-                class="flex-1 resize-none rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ff4d6d] focus:border-transparent transition bg-gray-50"
+                class="flex-1 resize-none rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF8A1F] focus:border-transparent transition bg-gray-50"
                 style="max-height: 80px;"
                 :disabled="loading"
                 aria-label="Message au chatbot"
@@ -129,7 +129,7 @@ $config = json_encode([
             <button
                 @click="send()"
                 :disabled="loading || !input.trim()"
-                class="shrink-0 w-9 h-9 rounded-xl bg-[#ff385c] hover:bg-[#e00b41] disabled:opacity-40 disabled:cursor-not-allowed text-white flex items-center justify-center transition-colors"
+                class="shrink-0 w-9 h-9 rounded-xl bg-[#F16A00] hover:bg-[#CC5A00] disabled:opacity-40 disabled:cursor-not-allowed text-white flex items-center justify-center transition-colors"
                 aria-label="Envoyer"
             >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -143,7 +143,7 @@ $config = json_encode([
     {{-- ==================== BOUTON FLOTTANT ==================== --}}
     <button
         @click="toggle()"
-        class="w-14 h-14 rounded-full bg-[#ff385c] hover:bg-[#e00b41] text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center relative group"
+        class="w-14 h-14 rounded-full bg-[#F16A00] hover:bg-[#CC5A00] text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center relative group"
         :class="open ? 'rotate-0' : ''"
         aria-label="Ouvrir l'assistant REZI"
     >

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Services\GeolocationService;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 /**
  * FormRequest pour la recherche publique de résidences.
@@ -21,7 +23,7 @@ class SearchResidenceRequest extends FormRequest
             // Géolocalisation
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
-            'radius' => ['nullable', 'integer', 'min:100', 'max:50000'],
+            'radius' => ['nullable', 'integer', Rule::in(GeolocationService::getAllowedRadii())],
 
             // Localisation textuelle
             'country_code' => ['nullable', 'string', 'size:2'],

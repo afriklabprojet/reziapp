@@ -24,7 +24,7 @@
             <div class="flex items-start justify-between mb-3">
                 <div>
                     @if($review->residence)
-                    <a href="{{ route('residences.show', $review->residence) }}" class="font-medium text-gray-900 hover:text-[#e00b41]">{{ $review->residence->title }}</a>
+                    <a href="{{ route('residences.show', $review->residence) }}" class="font-medium text-gray-900 hover:text-[#CC5A00]">{{ $review->residence->title }}</a>
                     @endif
                     <p class="text-xs text-gray-500 mt-1">{{ $review->created_at->diffForHumans() }}</p>
                 </div>

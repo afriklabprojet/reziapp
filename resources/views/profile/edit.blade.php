@@ -9,7 +9,7 @@
 @section($isOwner ? 'owner-content' : 'client-content')
     {{-- En-tête du profil --}}
     <div
-        class="bg-linear-to-r from-[#ff385c] to-[#e00b41] rounded-2xl p-6 sm:p-8 mb-6 text-white relative overflow-hidden">
+        class="bg-linear-to-r from-[#F16A00] to-[#CC5A00] rounded-2xl p-6 sm:p-8 mb-6 text-white relative overflow-hidden">
         {{-- Motif décoratif --}}
         <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
         <div class="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
@@ -140,7 +140,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
                 <h2 class="text-lg font-semibold text-gray-900 flex items-center">
-                    <svg class="w-5 h-5 mr-2 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 mr-2 text-[#F16A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
@@ -154,7 +154,7 @@
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
                     <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}" required
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] transition">
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00] transition">
                     @error('name')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -164,7 +164,7 @@
                     <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Adresse email</label>
                     <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}"
                         required
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] transition">
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00] transition">
                     @error('email')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -195,7 +195,7 @@
                     <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
                     <input type="tel" id="phone" name="phone" value="{{ old('phone', $user->phone) }}"
                         placeholder="+225 XX XX XX XX XX"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] transition">
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00] transition">
                     @error('phone')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -203,7 +203,7 @@
 
                 <div class="flex items-center justify-between pt-4 border-t border-gray-100">
                     <button type="submit"
-                        class="px-6 py-2.5 bg-[#ff385c] text-white font-medium rounded-lg hover:bg-[#e00b41] focus:ring-2 focus:ring-[#ff385c] focus:ring-offset-2 transition">
+                        class="px-6 py-2.5 bg-[#F16A00] text-white font-medium rounded-lg hover:bg-[#CC5A00] focus:ring-2 focus:ring-[#F16A00] focus:ring-offset-2 transition">
                         Enregistrer
                     </button>
                     @if (session('status') === 'profile-updated')
@@ -225,7 +225,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
                 <h2 class="text-lg font-semibold text-gray-900 flex items-center">
-                    <svg class="w-5 h-5 mr-2 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 mr-2 text-[#F16A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
@@ -240,7 +240,7 @@
                     <label for="current_password" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe
                         actuel</label>
                     <input type="password" id="current_password" name="current_password" autocomplete="current-password"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] transition">
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00] transition">
                     @error('current_password', 'updatePassword')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -250,7 +250,7 @@
                     <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Nouveau mot de
                         passe</label>
                     <input type="password" id="password" name="password" autocomplete="new-password"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] transition">
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00] transition">
                     @error('password', 'updatePassword')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -261,7 +261,7 @@
                         mot de passe</label>
                     <input type="password" id="password_confirmation" name="password_confirmation"
                         autocomplete="new-password"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] transition">
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00] transition">
                     @error('password_confirmation', 'updatePassword')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -292,7 +292,7 @@
     <div class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {{-- Notifications --}}
         <a href="{{ route('notifications.preferences') }}"
-            class="group bg-white rounded-xl border border-gray-100 p-5 hover:border-[#ffb3c1] hover:shadow-md transition-all">
+            class="group bg-white rounded-xl border border-gray-100 p-5 hover:border-[#FFD0A3] hover:shadow-md transition-all">
             <div class="flex items-center gap-4">
                 <div
                     class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center group-hover:bg-purple-200 transition">
@@ -302,10 +302,10 @@
                     </svg>
                 </div>
                 <div class="flex-1">
-                    <h3 class="font-semibold text-gray-900 group-hover:text-[#e00b41] transition">Notifications</h3>
+                    <h3 class="font-semibold text-gray-900 group-hover:text-[#CC5A00] transition">Notifications</h3>
                     <p class="text-sm text-gray-500">Gérer vos préférences</p>
                 </div>
-                <svg class="w-5 h-5 text-gray-400 group-hover:text-[#ff385c] transition" fill="none"
+                <svg class="w-5 h-5 text-gray-400 group-hover:text-[#F16A00] transition" fill="none"
                     stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
@@ -314,7 +314,7 @@
 
         {{-- Profil public --}}
         <a href="{{ route('profile.public.edit') }}"
-            class="group bg-white rounded-xl border border-gray-100 p-5 hover:border-[#ffb3c1] hover:shadow-md transition-all">
+            class="group bg-white rounded-xl border border-gray-100 p-5 hover:border-[#FFD0A3] hover:shadow-md transition-all">
             <div class="flex items-center gap-4">
                 <div
                     class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition">
@@ -324,10 +324,10 @@
                     </svg>
                 </div>
                 <div class="flex-1">
-                    <h3 class="font-semibold text-gray-900 group-hover:text-[#e00b41] transition">Profil public</h3>
+                    <h3 class="font-semibold text-gray-900 group-hover:text-[#CC5A00] transition">Profil public</h3>
                     <p class="text-sm text-gray-500">Visibilité et bio</p>
                 </div>
-                <svg class="w-5 h-5 text-gray-400 group-hover:text-[#ff385c] transition" fill="none"
+                <svg class="w-5 h-5 text-gray-400 group-hover:text-[#F16A00] transition" fill="none"
                     stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
@@ -337,7 +337,7 @@
         {{-- Parrainage --}}
         @if ($user->referral_code && Route::has('client.referral'))
             <a href="{{ route('client.referral') }}"
-                class="group bg-white rounded-xl border border-gray-100 p-5 hover:border-[#ffb3c1] hover:shadow-md transition-all">
+                class="group bg-white rounded-xl border border-gray-100 p-5 hover:border-[#FFD0A3] hover:shadow-md transition-all">
                 <div class="flex items-center gap-4">
                     <div
                         class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center group-hover:bg-green-200 transition">
@@ -347,11 +347,11 @@
                         </svg>
                     </div>
                     <div class="flex-1">
-                        <h3 class="font-semibold text-gray-900 group-hover:text-[#e00b41] transition">Parrainage</h3>
+                        <h3 class="font-semibold text-gray-900 group-hover:text-[#CC5A00] transition">Parrainage</h3>
                         <p class="text-sm text-gray-500">{{ number_format($user->referral_balance ?? 0, 0, ',', ' ') }}
                             FCFA de solde</p>
                     </div>
-                    <svg class="w-5 h-5 text-gray-400 group-hover:text-[#ff385c] transition" fill="none"
+                    <svg class="w-5 h-5 text-gray-400 group-hover:text-[#F16A00] transition" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
@@ -377,21 +377,21 @@
         {{-- Devenir propriétaire --}}
         @if ($user->role === 'user' && Route::has('owner.become'))
             <a href="{{ route('owner.become') }}"
-                class="group bg-linear-to-br from-[#fff0f3] to-[#ffd1da] rounded-xl border border-[#ffb3c1] p-5 hover:shadow-md transition-all">
+                class="group bg-linear-to-br from-[#FFF4EB] to-[#FFE7D1] rounded-xl border border-[#FFD0A3] p-5 hover:shadow-md transition-all">
                 <div class="flex items-center gap-4">
                     <div
-                        class="w-12 h-12 bg-[#ffb3c1] rounded-xl flex items-center justify-center group-hover:bg-[#ff7a96] transition">
-                        <svg class="w-6 h-6 text-[#e00b41]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="w-12 h-12 bg-[#FFD0A3] rounded-xl flex items-center justify-center group-hover:bg-[#FFB46F] transition">
+                        <svg class="w-6 h-6 text-[#CC5A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                         </svg>
                     </div>
                     <div class="flex-1">
-                        <h3 class="font-semibold text-gray-900 group-hover:text-[#e00b41] transition">Devenir propriétaire
+                        <h3 class="font-semibold text-gray-900 group-hover:text-[#CC5A00] transition">Devenir propriétaire
                         </h3>
                         <p class="text-sm text-gray-600">Publiez vos logements</p>
                     </div>
-                    <svg class="w-5 h-5 text-[#ff4d6d] group-hover:text-[#e00b41] transition" fill="none"
+                    <svg class="w-5 h-5 text-[#FF8A1F] group-hover:text-[#CC5A00] transition" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>

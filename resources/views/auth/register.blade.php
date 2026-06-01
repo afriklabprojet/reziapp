@@ -11,7 +11,7 @@
     }">
         {{-- Left Side - Branding & Benefits (Desktop only) --}}
         <div
-            class="hidden lg:flex lg:w-1/2 bg-linear-to-br from-[#ff385c] via-[#e00b41] to-[#c8102e] relative overflow-hidden">
+            class="hidden lg:flex lg:w-1/2 bg-linear-to-br from-[#F16A00] via-[#CC5A00] to-[#c8102e] relative overflow-hidden">
             {{-- Background Pattern --}}
             <div class="absolute inset-0 opacity-10">
                 <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -60,13 +60,13 @@
                 <div class="mb-8">
                     <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-2xl">
                         <span
-                            class="text-3xl font-bold bg-linear-to-r from-[#ff385c] to-[#ff385c] bg-clip-text text-transparent">R</span>
+                            class="text-3xl font-bold bg-linear-to-r from-[#F16A00] to-[#F16A00] bg-clip-text text-transparent">R</span>
                     </div>
                 </div>
 
                 {{-- Headline --}}
                 <h1 class="text-4xl font-bold text-center mb-4">Rejoignez REZI</h1>
-                <p class="text-xl text-[#ffd1da] text-center mb-12 max-w-md">
+                <p class="text-xl text-[#FFE7D1] text-center mb-12 max-w-md">
                     Créez votre compte et accédez à des centaines de résidences meublées
                 </p>
 
@@ -82,7 +82,7 @@
                         </div>
                         <div>
                             <div class="font-semibold">Inscription gratuite</div>
-                            <div class="text-sm text-[#ffd1da]">Aucun frais pour créer votre compte</div>
+                            <div class="text-sm text-[#FFE7D1]">Aucun frais pour créer votre compte</div>
                         </div>
                     </div>
 
@@ -96,7 +96,7 @@
                         </div>
                         <div>
                             <div class="font-semibold">Contact direct propriétaires</div>
-                            <div class="text-sm text-[#ffd1da]">Sans intermédiaire ni commission</div>
+                            <div class="text-sm text-[#FFE7D1]">Sans intermédiaire ni commission</div>
                         </div>
                     </div>
 
@@ -110,7 +110,7 @@
                         </div>
                         <div>
                             <div class="font-semibold">Alertes personnalisées</div>
-                            <div class="text-sm text-[#ffd1da]">Soyez notifié des nouvelles offres</div>
+                            <div class="text-sm text-[#FFE7D1]">Soyez notifié des nouvelles offres</div>
                         </div>
                     </div>
 
@@ -124,7 +124,7 @@
                         </div>
                         <div>
                             <div class="font-semibold">Favoris & historique</div>
-                            <div class="text-sm text-[#ffd1da]">Sauvegardez vos recherches</div>
+                            <div class="text-sm text-[#FFE7D1]">Sauvegardez vos recherches</div>
                         </div>
                     </div>
                 </div>
@@ -139,7 +139,7 @@
                             </svg>
                         @endfor
                     </div>
-                    <p class="text-sm italic text-[#fff0f3]">"J'ai trouvé mon appartement en 2 jours grâce à REZI. La
+                    <p class="text-sm italic text-[#FFF4EB]">"J'ai trouvé mon appartement en 2 jours grâce à REZI. La
                         géolocalisation m'a fait gagner un temps fou !"</p>
                     <div class="mt-3 flex items-center gap-3">
                         <div
@@ -147,7 +147,7 @@
                             AK</div>
                         <div>
                             <div class="text-sm font-medium">Aminata K.</div>
-                            <div class="text-xs text-[#ffb3c1]">Cocody, Abidjan</div>
+                            <div class="text-xs text-[#FFD0A3]">Cocody, Abidjan</div>
                         </div>
                     </div>
                 </div>
@@ -166,27 +166,27 @@
                 {{-- Progress Steps --}}
                 <div class="flex items-center justify-center gap-2 mb-8">
                     <div class="flex items-center gap-2">
-                        <div :class="step >= 1 ? 'bg-[#ff385c] text-white' : 'bg-gray-200 text-gray-500'"
+                        <div :class="step >= 1 ? 'bg-[#F16A00] text-white' : 'bg-gray-200 text-gray-500'"
                             class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors">
                             1</div>
                         <span class="text-sm font-medium text-gray-600 hidden sm:block">Type</span>
                     </div>
                     <div class="w-8 h-0.5 bg-gray-200">
-                        <div :class="step >= 2 ? 'bg-[#ff385c]' : 'bg-gray-200'" class="h-full transition-all"
+                        <div :class="step >= 2 ? 'bg-[#F16A00]' : 'bg-gray-200'" class="h-full transition-all"
                             :style="step >= 2 ? 'width: 100%' : 'width: 0%'"></div>
                     </div>
                     <div class="flex items-center gap-2">
-                        <div :class="step >= 2 ? 'bg-[#ff385c] text-white' : 'bg-gray-200 text-gray-500'"
+                        <div :class="step >= 2 ? 'bg-[#F16A00] text-white' : 'bg-gray-200 text-gray-500'"
                             class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors">
                             2</div>
                         <span class="text-sm font-medium text-gray-600 hidden sm:block">Infos</span>
                     </div>
                     <div class="w-8 h-0.5 bg-gray-200">
-                        <div :class="step >= 3 ? 'bg-[#ff385c]' : 'bg-gray-200'" class="h-full transition-all"
+                        <div :class="step >= 3 ? 'bg-[#F16A00]' : 'bg-gray-200'" class="h-full transition-all"
                             :style="step >= 3 ? 'width: 100%' : 'width: 0%'"></div>
                     </div>
                     <div class="flex items-center gap-2">
-                        <div :class="step >= 3 ? 'bg-[#ff385c] text-white' : 'bg-gray-200 text-gray-500'"
+                        <div :class="step >= 3 ? 'bg-[#F16A00] text-white' : 'bg-gray-200 text-gray-500'"
                             class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors">
                             3</div>
                         <span class="text-sm font-medium text-gray-600 hidden sm:block">Sécurité</span>
@@ -220,11 +220,11 @@
                         <div class="space-y-3">
                             {{-- Chercheur --}}
                             <label @click="role = 'user'"
-                                :class="role === 'user' ? 'border-[#ff385c] bg-[#fff0f3] ring-2 ring-[#ff385c]' :
+                                :class="role === 'user' ? 'border-[#F16A00] bg-[#FFF4EB] ring-2 ring-[#F16A00]' :
                                     'border-gray-200 hover:border-gray-300 hover:bg-gray-50'"
                                 class="flex items-center gap-4 p-5 bg-white border-2 rounded-xl cursor-pointer transition-all">
                                 <input type="radio" name="role" value="user" x-model="role" class="sr-only">
-                                <div :class="role === 'user' ? 'bg-[#ff385c]' : 'bg-gray-100'"
+                                <div :class="role === 'user' ? 'bg-[#F16A00]' : 'bg-gray-100'"
                                     class="w-14 h-14 rounded-xl flex items-center justify-center transition-colors">
                                     <svg :class="role === 'user' ? 'text-white' : 'text-gray-400'"
                                         class="w-7 h-7 transition-colors" fill="none" stroke="currentColor"
@@ -237,15 +237,15 @@
                                     <div class="flex items-center gap-2">
                                         <span class="font-semibold text-gray-900">Je cherche une résidence</span>
                                         <span x-show="role === 'user'"
-                                            class="text-xs bg-[#ffd1da] text-[#e00b41] px-2 py-0.5 rounded-full font-medium">Sélectionné</span>
+                                            class="text-xs bg-[#FFE7D1] text-[#CC5A00] px-2 py-0.5 rounded-full font-medium">Sélectionné</span>
                                     </div>
                                     <p class="text-sm text-gray-500 mt-1">Trouvez votre logement meublé idéal en
                                         Afrique de l'Ouest
                                     </p>
                                 </div>
-                                <div :class="role === 'user' ? 'border-[#ff385c]' : 'border-gray-300'"
+                                <div :class="role === 'user' ? 'border-[#F16A00]' : 'border-gray-300'"
                                     class="w-5 h-5 rounded-full border-2 flex items-center justify-center">
-                                    <div x-show="role === 'user'" class="w-2.5 h-2.5 bg-[#ff385c] rounded-full">
+                                    <div x-show="role === 'user'" class="w-2.5 h-2.5 bg-[#F16A00] rounded-full">
                                     </div>
                                 </div>
                             </label>
@@ -284,7 +284,7 @@
 
                         {{-- Owner Benefits --}}
                         <div x-show="role === 'owner'" x-transition
-                            class="mt-4 p-4 bg-linear-to-r from-amber-50 to-[#fff0f3] rounded-xl border border-amber-100">
+                            class="mt-4 p-4 bg-linear-to-r from-amber-50 to-[#FFF4EB] rounded-xl border border-amber-100">
                             <div class="flex items-start gap-3">
                                 <div
                                     class="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center text-white shrink-0">
@@ -309,7 +309,7 @@
                         @enderror
 
                         <button type="button" @click="step = 2"
-                            class="mt-6 w-full bg-[#ff385c] hover:bg-[#e00b41] text-white font-semibold py-3.5 px-4 rounded-xl transition-all shadow-lg shadow-[#ff385c]/30 hover:shadow-[#ff385c]/40 flex items-center justify-center gap-2">
+                            class="mt-6 w-full bg-[#F16A00] hover:bg-[#CC5A00] text-white font-semibold py-3.5 px-4 rounded-xl transition-all shadow-lg shadow-[#F16A00]/30 hover:shadow-[#F16A00]/40 flex items-center justify-center gap-2">
                             <span>Continuer</span>
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -373,7 +373,7 @@
                                 </div>
                                 <input id="name" name="name" type="text" x-model="name" required
                                     autocomplete="name" placeholder="Jean Kouassi"
-                                    class="w-full pl-12 pr-4 py-3.5 bg-white border rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff385c] focus:border-transparent transition-all {{ $errors->has('name') ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-200' }}">
+                                    class="w-full pl-12 pr-4 py-3.5 bg-white border rounded-xl text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F16A00] focus:border-transparent transition-all {{ $errors->has('name') ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-200' }}">
                             </div>
                             @error('name')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -392,9 +392,9 @@
                                             d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                                     </svg>
                                 </div>
-                                <input id="email" name="email" type="email" x-model="email" required
+                                <input id="email" name="email" type="email" inputmode="email" x-model="email" required
                                     autocomplete="username" placeholder="vous@exemple.com"
-                                    class="w-full pl-12 pr-4 py-3.5 bg-white border rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff385c] focus:border-transparent transition-all {{ $errors->has('email') ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-200' }}">
+                                    class="w-full pl-12 pr-4 py-3.5 bg-white border rounded-xl text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F16A00] focus:border-transparent transition-all {{ $errors->has('email') ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-200' }}">
                             </div>
                             @error('email')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -414,9 +414,9 @@
                                             d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                     </svg>
                                 </div>
-                                <input id="phone" name="phone" type="tel"
+                                <input id="phone" name="phone" type="tel" inputmode="tel"
                                     placeholder="+225 07 00 00 00 00"
-                                    class="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff385c] focus:border-transparent transition-all">
+                                    class="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F16A00] focus:border-transparent transition-all">
                             </div>
                         </div>
 
@@ -431,7 +431,7 @@
                             </button>
                             <button type="button" @click="step = 3" :disabled="!name || !email"
                                 :class="name && email ?
-                                    'bg-[#ff385c] hover:bg-[#e00b41] shadow-lg shadow-[#ff385c]/30' :
+                                    'bg-[#F16A00] hover:bg-[#CC5A00] shadow-lg shadow-[#F16A00]/30' :
                                     'bg-gray-300 cursor-not-allowed'"
                                 class="flex-1 text-white font-semibold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2">
                                 <span>Continuer</span>
@@ -462,7 +462,7 @@
                                 </div>
                                 <input id="password" name="password" :type="showPassword ? 'text' : 'password'"
                                     required autocomplete="new-password" placeholder="Minimum 8 caractères"
-                                    class="w-full pl-12 pr-12 py-3.5 bg-white border rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff385c] focus:border-transparent transition-all {{ $errors->has('password') ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-200' }}">
+                                    class="w-full pl-12 pr-12 py-3.5 bg-white border rounded-xl text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F16A00] focus:border-transparent transition-all {{ $errors->has('password') ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-200' }}">
                                 <button type="button" @click="showPassword = !showPassword"
                                     class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600">
                                     <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor"
@@ -535,7 +535,7 @@
                                 <input id="password_confirmation" name="password_confirmation"
                                     :type="showConfirmPassword ? 'text' : 'password'" required
                                     autocomplete="new-password" placeholder="Répétez le mot de passe"
-                                    class="w-full pl-12 pr-12 py-3.5 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff385c] focus:border-transparent transition-all">
+                                    class="w-full pl-12 pr-12 py-3.5 bg-white border border-gray-200 rounded-xl text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F16A00] focus:border-transparent transition-all">
                                 <button type="button" @click="showConfirmPassword = !showConfirmPassword"
                                     class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600">
                                     <svg x-show="!showConfirmPassword" class="w-5 h-5" fill="none"
@@ -558,12 +558,12 @@
                         <div class="mb-6">
                             <label class="flex items-start gap-3 cursor-pointer">
                                 <input type="checkbox" name="terms" required
-                                    class="mt-1 w-4 h-4 rounded border-gray-300 text-[#ff385c] focus:ring-[#ff385c]">
+                                    class="mt-1 w-4 h-4 rounded border-gray-300 text-[#F16A00] focus:ring-[#F16A00]">
                                 <span class="text-sm text-gray-600">
                                     J'accepte les <a href="{{ route('pages.cgu') }}"
-                                        class="text-[#ff385c] hover:underline">Conditions d'utilisation</a> et la <a
+                                        class="text-[#F16A00] hover:underline">Conditions d'utilisation</a> et la <a
                                         href="{{ route('pages.confidentialite') }}"
-                                        class="text-[#ff385c] hover:underline">Politique de confidentialité</a>
+                                        class="text-[#F16A00] hover:underline">Politique de confidentialité</a>
                                 </span>
                             </label>
                         </div>
@@ -578,7 +578,7 @@
                                 Retour
                             </button>
                             <button type="submit"
-                                class="flex-1 bg-[#ff385c] hover:bg-[#e00b41] text-white font-semibold py-3.5 px-4 rounded-xl transition-all shadow-lg shadow-[#ff385c]/30 hover:shadow-[#ff385c]/40 flex items-center justify-center gap-2">
+                                class="flex-1 bg-[#F16A00] hover:bg-[#CC5A00] text-white font-semibold py-3.5 px-4 rounded-xl transition-all shadow-lg shadow-[#F16A00]/30 hover:shadow-[#F16A00]/40 flex items-center justify-center gap-2">
                                 <span>Créer mon compte</span>
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -593,7 +593,7 @@
                 <p class="mt-8 text-center text-gray-600">
                     Déjà inscrit ?
                     <a href="{{ route('login') }}"
-                        class="font-semibold text-[#ff385c] hover:text-[#e00b41] transition-colors">
+                        class="font-semibold text-[#F16A00] hover:text-[#CC5A00] transition-colors">
                         Se connecter
                     </a>
                 </p>

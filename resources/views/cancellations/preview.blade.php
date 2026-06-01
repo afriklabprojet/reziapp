@@ -109,7 +109,7 @@
                 @endif
 
                 @if(isset($preview['amounts']['penalty_amount']) && $preview['amounts']['penalty_amount'] > 0)
-                    <div class="flex justify-between text-[#e00b41]">
+                    <div class="flex justify-between text-[#CC5A00]">
                         <span>Pénalité propriétaire</span>
                         <span class="font-medium">{{ number_format($preview['amounts']['penalty_amount'], 0, ',', ' ') }} FCFA</span>
                     </div>
@@ -135,7 +135,7 @@
                         <input type="radio" 
                                name="reason" 
                                value="{{ $value }}" 
-                               class="w-4 h-4 text-[#e00b41] border-gray-300 focus:ring-[#ff385c]"
+                               class="w-4 h-4 text-[#CC5A00] border-gray-300 focus:ring-[#F16A00]"
                                required>
                         <span class="ml-3 text-gray-700">{{ $label }}</span>
                     </label>
@@ -149,16 +149,16 @@
                 <textarea name="detailed_reason" 
                           id="detailed_reason" 
                           rows="3"
-                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]"
+                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]"
                           placeholder="Expliquez-nous pourquoi vous annulez..."></textarea>
             </div>
 
             @if($preview['amounts']['non_refundable_amount'] > 0)
                 <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                    <label class="flex items-start">
-                        <input type="checkbox" 
+                    <label for="confirm-non-refundable" class="flex items-start">
+                        <input id="confirm-non-refundable" type="checkbox" 
                                required 
-                               class="mt-1 w-4 h-4 text-[#e00b41] border-gray-300 rounded focus:ring-[#ff385c]">
+                               class="mt-1 w-4 h-4 text-[#CC5A00] border-gray-300 rounded focus:ring-[#F16A00]">
                         <span class="ml-3 text-sm text-yellow-800">
                             Je comprends que <strong>{{ $preview['amounts']['formatted_non_refundable'] }}</strong> 
                             ne seront pas remboursés selon la politique d'annulation.

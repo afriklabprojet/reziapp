@@ -1,6 +1,6 @@
 // REZI Service Worker v2.0 - West Africa Optimized
 // Enhanced for: Offline mode, Lite mode, Low bandwidth optimization
-const CACHE_VERSION = 'v6';
+const CACHE_VERSION = 'v8';
 const CACHE_NAME = `rezi-cache-${CACHE_VERSION}`;
 const IMAGES_CACHE = `rezi-images-${CACHE_VERSION}`;
 const API_CACHE = `rezi-api-${CACHE_VERSION}`;

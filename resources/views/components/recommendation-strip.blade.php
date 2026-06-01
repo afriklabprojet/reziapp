@@ -45,7 +45,7 @@
         </div>
 
         <!-- Badge IA -->
-        <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 bg-[#fff0f3] border border-[#ffb3c1] text-[#b5083a] text-xs font-semibold rounded-full">
+        <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 bg-[#FFF4EB] border border-[#FFD0A3] text-[#A34700] text-xs font-semibold rounded-full">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.346.346a3 3 0 01-2.12.878H9.147a3 3 0 01-2.12-.879L6.69 16.9z" />
@@ -86,7 +86,7 @@
             <template x-for="item in items" :key="item.id">
                 <a
                     :href="item.url"
-                    class="group bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 hover:border-[#ffd1da] hover:-translate-y-1 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#ff4d6d]"
+                    class="group bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 hover:border-[#FFE7D1] hover:-translate-y-1 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#FF8A1F]"
                     :aria-label="item.title"
                 >
                     <!-- Photo -->
@@ -128,7 +128,7 @@
                                 class="absolute bottom-3 right-3 px-2.5 py-1 text-xs font-bold rounded-full shadow"
                                 :class="{
                                     'bg-green-500 text-white': item.match_score >= 70,
-                                    'bg-[#ff4d6d] text-white': item.match_score >= 50 && item.match_score < 70,
+                                    'bg-[#FF8A1F] text-white': item.match_score >= 50 && item.match_score < 70,
                                     'bg-gray-400 text-white': item.match_score < 50,
                                 }"
                                 :aria-label="`Score de correspondance : ${item.match_score}%`"
@@ -148,11 +148,11 @@
 
                     <!-- Contenu texte -->
                     <div class="p-3 sm:p-4">
-                        <h3 class="font-sans text-base font-semibold text-gray-900 mb-1 line-clamp-1 group-hover:text-[#e00b41] transition-colors"
+                        <h3 class="font-sans text-base font-semibold text-gray-900 mb-1 line-clamp-1 group-hover:text-[#CC5A00] transition-colors"
                             x-text="item.title">
                         </h3>
                         <p class="flex items-center gap-1 text-sm text-gray-500 mb-2">
-                            <svg class="w-3.5 h-3.5 shrink-0 text-[#ff4d6d]" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                            <svg class="w-3.5 h-3.5 shrink-0 text-[#FF8A1F]" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                                 <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
                             </svg>
                             <span x-text="item.commune"></span>
@@ -178,7 +178,7 @@
                         <template x-if="item.match_reasons && item.match_reasons.length > 0">
                             <div class="mt-2 flex flex-wrap gap-1">
                                 <template x-for="reason in item.match_reasons.slice(0, 2)" :key="reason">
-                                    <span class="px-2 py-0.5 bg-[#fff0f3] text-[#e00b41] text-xs rounded-full border border-[#ffd1da]"
+                                    <span class="px-2 py-0.5 bg-[#FFF4EB] text-[#CC5A00] text-xs rounded-full border border-[#FFE7D1]"
                                         x-text="reason">
                                     </span>
                                 </template>

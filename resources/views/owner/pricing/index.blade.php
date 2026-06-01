@@ -8,10 +8,10 @@
             <!-- Header -->
             <div class="mb-8">
                 <nav class="flex items-center gap-2 text-sm text-gray-500 mb-4">
-                    <a href="{{ route('owner.dashboard') }}" class="hover:text-[#ff385c]">Tableau de bord</a>
+                    <a href="{{ route('owner.dashboard') }}" class="hover:text-[#F16A00]">Tableau de bord</a>
                     <span>→</span>
                     <a href="{{ route('owner.residences.show', $residence) }}"
-                        class="hover:text-[#ff385c]">{{ $residence->name }}</a>
+                        class="hover:text-[#F16A00]">{{ $residence->name }}</a>
                     <span>→</span>
                     <span class="text-gray-900">Tarification</span>
                 </nav>
@@ -30,7 +30,7 @@
                             Suggestions IA
                         </a>
                         <a href="{{ route('owner.pricing.create-season', $residence) }}"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-[#ff385c] text-white rounded-xl hover:bg-[#e00b41] transition">
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-[#F16A00] text-white rounded-xl hover:bg-[#CC5A00] transition">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                             </svg>
@@ -46,13 +46,13 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-gray-50 rounded-xl p-4">
                         <span class="text-sm text-gray-500">Par jour</span>
-                        <p class="text-2xl font-bold text-[#ff385c]">
+                        <p class="text-2xl font-bold text-[#F16A00]">
                             {{ number_format($residence->price_per_day, 0, ',', ' ') }} FCFA</p>
                     </div>
                     @if ($residence->price_per_week)
                         <div class="bg-gray-50 rounded-xl p-4">
                             <span class="text-sm text-gray-500">Par semaine</span>
-                            <p class="text-2xl font-bold text-[#ff385c]">
+                            <p class="text-2xl font-bold text-[#F16A00]">
                                 {{ number_format($residence->price_per_week, 0, ',', ' ') }} FCFA</p>
                             <span
                                 class="text-xs text-gray-400">{{ number_format($residence->price_per_week / 7, 0, ',', ' ') }}
@@ -62,7 +62,7 @@
                     @if ($residence->price_per_month)
                         <div class="bg-gray-50 rounded-xl p-4">
                             <span class="text-sm text-gray-500">Par jour</span>
-                            <p class="text-2xl font-bold text-[#ff385c]">
+                            <p class="text-2xl font-bold text-[#F16A00]">
                                 {{ number_format($residence->price_per_month, 0, ',', ' ') }} FCFA</p>
                             <span
                                 class="text-xs text-gray-400">{{ number_format($residence->price_per_month / 30, 0, ',', ' ') }}
@@ -80,7 +80,7 @@
                             <h2 class="text-lg font-semibold text-gray-900">Calendrier</h2>
                             <div class="flex items-center gap-4 text-sm">
                                 <span class="flex items-center gap-2">
-                                    <span class="w-3 h-3 bg-[#ff385c] rounded"></span>
+                                    <span class="w-3 h-3 bg-[#F16A00] rounded"></span>
                                     Disponible
                                 </span>
                                 <span class="flex items-center gap-2">
@@ -130,32 +130,32 @@
                                     <div @click="day.date && selectDate(day)"
                                         :class="{
                                             'bg-gray-50 cursor-not-allowed': !day.date || day.isPast,
-                                            'bg-[#fff0f3] border-[#ffb3c1] hover:bg-[#ffd1da] cursor-pointer': day
+                                            'bg-[#FFF4EB] border-[#FFD0A3] hover:bg-[#FFE7D1] cursor-pointer': day
                                                 .date && !day.isPast && day.isAvailable,
                                             'bg-red-50 border-red-200 hover:bg-red-100 cursor-pointer': day.date && !day
                                                 .isPast && !day.isAvailable,
                                             'bg-amber-50 border-amber-200': day.priceType === 'seasonal' || day
                                                 .priceType === 'daily',
-                                            'ring-2 ring-[#ff385c]': selectedDates.includes(day.date)
+                                            'ring-2 ring-[#F16A00]': selectedDates.includes(day.date)
                                         }"
                                         class="aspect-square p-1 border border-gray-200 rounded-lg flex flex-col items-center justify-center text-xs transition">
                                         <span x-text="day.dayNumber"
                                             :class="day.isPast ? 'text-gray-400' : 'text-gray-900 font-medium'"></span>
                                         <span x-show="day.price" x-text="formatPrice(day.price)"
-                                            class="text-[#ff385c] font-semibold truncate w-full text-center"
+                                            class="text-[#F16A00] font-semibold truncate w-full text-center"
                                             style="font-size: 10px;"></span>
                                     </div>
                                 </template>
                             </div>
 
                             <!-- Actions sur sélection -->
-                            <div x-show="selectedDates.length > 0" x-transition class="bg-[#fff0f3] rounded-xl p-4 mt-4">
-                                <p class="text-sm text-[#b5083a] mb-3">
+                            <div x-show="selectedDates.length > 0" x-transition class="bg-[#FFF4EB] rounded-xl p-4 mt-4">
+                                <p class="text-sm text-[#A34700] mb-3">
                                     <span x-text="selectedDates.length"></span> jour(s) sélectionné(s)
                                 </p>
                                 <div class="flex flex-wrap gap-3">
                                     <button @click="openPriceModal()"
-                                        class="px-4 py-2 bg-[#ff385c] text-white text-sm rounded-lg hover:bg-[#e00b41]">
+                                        class="px-4 py-2 bg-[#F16A00] text-white text-sm rounded-lg hover:bg-[#CC5A00]">
                                         Modifier le prix
                                     </button>
                                     <button @click="toggleAvailability(false)"
@@ -183,7 +183,7 @@
 
                         @forelse($seasonalPrices as $season)
                             <div
-                                class="border border-gray-200 rounded-xl p-4 mb-4 @if ($season->isCurrentlyActive()) ring-2 ring-[#ff385c] @endif">
+                                class="border border-gray-200 rounded-xl p-4 mb-4 @if ($season->isCurrentlyActive()) ring-2 ring-[#F16A00] @endif">
                                 <div class="flex items-start justify-between mb-2">
                                     <div>
                                         <h3 class="font-medium text-gray-900">{{ $season->name }}</h3>
@@ -194,10 +194,10 @@
                                     </div>
                                     @if ($season->isCurrentlyActive())
                                         <span
-                                            class="px-2 py-1 bg-[#ffd1da] text-[#e00b41] text-xs rounded-full">Actif</span>
+                                            class="px-2 py-1 bg-[#FFE7D1] text-[#CC5A00] text-xs rounded-full">Actif</span>
                                     @endif
                                 </div>
-                                <div class="text-lg font-bold text-[#ff385c] mb-3">
+                                <div class="text-lg font-bold text-[#F16A00] mb-3">
                                     {{ number_format($season->price_per_night, 0, ',', ' ') }} FCFA<span
                                         class="text-sm font-normal text-gray-500">/jour</span>
                                 </div>
@@ -206,7 +206,7 @@
                                 @endif
                                 <div class="flex gap-2">
                                     <a href="{{ route('owner.pricing.edit-season', [$residence, $season]) }}"
-                                        class="text-sm text-[#ff385c] hover:text-[#e00b41]">Modifier</a>
+                                        class="text-sm text-[#F16A00] hover:text-[#CC5A00]">Modifier</a>
                                     <form action="{{ route('owner.pricing.destroy-season', [$residence, $season]) }}"
                                         method="POST" class="inline">
                                         @csrf
@@ -230,7 +230,7 @@
                                 </div>
                                 <p class="text-gray-500 mb-4">Aucune saison tarifaire</p>
                                 <a href="{{ route('owner.pricing.create-season', $residence) }}"
-                                    class="text-[#ff385c] hover:text-[#e00b41] font-medium">
+                                    class="text-[#F16A00] hover:text-[#CC5A00] font-medium">
                                     + Créer une saison
                                 </a>
                             </div>
@@ -267,19 +267,19 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Nouveau prix (FCFA/jour)</label>
                         <input type="number" x-model="price"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Raison (optionnel)</label>
                         <input type="text" x-model="reason" placeholder="Ex: Jour férié, Événement..."
-                            class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                     </div>
                 </div>
                 <div class="flex gap-3 mt-6">
                     <button @click="open = false"
                         class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200">Annuler</button>
                     <button @click="$dispatch('confirm-price', { price, reason }); open = false"
-                        class="flex-1 px-4 py-2 bg-[#ff385c] text-white rounded-xl hover:bg-[#e00b41]">Confirmer</button>
+                        class="flex-1 px-4 py-2 bg-[#F16A00] text-white rounded-xl hover:bg-[#CC5A00]">Confirmer</button>
                 </div>
             </div>
         </div>

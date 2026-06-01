@@ -53,8 +53,8 @@
         {{-- HERO --}}
         <section class="relative overflow-hidden bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
             <div class="absolute inset-0 opacity-10" aria-hidden="true">
-                <div class="absolute -top-12 -right-12 w-48 h-48 sm:-top-24 sm:-right-24 sm:w-96 sm:h-96 rounded-full bg-[#ff385c] blur-3xl"></div>
-                <div class="absolute bottom-0 left-0 w-40 h-40 sm:w-72 sm:h-72 rounded-full bg-[#ff4d6d] blur-3xl"></div>
+                <div class="absolute -top-12 -right-12 w-48 h-48 sm:-top-24 sm:-right-24 sm:w-96 sm:h-96 rounded-full bg-[#F16A00] blur-3xl"></div>
+                <div class="absolute bottom-0 left-0 w-40 h-40 sm:w-72 sm:h-72 rounded-full bg-[#FF8A1F] blur-3xl"></div>
             </div>
 
             <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
@@ -62,19 +62,19 @@
                     <nav class="text-sm text-gray-400 mb-6" aria-label="Breadcrumb">
                         <a href="{{ route('home') }}" class="hover:text-white transition">Accueil</a>
                         <span class="mx-2">›</span>
-                        <span class="text-[#ff4d6d]">À propos</span>
+                        <span class="text-[#FF8A1F]">À propos</span>
                     </nav>
                     <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
                         {{ $hero['title'] ?? '' }}
                         <span
-                            class="text-transparent bg-clip-text bg-linear-to-r from-[#ff4d6d] to-[#ff385c]">{{ $hero['highlight'] ?? '' }}</span>
+                            class="text-transparent bg-clip-text bg-linear-to-r from-[#FF8A1F] to-[#F16A00]">{{ $hero['highlight'] ?? '' }}</span>
                     </h1>
                     <p class="mt-6 text-lg sm:text-xl text-gray-300 leading-relaxed max-w-2xl">
                         {{ $hero['description'] ?? '' }}
                     </p>
                     <div class="mt-8 flex flex-wrap gap-3">
                         <a href="{{ route('residences.index') }}"
-                            class="inline-flex items-center gap-2 px-6 py-3 bg-[#ff385c] hover:bg-[#e00b41] text-white rounded-xl font-semibold transition-all shadow-lg shadow-none active:scale-95">
+                            class="inline-flex items-center gap-2 px-6 py-3 bg-[#F16A00] hover:bg-[#CC5A00] text-white rounded-xl font-semibold transition-all shadow-lg shadow-none active:scale-95">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -96,7 +96,7 @@
                 <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 sm:p-8">
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
                         <div class="text-center">
-                            <div class="text-3xl sm:text-4xl font-extrabold text-[#ff385c]">
+                            <div class="text-3xl sm:text-4xl font-extrabold text-[#F16A00]">
                                 {{ number_format($stats['residences']) }}+</div>
                             <p class="mt-1 text-sm text-gray-500 font-medium">Résidences</p>
                         </div>
@@ -111,7 +111,7 @@
                             <p class="mt-1 text-sm text-gray-500 font-medium">Communes couvertes</p>
                         </div>
                         <div class="text-center">
-                            <div class="text-3xl sm:text-4xl font-extrabold text-[#ff385c]">
+                            <div class="text-3xl sm:text-4xl font-extrabold text-[#F16A00]">
                                 {{ number_format($stats['reviews']) }}+</div>
                             <p class="mt-1 text-sm text-gray-500 font-medium">Avis vérifiés</p>
                         </div>
@@ -125,7 +125,7 @@
             <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                 <div>
                     <div
-                        class="inline-flex items-center gap-2 bg-[#ffd1da] text-[#b5083a] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
+                        class="inline-flex items-center gap-2 bg-[#FFE7D1] text-[#A34700] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd"
                                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z"
@@ -191,7 +191,7 @@
                         @php $sColor = $stepColors[$i] ?? 'orange'; @endphp
                         <div class="relative text-center">
                             <div
-                                class="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-8 bg-[#ff385c] rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg shadow-orange-200 z-10">
+                                class="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-8 bg-[#F16A00] rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg shadow-orange-200 z-10">
                                 {{ $i + 1 }}</div>
                             <div
                                 class="bg-{{ $sColor }}-50 rounded-2xl p-8 pt-10 hover:shadow-md transition-shadow">
@@ -216,7 +216,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-14">
                     <div
-                        class="inline-flex items-center gap-2 bg-[#ffd1da] text-[#b5083a] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
+                        class="inline-flex items-center gap-2 bg-[#FFE7D1] text-[#A34700] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd"
                                 d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
@@ -286,12 +286,12 @@
 
                     {{-- Illustration visuelle --}}
                     <div class="relative">
-                        <div class="bg-linear-to-br from-[#fff0f3] to-[#ffd1da] rounded-3xl p-8 sm:p-12">
+                        <div class="bg-linear-to-br from-[#FFF4EB] to-[#FFE7D1] rounded-3xl p-8 sm:p-12">
                             <div class="space-y-4">
                                 <div class="bg-white rounded-2xl shadow-md p-4 flex gap-4 items-center">
                                     <div
-                                        class="w-16 h-16 bg-[#ffb3c1] rounded-xl shrink-0 flex items-center justify-center">
-                                        <svg class="w-8 h-8 text-[#ff385c]" fill="none" stroke="currentColor"
+                                        class="w-16 h-16 bg-[#FFD0A3] rounded-xl shrink-0 flex items-center justify-center">
+                                        <svg class="w-8 h-8 text-[#F16A00]" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -300,7 +300,7 @@
                                     <div class="min-w-0">
                                         <div class="h-3 bg-gray-200 rounded-full w-32 mb-2"></div>
                                         <div class="h-2 bg-gray-100 rounded-full w-24 mb-2"></div>
-                                        <div class="text-[#ff385c] font-bold text-sm">15 000 FCFA/jour</div>
+                                        <div class="text-[#F16A00] font-bold text-sm">15 000 FCFA/jour</div>
                                     </div>
                                 </div>
                                 <div class="bg-white rounded-2xl shadow-md p-4 flex gap-4 items-center ml-4 sm:ml-8">
@@ -359,9 +359,9 @@
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div
                     class="relative overflow-hidden bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-8 sm:p-14 text-center text-white">
-                    <div class="absolute top-0 right-0 w-64 h-64 bg-[#ff385c]/10 rounded-full blur-3xl"
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-[#F16A00]/10 rounded-full blur-3xl"
                         aria-hidden="true"></div>
-                    <div class="absolute bottom-0 left-0 w-48 h-48 bg-[#ff385c]/10 rounded-full blur-3xl"
+                    <div class="absolute bottom-0 left-0 w-48 h-48 bg-[#F16A00]/10 rounded-full blur-3xl"
                         aria-hidden="true"></div>
 
                     <div class="relative">
@@ -369,7 +369,7 @@
                         <p class="text-gray-300 mb-8 max-w-xl mx-auto text-lg">{{ $cta['description'] ?? '' }}</p>
                         <div class="flex flex-col sm:flex-row gap-4 justify-center">
                             <a href="{{ route('residences.index') }}"
-                                class="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-[#ff385c] hover:bg-[#e00b41] text-white rounded-xl font-semibold transition-all shadow-lg shadow-none active:scale-95">
+                                class="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-[#F16A00] hover:bg-[#CC5A00] text-white rounded-xl font-semibold transition-all shadow-lg shadow-none active:scale-95">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />

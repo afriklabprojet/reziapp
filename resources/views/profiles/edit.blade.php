@@ -65,7 +65,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
                 <h2 class="font-semibold text-gray-900 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-[#F16A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
@@ -81,11 +81,11 @@
                     </label>
                     <div x-data="{ chars: {{ strlen($profile->bio ?? '') }} }">
                         <textarea id="bio" name="bio" rows="4" x-on:input="chars = $event.target.value.length" maxlength="1000"
-                            class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] transition resize-none"
+                            class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00] transition resize-none"
                             placeholder="Parlez de vous en quelques mots... Qu'est-ce qui vous passionne ? Pourquoi voyagez-vous ?">{{ old('bio', $profile->bio) }}</textarea>
                         <div class="flex justify-between items-center mt-1">
                             <p class="text-xs text-gray-400">Présentez-vous aux autres membres de la communauté</p>
-                            <span class="text-xs" :class="chars > 900 ? 'text-[#ff385c]' : 'text-gray-400'">
+                            <span class="text-xs" :class="chars > 900 ? 'text-[#F16A00]' : 'text-gray-400'">
                                 <span x-text="chars"></span>/1000
                             </span>
                         </div>
@@ -107,7 +107,7 @@
                         </span>
                     </label>
                     <input type="text" id="location" name="location" value="{{ old('location', $profile->location) }}"
-                        class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] transition"
+                        class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00] transition"
                         placeholder="Ex: Cocody, Abidjan">
                     @error('location')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -126,7 +126,7 @@
                         </span>
                     </label>
                     <input type="text" id="work" name="work" value="{{ old('work', $profile->work) }}"
-                        class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] transition"
+                        class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00] transition"
                         placeholder="Ex: Consultant en marketing">
                     @error('work')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -139,7 +139,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
                 <h2 class="font-semibold text-gray-900 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-[#F16A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
                     </svg>
@@ -168,7 +168,7 @@
                 <div class="flex flex-wrap gap-2 mb-4">
                     <template x-for="(lang, index) in languages" :key="index">
                         <span
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#ffd1da] text-[#b5083a] rounded-full text-sm font-medium">
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#FFE7D1] text-[#A34700] rounded-full text-sm font-medium">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
@@ -191,10 +191,10 @@
                 {{-- Ajouter une langue --}}
                 <div class="flex items-center gap-2 mb-4">
                     <input type="text" x-model="newLang" @keydown.enter.prevent="addLanguage()"
-                        class="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]"
+                        class="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]"
                         placeholder="Tapez une langue...">
                     <button type="button" @click="addLanguage()"
-                        class="px-4 py-2.5 bg-[#ff385c] hover:bg-[#e00b41] text-white rounded-lg text-sm font-medium transition">
+                        class="px-4 py-2.5 bg-[#F16A00] hover:bg-[#CC5A00] text-white rounded-lg text-sm font-medium transition">
                         Ajouter
                     </button>
                 </div>
@@ -222,7 +222,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
                 <h2 class="font-semibold text-gray-900 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-[#F16A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
@@ -234,13 +234,13 @@
                     sur votre profil.</p>
 
                 <label
-                    class="flex items-start gap-4 p-4 rounded-lg border border-gray-200 hover:border-[#ffb3c1] cursor-pointer transition group">
+                    class="flex items-start gap-4 p-4 rounded-lg border border-gray-200 hover:border-[#FFD0A3] cursor-pointer transition group">
                     <input type="checkbox" name="show_email" value="1"
                         {{ old('show_email', $profile->show_email) ? 'checked' : '' }}
-                        class="mt-0.5 w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
+                        class="mt-0.5 w-5 h-5 text-[#F16A00] border-gray-300 rounded focus:ring-[#F16A00]">
                     <div class="flex-1">
                         <div class="flex items-center gap-2">
-                            <svg class="w-5 h-5 text-gray-400 group-hover:text-[#ff385c] transition" fill="none"
+                            <svg class="w-5 h-5 text-gray-400 group-hover:text-[#F16A00] transition" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -252,13 +252,13 @@
                 </label>
 
                 <label
-                    class="flex items-start gap-4 p-4 rounded-lg border border-gray-200 hover:border-[#ffb3c1] cursor-pointer transition group">
+                    class="flex items-start gap-4 p-4 rounded-lg border border-gray-200 hover:border-[#FFD0A3] cursor-pointer transition group">
                     <input type="checkbox" name="show_phone" value="1"
                         {{ old('show_phone', $profile->show_phone) ? 'checked' : '' }}
-                        class="mt-0.5 w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
+                        class="mt-0.5 w-5 h-5 text-[#F16A00] border-gray-300 rounded focus:ring-[#F16A00]">
                     <div class="flex-1">
                         <div class="flex items-center gap-2">
-                            <svg class="w-5 h-5 text-gray-400 group-hover:text-[#ff385c] transition" fill="none"
+                            <svg class="w-5 h-5 text-gray-400 group-hover:text-[#F16A00] transition" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -307,7 +307,7 @@
                 Annuler
             </a>
             <button type="submit"
-                class="w-full sm:w-auto px-8 py-3 bg-[#ff385c] hover:bg-[#e00b41] text-white font-medium rounded-lg shadow-sm hover:shadow transition flex items-center justify-center gap-2">
+                class="w-full sm:w-auto px-8 py-3 bg-[#F16A00] hover:bg-[#CC5A00] text-white font-medium rounded-lg shadow-sm hover:shadow transition flex items-center justify-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>

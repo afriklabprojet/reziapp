@@ -1,62 +1,19 @@
 <x-filament-panels::page>
     <div class="space-y-6">
+        <x-filament.admin.hero
+            eyebrow="Marketing"
+            title="Tableau de bord marketing"
+            subtitle="Suivez les campagnes, les coupons, les parrainages et les annonces sponsorisées dans une même lecture opérationnelle."
+            icon="heroicon-o-megaphone"
+            tone="orange"
+        />
+
         {{-- Stats Cards --}}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {{-- Campagnes --}}
-            <x-filament::section>
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-primary-100 dark:bg-primary-900 rounded-lg">
-                        <x-heroicon-o-megaphone class="w-6 h-6 text-primary-600 dark:text-primary-400"/>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Campagnes actives</p>
-                        <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['active_campaigns'] }}</p>
-                    </div>
-                </div>
-                <p class="mt-2 text-xs text-gray-500">{{ $stats['total_campaigns'] }} campagnes au total</p>
-            </x-filament::section>
-
-            {{-- Coupons --}}
-            <x-filament::section>
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-success-100 dark:bg-success-900 rounded-lg">
-                        <x-heroicon-o-ticket class="w-6 h-6 text-success-600 dark:text-success-400"/>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Codes promo actifs</p>
-                        <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['active_coupons'] }}</p>
-                    </div>
-                </div>
-                <p class="mt-2 text-xs text-gray-500">{{ $stats['total_coupons'] }} codes au total</p>
-            </x-filament::section>
-
-            {{-- Parrainages --}}
-            <x-filament::section>
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-warning-100 dark:bg-warning-900 rounded-lg">
-                        <x-heroicon-o-user-plus class="w-6 h-6 text-warning-600 dark:text-warning-400"/>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Parrainages en attente</p>
-                        <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['pending_referrals'] }}</p>
-                    </div>
-                </div>
-                <p class="mt-2 text-xs text-gray-500">{{ $stats['total_referrals'] }} parrainages au total</p>
-            </x-filament::section>
-
-            {{-- Sponsorisés --}}
-            <x-filament::section>
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-info-100 dark:bg-info-900 rounded-lg">
-                        <x-heroicon-o-star class="w-6 h-6 text-info-600 dark:text-info-400"/>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Annonces sponsorisées</p>
-                        <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['active_sponsored'] }}</p>
-                    </div>
-                </div>
-                <p class="mt-2 text-xs text-gray-500">{{ $stats['active_promotions'] }} promotions actives</p>
-            </x-filament::section>
+            <x-filament.admin.metric-card label="Campagnes actives" :value="$stats['active_campaigns']" icon="heroicon-o-megaphone" accent="orange" :meta="$stats['total_campaigns'].' campagnes au total'" />
+            <x-filament.admin.metric-card label="Codes promo actifs" :value="$stats['active_coupons']" icon="heroicon-o-ticket" accent="emerald" :meta="$stats['total_coupons'].' codes au total'" />
+            <x-filament.admin.metric-card label="Parrainages en attente" :value="$stats['pending_referrals']" icon="heroicon-o-user-plus" accent="amber" :meta="$stats['total_referrals'].' parrainages au total'" />
+            <x-filament.admin.metric-card label="Annonces sponsorisées" :value="$stats['active_sponsored']" icon="heroicon-o-star" accent="sky" :meta="$stats['active_promotions'].' promotions actives'" />
         </div>
 
         {{-- Campagnes Section --}}

@@ -1,28 +1,28 @@
                 {{-- 4. SECTION RÉSIDENCES VEDETTES (Boosted / Premium) --}}
-                <section class="py-10 sm:py-16 bg-white">
+                <section class="py-6 sm:py-16 bg-white">
                     <div class="max-w-7xl mx-auto px-4 sm:px-6">
                         {{-- Section Header --}}
-                        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10 reveal-hidden"
+                        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6 sm:mb-10 reveal-hidden"
                             x-intersect.once="$el.classList.add('reveal-visible')">
                             <div>
                                 <div
-                                    class="inline-flex items-center gap-2 bg-linear-to-r from-amber-100 to-[#ffd1da] text-amber-700 px-3 py-1.5 rounded-full text-xs font-bold mb-3">
+                                    class="inline-flex items-center gap-2 bg-linear-to-r from-amber-100 to-[#FFE7D1] text-amber-700 px-3 py-1.5 rounded-full text-xs font-bold mb-3">
                                     <svg aria-hidden="true" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                         <path
                                             d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                                     </svg>
                                     Sélection Premium
                                 </div>
-                                <h2 class="font-sans text-2xl sm:text-3xl font-bold text-gray-900">
+                                <h2 class="font-sans text-xl sm:text-3xl font-bold text-gray-900">
                                     Résidences Vedettes
                                     @if (isset($userLocation) && !empty($userLocation['city']))
-                                        <span class="text-[#ff385c]">à {{ $userLocation['city'] }}</span>
+                                        <span class="text-[#F16A00]">à {{ $userLocation['city'] }}</span>
                                     @endif
                                 </h2>
                                 <p class="mt-2 text-sm text-gray-500">Les logements les mieux notés et les plus populaires</p>
                             </div>
                             <a href="{{ route('residences.index') }}"
-                                class="inline-flex items-center gap-2 text-sm font-semibold text-[#ff385c] hover:text-[#e00b41] transition group">
+                                class="inline-flex items-center gap-2 text-sm font-semibold text-[#F16A00] hover:text-[#CC5A00] transition group">
                                 Voir toutes les résidences
                                 <svg aria-hidden="true" class="w-4 h-4 group-hover:translate-x-1 transition-transform"
                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -33,18 +33,22 @@
                         </div>
 
                         {{-- Featured Grid - Dynamic from Database --}}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6 sm:gap-6">
 
                             @php $staggerClasses = ['', 'reveal-delay-1', 'reveal-delay-2', 'reveal-delay-3', 'reveal-delay-4', 'reveal-delay-5']; @endphp
 
                             @forelse($featuredResidences as $index => $residence)
-                                {{-- Featured Card --}}
+                                {{-- Mobile Card --}}
+                                <div class="sm:hidden">
+                                    <x-residence-card-mobile :residence="$residence" />
+                                </div>
+                                {{-- Desktop Card --}}
                                 <div x-intersect.once="$el.classList.add('reveal-visible')"
-                                    class="group relative reveal-card card-lift {{ $staggerClasses[$index] ?? '' }} bg-white rounded-2xl {{ $index === 0 ? 'border-2 border-amber-200 shadow-lg shadow-amber-100/50' : 'border border-gray-200 shadow-md' }} overflow-hidden {{ $index === 0 ? 'hover:border-amber-300' : 'hover:border-[#ffb3c1]' }} transition-all duration-300">
+                                    class="hidden sm:block group relative reveal-card card-lift {{ $staggerClasses[$index] ?? '' }} bg-white rounded-2xl {{ $index === 0 ? 'border-2 border-amber-200 shadow-lg shadow-amber-100/50' : 'border border-gray-200 shadow-md' }} overflow-hidden {{ $index === 0 ? 'hover:border-amber-300' : 'hover:border-[#FFD0A3]' }} transition-all duration-300">
                                     {{-- Boost Badge --}}
                                     @if ($index === 0)
                                         <div
-                                            class="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-linear-to-r from-amber-500 to-[#ff385c] text-white px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide shadow-lg">
+                                            class="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-linear-to-r from-amber-500 to-[#F16A00] text-white px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide shadow-lg">
                                             <svg aria-hidden="true" class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
                                                 <path
                                                     d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -138,7 +142,7 @@
                                                 class="p-2 rounded-full hover:bg-gray-100 transition"
                                                 aria-label="Voir les détails">
                                                 <svg aria-hidden="true"
-                                                    class="w-5 h-5 text-gray-400 hover:text-[#ff385c] transition"
+                                                    class="w-5 h-5 text-gray-400 hover:text-[#F16A00] transition"
                                                     fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                                     aria-hidden="true">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -176,7 +180,7 @@
 
                                         {{-- CTA --}}
                                         <a href="{{ route('residences.show', $residence) }}"
-                                            class="block w-full {{ $index === 0 ? 'bg-linear-to-r from-amber-500 to-[#ff385c] hover:from-amber-600 hover:to-[#e00b41] shadow-lg shadow-amber-500/25' : 'bg-[#ff385c] hover:bg-[#e00b41] shadow' }} text-white text-center py-2.5 rounded-xl font-semibold text-sm transition-all">
+                                            class="block w-full {{ $index === 0 ? 'bg-linear-to-r from-amber-500 to-[#F16A00] hover:from-amber-600 hover:to-[#CC5A00] shadow-lg shadow-amber-500/25' : 'bg-[#F16A00] hover:bg-[#CC5A00] shadow' }} text-white text-center py-2.5 rounded-xl font-semibold text-sm transition-all">
                                             Voir les détails
                                         </a>
                                     </div>
@@ -190,7 +194,7 @@
                                     </svg>
                                     <p class="text-gray-500">Aucune résidence vedette pour le moment</p>
                                     <a href="{{ route('residences.index') }}"
-                                        class="mt-4 inline-flex items-center gap-2 text-[#ff385c] hover:text-[#e00b41] font-semibold">
+                                        class="mt-4 inline-flex items-center gap-2 text-[#F16A00] hover:text-[#CC5A00] font-semibold">
                                         Voir toutes les résidences
                                         <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">

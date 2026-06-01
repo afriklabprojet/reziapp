@@ -187,7 +187,7 @@ export default function chatShow(config = {}) {
                 <div class="flex justify-end group msg-row" id="msg-${msg.id}" @contextmenu.prevent="showContextMenu($event, ${msg.id}, true, ${JSON.stringify(this.esc(msg.content || ''))})">
                     <div class="flex items-end gap-2 max-w-[85%] sm:max-w-[75%] lg:max-w-[65%]">
                         <div class="space-y-0.5 items-end">
-                            <div class="bg-[#ff385c] text-white rounded-2xl rounded-br-md">${bubbleContent}</div>
+                            <div class="bg-[#F16A00] text-white rounded-2xl rounded-br-md">${bubbleContent}</div>
                             <div class="msg-meta flex items-center gap-1.5 px-1 justify-end">
                                 <span class="text-[10px] text-gray-400">${time}</span>
                                 <span class="msg-status-icon" data-own="true">${this.statusSvg(msg.status)}</span>
@@ -556,7 +556,7 @@ export default function chatShow(config = {}) {
             const time = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
             let replyHtml = '';
             if (replyContent) {
-                replyHtml = `<div class="mx-2.5 mt-2.5 mb-0 px-2.5 py-1.5 rounded-lg border-l-2 bg-[#e00b41]/30 border-white/50"><p class="text-[11px] text-white/70 truncate">${this.esc(replyContent)}</p></div>`;
+                replyHtml = `<div class="mx-2.5 mt-2.5 mb-0 px-2.5 py-1.5 rounded-lg border-l-2 bg-[#CC5A00]/30 border-white/50"><p class="text-[11px] text-white/70 truncate">${this.esc(replyContent)}</p></div>`;
             }
 
             const ownAvatar = this.ownAvatarUrl
@@ -567,7 +567,7 @@ export default function chatShow(config = {}) {
             <div class="flex justify-end group msg-row" id="msg-${id}">
                 <div class="flex items-end gap-2 max-w-[85%] sm:max-w-[75%] lg:max-w-[65%]">
                     <div class="space-y-0.5 items-end">
-                        <div class="bg-[#ff385c] text-white rounded-2xl rounded-br-md">
+                        <div class="bg-[#F16A00] text-white rounded-2xl rounded-br-md">
                             ${replyHtml}
                             <div class="px-3.5 py-2"><p class="msg-text text-[14.5px] leading-relaxed whitespace-pre-wrap wrap-break-word">${this.esc(content)}</p></div>
                         </div>
@@ -595,7 +595,7 @@ export default function chatShow(config = {}) {
             } else {
                 content = `
                 <div class="mx-2.5 my-2.5">
-                    <div class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-[#e00b41]/30">
+                    <div class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-[#CC5A00]/30">
                         <svg class="w-5 h-5 text-white shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <span class="text-sm font-medium text-white truncate">${this.esc(fileName)}</span>
                     </div>
@@ -610,7 +610,7 @@ export default function chatShow(config = {}) {
             <div class="flex justify-end group msg-row" id="msg-${id}">
                 <div class="flex items-end gap-2 max-w-[85%] sm:max-w-[75%] lg:max-w-[65%]">
                     <div class="space-y-0.5 items-end">
-                        <div class="bg-[#ff385c] text-white rounded-2xl rounded-br-md">${content}</div>
+                        <div class="bg-[#F16A00] text-white rounded-2xl rounded-br-md">${content}</div>
                         <div class="msg-meta flex items-center gap-1.5 px-1 justify-end">
                             <span class="text-[10px] text-gray-400">${time}</span>
                             <span class="msg-status-icon" data-own="true">${this.statusSvg(status)}</span>
@@ -811,7 +811,7 @@ export default function chatShow(config = {}) {
                 const isActive = r.users.includes(this.currentUserId);
                 return `<button onclick="document.querySelector('[x-data]').__x.$data.toggleReaction(${messageId}, '${r.emoji}')"
                     class="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-xs rounded-full border transition-all hover:scale-105
-                    ${isActive ? 'bg-orange-50 border-orange-300 text-[#b5083a]' : 'bg-white border-gray-200 text-gray-600'}">
+                    ${isActive ? 'bg-orange-50 border-orange-300 text-[#A34700]' : 'bg-white border-gray-200 text-gray-600'}">
                     <span>${r.emoji}</span>${r.count > 1 ? `<span class="text-[10px] font-medium">${r.count}</span>` : ''}
                 </button>`;
             }).join('');
@@ -862,7 +862,7 @@ export default function chatShow(config = {}) {
                 const html = `<div class="flex justify-end group msg-row" id="msg-${tempId}">
                     <div class="flex items-end gap-2 max-w-[85%] sm:max-w-[75%] lg:max-w-[65%]">
                         <div class="space-y-0.5 items-end">
-                            <div class="bg-[#ff385c] text-white rounded-2xl rounded-br-md p-1.5">
+                            <div class="bg-[#F16A00] text-white rounded-2xl rounded-br-md p-1.5">
                                 <img src="${this.esc(gif.url)}" class="rounded-xl max-h-64" style="max-width:${Math.min(gif.width || 250, 300)}px">
                                 <span class="text-[9px] text-white/40 px-1">GIF</span>
                             </div>
@@ -987,7 +987,7 @@ export default function chatShow(config = {}) {
                 const html = `<div class="flex justify-end group msg-row" id="msg-${tempId}">
                     <div class="flex items-end gap-2 max-w-[85%] sm:max-w-[75%] lg:max-w-[65%]">
                         <div class="space-y-0.5 items-end">
-                            <div class="bg-[#ff385c] text-white rounded-2xl rounded-br-md px-3 py-2.5 flex items-center gap-3 min-w-50">
+                            <div class="bg-[#F16A00] text-white rounded-2xl rounded-br-md px-3 py-2.5 flex items-center gap-3 min-w-50">
                                 <div class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center shrink-0">
                                     <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z"/></svg>
                                 </div>

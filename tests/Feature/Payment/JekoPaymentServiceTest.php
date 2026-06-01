@@ -5,12 +5,12 @@ namespace Tests\Feature\Payment;
 use App\Models\Booking;
 use App\Models\CancellationPolicy;
 use App\Models\Residence;
+use App\Models\SponsoredListing;
 use App\Models\User;
 use App\Models\WebhookEvent;
 use App\Services\JekoPaymentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -23,6 +23,10 @@ use Tests\TestCase;
 class JekoPaymentServiceTest extends TestCase
 {
     use RefreshDatabase;
+
+    private const REDIRECT_URL = 'https://pay.jeko.africa/pr/jeko-uuid-abc123';
+    private const WEBHOOK_URI = '/api/webhooks/jeko';
+    private const CONTENT_TYPE_JSON = 'application/json';
 
     protected User $guest;
     protected User $owner;
@@ -118,7 +122,7 @@ class JekoPaymentServiceTest extends TestCase
         Http::fake([
             'api.jeko.africa/partner_api/payment_requests' => Http::response([
                 'id'          => 'jeko-uuid-abc123',
-                'redirectUrl' => 'https://pay.jeko.africa/pr/jeko-uuid-abc123',
+                'redirectUrl' => self::REDIRECT_URL,
                 'status'      => 'pending',
             ], 200),
         ]);
@@ -127,7 +131,7 @@ class JekoPaymentServiceTest extends TestCase
         $result = $service->createBookingPaymentRequest($this->booking, 'wave');
 
         $this->assertTrue($result['success']);
-        $this->assertEquals('https://pay.jeko.africa/pr/jeko-uuid-abc123', $result['redirect_url']);
+        $this->assertEquals(self::REDIRECT_URL, $result['redirect_url']);
         $this->assertEquals('jeko-uuid-abc123', $result['payment_id']);
         $this->assertStringStartsWith('REZI-BK-', $result['reference']);
     }
@@ -138,7 +142,7 @@ class JekoPaymentServiceTest extends TestCase
         Http::fake([
             'api.jeko.africa/partner_api/payment_requests' => Http::response([
                 'id'          => 'jeko-uuid-abc123',
-                'redirectUrl' => 'https://pay.jeko.africa/pr/jeko-uuid-abc123',
+                'redirectUrl' => self::REDIRECT_URL,
                 'status'      => 'pending',
             ], 200),
         ]);
@@ -157,15 +161,15 @@ class JekoPaymentServiceTest extends TestCase
             $this->assertEquals('wave', $body['paymentDetails']['data']['paymentMethod']);
             $this->assertStringContainsString(
                 '/bookings/payment/success',
-                $body['paymentDetails']['data']['successUrl']
+                $body['paymentDetails']['data']['successUrl'],
             );
             $this->assertStringContainsString(
                 '/bookings/payment/error',
-                $body['paymentDetails']['data']['errorUrl'] ?? ''
+                $body['paymentDetails']['data']['errorUrl'] ?? '',
             );
             $this->assertStringContainsString(
                 'booking='.$this->booking->uuid,
-                $body['paymentDetails']['data']['successUrl'] ?? ''
+                $body['paymentDetails']['data']['successUrl'] ?? '',
             );
 
             return true;
@@ -330,7 +334,7 @@ class JekoPaymentServiceTest extends TestCase
     {
         config(['services.jeko.webhook_secret' => 'real_secret']);
 
-        $response = $this->postJson('/api/webhooks/jeko', ['event' => 'transaction.completed'], [
+        $response = $this->postJson(self::WEBHOOK_URI, ['event' => 'transaction.completed'], [
             'Jeko-Signature' => 'bad_sig',
         ]);
 
@@ -362,12 +366,79 @@ class JekoPaymentServiceTest extends TestCase
         ]);
         $signature = hash_hmac('sha256', $payload, 'real_secret');
 
-        $response = $this->call('POST', '/api/webhooks/jeko', [], [], [], [
-            'CONTENT_TYPE'       => 'application/json',
+        $response = $this->call('POST', self::WEBHOOK_URI, [], [], [], [
+            'CONTENT_TYPE'       => self::CONTENT_TYPE_JSON,
             'HTTP_Jeko-Signature' => $signature,
         ], $payload);
 
         $response->assertStatus(200);
+    }
+
+    #[Test]
+    public function webhook_activates_sponsored_listing_when_reference_matches(): void
+    {
+        config([
+            'services.jeko.webhook_secret' => 'real_secret',
+            'services.jeko.enabled'        => true,
+            'services.jeko.api_key'        => 'key',
+            'services.jeko.api_key_id'     => 'kid',
+            'services.jeko.store_id'       => 'sid',
+        ]);
+
+        $sponsored = SponsoredListing::create([
+            'residence_id' => $this->residence->id,
+            'user_id' => $this->owner->id,
+            'type' => 'highlighted',
+            'starts_at' => null,
+            'ends_at' => null,
+            'duration_days' => 7,
+            'daily_budget' => null,
+            'total_budget' => 100,
+            'amount_spent' => 0,
+            'billing_type' => 'flat_rate',
+            'cost_per_unit' => 0,
+            'impressions' => 0,
+            'clicks' => 0,
+            'contacts_generated' => 0,
+            'status' => 'pending',
+            'is_paid' => false,
+            'jeko_reference' => 'REZI-SP-42-ABCD1234',
+            'payment_status' => 'processing',
+        ]);
+
+        $payload = json_encode([
+            'event' => 'transaction.completed',
+            'data'  => [
+                'id' => 'txn-sp-001',
+                'status' => 'success',
+                'paymentMethod' => 'wave',
+                'executedAt' => now()->toISOString(),
+                'transactionDetails' => [
+                    'reference' => $sponsored->jeko_reference,
+                ],
+                'amount' => [
+                    'amount' => 100,
+                ],
+            ],
+        ]);
+        $signature = hash_hmac('sha256', $payload, 'real_secret');
+
+        $response = $this->call('POST', self::WEBHOOK_URI, [], [], [], [
+            'CONTENT_TYPE' => self::CONTENT_TYPE_JSON,
+            'HTTP_Jeko-Signature' => $signature,
+        ], $payload);
+
+        $response->assertStatus(200);
+
+        $sponsored->refresh();
+        $this->assertTrue($sponsored->is_paid);
+        $this->assertSame('active', $sponsored->status);
+        $this->assertSame('success', $sponsored->payment_status);
+        $this->assertSame('txn-sp-001', $sponsored->payment_reference);
+        $this->assertSame('wave', $sponsored->payment_method);
+        $this->assertNotNull($sponsored->paid_at);
+        $this->assertNotNull($sponsored->starts_at);
+        $this->assertNotNull($sponsored->ends_at);
     }
 
     #[Test]
@@ -386,14 +457,14 @@ class JekoPaymentServiceTest extends TestCase
         $signature = hash_hmac('sha256', $payload, 'secret');
 
         // First call — acquires lock
-        $this->call('POST', '/api/webhooks/jeko', [], [], [], [
-            'CONTENT_TYPE'       => 'application/json',
+        $this->call('POST', self::WEBHOOK_URI, [], [], [], [
+            'CONTENT_TYPE'       => self::CONTENT_TYPE_JSON,
             'HTTP_Jeko-Signature' => $signature,
         ], $payload);
 
         // Second call — duplicate, should still return 200 (not retry)
-        $response = $this->call('POST', '/api/webhooks/jeko', [], [], [], [
-            'CONTENT_TYPE'       => 'application/json',
+        $response = $this->call('POST', self::WEBHOOK_URI, [], [], [], [
+            'CONTENT_TYPE'       => self::CONTENT_TYPE_JSON,
             'HTTP_Jeko-Signature' => $signature,
         ], $payload);
 

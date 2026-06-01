@@ -331,14 +331,14 @@
                     Dépenses
                 </a>
 
-                {{-- Relances loyer --}}
+                {{-- Relances paiement --}}
                 <a href="{{ route('owner.rent-reminders.index') }}"
                     class="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[14px] font-medium transition-all duration-150
                           {{ $active === 'rent-reminders' ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-700 hover:bg-gray-50' }}">
                     <span class="flex items-center justify-center w-8 h-8 rounded-lg transition-colors {{ $active === 'rent-reminders' ? 'bg-white/10' : 'bg-gray-50 group-hover:bg-gray-100' }}">
                         <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" /></svg>
                     </span>
-                    Relances loyer
+                    Relances paiement
                 </a>
 
                 {{-- Maintenance --}}
@@ -777,7 +777,7 @@
             @foreach ([
                 ['route' => 'owner.lease-contracts.index', 'key' => 'lease-contracts', 'label' => 'Contrats'],
                 ['route' => 'owner.expenses.index', 'key' => 'expenses', 'label' => 'Dépenses'],
-                ['route' => 'owner.rent-reminders.index', 'key' => 'rent-reminders', 'label' => 'Relances loyer'],
+                ['route' => 'owner.rent-reminders.index', 'key' => 'rent-reminders', 'label' => 'Relances paiement'],
                 ['route' => 'owner.maintenance.index', 'key' => 'maintenance', 'label' => 'Maintenance'],
                 ['route' => 'owner.documents.index', 'key' => 'documents', 'label' => 'Documents'],
                 ['route' => 'owner.cleaning.index', 'key' => 'cleaning', 'label' => 'Ménage'],

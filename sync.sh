@@ -9,6 +9,9 @@ REMOTE="/var/www/reziapp"
 SSH_KEY="${SSH_KEY:-$HOME/.ssh/rezi_deploy}"
 SSH_OPTS="-i $SSH_KEY -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
 
+echo "🧱 Build assets front..."
+npm run build
+
 echo "🚀 Rsync vers $SERVER..."
 rsync -az --delete -e "ssh $SSH_OPTS" \
   --exclude='.git' \

@@ -16,10 +16,10 @@
 
             {{-- Blobs décoratifs (lueur orange) --}}
             <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
-                <div class="absolute -top-12 -left-12 w-48 h-48 sm:-top-24 sm:-left-24 sm:w-96 sm:h-96 rounded-full bg-[#ff385c]/20 blur-3xl"></div>
-                <div class="absolute bottom-0 right-0 w-40 h-40 sm:w-80 sm:h-80 rounded-full bg-[#ff4d6d]/15 blur-3xl"></div>
+                <div class="absolute -top-12 -left-12 w-48 h-48 sm:-top-24 sm:-left-24 sm:w-96 sm:h-96 rounded-full bg-[#F16A00]/20 blur-3xl"></div>
+                <div class="absolute bottom-0 right-0 w-40 h-40 sm:w-80 sm:h-80 rounded-full bg-[#FF8A1F]/15 blur-3xl"></div>
                 <div
-                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 sm:w-64 sm:h-64 rounded-full bg-[#ff385c]/10 blur-3xl">
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 sm:w-64 sm:h-64 rounded-full bg-[#F16A00]/10 blur-3xl">
                 </div>
             </div>
 
@@ -29,7 +29,7 @@
                 <div class="mb-10 text-center">
                     <div
                         class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-2xl mx-auto mb-4">
-                        <span class="text-2xl font-extrabold text-[#ff385c]">R</span>
+                        <span class="text-2xl font-extrabold text-[#F16A00]">R</span>
                     </div>
                     <h1 class="text-4xl font-extrabold tracking-tight">REZI</h1>
                     <p class="text-sm text-gray-400 mt-1 font-medium tracking-wider uppercase">Location meublée en
@@ -38,7 +38,7 @@
 
                 {{-- Headline --}}
                 <p class="text-xl text-gray-300 text-center mb-12 max-w-sm leading-relaxed">
-                    Trouvez votre <span class="text-[#ff4d6d] font-semibold">résidence meublée idéale</span> en
+                    Trouvez votre <span class="text-[#FF8A1F] font-semibold">résidence meublée idéale</span> en
                     quelques clics
                 </p>
 
@@ -46,8 +46,8 @@
                 <div class="space-y-3 w-full max-w-sm">
                     <div
                         class="flex items-center gap-4 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 transition-colors">
-                        <div class="w-10 h-10 bg-[#ff385c]/20 rounded-xl flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5 text-[#ff4d6d]" fill="none" stroke="currentColor"
+                        <div class="w-10 h-10 bg-[#F16A00]/20 rounded-xl flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5 text-[#FF8A1F]" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -94,7 +94,7 @@
                 {{-- Stats --}}
                 <div class="mt-12 flex items-center gap-6">
                     <div class="text-center">
-                        <div class="text-2xl font-extrabold text-[#ff4d6d]">500+</div>
+                        <div class="text-2xl font-extrabold text-[#FF8A1F]">500+</div>
                         <div class="text-xs text-gray-500 font-medium uppercase tracking-wide mt-0.5">Résidences</div>
                     </div>
                     <div class="w-px h-10 bg-white/10"></div>
@@ -129,7 +129,7 @@
             {{-- Fond subtil --}}
             <div class="absolute inset-0 bg-linear-to-b from-gray-50/80 to-white pointer-events-none"
                 aria-hidden="true"></div>
-            <div class="absolute top-0 right-0 w-64 h-64 bg-[#fff0f3] rounded-full blur-3xl opacity-60 pointer-events-none"
+            <div class="absolute top-0 right-0 w-64 h-64 bg-[#FFF4EB] rounded-full blur-3xl opacity-60 pointer-events-none"
                 aria-hidden="true"></div>
 
             <div class="w-full max-w-md relative">
@@ -137,7 +137,7 @@
                 <div class="lg:hidden text-center mb-8">
                     <div
                         class="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-                        <span class="text-lg font-extrabold text-[#ff4d6d]">R</span>
+                        <span class="text-lg font-extrabold text-[#FF8A1F]">R</span>
                     </div>
                     <p class="text-xs text-gray-400 font-medium uppercase tracking-widest">REZI · Location meublée</p>
                 </div>
@@ -205,9 +205,9 @@
                                         d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                                 </svg>
                             </div>
-                            <input id="email" name="email" type="email" value="{{ old('email') }}" required
+                            <input id="email" name="email" type="email" inputmode="email" value="{{ old('email') }}" required
                                 autofocus autocomplete="username" placeholder="vous@exemple.com"
-                                class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff385c]/40 focus:border-[#ff4d6d] focus:bg-white transition-all">
+                                class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F16A00]/40 focus:border-[#FF8A1F] focus:bg-white transition-all">
                         </div>
                         @error('email')
                             <p class="mt-2 text-sm text-red-600 flex items-center gap-1">
@@ -235,7 +235,7 @@
                             </div>
                             <input id="password" name="password" type="password" :type="showPassword ? 'text' : 'password'" required
                                 autocomplete="current-password" placeholder="••••••••"
-                                class="w-full pl-12 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff385c]/40 focus:border-[#ff4d6d] focus:bg-white transition-all">
+                                class="w-full pl-12 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F16A00]/40 focus:border-[#FF8A1F] focus:bg-white transition-all">
                             <button type="button" @click="showPassword = !showPassword"
                                 class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors">
                                 <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor"
@@ -268,14 +268,14 @@
                     <div class="flex items-center justify-between">
                         <label for="remember_me" class="flex items-center cursor-pointer group">
                             <input id="remember_me" type="checkbox" name="remember"
-                                class="w-4 h-4 rounded border-gray-300 text-[#ff385c] focus:ring-[#ff385c] cursor-pointer">
+                                class="w-4 h-4 rounded border-gray-300 text-[#F16A00] focus:ring-[#F16A00] cursor-pointer">
                             <span class="ml-2 text-sm text-gray-500 group-hover:text-gray-700 transition-colors">Se
                                 souvenir de moi</span>
                         </label>
 
                         @if (Route::has('password.request'))
                             <a href="{{ route('password.request') }}"
-                                class="text-sm font-medium text-[#ff385c] hover:text-[#e00b41] transition-colors">
+                                class="text-sm font-medium text-[#F16A00] hover:text-[#CC5A00] transition-colors">
                                 Mot de passe oublié ?
                             </a>
                         @endif
@@ -283,7 +283,7 @@
 
                     {{-- Submit Button --}}
                     <button type="submit"
-                        class="w-full bg-[#ff385c] hover:bg-[#e00b41] text-white font-semibold py-3.5 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2">
+                        class="w-full bg-[#F16A00] hover:bg-[#CC5A00] text-white font-semibold py-3.5 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2">
                         <span>Se connecter</span>
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -296,7 +296,7 @@
                 <p class="mt-8 text-center text-gray-500">
                     Pas encore de compte ?
                     <a href="{{ route('register') }}"
-                        class="font-semibold text-[#ff385c] hover:text-[#e00b41] transition-colors">
+                        class="font-semibold text-[#F16A00] hover:text-[#CC5A00] transition-colors">
                         Créer un compte gratuit
                     </a>
                 </p>
@@ -304,8 +304,8 @@
                 {{-- Owner CTA --}}
                 <div class="mt-6 p-4 bg-gray-900 rounded-2xl text-white">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-[#ff385c]/20 rounded-xl flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5 text-[#ff4d6d]" fill="none" stroke="currentColor"
+                        <div class="w-10 h-10 bg-[#F16A00]/20 rounded-xl flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5 text-[#FF8A1F]" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -314,7 +314,7 @@
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-medium text-gray-300">Vous êtes propriétaire ?</p>
                             <a href="{{ route('register') }}"
-                                class="text-sm text-[#ff4d6d] hover:text-[#ff7a96] font-semibold transition-colors">
+                                class="text-sm text-[#FF8A1F] hover:text-[#FFB46F] font-semibold transition-colors">
                                 Publiez votre résidence →
                             </a>
                         </div>

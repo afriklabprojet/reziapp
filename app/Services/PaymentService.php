@@ -10,9 +10,9 @@ use App\Models\PaymentMethod;
 use App\Models\PaymentProvider;
 use App\Models\PlatformSetting;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class PaymentService
 {
@@ -31,58 +31,65 @@ class PaymentService
      */
     public function createBookingPayment(Booking $booking, User $user, array $options = []): Payment
     {
-        // Idempotency: prevent duplicate payment creation for the same booking
-        $existing = Payment::where('booking_id', $booking->id)
-            ->where('user_id', $user->id)
-            ->whereIn('status', [Payment::STATUS_PENDING, Payment::STATUS_PROCESSING])
-            ->first();
+        return DB::transaction(function () use ($booking, $user, $options) {
+            $lockedBooking = Booking::whereKey($booking->id)->lockForUpdate()->firstOrFail();
 
-        if ($existing) {
-            Log::channel('payments')->info('createBookingPayment: Returning existing payment (idempotent)', [
-                'payment_id' => $existing->id,
-                'booking_id' => $booking->id,
+            $existing = Payment::where('booking_id', $lockedBooking->id)
+                ->where('user_id', $user->id)
+                ->whereIn('status', [Payment::STATUS_PENDING, Payment::STATUS_PROCESSING])
+                ->first();
+
+            if ($existing) {
+                Log::channel('payments')->info('createBookingPayment: Returning existing payment (idempotent)', [
+                    'payment_id' => $existing->id,
+                    'booking_id' => $lockedBooking->id,
+                ]);
+
+                return $existing;
+            }
+
+            $provider = PaymentProvider::where('code', $options['provider'] ?? 'jeko')->first();
+
+            $fees = $provider?->calculateFees($lockedBooking->total_amount) ?? [
+                'total_fee' => 0,
+                'total_amount' => $lockedBooking->total_amount,
+            ];
+
+            $attempt = Payment::withTrashed()
+                ->where('booking_id', $lockedBooking->id)
+                ->where('user_id', $user->id)
+                ->where('type', Payment::TYPE_BOOKING)
+                ->count() + 1;
+
+            $payment = Payment::create([
+                'idempotency_key' => 'bk_'.$lockedBooking->id.'_'.$user->id.'_attempt_'.$attempt,
+                'user_id' => $user->id,
+                'booking_id' => $lockedBooking->id,
+                'payment_provider_id' => $provider?->id,
+                'payment_method_id' => $options['payment_method_id'] ?? null,
+                'amount' => $lockedBooking->total_amount,
+                'fee' => $fees['total_fee'],
+                'total_amount' => $fees['total_amount'],
+                'currency' => 'XOF',
+                'type' => Payment::TYPE_BOOKING,
+                'status' => Payment::STATUS_PENDING,
+                'metadata' => [
+                    'booking_reference' => $lockedBooking->reference,
+                    'residence_id' => $lockedBooking->residence_id,
+                    'check_in' => $lockedBooking->check_in->toDateString(),
+                    'check_out' => $lockedBooking->check_out->toDateString(),
+                ],
             ]);
 
-            return $existing;
-        }
+            Log::channel('payments')->info('Payment created', [
+                'payment_id' => $payment->id,
+                'booking_id' => $lockedBooking->id,
+                'amount' => $payment->total_amount,
+                'user_id' => $user->id,
+            ]);
 
-        $provider = PaymentProvider::where('code', $options['provider'] ?? 'jeko')->first();
-
-        $fees = $provider?->calculateFees($booking->total_amount) ?? [
-            'total_fee' => 0,
-            'total_amount' => $booking->total_amount,
-        ];
-
-        $idempotencyKey = 'bk_'.$booking->id.'_'.$user->id.'_'.Str::random(8);
-
-        $payment = Payment::create([
-            'idempotency_key' => $idempotencyKey,
-            'user_id' => $user->id,
-            'booking_id' => $booking->id,
-            'payment_provider_id' => $provider?->id,
-            'payment_method_id' => $options['payment_method_id'] ?? null,
-            'amount' => $booking->total_amount,
-            'fee' => $fees['total_fee'],
-            'total_amount' => $fees['total_amount'],
-            'currency' => 'XOF',
-            'type' => Payment::TYPE_BOOKING,
-            'status' => Payment::STATUS_PENDING,
-            'metadata' => [
-                'booking_reference' => $booking->reference,
-                'residence_id' => $booking->residence_id,
-                'check_in' => $booking->check_in->toDateString(),
-                'check_out' => $booking->check_out->toDateString(),
-            ],
-        ]);
-
-        Log::channel('payments')->info('Payment created', [
-            'payment_id' => $payment->id,
-            'booking_id' => $booking->id,
-            'amount' => $payment->total_amount,
-            'user_id' => $user->id,
-        ]);
-
-        return $payment;
+            return $payment;
+        });
     }
 
     /**
@@ -369,7 +376,7 @@ class PaymentService
         ];
     }
 
-    protected function calculateSuccessRate($query): float
+    protected function calculateSuccessRate(Builder $query): float
     {
         $total = (clone $query)->count();
         if ($total === 0) {

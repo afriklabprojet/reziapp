@@ -56,11 +56,11 @@
             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
         >
         {{-- Fallback pour erreur de chargement --}}
-        <div class="{{ $sizeClass }} {{ $roundedClass }} bg-linear-to-br from-[#ff4d6d] to-[#e00b41] items-center justify-center text-white font-semibold ring-2 ring-white" style="display: none;">
+        <div class="{{ $sizeClass }} {{ $roundedClass }} bg-linear-to-br from-[#FF8A1F] to-[#CC5A00] items-center justify-center text-white font-semibold ring-2 ring-white" style="display: none;">
             {{ $initials ?? '?' }}
         </div>
     @elseif($initials)
-        <div class="{{ $sizeClass }} {{ $roundedClass }} bg-linear-to-br from-[#ff4d6d] to-[#e00b41] flex items-center justify-center text-white font-semibold ring-2 ring-white">
+        <div class="{{ $sizeClass }} {{ $roundedClass }} bg-linear-to-br from-[#FF8A1F] to-[#CC5A00] flex items-center justify-center text-white font-semibold ring-2 ring-white">
             {{ $initials }}
         </div>
     @else

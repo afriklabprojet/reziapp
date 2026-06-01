@@ -10,7 +10,7 @@
                     <p class="text-gray-600 mt-1">Organisez vos favoris par thèmes</p>
                 </div>
                 <button onclick="document.getElementById('createModal').classList.remove('hidden')" 
-                        class="inline-flex items-center gap-2 bg-[#e00b41] text-white px-4 py-2 rounded-xl hover:bg-[#b5083a] transition-colors">
+                        class="inline-flex items-center gap-2 bg-[#CC5A00] text-white px-4 py-2 rounded-xl hover:bg-[#A34700] transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
@@ -21,15 +21,15 @@
             @if($collections->isEmpty())
                 <!-- État vide -->
                 <div class="bg-white rounded-2xl shadow-sm p-8 text-center">
-                    <div class="w-16 h-16 bg-[#fff0f3] rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-[#ff4d6d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-16 h-16 bg-[#FFF4EB] rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-[#FF8A1F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                         </svg>
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Aucune collection</h3>
                     <p class="text-gray-500 mb-4">Créez des collections pour organiser vos favoris par thèmes.</p>
                     <button onclick="document.getElementById('createModal').classList.remove('hidden')" 
-                            class="inline-flex items-center gap-2 bg-[#e00b41] text-white px-4 py-2 rounded-xl hover:bg-[#b5083a] transition-colors">
+                            class="inline-flex items-center gap-2 bg-[#CC5A00] text-white px-4 py-2 rounded-xl hover:bg-[#A34700] transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
@@ -43,7 +43,7 @@
                     <a href="{{ route('collections.show', $collection) }}" 
                        class="bg-white rounded-2xl shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
                         <!-- Image de couverture -->
-                        <div class="relative aspect-video bg-linear-to-br from-[#ffd1da] to-[#ffb3c1]">
+                        <div class="relative aspect-video bg-linear-to-br from-[#FFE7D1] to-[#FFD0A3]">
                             @if($collection->getCoverImageUrl())
                                 <img loading="lazy" src="{{ $collection->getCoverImageUrl() }}" 
                                      alt="{{ $collection->name }}" 
@@ -65,7 +65,7 @@
                         </div>
 
                         <div class="p-4">
-                            <h3 class="font-semibold text-gray-900 group-hover:text-[#e00b41] transition-colors">
+                            <h3 class="font-semibold text-gray-900 group-hover:text-[#CC5A00] transition-colors">
                                 {{ $collection->name }}
                             </h3>
                             @if($collection->description)
@@ -102,26 +102,26 @@
                         <div>
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
                             <input type="text" name="name" id="name" required
-                                   class="w-full rounded-xl border-gray-300 focus:border-[#ff385c] focus:ring-[#ff385c]"
+                                   class="w-full rounded-xl border-gray-300 focus:border-[#F16A00] focus:ring-[#F16A00]"
                                    placeholder="Ex: Vacances à Cocody">
                         </div>
                         
                         <div>
                             <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
                             <textarea name="description" id="description" rows="3"
-                                      class="w-full rounded-xl border-gray-300 focus:border-[#ff385c] focus:ring-[#ff385c]"
+                                      class="w-full rounded-xl border-gray-300 focus:border-[#F16A00] focus:ring-[#F16A00]"
                                       placeholder="Description de la collection..."></textarea>
                         </div>
 
                         <div>
                             <label for="cover_image" class="block text-sm font-medium text-gray-700 mb-1">Image de couverture</label>
                             <input type="file" name="cover_image" id="cover_image" accept="image/*"
-                                   class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#fff0f3] file:text-[#b5083a] hover:file:bg-[#ffd1da]">
+                                   class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#FFF4EB] file:text-[#A34700] hover:file:bg-[#FFE7D1]">
                         </div>
                         
                         <div class="flex items-center gap-2">
                             <input type="checkbox" name="is_public" id="is_public" value="1"
-                                   class="rounded border-gray-300 text-[#e00b41] focus:ring-[#ff385c]">
+                                   class="rounded border-gray-300 text-[#CC5A00] focus:ring-[#F16A00]">
                             <label for="is_public" class="text-sm text-gray-700">Rendre cette collection publique</label>
                         </div>
                     </div>
@@ -131,7 +131,7 @@
                                 class="px-4 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors">
                             Annuler
                         </button>
-                        <button type="submit" class="px-4 py-2 bg-[#e00b41] text-white rounded-xl hover:bg-[#b5083a] transition-colors">
+                        <button type="submit" class="px-4 py-2 bg-[#CC5A00] text-white rounded-xl hover:bg-[#A34700] transition-colors">
                             Créer
                         </button>
                     </div>

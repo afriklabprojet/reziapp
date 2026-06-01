@@ -1,7 +1,15 @@
 <x-app-layout>
     @section('title', 'Carte des résidences - REZI')
 
-    <div class="h-[calc(100vh-64px)] flex flex-col"
+    @php
+        $allowedRadiusMeters = config('rezi.search.allowed_radii', [2000, 5000, 10000, 25000, 50000]);
+        $requestedRadiusMeters = (int) request()->query('radius', 5000);
+        $initialRadiusKm = in_array($requestedRadiusMeters, $allowedRadiusMeters, true) ? $requestedRadiusMeters / 1000 : 5;
+        $initialLatitude = is_numeric(request()->query('lat')) ? (float) request()->query('lat') : null;
+        $initialLongitude = is_numeric(request()->query('lng')) ? (float) request()->query('lng') : null;
+    @endphp
+
+    <div class="fixed inset-x-0 top-[calc(3.5rem+env(safe-area-inset-top))] bottom-[calc(4rem+env(safe-area-inset-bottom))] z-10 flex flex-col overflow-hidden bg-white md:static md:h-[calc(100vh-64px)]"
         x-data="{
             residences: @js(
                 $residences->map(fn($r) => [
@@ -43,23 +51,51 @@
             filterBedrooms: '',
             filterRating: '',
             filterInstantBook: false,
-            showSidebar: window.innerWidth >= 1024,
+            showSidebar: globalThis.innerWidth >= 1024,
             hoveredId: null,
             sortBy: 'price_asc',
             showFilters: false,
             searchQuery: '',
+            sheetExpanded: false,
+            userLocation: @js($initialLatitude !== null && $initialLongitude !== null ? ['lat' => $initialLatitude, 'lng' => $initialLongitude] : null),
+            locationState: 'idle',
+            locationAccuracy: null,
+            locationMode: @js($initialLatitude !== null && $initialLongitude !== null),
+            radiusKm: @js($initialRadiusKm),
+            radiusOptions: @js(collect($allowedRadiusMeters)->map(fn($radius) => $radius / 1000)->values()),
 
             init() {
                 this.applyFilters();
-                const watchers = ['filterCommune','filterPriceMin','filterPriceMax','filterType','filterAvailability','filterBedrooms','filterRating','filterInstantBook','sortBy','searchQuery'];
+                if (this.hasUserLocation()) {
+                    this.$nextTick(() => {
+                        globalThis.dispatchEvent(new CustomEvent('map:center-on', { detail: { lat: this.userLocation.lat, lng: this.userLocation.lng, zoom: 12 } }));
+                        globalThis.dispatchEvent(new CustomEvent('map:update-radius', { detail: { radius: this.radiusKm } }));
+                    });
+                }
+                const watchers = ['filterCommune','filterPriceMin','filterPriceMax','filterType','filterAvailability','filterBedrooms','filterRating','filterInstantBook','sortBy','searchQuery','radiusKm','locationMode'];
                 watchers.forEach(w => this.$watch(w, () => this.applyFilters()));
 
-                window.addEventListener('map:residence-hover', (e) => this.hoveredId = e.detail.id);
-                window.addEventListener('map:residence-unhover', () => this.hoveredId = null);
+                globalThis.addEventListener('map:residence-hover', (e) => this.hoveredId = e.detail.id);
+                globalThis.addEventListener('map:residence-unhover', () => this.hoveredId = null);
+                globalThis.addEventListener('map:user-location', (e) => {
+                    this.setUserLocation(e.detail.lat, e.detail.lng, e.detail.accuracy, false);
+                });
+                this.$watch('showSidebar', () => this.$nextTick(() => {
+                    globalThis.dispatchEvent(new CustomEvent('map:resize'));
+                }));
+                this.$watch('sheetExpanded', () => this.$nextTick(() => {
+                    globalThis.dispatchEvent(new CustomEvent('map:resize'));
+                }));
             },
 
             applyFilters() {
                 let result = [...this.residences];
+                const hasLocation = this.hasUserLocation();
+
+                result = result.map((residence) => ({
+                    ...residence,
+                    distanceKm: hasLocation ? this.residenceDistance(residence) : null,
+                }));
 
                 if (this.searchQuery.trim()) {
                     const q = this.searchQuery.trim().toLowerCase();
@@ -92,8 +128,12 @@
                     result = result.filter(r => r.instant_book);
                 }
                 result = result.filter(r => r.price >= this.filterPriceMin && r.price <= this.filterPriceMax);
+                if (this.locationMode && hasLocation) {
+                    result = result.filter(r => r.distanceKm !== null && r.distanceKm <= this.radiusKm);
+                }
 
                 switch (this.sortBy) {
+                    case 'distance': result.sort((a, b) => (a.distanceKm ?? Number.POSITIVE_INFINITY) - (b.distanceKm ?? Number.POSITIVE_INFINITY)); break;
                     case 'price_asc': result.sort((a, b) => a.price - b.price); break;
                     case 'price_desc': result.sort((a, b) => b.price - a.price); break;
                     case 'rating': result.sort((a, b) => (b.average_rating || 0) - (a.average_rating || 0)); break;
@@ -101,7 +141,12 @@
                 }
 
                 this.filteredResidences = result;
-                window.dispatchEvent(new CustomEvent('map:update-residences', { detail: { residences: result } }));
+                globalThis.dispatchEvent(new CustomEvent('map:update-residences', { detail: { residences: result } }));
+                if (this.locationMode && hasLocation) {
+                    globalThis.dispatchEvent(new CustomEvent('map:fit-residences', {
+                        detail: { residences: result, userLocation: this.userLocation },
+                    }));
+                }
             },
 
             resetFilters() {
@@ -114,6 +159,7 @@
                 this.filterRating = '';
                 this.filterInstantBook = false;
                 this.searchQuery = '';
+                this.locationMode = false;
             },
 
             get activeFilterCount() {
@@ -124,6 +170,7 @@
                 if (this.filterBedrooms) count++;
                 if (this.filterRating) count++;
                 if (this.filterInstantBook) count++;
+                if (this.locationMode) count++;
                 if (this.filterPriceMin > this.priceMin || this.filterPriceMax < this.priceMax) count++;
                 if (this.searchQuery.trim()) count++;
                 return count;
@@ -134,7 +181,79 @@
                 const available = this.filteredResidences.filter(r => r.is_available).length;
                 const avgPrice = total > 0 ? Math.round(this.filteredResidences.reduce((sum, r) => sum + r.price, 0) / total) : 0;
                 const avgRating = total > 0 ? (this.filteredResidences.reduce((sum, r) => sum + (r.average_rating || 0), 0) / total).toFixed(1) : '—';
-                return { total, available, avgPrice, avgRating };
+                const distances = this.filteredResidences.map(r => r.distanceKm).filter(distance => distance !== null);
+                const nearest = distances.length > 0 ? Math.min(...distances) : null;
+                return { total, available, avgPrice, avgRating, nearest };
+            },
+
+            locateMe() {
+                if (!navigator.geolocation) {
+                    this.locationState = 'error';
+                    return;
+                }
+
+                this.locationState = 'loading';
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        this.setUserLocation(
+                            position.coords.latitude,
+                            position.coords.longitude,
+                            Math.round(position.coords.accuracy),
+                            true,
+                        );
+                    },
+                    () => {
+                        this.locationState = 'error';
+                    },
+                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
+                );
+            },
+
+            setUserLocation(lat, lng, accuracy = null, shouldCenter = true) {
+                this.userLocation = { lat: Number(lat), lng: Number(lng) };
+                this.locationAccuracy = accuracy;
+                this.locationState = 'success';
+                this.locationMode = true;
+                this.sortBy = 'distance';
+                this.applyFilters();
+
+                if (shouldCenter && this.filteredResidences.length === 0) {
+                    globalThis.dispatchEvent(new CustomEvent('map:center-on', { detail: { lat: this.userLocation.lat, lng: this.userLocation.lng, zoom: 14 } }));
+                }
+                globalThis.dispatchEvent(new CustomEvent('map:update-radius', { detail: { radius: this.radiusKm } }));
+            },
+
+            setRadius(km) {
+                this.radiusKm = km;
+                if (this.hasUserLocation()) {
+                    globalThis.dispatchEvent(new CustomEvent('map:update-radius', { detail: { radius: km } }));
+                }
+            },
+
+            hasUserLocation() {
+                return this.userLocation !== null && Number.isFinite(this.userLocation.lat) && Number.isFinite(this.userLocation.lng);
+            },
+
+            residenceDistance(residence) {
+                const lat = Number(residence.location?.latitude);
+                const lng = Number(residence.location?.longitude);
+                if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+                return this.distanceKm(this.userLocation.lat, this.userLocation.lng, lat, lng);
+            },
+
+            distanceKm(lat1, lng1, lat2, lng2) {
+                const earthRadiusKm = 6371;
+                const toRad = value => (value * Math.PI) / 180;
+                const dLat = toRad(lat2 - lat1);
+                const dLng = toRad(lng2 - lng1);
+                const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+                return earthRadiusKm * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            },
+
+            formatDistance(distanceKm) {
+                if (distanceKm === null || distanceKm === undefined) return '';
+                if (distanceKm < 1) return Math.round(distanceKm * 1000) + ' m';
+                return distanceKm.toFixed(1).replace('.', ',') + ' km';
             },
 
             formatPrice(price) {
@@ -142,7 +261,7 @@
             },
 
             highlightOnMap(id) {
-                window.dispatchEvent(new CustomEvent('map:highlight-residence', { detail: { id } }));
+                globalThis.dispatchEvent(new CustomEvent('map:highlight-residence', { detail: { id } }));
             }
         }">
 
@@ -155,8 +274,8 @@
                 <div class="flex items-center gap-3 sm:gap-5 overflow-x-auto scrollbar-hide">
                     {{-- Total --}}
                     <div class="flex items-center gap-1.5 shrink-0">
-                        <div class="w-8 h-8 rounded-lg bg-[#fff0f3] flex items-center justify-center">
-                            <svg class="w-4 h-4 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-8 h-8 rounded-lg bg-[#FFF4EB] flex items-center justify-center">
+                            <svg class="w-4 h-4 text-[#F16A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
                         </div>
@@ -207,13 +326,13 @@
                 <div class="flex items-center gap-2 shrink-0">
                     <button @click="showFilters = !showFilters"
                         class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all border"
-                        :class="showFilters ? 'bg-[#fff0f3] text-[#e00b41] border-[#ffb3c1]' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'">
+                        :class="showFilters ? 'bg-[#FFF4EB] text-[#CC5A00] border-[#FFD0A3]' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                         </svg>
                         <span class="hidden sm:inline">Filtres</span>
                         <span x-show="activeFilterCount > 0"
-                            class="w-5 h-5 rounded-full bg-[#ff385c] text-white text-[10px] font-bold flex items-center justify-center"
+                            class="w-5 h-5 rounded-full bg-[#F16A00] text-white text-[10px] font-bold flex items-center justify-center"
                             x-text="activeFilterCount"></span>
                     </button>
                     <button @click="showSidebar = !showSidebar"
@@ -236,6 +355,45 @@
         </div>
 
         {{-- ═══════════════════════════════════════════════════════════════════ --}}
+        {{-- LOCALISATION — Fonctionnalité phare --}}
+        {{-- ═══════════════════════════════════════════════════════════════════ --}}
+        <div class="bg-white/95 border-b border-gray-200 px-3 sm:px-4 py-2 shrink-0 z-20 backdrop-blur">
+            <div class="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+                <button type="button" @click="locateMe()"
+                    class="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border px-3 text-xs font-bold shadow-sm transition-all active:scale-95"
+                    :class="locationMode ? 'border-[#e00b41] bg-[#e00b41] text-white' : 'border-gray-200 bg-white text-gray-800 hover:border-gray-300'">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21s7-4.35 7-11a7 7 0 10-14 0c0 6.65 7 11 7 11z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10.5h.01" />
+                    </svg>
+                    <span x-text="locationState === 'loading' ? 'Localisation...' : (locationMode ? 'Autour de moi' : 'Me localiser')"></span>
+                </button>
+
+                <template x-for="option in radiusOptions" :key="option">
+                    <button type="button" @click="setRadius(option)"
+                        class="h-10 shrink-0 rounded-full border px-3 text-xs font-semibold transition-all disabled:opacity-40"
+                        :disabled="!hasUserLocation()"
+                        :class="radiusKm === option && locationMode ? 'border-[#222222] bg-[#222222] text-white' : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'">
+                        <span x-text="option + ' km'"></span>
+                    </button>
+                </template>
+
+                <button type="button" x-show="hasUserLocation()" @click="locationMode = !locationMode"
+                    class="h-10 shrink-0 rounded-full border px-3 text-xs font-semibold transition-all"
+                    :class="locationMode ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-gray-200 bg-white text-gray-600'">
+                    <span x-text="locationMode ? 'Rayon actif' : 'Rayon désactivé'"></span>
+                </button>
+
+                <div x-show="stats.nearest !== null" class="shrink-0 rounded-full bg-white px-3 py-2 text-xs font-semibold text-gray-700 shadow-sm ring-1 ring-gray-200">
+                    + proche <span class="text-[#e00b41]" x-text="formatDistance(stats.nearest)"></span>
+                </div>
+            </div>
+            <p x-show="locationState === 'error'" x-cloak class="mt-1 text-xs text-red-600">
+                Activez la géolocalisation pour voir les résidences les plus proches.
+            </p>
+        </div>
+
+        {{-- ═══════════════════════════════════════════════════════════════════ --}}
         {{-- FILTRES DÉPLIANTS --}}
         {{-- ═══════════════════════════════════════════════════════════════════ --}}
         <div x-show="showFilters" x-cloak
@@ -245,7 +403,7 @@
             x-transition:leave="transition ease-in duration-150"
             x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 -translate-y-2"
-            class="bg-white border-b border-gray-200 px-4 py-3 shrink-0 z-10 shadow-sm">
+            class="absolute inset-x-3 top-29 z-30 max-h-[40dvh] overflow-y-auto rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-2xl lg:static lg:max-h-none lg:rounded-none lg:border-x-0 lg:border-t-0 lg:shadow-sm">
 
             {{-- Recherche texte --}}
             <div class="mb-3">
@@ -255,14 +413,14 @@
                     </svg>
                     <input type="text" x-model.debounce.300ms="searchQuery"
                         placeholder="Rechercher par nom, commune, quartier..."
-                        class="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff385c] focus:border-transparent bg-gray-50">
+                        class="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F16A00] focus:border-transparent bg-gray-50">
                 </div>
             </div>
 
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                 <div>
-                    <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Commune</label>
-                    <select x-model="filterCommune" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff385c] bg-white">
+                    <label for="map-filter-commune" class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Commune</label>
+                    <select id="map-filter-commune" x-model="filterCommune" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#F16A00] bg-white">
                         <option value="">Toutes</option>
                         @foreach ($communes as $commune)
                             <option value="{{ $commune }}">{{ $commune }}</option>
@@ -270,8 +428,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Type</label>
-                    <select x-model="filterType" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff385c] bg-white">
+                    <label for="map-filter-type" class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Type</label>
+                    <select id="map-filter-type" x-model="filterType" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#F16A00] bg-white">
                         <option value="">Tous</option>
                         @foreach ($types as $type)
                             <option value="{{ $type }}">{{ ucfirst($type) }}</option>
@@ -279,8 +437,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Chambres</label>
-                    <select x-model="filterBedrooms" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff385c] bg-white">
+                    <label for="map-filter-bedrooms" class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Chambres</label>
+                    <select id="map-filter-bedrooms" x-model="filterBedrooms" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#F16A00] bg-white">
                         <option value="">Toutes</option>
                         <option value="1">1+</option>
                         <option value="2">2+</option>
@@ -289,8 +447,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Note min.</label>
-                    <select x-model="filterRating" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff385c] bg-white">
+                    <label for="map-filter-rating" class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Note min.</label>
+                    <select id="map-filter-rating" x-model="filterRating" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#F16A00] bg-white">
                         <option value="">Toutes</option>
                         <option value="3">3+ &#9733;</option>
                         <option value="4">4+ &#9733;</option>
@@ -298,12 +456,12 @@
                     </select>
                 </div>
                 <div class="col-span-2 sm:col-span-1 lg:col-span-2">
-                    <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                    <div id="map-filter-price-label" class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">
                         Prix : <span class="text-gray-600" x-text="formatPrice(filterPriceMin) + ' – ' + formatPrice(filterPriceMax) + ' FCFA/j'"></span>
-                    </label>
+                    </div>
                     <div class="flex gap-2 items-center">
-                        <input type="range" x-model.number="filterPriceMin" :min="priceMin" :max="priceMax" step="1000" class="flex-1 accent-orange-500 h-2">
-                        <input type="range" x-model.number="filterPriceMax" :min="priceMin" :max="priceMax" step="1000" class="flex-1 accent-orange-500 h-2">
+                        <input type="range" aria-labelledby="map-filter-price-label" x-model.number="filterPriceMin" :min="priceMin" :max="priceMax" step="1000" class="flex-1 accent-orange-500 h-2">
+                        <input type="range" aria-labelledby="map-filter-price-label" x-model.number="filterPriceMax" :min="priceMin" :max="priceMax" step="1000" class="flex-1 accent-orange-500 h-2">
                     </div>
                 </div>
             </div>
@@ -333,7 +491,7 @@
                     </button>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button @click="resetFilters()" class="text-xs text-[#ff385c] hover:text-[#e00b41] font-semibold px-2 py-1">Réinitialiser</button>
+                    <button @click="resetFilters()" class="text-xs text-[#F16A00] hover:text-[#CC5A00] font-semibold px-2 py-1">Réinitialiser</button>
                     <button @click="showFilters = false" class="text-xs text-gray-400 hover:text-gray-600 font-medium px-2 py-1">Fermer</button>
                 </div>
             </div>
@@ -342,37 +500,52 @@
         {{-- ═══════════════════════════════════════════════════════════════════ --}}
         {{-- CONTENU PRINCIPAL — Sidebar + Carte --}}
         {{-- ═══════════════════════════════════════════════════════════════════ --}}
-        <div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
+        <div class="relative flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
 
             {{-- ─── SIDEBAR ─── --}}
-            <div class="lg:w-105 xl:w-115 bg-white border-r border-gray-200 flex flex-col overflow-hidden"
-                :class="showSidebar ? 'flex-1 lg:flex-none' : 'hidden lg:flex'">
+            <div class="absolute inset-x-2 bottom-3 z-30 flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl transition-transform duration-200 lg:static lg:z-auto lg:h-auto lg:max-h-none lg:w-105 lg:translate-y-0 lg:rounded-none lg:border-y-0 lg:border-l-0 lg:shadow-none xl:w-115"
+                :class="[
+                    showSidebar ? 'translate-y-0' : 'pointer-events-none translate-y-[calc(100%+1rem)] lg:pointer-events-auto lg:translate-y-0',
+                    sheetExpanded ? 'h-80' : 'h-42'
+                ]">
+
+                <div class="flex justify-center pt-2 lg:hidden">
+                    <button type="button" @click="sheetExpanded = !sheetExpanded" class="h-6 w-full" :aria-label="sheetExpanded ? 'Réduire la liste' : 'Agrandir la liste'">
+                        <span class="mx-auto block h-1 w-12 rounded-full bg-gray-300"></span>
+                    </button>
+                </div>
 
                 <div class="flex items-center justify-between px-4 py-2.5 border-b border-gray-100 bg-gray-50/50 shrink-0">
                     <div class="flex items-center gap-2">
                         <span class="text-sm text-gray-600">
-                            <span x-text="filteredResidences.length" class="font-bold text-[#ff385c]"></span>
+                            <span x-text="filteredResidences.length" class="font-bold text-[#F16A00]"></span>
                             résultat<span x-show="filteredResidences.length > 1">s</span>
                         </span>
                         <span x-show="activeFilterCount > 0" class="text-[10px] text-gray-400">
                             &bull; <span x-text="activeFilterCount"></span> filtre<span x-show="activeFilterCount > 1">s</span>
                         </span>
                     </div>
-                    <select x-model="sortBy"
-                        class="text-xs border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#ff385c] bg-white font-medium">
-                        <option value="price_asc">Prix croissant</option>
-                        <option value="price_desc">Prix décroissant</option>
-                        <option value="rating">Meilleures notes</option>
-                        <option value="newest">Plus récents</option>
-                    </select>
+                    <div class="flex items-center gap-2">
+                        <select x-model="sortBy"
+                            class="text-xs border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#F16A00] bg-white font-medium">
+                            <option value="distance">Plus proches</option>
+                            <option value="price_asc">Prix croissant</option>
+                            <option value="price_desc">Prix décroissant</option>
+                            <option value="rating">Meilleures notes</option>
+                            <option value="newest">Plus récents</option>
+                        </select>
+                        <button type="button" @click="showSidebar = false" class="lg:hidden rounded-full bg-gray-900 px-3 py-1.5 text-xs font-semibold text-white shadow-sm active:scale-95">
+                            Carte
+                        </button>
+                    </div>
                 </div>
 
                 <div class="flex-1 overflow-y-auto p-3 space-y-2 relative">
                     <template x-for="residence in filteredResidences" :key="residence.id">
                         <a :href="'/residences/' + residence.id"
-                            class="block bg-white rounded-xl border border-gray-100 hover:border-[#ffb3c1] hover:shadow-md transition-all duration-200 overflow-hidden group"
+                            class="block bg-white rounded-xl border border-gray-100 hover:border-[#FFD0A3] hover:shadow-md transition-all duration-200 overflow-hidden group"
                             :class="{
-                                'border-[#ff4d6d] shadow-md ring-2 ring-orange-100': hoveredId === residence.id,
+                                'border-[#FF8A1F] shadow-md ring-2 ring-orange-100': hoveredId === residence.id,
                                 'opacity-50': !residence.is_available,
                             }"
                             @mouseenter="highlightOnMap(residence.id)"
@@ -410,10 +583,13 @@
                                 </div>
                                 <div class="flex-1 min-w-0 flex flex-col justify-between">
                                     <div>
-                                        <h3 class="font-semibold text-gray-900 text-sm line-clamp-1" x-text="residence.title"></h3>
+                                        <p class="font-semibold text-gray-900 text-sm line-clamp-1">
+                                            <span x-text="residence.title"></span>
+                                        </p>
                                         <p class="text-xs text-gray-500 mt-0.5 flex items-center gap-1">
                                             <svg class="w-3 h-3 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
                                             <span x-text="(residence.commune || '') + (residence.quartier ? ', ' + residence.quartier : '')" class="truncate"></span>
+                                            <span x-show="residence.distanceKm !== null" class="shrink-0 font-semibold text-[#e00b41]" x-text="'• ' + formatDistance(residence.distanceKm)"></span>
                                         </p>
                                         <div class="flex items-center gap-2 mt-1.5 text-[10px] text-gray-400">
                                             <span x-show="residence.bedrooms" class="inline-flex items-center gap-0.5">
@@ -431,7 +607,7 @@
                                         </div>
                                     </div>
                                     <div class="mt-2 flex items-center justify-between">
-                                        <span class="text-[#ff385c] font-bold text-sm">
+                                        <span class="text-[#F16A00] font-bold text-sm">
                                             <span x-text="formatPrice(residence.price)"></span>
                                             <span class="text-[10px] font-normal text-gray-400">FCFA/jour</span>
                                         </span>
@@ -452,24 +628,17 @@
                         </div>
                         <p class="text-gray-500 text-sm font-medium">Aucune résidence trouvée</p>
                         <p class="text-gray-400 text-xs mt-1">Essayez de modifier vos filtres</p>
-                        <button @click="resetFilters()" class="mt-3 text-[#ff385c] text-sm font-semibold hover:underline inline-flex items-center gap-1">
+                        <button @click="resetFilters()" class="mt-3 text-[#F16A00] text-sm font-semibold hover:underline inline-flex items-center gap-1">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                             Réinitialiser les filtres
                         </button>
                     </div>
 
-                    <div x-show="showSidebar" class="lg:hidden sticky bottom-3 flex justify-center pt-4 z-10">
-                        <button @click="showSidebar = false"
-                            class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white rounded-full shadow-xl text-sm font-semibold hover:bg-gray-800 active:scale-95 transition-all">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
-                            Voir la carte
-                        </button>
-                    </div>
                 </div>
             </div>
 
             {{-- ─── CARTE MAPBOX ─── --}}
-            <div class="flex-1 relative min-h-0" :class="showSidebar ? 'hidden lg:block' : 'flex-1'">
+            <div class="relative h-full min-h-0 flex-1">
                 <x-map-search
                     :residences="$residences->map(fn($r) => [
                         'id' => $r->id,
@@ -492,13 +661,13 @@
                     ])->toArray()"
                     :center="['lat' => config('rezi.default_latitude'), 'lng' => config('rezi.default_longitude')]"
                     :radius="config('rezi.default_search_radius_km')"
-                    height="h-full"
-                    class="h-full rounded-none!"
-                    :showRadiusCircle="false"
+                    height="h-full min-h-full"
+                    class="h-full min-h-full rounded-none! shadow-none!"
+                    :showRadiusCircle="true"
                 />
 
                 <div x-show="!showSidebar" class="lg:hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
-                    <button @click="showSidebar = true"
+                    <button @click="showSidebar = true; sheetExpanded = false"
                         class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-gray-800 rounded-full shadow-xl border border-gray-200 text-sm font-semibold hover:shadow-2xl active:scale-95 transition-all">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" /></svg>
                         Liste (<span x-text="filteredResidences.length"></span>)

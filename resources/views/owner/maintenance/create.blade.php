@@ -17,7 +17,7 @@
 
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Résidence *</label>
-            <select name="residence_id" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" required>
+            <select name="residence_id" class="w-full rounded-xl border-gray-200 focus:ring-[#F16A00] focus:border-[#F16A00] text-sm" required>
                 <option value="">Sélectionner</option>
                 @foreach($residences as $r) <option value="{{ $r->id }}" {{ old('residence_id') == $r->id ? 'selected' : '' }}>{{ $r->name }}</option> @endforeach
             </select>
@@ -26,14 +26,14 @@
 
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Titre *</label>
-            <input type="text" name="title" value="{{ old('title') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" placeholder="Ex: Fuite robinet salle de bain" required>
+            <input type="text" name="title" value="{{ old('title') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#F16A00] focus:border-[#F16A00] text-sm" placeholder="Ex: Fuite robinet salle de bain" required>
             @error('title') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
         </div>
 
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Catégorie *</label>
-                <select name="category" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" required>
+                <select name="category" class="w-full rounded-xl border-gray-200 focus:ring-[#F16A00] focus:border-[#F16A00] text-sm" required>
                     @foreach(\App\Models\MaintenanceRequest::CATEGORIES as $key => $label)
                         <option value="{{ $key }}" {{ old('category') === $key ? 'selected' : '' }}>{{ $label }}</option>
                     @endforeach
@@ -42,7 +42,7 @@
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Priorité *</label>
-                <select name="priority" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" required>
+                <select name="priority" class="w-full rounded-xl border-gray-200 focus:ring-[#F16A00] focus:border-[#F16A00] text-sm" required>
                     @foreach(\App\Models\MaintenanceRequest::PRIORITIES as $key => $label)
                         <option value="{{ $key }}" {{ old('priority', 'medium') === $key ? 'selected' : '' }}>{{ $label }}</option>
                     @endforeach
@@ -53,7 +53,7 @@
 
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Description *</label>
-            <textarea name="description" rows="4" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" placeholder="Décrivez le problème en détail..." required>{{ old('description') }}</textarea>
+            <textarea name="description" rows="4" class="w-full rounded-xl border-gray-200 focus:ring-[#F16A00] focus:border-[#F16A00] text-sm" placeholder="Décrivez le problème en détail..." required>{{ old('description') }}</textarea>
             @error('description') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
         </div>
 

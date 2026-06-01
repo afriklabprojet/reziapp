@@ -11,7 +11,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 /**
- * Alerte envoyée au propriétaire pour un loyer impayé.
+ * Alerte envoyée au propriétaire pour un paiement de location impayé.
  */
 class UnpaidRentAlertNotification extends Notification implements ShouldQueue
 {

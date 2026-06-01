@@ -11,7 +11,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 /**
- * Notification envoyée au locataire lors de la génération d'une quittance de loyer.
+ * Notification envoyée au locataire lors de la génération d'un reçu de location.
  */
 class RentReceiptNotification extends Notification implements ShouldQueue
 {
@@ -36,19 +36,19 @@ class RentReceiptNotification extends Notification implements ShouldQueue
         $downloadUrl = route('owner.rent-receipts.download', $this->receipt);
 
         return (new MailMessage())
-            ->subject("🧾 Quittance de loyer — {$period}")
+            ->subject("🧾 Reçu de location — {$period}")
             ->greeting("Bonjour {$notifiable->name},")
-            ->line("Votre quittance de loyer pour la période **{$period}** est disponible.")
+            ->line("Votre reçu de location pour la période **{$period}** est disponible.")
             ->line('**Récapitulatif :')
             ->line("Résidence : {$residence->title}")
             ->line("Période : {$period}")
-            ->line('Loyer : '.number_format($this->receipt->rent_amount, 0, ',', ' ')." {$currency}")
+            ->line('Montant de location : '.number_format($this->receipt->rent_amount, 0, ',', ' ')." {$currency}")
             ->when($this->receipt->charges_amount > 0, function (MailMessage $mail) use ($currency) {
                 return $mail->line('Charges : '.number_format($this->receipt->charges_amount, 0, ',', ' ')." {$currency}");
             })
             ->line("**Total payé : {$amount} {$currency}**")
             ->line('Mode de paiement : '.($this->receipt->payment_method ?? 'Non renseigné'))
-            ->action('Télécharger la quittance PDF', $downloadUrl)
+            ->action('Télécharger le reçu PDF', $downloadUrl)
             ->line('Conservez ce document pour vos démarches administratives.')
             ->salutation('L\'équipe REZI');
     }

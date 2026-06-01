@@ -24,12 +24,12 @@ Schedule::command('rezi:calculate-market-prices --country=CI')->weeklyOn(0, '04:
 Schedule::command('rezi:calculate-owner-badges')->weeklyOn(1, '05:00'); // Lundi
 Schedule::command('rezi:calculate-owner-badges')->weeklyOn(4, '05:00'); // Jeudi
 
-// Alertes quotidiennes : loyers en retard de paiement (08h00)
+// Alertes quotidiennes : paiements de location en retard (08h00)
 Schedule::command('rezi:check-unpaid-bookings --days=3')->dailyAt('08:00')
     ->withoutOverlapping()
     ->runInBackground();
 
-// Alertes relance : loyers en retard critique (15h00)
+// Alertes relance : paiements de location en retard critique (15h00)
 Schedule::command('rezi:check-unpaid-bookings --days=7')->dailyAt('15:00')
     ->withoutOverlapping()
     ->runInBackground();
@@ -41,7 +41,7 @@ Schedule::command('rezi:check-unpaid-bookings --days=7')->dailyAt('15:00')
 // Régénérer le sitemap chaque nuit — planifié dans bootstrap/app.php à 03:00
 // Schedule::command('rezi:generate-sitemap')->dailyAt('02:00');
 
-// Envoyer les relances de loyer automatiques (chaque jour à 08h30)
+// Envoyer les relances de paiement automatiques (chaque jour à 08h30)
 Schedule::command('rezi:send-rent-reminders')->dailyAt('08:30')
     ->withoutOverlapping()
     ->runInBackground();

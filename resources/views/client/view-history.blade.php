@@ -43,7 +43,7 @@
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-gray-600">Contactés</span>
-                        <span class="font-semibold text-[#ff385c]">{{ $viewStats['contacted'] }}</span>
+                        <span class="font-semibold text-[#F16A00]">{{ $viewStats['contacted'] }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-gray-600">Ajoutés aux favoris</span>
@@ -75,19 +75,19 @@
                 <h3 class="font-semibold text-gray-900 mb-4">Filtrer par source</h3>
                 <div class="space-y-2">
                     <a href="{{ route('client.view-history') }}"
-                        class="block px-3 py-2 rounded-lg {{ !request('source') ? 'bg-[#ffd1da] text-[#e00b41]' : 'text-gray-700 hover:bg-gray-50' }} transition">
+                        class="block px-3 py-2 rounded-lg {{ !request('source') ? 'bg-[#FFE7D1] text-[#CC5A00]' : 'text-gray-700 hover:bg-gray-50' }} transition">
                         Toutes les sources
                     </a>
                     <a href="{{ route('client.view-history', ['source' => 'search']) }}"
-                        class="block px-3 py-2 rounded-lg {{ request('source') == 'search' ? 'bg-[#ffd1da] text-[#e00b41]' : 'text-gray-700 hover:bg-gray-50' }} transition">
+                        class="block px-3 py-2 rounded-lg {{ request('source') == 'search' ? 'bg-[#FFE7D1] text-[#CC5A00]' : 'text-gray-700 hover:bg-gray-50' }} transition">
                         Depuis la recherche
                     </a>
                     <a href="{{ route('client.view-history', ['source' => 'map']) }}"
-                        class="block px-3 py-2 rounded-lg {{ request('source') == 'map' ? 'bg-[#ffd1da] text-[#e00b41]' : 'text-gray-700 hover:bg-gray-50' }} transition">
+                        class="block px-3 py-2 rounded-lg {{ request('source') == 'map' ? 'bg-[#FFE7D1] text-[#CC5A00]' : 'text-gray-700 hover:bg-gray-50' }} transition">
                         Depuis la carte
                     </a>
                     <a href="{{ route('client.view-history', ['source' => 'recommendation']) }}"
-                        class="block px-3 py-2 rounded-lg {{ request('source') == 'recommendation' ? 'bg-[#ffd1da] text-[#e00b41]' : 'text-gray-700 hover:bg-gray-50' }} transition">
+                        class="block px-3 py-2 rounded-lg {{ request('source') == 'recommendation' ? 'bg-[#FFE7D1] text-[#CC5A00]' : 'text-gray-700 hover:bg-gray-50' }} transition">
                         Recommandations
                     </a>
                 </div>
@@ -123,7 +123,7 @@
                                         <div class="absolute top-2 left-2 flex flex-wrap gap-1">
                                             @if ($view->contacted)
                                                 <span
-                                                    class="px-2 py-0.5 bg-[#ff385c] text-white text-xs font-medium rounded">Contacté</span>
+                                                    class="px-2 py-0.5 bg-[#F16A00] text-white text-xs font-medium rounded">Contacté</span>
                                             @endif
                                             @if ($view->favorited)
                                                 <span
@@ -141,7 +141,7 @@
 
                                 <div class="p-4">
                                     <a href="{{ route('residences.show', $view->residence) }}" class="block">
-                                        <h3 class="font-medium text-gray-900 truncate group-hover:text-[#ff385c]">
+                                        <h3 class="font-medium text-gray-900 truncate group-hover:text-[#F16A00]">
                                             {{ $view->residence->title }}</h3>
                                         <p class="text-sm text-gray-500 mt-1">{{ $view->residence->commune }}</p>
                                     </a>
@@ -194,7 +194,7 @@
                     <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune visite enregistrée</h3>
                     <p class="text-gray-600 mb-6">Explorez les résidences pour commencer à constituer votre historique</p>
                     <a href="{{ route('residences.index') }}"
-                        class="inline-flex items-center px-4 py-2 bg-[#ff385c] hover:bg-[#e00b41] text-white font-medium rounded-lg transition">
+                        class="inline-flex items-center px-4 py-2 bg-[#F16A00] hover:bg-[#CC5A00] text-white font-medium rounded-lg transition">
                         Explorer les résidences
                     </a>
                 </div>

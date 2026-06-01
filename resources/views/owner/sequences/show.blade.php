@@ -19,7 +19,7 @@
         <div class="flex gap-2">
             <form action="{{ route('owner.sequences.toggle', $sequence) }}" method="POST">
                 @csrf
-                <button type="submit" class="inline-flex items-center gap-2 px-4 py-2.5 {{ $sequence->is_active ? 'bg-[#fff0f3] text-[#b5083a] hover:bg-[#ffd1da]' : 'bg-green-50 text-green-700 hover:bg-green-100' }} font-semibold rounded-xl transition-all text-sm">
+                <button type="submit" class="inline-flex items-center gap-2 px-4 py-2.5 {{ $sequence->is_active ? 'bg-[#FFF4EB] text-[#A34700] hover:bg-[#FFE7D1]' : 'bg-green-50 text-green-700 hover:bg-green-100' }} font-semibold rounded-xl transition-all text-sm">
                     {{ $sequence->is_active ? 'Désactiver' : 'Activer' }}
                 </button>
             </form>

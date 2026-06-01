@@ -8,6 +8,7 @@ use App\Jobs\RecordSponsoredImpressions;
 use App\Models\Category;
 use App\Models\Residence;
 use App\Models\SponsoredListing;
+use App\Services\GeolocationService;
 use App\Services\UserLocationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -29,7 +30,7 @@ class HomeController extends Controller
             $searchPerformed = true;
             $latitude = $request->input('latitude');
             $longitude = $request->input('longitude');
-            $radius = $request->input('radius', 500); // Default 500m
+            $radius = $request->input('radius', GeolocationService::getDefaultRadius());
 
             $userLocation = [
                 'lat' => $latitude,

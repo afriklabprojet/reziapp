@@ -66,7 +66,7 @@
 
                 <div>
                     <button type="submit"
-                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-linear-to-r from-[#E21D63] to-[#D70466] hover:from-[#C9145A] hover:to-[#BD035D] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-linear-to-r from-[#F16A00] to-[#CC5A00] hover:from-[#B85100] hover:to-[#A34700] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
                         Activer mon compte
                     </button>
                 </div>

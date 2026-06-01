@@ -49,7 +49,7 @@
                     <option value="mutual_agreement" {{ old('termination_reason') === 'mutual_agreement' ? 'selected' : '' }}>Accord mutuel</option>
                     <option value="tenant_request" {{ old('termination_reason') === 'tenant_request' ? 'selected' : '' }}>Demande du locataire</option>
                     <option value="owner_request" {{ old('termination_reason') === 'owner_request' ? 'selected' : '' }}>Décision du bailleur</option>
-                    <option value="non_payment" {{ old('termination_reason') === 'non_payment' ? 'selected' : '' }}>Loyers impayés</option>
+                    <option value="non_payment" {{ old('termination_reason') === 'non_payment' ? 'selected' : '' }}>Paiements de location impayés</option>
                     <option value="breach_contract" {{ old('termination_reason') === 'breach_contract' ? 'selected' : '' }}>Non respect du contrat</option>
                     <option value="end_of_term" {{ old('termination_reason') === 'end_of_term' ? 'selected' : '' }}>Fin de terme</option>
                     <option value="other" {{ old('termination_reason') === 'other' ? 'selected' : '' }}>Autre</option>

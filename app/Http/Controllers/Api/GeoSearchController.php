@@ -14,12 +14,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 /**
  * API Controller pour la recherche géolocalisée optimisée
  *
- * Core feature de REZI : recherche de résidences ≤ 500m
- * avec cache géohash et tri par distance
+ * Core feature de REZI : recherche de résidences par rayon intelligent
+ * avec cache géohash et tri par distance.
  */
 class GeoSearchController extends Controller
 {
@@ -36,7 +37,7 @@ class GeoSearchController extends Controller
      * Corps de requête :
      * - latitude: float (requis) - Latitude du point central
      * - longitude: float (requis) - Longitude du point central
-     * - radius: int (100|200|300|400|500) - Rayon en mètres, défaut 300
+        * - radius: int - Rayon en mètres autorisé par config('rezi.search.allowed_radii')
      * - min_price: int - Prix minimum
      * - max_price: int - Prix maximum
      * - bedrooms: int - Nombre de chambres
@@ -110,7 +111,7 @@ class GeoSearchController extends Controller
     /**
      * Recherche rapide à proximité (sans filtres complexes)
      *
-     * GET /api/v1/geo/nearby?latitude=X&longitude=Y&radius=300&limit=10
+        * GET /api/v1/geo/nearby?latitude=X&longitude=Y&radius=5000&limit=10
      */
     public function nearby(Request $request): JsonResponse
     {
@@ -119,7 +120,7 @@ class GeoSearchController extends Controller
         $validator = Validator::make($request->all(), [
             'latitude' => ['required', 'numeric', 'between:'.$bounds['min_lat'].','.$bounds['max_lat']],
             'longitude' => ['required', 'numeric', 'between:'.$bounds['min_lng'].','.$bounds['max_lng']],
-            'radius' => ['sometimes', 'integer', 'min:100', 'max:50000'],
+            'radius' => ['sometimes', 'integer', Rule::in(GeolocationService::getAllowedRadii())],
             'limit' => ['sometimes', 'integer', 'min:1', 'max:50'],
         ], [
             'latitude.between' => 'La latitude doit être dans la zone couverte (CI / BF).',
@@ -135,7 +136,7 @@ class GeoSearchController extends Controller
         }
 
         $validated = $validator->validated();
-        $radius = (int) ($validated['radius'] ?? 5000);
+        $radius = (int) ($validated['radius'] ?? GeolocationService::getDefaultRadius());
         $limit = (int) ($validated['limit'] ?? 15);
 
         try {

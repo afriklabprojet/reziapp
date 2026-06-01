@@ -6,12 +6,12 @@
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {{-- Fil d'Ariane --}}
         <nav class="flex items-center gap-2 text-xs text-gray-400 mb-6">
-            <a href="{{ route('owner.dashboard') }}" class="hover:text-[#ff385c] transition">Tableau de bord</a>
+            <a href="{{ route('owner.dashboard') }}" class="hover:text-[#F16A00] transition">Tableau de bord</a>
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
             <a href="{{ route('owner.residences.show', $residence) }}"
-                class="hover:text-[#ff385c] transition">{{ Str::limit($residence->name, 25) }}</a>
+                class="hover:text-[#F16A00] transition">{{ Str::limit($residence->name, 25) }}</a>
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
@@ -25,7 +25,7 @@
                 <p class="mt-1 text-sm text-gray-500">Déléguez la gestion de votre résidence</p>
             </div>
             <a href="{{ route('owner.cohosts.create', $residence) }}"
-                class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#ff385c] text-white text-sm font-semibold rounded-xl hover:bg-[#e00b41] transition shadow-sm">
+                class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#F16A00] text-white text-sm font-semibold rounded-xl hover:bg-[#CC5A00] transition shadow-sm">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
@@ -37,7 +37,7 @@
         {{-- Messages flash --}}
         @if (session('success'))
             <div
-                class="mb-6 flex items-center gap-3 bg-[#fff0f3] border border-[#ffb3c1] text-[#b5083a] px-4 py-3 rounded-xl text-sm">
+                class="mb-6 flex items-center gap-3 bg-[#FFF4EB] border border-[#FFD0A3] text-[#A34700] px-4 py-3 rounded-xl text-sm">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
@@ -64,11 +64,11 @@
                         <div class="flex items-center gap-4 flex-1">
                             @php
                                 $gradients = [
-                                    'from-[#ff4d6d] to-pink-500',
+                                    'from-[#FF8A1F] to-pink-500',
                                     'from-blue-400 to-indigo-500',
                                     'from-emerald-400 to-teal-500',
                                     'from-purple-400 to-pink-500',
-                                    'from-amber-400 to-[#ff385c]',
+                                    'from-amber-400 to-[#F16A00]',
                                 ];
                                 $gradient = $gradients[($cohost->id ?? 0) % count($gradients)];
                             @endphp
@@ -96,7 +96,7 @@
                             @switch($cohost->status)
                                 @case('accepted')
                                     <span
-                                        class="inline-flex items-center gap-1 px-2.5 py-1 bg-[#ffd1da] text-[#e00b41] text-xs font-semibold rounded-full">
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 bg-[#FFE7D1] text-[#CC5A00] text-xs font-semibold rounded-full">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M5 13l4 4L19 7" />
@@ -213,8 +213,8 @@
                                         ],
                                         'can_manage_pricing' => [
                                             'label' => 'Tarification',
-                                            'bg' => 'bg-[#fff0f3]',
-                                            'text' => 'text-[#e00b41]',
+                                            'bg' => 'bg-[#FFF4EB]',
+                                            'text' => 'text-[#CC5A00]',
                                             'icon' =>
                                                 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
                                         ],
@@ -274,7 +274,7 @@
                             Invitez un ami, un proche ou un gestionnaire pour vous aider à gérer cette résidence.
                         </p>
                         <a href="{{ route('owner.cohosts.create', $residence) }}"
-                            class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#ff385c] text-white text-sm font-semibold rounded-xl hover:bg-[#e00b41] transition">
+                            class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#F16A00] text-white text-sm font-semibold rounded-xl hover:bg-[#CC5A00] transition">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />

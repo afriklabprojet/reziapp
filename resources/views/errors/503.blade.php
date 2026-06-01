@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css'])
 </head>
-<body class="font-sans antialiased bg-linear-to-br from-[#ff385c] to-[#e00b41]">
+<body class="font-sans antialiased bg-linear-to-br from-[#F16A00] to-[#CC5A00]">
     <div class="min-h-screen flex flex-col items-center justify-center px-4">
         {{-- Logo --}}
         <div class="mb-8">
@@ -38,7 +38,7 @@
         <h1 class="text-3xl sm:text-4xl font-bold text-white text-center mb-4">
             Maintenance en cours
         </h1>
-        <p class="text-[#ffd1da] text-center max-w-md mb-8 text-lg">
+        <p class="text-[#FFE7D1] text-center max-w-md mb-8 text-lg">
             Nous améliorons REZI pour vous offrir une meilleure expérience.
             Nous serons de retour très bientôt !
         </p>

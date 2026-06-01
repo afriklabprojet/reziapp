@@ -6,13 +6,25 @@ use App\Models\Booking;
 use App\Models\Payout;
 use App\Models\SponsoredListing;
 use App\Models\User;
+use App\Services\Concerns\HandlesJekoTransfers;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class JekoPaymentService
 {
+    use HandlesJekoTransfers;
+
+    private const CONTENT_TYPE_JSON = 'application/json';
+    private const PAYMENT_REQUESTS_ENDPOINT = '/partner_api/payment_requests';
+    private const ERROR_JEKO_DISABLED = 'Le service de paiement Jeko n\'est pas activé.';
+    private const ERROR_MINIMUM_AMOUNT = 'Le montant minimum est de 100 FCFA.';
+    private const ERROR_UNKNOWN = 'Erreur inconnue';
+    private const ERROR_TEMPORARILY_UNAVAILABLE = 'Service de paiement temporairement indisponible.';
+    private const ERROR_TEMPORARILY_UNAVAILABLE_RETRY = 'Service de paiement temporairement indisponible. Veuillez réessayer.';
+
     protected string $baseUrl;
     protected string $apiKey;
     protected string $apiKeyId;
@@ -43,6 +55,14 @@ class JekoPaymentService
             && $this->storeId;
     }
 
+    private function failure(string $error): array
+    {
+        return [
+            'success' => false,
+            'error' => $error,
+        ];
+    }
+
     /**
      * Create a payment request for a sponsored listing via Jeko redirect flow.
      *
@@ -52,103 +72,85 @@ class JekoPaymentService
      */
     public function createPaymentRequest(SponsoredListing $sponsored, string $paymentMethod): array
     {
+        $result = null;
+
         if (! $this->isEnabled()) {
-            return [
-                'success' => false,
-                'error' => 'Le service de paiement Jeko n\'est pas activé.',
-            ];
-        }
+            $result = $this->failure(self::ERROR_JEKO_DISABLED);
+        } else {
+            $reference = 'REZI-SP-'.$sponsored->id.'-'.Str::random(8);
+            $amountCents = (int) round($sponsored->total_budget);
 
-        // Generate a unique reference (1–100 chars)
-        $reference = 'REZI-SP-'.$sponsored->id.'-'.Str::random(8);
-
-        // Pour XOF, amountCents = montant en XOF directement (pas × 100)
-        // Jeko docs: amountCents:10000 → amount:10000 XOF (mapping 1:1), minimum 100 XOF
-        $amountCents = (int) round($sponsored->total_budget);
-
-        if ($amountCents < 100) {
-            return [
-                'success' => false,
-                'error' => 'Le montant minimum est de 100 FCFA.',
-            ];
-        }
-
-        $successUrl = $this->callbackBaseUrl.'/payment/jeko/success?sponsored_id='.$sponsored->id;
-        $errorUrl = $this->callbackBaseUrl.'/payment/jeko/error?sponsored_id='.$sponsored->id;
-
-        $payload = [
-            'storeId' => $this->storeId,
-            'amountCents' => $amountCents,
-            'currency' => $this->currency,
-            'reference' => $reference,
-            'paymentDetails' => [
-                'type' => 'redirect',
-                'data' => [
-                    'paymentMethod' => $paymentMethod,
-                    'successUrl' => $successUrl,
-                    'errorUrl' => $errorUrl,
-                ],
-            ],
-        ];
-
-        try {
-            /** @var \Illuminate\Http\Client\Response $response */
-            $response = Http::withHeaders([
-                'X-API-KEY' => $this->apiKey,
-                'X-API-KEY-ID' => $this->apiKeyId,
-                'Content-Type' => 'application/json',
-            ])->post($this->baseUrl.'/partner_api/payment_requests', $payload);
-
-            if ($response->successful()) {
-                $data = $response->json();
-
-                Log::info('Jeko payment request created', [
-                    'sponsored_id' => $sponsored->id,
-                    'jeko_payment_id' => $data['id'] ?? null,
+            if ($amountCents < 100) {
+                $result = $this->failure(self::ERROR_MINIMUM_AMOUNT);
+            } else {
+                $payload = [
+                    'storeId' => $this->storeId,
+                    'amountCents' => $amountCents,
+                    'currency' => $this->currency,
                     'reference' => $reference,
-                    'amount_cents' => $amountCents,
-                    'payment_method' => $paymentMethod,
-                ]);
-
-                return [
-                    'success' => true,
-                    'redirect_url' => $data['redirectUrl'] ?? null,
-                    'payment_id' => $data['id'] ?? null,
-                    'reference' => $reference,
+                    'paymentDetails' => [
+                        'type' => 'redirect',
+                        'data' => [
+                            'paymentMethod' => $paymentMethod,
+                            'successUrl' => $this->signedSponsoredSuccessUrl($sponsored, $reference),
+                            'errorUrl' => $this->signedSponsoredErrorUrl($sponsored, $reference),
+                        ],
+                    ],
                 ];
+
+                try {
+                    /** @var \Illuminate\Http\Client\Response $response */
+                    $response = Http::withHeaders([
+                        'X-API-KEY' => $this->apiKey,
+                        'X-API-KEY-ID' => $this->apiKeyId,
+                        'Content-Type' => self::CONTENT_TYPE_JSON,
+                    ])->post($this->baseUrl.self::PAYMENT_REQUESTS_ENDPOINT, $payload);
+
+                    if ($response->successful()) {
+                        $data = $response->json();
+
+                        Log::info('Jeko payment request created', [
+                            'sponsored_id' => $sponsored->id,
+                            'jeko_payment_id' => $data['id'] ?? null,
+                            'reference' => $reference,
+                            'amount_cents' => $amountCents,
+                            'payment_method' => $paymentMethod,
+                        ]);
+
+                        $result = [
+                            'success' => true,
+                            'redirect_url' => $data['redirectUrl'] ?? null,
+                            'payment_id' => $data['id'] ?? null,
+                            'reference' => $reference,
+                        ];
+                    } else {
+                        Log::error('Jeko payment request failed', [
+                            'sponsored_id' => $sponsored->id,
+                            'status' => $response->status(),
+                            'body' => $response->body(),
+                        ]);
+
+                        $result = $this->failure('Erreur lors de la création du paiement : '.($response->json('message') ?? self::ERROR_UNKNOWN));
+                    }
+                } catch (RequestException $e) {
+                    Log::error('Jeko payment request exception', [
+                        'sponsored_id' => $sponsored->id,
+                        'error' => $e->getMessage(),
+                    ]);
+
+                    $result = $this->failure(self::ERROR_TEMPORARILY_UNAVAILABLE_RETRY);
+                } catch (\Throwable $e) {
+                    Log::error('Jeko payment unexpected error', [
+                        'sponsored_id' => $sponsored->id,
+                        'error' => $e->getMessage(),
+                    ]);
+
+                    $result = $this->failure('Une erreur inattendue est survenue. Veuillez réessayer.');
+                }
             }
-
-            Log::error('Jeko payment request failed', [
-                'sponsored_id' => $sponsored->id,
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-
-            return [
-                'success' => false,
-                'error' => 'Erreur lors de la création du paiement : '.($response->json('message') ?? 'Erreur inconnue'),
-            ];
-        } catch (RequestException $e) {
-            Log::error('Jeko payment request exception', [
-                'sponsored_id' => $sponsored->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return [
-                'success' => false,
-                'error' => 'Service de paiement temporairement indisponible. Veuillez réessayer.',
-            ];
-        } catch (\Throwable $e) {
-            Log::error('Jeko payment unexpected error', [
-                'sponsored_id' => $sponsored->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return [
-                'success' => false,
-                'error' => 'Une erreur inattendue est survenue. Veuillez réessayer.',
-            ];
         }
+
+        return $result;
     }
 
     /**
@@ -160,34 +162,30 @@ class JekoPaymentService
      */
     public function createBookingPaymentRequest(Booking $booking, string $paymentMethod): array
     {
+        $result = null;
+
         if (! $this->isEnabled()) {
-            return [
-                'success' => false,
-                'error' => 'Le service de paiement Jeko n\'est pas activé.',
-            ];
+            $result = $this->failure(self::ERROR_JEKO_DISABLED);
+        } else {
+            $reference = 'REZI-BK-'.$booking->id.'-'.Str::random(8);
+            $chargeAmount = ($booking->payment_split && $booking->deposit_amount > 0)
+                ? $booking->deposit_amount
+                : $booking->total_amount;
+            $amountCents = (int) round($chargeAmount * 100);
+
+            if ($chargeAmount < 100) {
+                $result = $this->failure(self::ERROR_MINIMUM_AMOUNT);
+            } else {
+                $result = $this->sendBookingPaymentRequest($booking, $paymentMethod, $reference, $amountCents);
+            }
         }
 
-        $reference = 'REZI-BK-'.$booking->id.'-'.Str::random(8);
-        // Pour XOF, Jeko attend amountCents = montant × 100 (1 FCFA = 100 "centimes" Jeko)
-        // Comportement observé : amountCents:201000 → Jeko affiche 2 010 FCFA (÷100)
-        // Donc pour afficher N FCFA, envoyer N × 100 en amountCents.
-        // Paiement fractionné : si payment_split=true, ne prélever que le dépôt (50%)
-        $chargeAmount = ($booking->payment_split && $booking->deposit_amount > 0)
-            ? $booking->deposit_amount
-            : $booking->total_amount;
-        $amountCents = (int) round($chargeAmount * 100);
+        return $result;
+    }
 
-        // Minimum 100 FCFA → amountCents = 10 000
-        if ($chargeAmount < 100) {
-            return [
-                'success' => false,
-                'error' => 'Le montant minimum est de 100 FCFA.',
-            ];
-        }
-
-        $successUrl = $this->callbackBaseUrl.'/bookings/payment/success?booking='.$booking->uuid;
-        $errorUrl = $this->callbackBaseUrl.'/bookings/payment/error?booking='.$booking->uuid;
-
+    private function sendBookingPaymentRequest(Booking $booking, string $paymentMethod, string $reference, int $amountCents): array
+    {
+        $result = null;
         $payload = [
             'storeId' => $this->storeId,
             'amountCents' => $amountCents,
@@ -197,8 +195,8 @@ class JekoPaymentService
                 'type' => 'redirect',
                 'data' => [
                     'paymentMethod' => $paymentMethod,
-                    'successUrl' => $successUrl,
-                    'errorUrl' => $errorUrl,
+                    'successUrl' => $this->callbackBaseUrl.'/bookings/payment/success?booking='.$booking->uuid,
+                    'errorUrl' => $this->callbackBaseUrl.'/bookings/payment/error?booking='.$booking->uuid,
                 ],
             ],
         ];
@@ -208,8 +206,8 @@ class JekoPaymentService
             $response = Http::withHeaders([
                 'X-API-KEY' => $this->apiKey,
                 'X-API-KEY-ID' => $this->apiKeyId,
-                'Content-Type' => 'application/json',
-            ])->post($this->baseUrl.'/partner_api/payment_requests', $payload);
+                'Content-Type' => self::CONTENT_TYPE_JSON,
+            ])->post($this->baseUrl.self::PAYMENT_REQUESTS_ENDPOINT, $payload);
 
             if ($response->successful()) {
                 $data = $response->json();
@@ -222,51 +220,43 @@ class JekoPaymentService
                     'payment_method' => $paymentMethod,
                 ]);
 
-                // Store payment reference on booking
                 $booking->update([
                     'payment_reference' => $reference,
                     'payment_method' => $paymentMethod,
                 ]);
 
-                return [
+                $result = [
                     'success' => true,
                     'redirect_url' => $data['redirectUrl'] ?? null,
                     'payment_id' => $data['id'] ?? null,
                     'reference' => $reference,
                 ];
+            } else {
+                Log::error('Jeko booking payment request failed', [
+                    'booking_id' => $booking->id,
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
+
+                $result = $this->failure('Erreur lors de la création du paiement : '.($response->json('message') ?? self::ERROR_UNKNOWN));
             }
-
-            Log::error('Jeko booking payment request failed', [
-                'booking_id' => $booking->id,
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-
-            return [
-                'success' => false,
-                'error' => 'Erreur lors de la création du paiement : '.($response->json('message') ?? 'Erreur inconnue'),
-            ];
         } catch (RequestException $e) {
             Log::error('Jeko booking payment request exception', [
                 'booking_id' => $booking->id,
                 'error' => $e->getMessage(),
             ]);
 
-            return [
-                'success' => false,
-                'error' => 'Service de paiement temporairement indisponible. Veuillez réessayer.',
-            ];
+            $result = $this->failure(self::ERROR_TEMPORARILY_UNAVAILABLE_RETRY);
         } catch (\Throwable $e) {
             Log::error('Jeko booking payment unexpected error', [
                 'booking_id' => $booking->id,
                 'error' => $e->getMessage(),
             ]);
 
-            return [
-                'success' => false,
-                'error' => 'Une erreur inattendue est survenue. Veuillez réessayer.',
-            ];
+            $result = $this->failure('Une erreur inattendue est survenue. Veuillez réessayer.');
         }
+
+        return $result;
     }
 
     /**
@@ -282,8 +272,8 @@ class JekoPaymentService
             $response = Http::withHeaders([
                 'X-API-KEY' => $this->apiKey,
                 'X-API-KEY-ID' => $this->apiKeyId,
-                'Content-Type' => 'application/json',
-            ])->get($this->baseUrl.'/partner_api/payment_requests/'.$paymentRequestId);
+                'Content-Type' => self::CONTENT_TYPE_JSON,
+            ])->get($this->baseUrl.self::PAYMENT_REQUESTS_ENDPOINT.'/'.$paymentRequestId);
 
             if ($response->successful()) {
                 $data = $response->json();
@@ -332,6 +322,60 @@ class JekoPaymentService
         return hash_equals($computedSignature, $signature);
     }
 
+    public function signedSponsoredSuccessUrl(SponsoredListing $sponsored, string $reference): string
+    {
+        return $this->formatRelativeSignedCallbackUrl(
+            URL::temporarySignedRoute(
+                'payment.jeko.success',
+                now()->addDay(),
+                [
+                    'sponsored_id' => $sponsored->getKey(),
+                    'reference' => $reference,
+                ],
+                absolute: false,
+            ),
+        );
+    }
+
+    public function signedSponsoredErrorUrl(SponsoredListing $sponsored, string $reference): string
+    {
+        return $this->formatRelativeSignedCallbackUrl(
+            URL::temporarySignedRoute(
+                'payment.jeko.error',
+                now()->addDay(),
+                [
+                    'sponsored_id' => $sponsored->getKey(),
+                    'reference' => $reference,
+                ],
+                absolute: false,
+            ),
+        );
+    }
+
+    public function signedSponsoredCheckUrl(SponsoredListing $sponsored): string
+    {
+        return $this->formatRelativeSignedCallbackUrl(
+            URL::temporarySignedRoute(
+                'payment.jeko.check',
+                now()->addDay(),
+                [
+                    'sponsored' => $sponsored->getKey(),
+                    'reference' => $sponsored->jeko_reference,
+                ],
+                absolute: false,
+            ),
+        );
+    }
+
+    protected function formatRelativeSignedCallbackUrl(string $relativeSignedUrl): string
+    {
+        if ($this->callbackBaseUrl) {
+            return rtrim($this->callbackBaseUrl, '/').$relativeSignedUrl;
+        }
+
+        return URL::to($relativeSignedUrl);
+    }
+
     /**
      * Create a payment request for a subscription via Jeko redirect flow.
      *
@@ -342,95 +386,83 @@ class JekoPaymentService
      */
     public function createSubscriptionPayment(\App\Models\SubscriptionPayment $payment, string $paymentMethod, string $description = ''): array
     {
+        $result = null;
+
         if (! $this->isEnabled()) {
-            return [
-                'success' => false,
-                'error' => 'Le service de paiement Jeko n\'est pas activé.',
-            ];
-        }
+            $result = $this->failure(self::ERROR_JEKO_DISABLED);
+        } else {
+            $amountCents = (int) round($payment->amount);
 
-        // Pour XOF, amountCents = montant en XOF directement (pas × 100)
-        $amountCents = (int) round($payment->amount);
-
-        if ($amountCents < 100) {
-            return [
-                'success' => false,
-                'error' => 'Le montant minimum est de 100 FCFA.',
-            ];
-        }
-
-        $successUrl = $this->callbackBaseUrl.'/owner/subscriptions/payment/success?reference='.$payment->reference;
-        $errorUrl = $this->callbackBaseUrl.'/owner/subscriptions/payment/error?reference='.$payment->reference;
-
-        $payload = [
-            'storeId' => $this->storeId,
-            'amountCents' => $amountCents,
-            'currency' => $this->currency,
-            'reference' => $payment->reference,
-            'paymentDetails' => [
-                'type' => 'redirect',
-                'data' => [
-                    'paymentMethod' => $paymentMethod,
-                    'successUrl' => $successUrl,
-                    'errorUrl' => $errorUrl,
-                ],
-            ],
-        ];
-
-        try {
-            /** @var \Illuminate\Http\Client\Response $response */
-            $response = Http::withHeaders([
-                'X-API-KEY' => $this->apiKey,
-                'X-API-KEY-ID' => $this->apiKeyId,
-                'Content-Type' => 'application/json',
-            ])->post($this->baseUrl.'/partner_api/payment_requests', $payload);
-
-            if ($response->successful()) {
-                $data = $response->json();
-
-                $payment->update([
-                    'provider_reference' => $data['id'] ?? null,
-                    'metadata' => array_merge($payment->metadata ?? [], [
-                        'jeko_payment_id' => $data['id'] ?? null,
-                        'payment_method' => $paymentMethod,
-                        'description' => $description,
-                    ]),
-                ]);
-
-                Log::info('Jeko subscription payment created', [
-                    'subscription_payment_id' => $payment->id,
+            if ($amountCents < 100) {
+                $result = $this->failure(self::ERROR_MINIMUM_AMOUNT);
+            } else {
+                $payload = [
+                    'storeId' => $this->storeId,
+                    'amountCents' => $amountCents,
+                    'currency' => $this->currency,
                     'reference' => $payment->reference,
-                    'amount' => $payment->amount,
-                ]);
-
-                return [
-                    'success' => true,
-                    'redirect_url' => $data['redirectUrl'] ?? null,
-                    'payment_id' => $data['id'] ?? null,
+                    'paymentDetails' => [
+                        'type' => 'redirect',
+                        'data' => [
+                            'paymentMethod' => $paymentMethod,
+                            'successUrl' => $this->callbackBaseUrl.'/owner/subscriptions/payment/success?reference='.$payment->reference,
+                            'errorUrl' => $this->callbackBaseUrl.'/owner/subscriptions/payment/error?reference='.$payment->reference,
+                        ],
+                    ],
                 ];
+
+                try {
+                    /** @var \Illuminate\Http\Client\Response $response */
+                    $response = Http::withHeaders([
+                        'X-API-KEY' => $this->apiKey,
+                        'X-API-KEY-ID' => $this->apiKeyId,
+                        'Content-Type' => self::CONTENT_TYPE_JSON,
+                    ])->post($this->baseUrl.self::PAYMENT_REQUESTS_ENDPOINT, $payload);
+
+                    if ($response->successful()) {
+                        $data = $response->json();
+
+                        $payment->update([
+                            'provider_reference' => $data['id'] ?? null,
+                            'metadata' => array_merge($payment->metadata ?? [], [
+                                'jeko_payment_id' => $data['id'] ?? null,
+                                'payment_method' => $paymentMethod,
+                                'description' => $description,
+                            ]),
+                        ]);
+
+                        Log::info('Jeko subscription payment created', [
+                            'subscription_payment_id' => $payment->id,
+                            'reference' => $payment->reference,
+                            'amount' => $payment->amount,
+                        ]);
+
+                        $result = [
+                            'success' => true,
+                            'redirect_url' => $data['redirectUrl'] ?? null,
+                            'payment_id' => $data['id'] ?? null,
+                        ];
+                    } else {
+                        Log::error('Jeko subscription payment failed', [
+                            'payment_id' => $payment->id,
+                            'status' => $response->status(),
+                            'body' => $response->body(),
+                        ]);
+
+                        $result = $this->failure('Erreur lors de la création du paiement.');
+                    }
+                } catch (\Throwable $e) {
+                    Log::error('Jeko subscription payment exception', [
+                        'payment_id' => $payment->id,
+                        'error' => $e->getMessage(),
+                    ]);
+
+                    $result = $this->failure(self::ERROR_TEMPORARILY_UNAVAILABLE);
+                }
             }
-
-            Log::error('Jeko subscription payment failed', [
-                'payment_id' => $payment->id,
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-
-            return [
-                'success' => false,
-                'error' => 'Erreur lors de la création du paiement.',
-            ];
-        } catch (\Throwable $e) {
-            Log::error('Jeko subscription payment exception', [
-                'payment_id' => $payment->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return [
-                'success' => false,
-                'error' => 'Service de paiement temporairement indisponible.',
-            ];
         }
+
+        return $result;
     }
 
     /**
@@ -442,77 +474,68 @@ class JekoPaymentService
      */
     public function createInsurancePayment(\App\Models\BookingInsurance $insurance, string $paymentMethod): array
     {
+        $result = null;
+
         if (! $this->isEnabled()) {
-            return [
-                'success' => false,
-                'error' => 'Le service de paiement Jeko n\'est pas activé.',
-            ];
-        }
+            $result = $this->failure(self::ERROR_JEKO_DISABLED);
+        } else {
+            $reference = 'REZI-INS-'.$insurance->id.'-'.\Illuminate\Support\Str::random(8);
+            $amountCents = (int) round($insurance->premium_amount);
 
-        $reference = 'REZI-INS-'.$insurance->id.'-'.\Illuminate\Support\Str::random(8);
-        // Pour XOF, amountCents = montant en XOF directement (pas × 100)
-        $amountCents = (int) round($insurance->premium_amount);
-
-        $successUrl = $this->callbackBaseUrl.'/insurance/payment/success?reference='.$reference;
-        $errorUrl = $this->callbackBaseUrl.'/insurance/payment/error?reference='.$reference;
-
-        $payload = [
-            'storeId' => $this->storeId,
-            'amountCents' => $amountCents,
-            'currency' => $this->currency,
-            'reference' => $reference,
-            'paymentDetails' => [
-                'type' => 'redirect',
-                'data' => [
-                    'paymentMethod' => $paymentMethod,
-                    'successUrl' => $successUrl,
-                    'errorUrl' => $errorUrl,
+            $payload = [
+                'storeId' => $this->storeId,
+                'amountCents' => $amountCents,
+                'currency' => $this->currency,
+                'reference' => $reference,
+                'paymentDetails' => [
+                    'type' => 'redirect',
+                    'data' => [
+                        'paymentMethod' => $paymentMethod,
+                        'successUrl' => $this->callbackBaseUrl.'/insurance/payment/success?reference='.$reference,
+                        'errorUrl' => $this->callbackBaseUrl.'/insurance/payment/error?reference='.$reference,
+                    ],
                 ],
-            ],
-        ];
+            ];
 
-        try {
-            /** @var \Illuminate\Http\Client\Response $response */
-            $response = Http::withHeaders([
-                'X-API-KEY' => $this->apiKey,
-                'X-API-KEY-ID' => $this->apiKeyId,
-                'Content-Type' => 'application/json',
-            ])->post($this->baseUrl.'/partner_api/payment_requests', $payload);
+            try {
+                /** @var \Illuminate\Http\Client\Response $response */
+                $response = Http::withHeaders([
+                    'X-API-KEY' => $this->apiKey,
+                    'X-API-KEY-ID' => $this->apiKeyId,
+                    'Content-Type' => self::CONTENT_TYPE_JSON,
+                ])->post($this->baseUrl.self::PAYMENT_REQUESTS_ENDPOINT, $payload);
 
-            if ($response->successful()) {
-                $data = $response->json();
+                if ($response->successful()) {
+                    $data = $response->json();
 
-                $insurance->update([
-                    'payment_reference' => $reference,
-                    'metadata' => array_merge($insurance->metadata ?? [], [
-                        'jeko_payment_id' => $data['id'] ?? null,
-                        'payment_method' => $paymentMethod,
-                    ]),
+                    $insurance->update([
+                        'payment_reference' => $reference,
+                        'metadata' => array_merge($insurance->metadata ?? [], [
+                            'jeko_payment_id' => $data['id'] ?? null,
+                            'payment_method' => $paymentMethod,
+                        ]),
+                    ]);
+
+                    $result = [
+                        'success' => true,
+                        'redirect_url' => $data['redirectUrl'] ?? null,
+                        'payment_id' => $data['id'] ?? null,
+                        'reference' => $reference,
+                    ];
+                } else {
+                    $result = $this->failure('Erreur lors de la création du paiement.');
+                }
+            } catch (\Throwable $e) {
+                Log::error('Jeko insurance payment exception', [
+                    'insurance_id' => $insurance->id,
+                    'error' => $e->getMessage(),
                 ]);
 
-                return [
-                    'success' => true,
-                    'redirect_url' => $data['redirectUrl'] ?? null,
-                    'payment_id' => $data['id'] ?? null,
-                    'reference' => $reference,
-                ];
+                $result = $this->failure(self::ERROR_TEMPORARILY_UNAVAILABLE);
             }
-
-            return [
-                'success' => false,
-                'error' => 'Erreur lors de la création du paiement.',
-            ];
-        } catch (\Throwable $e) {
-            Log::error('Jeko insurance payment exception', [
-                'insurance_id' => $insurance->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return [
-                'success' => false,
-                'error' => 'Service de paiement temporairement indisponible.',
-            ];
         }
+
+        return $result;
     }
 
     /**
@@ -566,73 +589,67 @@ class JekoPaymentService
      */
     public function createOrGetContact(User $user, string $paymentMethod, array $identifier): array
     {
-        // Si le propriétaire a déjà un contact Jeko enregistré, le réutiliser
+        $result = null;
+
         if ($user->jeko_contact_id) {
-            return [
+            $result = [
                 'success' => true,
                 'contact_id' => $user->jeko_contact_id,
             ];
-        }
+        } else {
+            $jekoMethod = $this->mapPayoutMethodToJeko($paymentMethod);
+            $payload = [
+                'name' => $user->name,
+                'paymentMethod' => $jekoMethod,
+                'identifier' => $identifier,
+            ];
 
-        // Mapper les noms d'opérateurs vers les noms Jeko
-        $jekoMethod = $this->mapPayoutMethodToJeko($paymentMethod);
+            try {
+                /** @var \Illuminate\Http\Client\Response $response */
+                $response = Http::withHeaders([
+                    'X-API-KEY' => $this->apiKey,
+                    'X-API-KEY-ID' => $this->apiKeyId,
+                    'Content-Type' => self::CONTENT_TYPE_JSON,
+                ])->post($this->baseUrl.'/partner_api/contacts', $payload);
 
-        $payload = [
-            'name' => $user->name,
-            'paymentMethod' => $jekoMethod,
-            'identifier' => $identifier,
-        ];
+                if ($response->successful()) {
+                    $data = $response->json();
+                    $contactId = $data['id'] ?? null;
 
-        try {
-            /** @var \Illuminate\Http\Client\Response $response */
-            $response = Http::withHeaders([
-                'X-API-KEY' => $this->apiKey,
-                'X-API-KEY-ID' => $this->apiKeyId,
-                'Content-Type' => 'application/json',
-            ])->post($this->baseUrl.'/partner_api/contacts', $payload);
+                    if ($contactId) {
+                        $user->update(['jeko_contact_id' => $contactId]);
 
-            if ($response->successful()) {
-                $data = $response->json();
-                $contactId = $data['id'] ?? null;
+                        Log::info('Jeko contact created', [
+                            'user_id' => $user->id,
+                            'contact_id' => $contactId,
+                            'payment_method' => $jekoMethod,
+                        ]);
+                    }
 
-                if ($contactId) {
-                    // Persister le contactId sur le propriétaire
-                    $user->update(['jeko_contact_id' => $contactId]);
-
-                    Log::info('Jeko contact created', [
-                        'user_id' => $user->id,
+                    $result = [
+                        'success' => true,
                         'contact_id' => $contactId,
-                        'payment_method' => $jekoMethod,
+                    ];
+                } else {
+                    Log::error('Jeko create contact failed', [
+                        'user_id' => $user->id,
+                        'status' => $response->status(),
+                        'body' => $response->body(),
                     ]);
+
+                    $result = $this->failure('Impossible de créer le contact bénéficiaire : '.($response->json('message') ?? self::ERROR_UNKNOWN));
                 }
+            } catch (\Throwable $e) {
+                Log::error('Jeko create contact exception', [
+                    'user_id' => $user->id,
+                    'error' => $e->getMessage(),
+                ]);
 
-                return [
-                    'success' => true,
-                    'contact_id' => $contactId,
-                ];
+                $result = $this->failure(self::ERROR_TEMPORARILY_UNAVAILABLE);
             }
-
-            Log::error('Jeko create contact failed', [
-                'user_id' => $user->id,
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-
-            return [
-                'success' => false,
-                'error' => 'Impossible de créer le contact bénéficiaire : '.($response->json('message') ?? 'Erreur inconnue'),
-            ];
-        } catch (\Throwable $e) {
-            Log::error('Jeko create contact exception', [
-                'user_id' => $user->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return [
-                'success' => false,
-                'error' => 'Service de paiement temporairement indisponible.',
-            ];
         }
+
+        return $result;
     }
 
     /**
@@ -687,135 +704,21 @@ class JekoPaymentService
      */
     public function executeTransfer(Payout $payout, User $owner): array
     {
+        $result = null;
+
         if (! $this->isEnabled()) {
-            return [
-                'success' => false,
-                'error' => 'Le service de paiement Jeko n\'est pas activé.',
-            ];
+            $result = $this->failure(self::ERROR_JEKO_DISABLED);
+        } else {
+            $result = $this->executeEnabledTransfer($payout, $owner);
         }
 
-        // 1. Créer ou récupérer le contact bénéficiaire
-        $identifier = $this->buildIdentifier($payout);
-        $contactResult = $this->createOrGetContact($owner, $payout->payout_method, $identifier);
-
-        if (! $contactResult['success']) {
-            return $contactResult;
-        }
-
-        $contactId = $contactResult['contact_id'];
-
-        // 2. Montant en XOF (mapping 1:1 avec Jeko, minimum 500 XOF)
-        $amountCents = (int) round($payout->net_amount);
-
-        if ($amountCents < 500) {
-            return [
-                'success' => false,
-                'error' => 'Le montant minimum de transfert est de 5 FCFA.',
-            ];
-        }
-
-        // 3. Créer le transfert
-        $payload = [
-            'storeId' => $this->storeId,
-            'contactId' => $contactId,
-            'amountCents' => $amountCents,
-            'currency' => $this->currency,
-            'description' => 'Versement REZI — '.$payout->reference,
-        ];
-
-        try {
-            // Protéger contre le double envoi (retries, dispatches concurrents)
-            $updated = Payout::where('id', $payout->id)
-                ->whereIn('status', ['pending', 'approved'])
-                ->update(['status' => 'processing']);
-
-            if (!$updated) {
-                return [
-                    'success' => false,
-                    'error' => 'Payout already being processed or completed.',
-                ];
-            }
-
-            $payout->refresh();
-
-            /** @var \Illuminate\Http\Client\Response $response */
-            $response = Http::withHeaders([
-                'X-API-KEY' => $this->apiKey,
-                'X-API-KEY-ID' => $this->apiKeyId,
-                'Content-Type' => 'application/json',
-            ])->timeout(30)->post($this->baseUrl.'/partner_api/transfers', $payload);
-
-            $data = $response->json();
-
-            if ($response->successful()) {
-                $transferId = $data['id'] ?? null;
-                $transferStatus = $data['status'] ?? 'pending';
-                $fees = $data['fees']['amount'] ?? 0;
-
-                // Mettre à jour le payout avec la référence Jeko
-                $payout->update([
-                    'provider_reference' => $transferId,
-                    'transfer_fee' => $fees / 100, // centimes → FCFA
-                    'metadata' => array_merge($payout->metadata ?? [], [
-                        'jeko_transfer_id' => $transferId,
-                        'jeko_status' => $transferStatus,
-                        'jeko_fees' => $fees,
-                        'jeko_contact_id' => $contactId,
-                    ]),
-                ]);
-
-                // Si le transfert est immédiatement complété
-                if ($transferStatus === 'success') {
-                    $payout->markAsCompleted($transferId);
-                }
-
-                Log::info('Jeko transfer created', [
-                    'payout_id' => $payout->id,
-                    'transfer_id' => $transferId,
-                    'status' => $transferStatus,
-                    'amount_cents' => $amountCents,
-                    'owner_id' => $owner->id,
-                ]);
-
-                return [
-                    'success' => true,
-                    'transfer_id' => $transferId,
-                    'status' => $transferStatus,
-                ];
-            }
-
-            $errorMsg = $data['message'] ?? 'Erreur lors du transfert';
-            $payout->markAsFailed($errorMsg);
-
-            Log::error('Jeko transfer failed', [
-                'payout_id' => $payout->id,
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-
-            return [
-                'success' => false,
-                'error' => $errorMsg,
-            ];
-        } catch (\Throwable $e) {
-            $payout->markAsFailed('Erreur de connexion : '.$e->getMessage());
-
-            Log::error('Jeko transfer exception', [
-                'payout_id' => $payout->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return [
-                'success' => false,
-                'error' => 'Service de paiement temporairement indisponible.',
-            ];
-        }
+        return $result;
     }
 
     /**
      * Construire l'identifiant bénéficiaire à partir du payout.
      */
-    private function buildIdentifier(Payout $payout): array
+    protected function buildIdentifier(Payout $payout): array
     {
         if ($payout->payout_method === 'bank_transfer') {
             return [

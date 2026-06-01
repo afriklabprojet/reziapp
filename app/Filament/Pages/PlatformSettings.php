@@ -14,13 +14,17 @@ class PlatformSettings extends Page implements HasForms
 {
     use InteractsWithForms;
 
+    protected static bool $shouldRegisterNavigation = true;
+
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?string $navigationGroup = 'Administration';
+    protected static ?string $navigationGroup = 'Configuration';
 
-    protected static ?string $navigationLabel = 'Paramètres plateforme';
+    protected static ?string $navigationLabel = 'Commissions & paiements';
 
-    protected static ?string $title = 'Paramètres de la plateforme';
+    protected static ?string $title = 'Commissions et paiements';
+
+    protected static ?string $slug = 'commissions-paiements';
 
     protected static ?int $navigationSort = 10;
 
@@ -87,19 +91,19 @@ class PlatformSettings extends Page implements HasForms
         return $form
             ->schema([
                 Forms\Components\Section::make('Commissions')
-                    ->description('Paramètres de commission de la plateforme')
+                    ->description('Paramètres de commission appliqués au propriétaire sur chaque réservation')
                     ->icon('heroicon-o-calculator')
                     ->schema([
                         Forms\Components\TextInput::make('commission_rate')
-                            ->label('Taux de commission (%)')
+                            ->label('Taux de commission propriétaire (%)')
                             ->numeric()
                             ->minValue(0)
                             ->maxValue(50)
                             ->suffix('%')
                             ->required()
-                            ->helperText('Pourcentage prélevé sur chaque réservation'),
+                            ->helperText('Exemple : 10 pour prélever 10% sur le montant total de chaque réservation'),
                         Forms\Components\TextInput::make('commission_min')
-                            ->label('Commission minimum')
+                            ->label('Commission minimum par réservation')
                             ->numeric()
                             ->minValue(0)
                             ->suffix('FCFA')
@@ -261,7 +265,7 @@ class PlatformSettings extends Page implements HasForms
         return $form
             ->schema([
                 Forms\Components\Section::make('Tarification')
-                    ->description('Taxes et frais applicables aux réservations')
+                    ->description('Taxes et frais visibles côté réservation')
                     ->icon('heroicon-o-banknotes')
                     ->schema([
                         Forms\Components\TextInput::make('state_tax')

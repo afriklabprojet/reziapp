@@ -28,8 +28,8 @@
                     </span>
                 @elseif ($sponsored->status === 'pending')
                     <span
-                        class="self-start inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full bg-[#fff0f3] text-[#b5083a] border border-[#ffb3c1]">
-                        <span class="w-1.5 h-1.5 bg-[#ff385c] rounded-full"></span>En attente
+                        class="self-start inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full bg-[#FFF4EB] text-[#A34700] border border-[#FFD0A3]">
+                        <span class="w-1.5 h-1.5 bg-[#F16A00] rounded-full"></span>En attente
                     </span>
                 @elseif ($sponsored->status === 'paused')
                     <span
@@ -248,7 +248,7 @@
                             @if ($sponsored->total_budget)
                                 @php $budgetPct = min(100, round(($sponsored->amount_spent / $sponsored->total_budget) * 100)); @endphp
                                 <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                                    <div class="h-full rounded-full transition-all duration-500 {{ $budgetPct >= 90 ? 'bg-red-500' : ($budgetPct >= 60 ? 'bg-[#ff4d6d]' : 'bg-green-500') }}"
+                                    <div class="h-full rounded-full transition-all duration-500 {{ $budgetPct >= 90 ? 'bg-red-500' : ($budgetPct >= 60 ? 'bg-[#FF8A1F]' : 'bg-green-500') }}"
                                         style="width: {{ $budgetPct }}%"></div>
                                 </div>
                                 <p class="text-[11px] text-gray-400 mt-1">sur

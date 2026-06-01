@@ -4,7 +4,7 @@
     <div class="min-h-[calc(100vh-64px)] flex">
         {{-- Left Side - Branding (Desktop only) --}}
         <div
-            class="hidden lg:flex lg:w-1/2 bg-linear-to-br from-[#ff385c] via-[#ff385c] to-cyan-700 relative overflow-hidden">
+            class="hidden lg:flex lg:w-1/2 bg-linear-to-br from-[#F16A00] via-[#F16A00] to-cyan-700 relative overflow-hidden">
             {{-- Background Pattern --}}
             <div class="absolute inset-0 opacity-10">
                 <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -32,13 +32,13 @@
                 <div class="mb-8">
                     <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-2xl">
                         <span
-                            class="text-3xl font-bold bg-linear-to-r from-[#ff385c] to-[#ff385c] bg-clip-text text-transparent">R</span>
+                            class="text-3xl font-bold bg-linear-to-r from-[#F16A00] to-[#F16A00] bg-clip-text text-transparent">R</span>
                     </div>
                 </div>
 
                 {{-- Headline --}}
                 <h1 class="text-4xl font-bold text-center mb-4">Presque terminé !</h1>
-                <p class="text-xl text-[#ffd1da] text-center mb-12 max-w-md">
+                <p class="text-xl text-[#FFE7D1] text-center mb-12 max-w-md">
                     Il ne reste qu'une étape pour activer votre compte REZI.
                 </p>
 
@@ -61,7 +61,7 @@
                         </div>
                         <div>
                             <div class="font-semibold">Sécurité renforcée</div>
-                            <div class="text-sm text-[#ffd1da]">Protégez votre compte</div>
+                            <div class="text-sm text-[#FFE7D1]">Protégez votre compte</div>
                         </div>
                     </div>
                     <div class="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-xl p-4">
@@ -73,7 +73,7 @@
                         </div>
                         <div>
                             <div class="font-semibold">Notifications</div>
-                            <div class="text-sm text-[#ffd1da]">Recevez les alertes</div>
+                            <div class="text-sm text-[#FFE7D1]">Recevez les alertes</div>
                         </div>
                     </div>
                     <div class="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-xl p-4">
@@ -85,7 +85,7 @@
                         </div>
                         <div>
                             <div class="font-semibold">Favoris & réservations</div>
-                            <div class="text-sm text-[#ffd1da]">Sauvegardez vos coups de cœur</div>
+                            <div class="text-sm text-[#FFE7D1]">Sauvegardez vos coups de cœur</div>
                         </div>
                     </div>
                 </div>
@@ -100,14 +100,14 @@
                     {{-- Mobile logo --}}
                     <div class="lg:hidden mb-6 flex justify-center">
                         <div
-                            class="w-16 h-16 bg-linear-to-br from-[#ff385c] to-[#e00b41] rounded-2xl flex items-center justify-center shadow-xl">
+                            class="w-16 h-16 bg-linear-to-br from-[#F16A00] to-[#CC5A00] rounded-2xl flex items-center justify-center shadow-xl">
                             <span class="text-2xl font-bold text-white">R</span>
                         </div>
                     </div>
 
                     {{-- Email Icon --}}
-                    <div class="mx-auto w-20 h-20 bg-[#ffd1da] rounded-2xl flex items-center justify-center mb-6">
-                        <svg class="w-10 h-10 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="mx-auto w-20 h-20 bg-[#FFE7D1] rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-10 h-10 text-[#F16A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
@@ -141,7 +141,7 @@
                     <form method="POST" action="{{ route('verification.send') }}">
                         @csrf
                         <button type="submit"
-                            class="w-full bg-linear-to-r from-[#ff385c] to-[#ff385c] hover:from-[#e00b41] hover:to-teal-700 text-white font-semibold py-3.5 px-4 rounded-xl transition-all duration-200 shadow-lg shadow-none hover:shadow-xl hover:shadow-none/40 flex items-center justify-center gap-2">
+                            class="w-full bg-linear-to-r from-[#F16A00] to-[#F16A00] hover:from-[#CC5A00] hover:to-teal-700 text-white font-semibold py-3.5 px-4 rounded-xl transition-all duration-200 shadow-lg shadow-none hover:shadow-xl hover:shadow-none/40 flex items-center justify-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />

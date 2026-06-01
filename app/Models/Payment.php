@@ -64,6 +64,8 @@ class Payment extends Model
 
     protected $hidden = [
         'otp_code',
+        'provider_response', // Données sensibles du prestataire Jeko — jamais exposées dans les réponses API
+        'provider_response', // Données sensibles du prestataire Jeko — jamais exposées dans les réponses API
     ];
 
     // ===== CONSTANTS =====

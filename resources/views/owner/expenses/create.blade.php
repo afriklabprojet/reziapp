@@ -17,7 +17,7 @@
 
         <div>
             <label for="residence_id" class="block text-sm font-semibold text-gray-700 mb-1">Résidence *</label>
-            <select name="residence_id" id="residence_id" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]">
+            <select name="residence_id" id="residence_id" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#F16A00] focus:border-[#F16A00]">
                 <option value="">Sélectionner...</option>
                 @foreach($residences as $r)
                     <option value="{{ $r->id }}" {{ old('residence_id') == $r->id ? 'selected' : '' }}>{{ $r->name }}</option>
@@ -29,7 +29,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
                 <label for="category" class="block text-sm font-semibold text-gray-700 mb-1">Catégorie *</label>
-                <select name="category" id="category" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                <select name="category" id="category" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#F16A00] focus:border-[#F16A00]">
                     <option value="">Sélectionner...</option>
                     @foreach($categories as $key => $label)
                         <option value="{{ $key }}" {{ old('category') === $key ? 'selected' : '' }}>{{ $label }}</option>
@@ -39,31 +39,31 @@
             </div>
             <div>
                 <label for="expense_date" class="block text-sm font-semibold text-gray-700 mb-1">Date *</label>
-                <input type="date" name="expense_date" id="expense_date" value="{{ old('expense_date', now()->format('Y-m-d')) }}" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                <input type="date" name="expense_date" id="expense_date" value="{{ old('expense_date', now()->format('Y-m-d')) }}" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#F16A00] focus:border-[#F16A00]">
                 @error('expense_date') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             </div>
         </div>
 
         <div>
             <label for="description" class="block text-sm font-semibold text-gray-700 mb-1">Description *</label>
-            <input type="text" name="description" id="description" value="{{ old('description') }}" required placeholder="Ex: Facture SODECI mars 2025" class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]">
+            <input type="text" name="description" id="description" value="{{ old('description') }}" required placeholder="Ex: Facture SODECI mars 2025" class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#F16A00] focus:border-[#F16A00]">
             @error('description') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
         </div>
 
         <div>
             <label for="amount" class="block text-sm font-semibold text-gray-700 mb-1">Montant (FCFA) *</label>
-            <input type="number" name="amount" id="amount" value="{{ old('amount') }}" required min="0" step="1" placeholder="0" class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]">
+            <input type="number" name="amount" id="amount" value="{{ old('amount') }}" required min="0" step="1" placeholder="0" class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#F16A00] focus:border-[#F16A00]">
             @error('amount') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
         </div>
 
         <div x-data="{ recurring: {{ old('is_recurring') ? 'true' : 'false' }} }">
             <label class="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" name="is_recurring" value="1" x-model="recurring" class="rounded border-gray-300 text-[#ff385c] focus:ring-[#ff385c]">
+                <input type="checkbox" name="is_recurring" value="1" x-model="recurring" class="rounded border-gray-300 text-[#F16A00] focus:ring-[#F16A00]">
                 <span class="text-sm font-medium text-gray-700">Dépense récurrente</span>
             </label>
             <div x-show="recurring" x-transition class="mt-3">
                 <label for="frequency" class="block text-sm font-semibold text-gray-700 mb-1">Fréquence</label>
-                <select name="frequency" id="frequency" class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                <select name="frequency" id="frequency" class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#F16A00] focus:border-[#F16A00]">
                     <option value="monthly" {{ old('frequency') === 'monthly' ? 'selected' : '' }}>Mensuelle</option>
                     <option value="quarterly" {{ old('frequency') === 'quarterly' ? 'selected' : '' }}>Trimestrielle</option>
                     <option value="yearly" {{ old('frequency') === 'yearly' ? 'selected' : '' }}>Annuelle</option>
@@ -79,7 +79,7 @@
 
         <div>
             <label for="notes" class="block text-sm font-semibold text-gray-700 mb-1">Notes</label>
-            <textarea name="notes" id="notes" rows="2" placeholder="Notes complémentaires..." class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]">{{ old('notes') }}</textarea>
+            <textarea name="notes" id="notes" rows="2" placeholder="Notes complémentaires..." class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#F16A00] focus:border-[#F16A00]">{{ old('notes') }}</textarea>
         </div>
 
         <div class="flex justify-end gap-3 pt-3 border-t border-gray-100">

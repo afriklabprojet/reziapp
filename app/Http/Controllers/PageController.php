@@ -119,11 +119,11 @@ class PageController extends Controller
     {
         $content = \App\Models\PageContent::getBySlug('tarifs');
 
-        $metaTitle       = $content?->meta_title       ?? 'Tarifs REZI – Publication gratuite, 0 commission';
-        $metaDescription = $content?->meta_description ?? 'Publiez votre résidence meublée gratuitement sur REZI. Aucune commission sur la mise en location, options de visibilité disponibles.';
+        $metaTitle = 'Tarifs REZI – 10% de commission propriétaire par réservation';
+        $metaDescription = 'REZI ne fonctionne pas par abonnement. Les locataires ne paient aucun frais de plateforme et les propriétaires paient 10% sur le montant total de chaque réservation confirmée.';
 
         $boostPlans = $content?->data['boost_plans'] ?? \App\Models\PageContent::defaultTarifsData()['boost_plans'];
-        $faqItems   = $content?->data['faq']         ?? \App\Models\PageContent::defaultTarifsData()['faq'];
+        $faqItems = \App\Models\PageContent::defaultTarifsData()['faq'];
 
         return view('pages.tarifs', compact('metaTitle', 'metaDescription', 'boostPlans', 'faqItems'));
     }

@@ -22,7 +22,7 @@
                 404
             </div>
             <div class="absolute inset-0 flex items-center justify-center">
-                <svg class="w-24 h-24 sm:w-32 sm:h-32 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-24 h-24 sm:w-32 sm:h-32 text-[#F16A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
@@ -40,7 +40,7 @@
 
         {{-- Actions --}}
         <div class="flex flex-col sm:flex-row gap-4">
-            <a href="{{ route('home') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#ff385c] text-white font-semibold rounded-xl hover:bg-[#e00b41] transition-colors shadow-lg shadow-none">
+            <a href="{{ route('home') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#F16A00] text-white font-semibold rounded-xl hover:bg-[#CC5A00] transition-colors shadow-lg shadow-none">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                 </svg>
@@ -58,11 +58,11 @@
         <div class="mt-12 text-center">
             <p class="text-sm text-gray-500 mb-4">Liens utiles :</p>
             <div class="flex flex-wrap justify-center gap-4 text-sm">
-                <a href="{{ route('residences.index') }}" class="text-[#e00b41] hover:text-[#b5083a]">Résidences</a>
+                <a href="{{ route('residences.index') }}" class="text-[#CC5A00] hover:text-[#A34700]">Résidences</a>
                 <span class="text-gray-300">•</span>
-                <a href="{{ route('residences.map') }}" class="text-[#e00b41] hover:text-[#b5083a]">Carte</a>
+                <a href="{{ route('residences.map') }}" class="text-[#CC5A00] hover:text-[#A34700]">Carte</a>
                 <span class="text-gray-300">•</span>
-                <a href="{{ route('login') }}" class="text-[#e00b41] hover:text-[#b5083a]">Connexion</a>
+                <a href="{{ route('login') }}" class="text-[#CC5A00] hover:text-[#A34700]">Connexion</a>
             </div>
         </div>
     </div>

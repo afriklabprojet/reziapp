@@ -5,13 +5,13 @@
     <title>Contrat de bail – {{ $contract->reference }}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 12px; line-height: 1.6; color: #1a1a1a; padding: 40px; }
+        body { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 12px; line-height: 1.6; color: #0F0F0F; padding: 40px; }
 
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; border-bottom: 3px solid #059669; padding-bottom: 20px; }
         .logo { font-size: 26px; font-weight: bold; color: #059669; letter-spacing: -1px; }
         .logo span { color: #f97316; }
         .doc-meta { text-align: right; }
-        .doc-meta h1 { font-size: 18px; color: #1a1a1a; font-weight: bold; margin-bottom: 4px; }
+        .doc-meta h1 { font-size: 18px; color: #0F0F0F; font-weight: bold; margin-bottom: 4px; }
         .doc-meta .ref { font-size: 11px; color: #6b7280; }
         .doc-meta .status { display: inline-block; margin-top: 6px; padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: bold; background: #d1fae5; color: #065f46; }
 
@@ -152,7 +152,7 @@
             <th style="text-align:right;">Montant (FCFA)</th>
         </tr>
         <tr>
-            <td>{{ $contract->lease_type === 'short_term' ? 'Tarif par nuit' : 'Loyer mensuel' }}</td>
+            <td>{{ $contract->lease_type === 'short_term' ? 'Tarif par nuit' : 'Montant mensuel de location' }}</td>
             <td class="amount">{{ number_format($contract->monthly_rent, 0, ',', ' ') }} FCFA</td>
         </tr>
         @if($contract->charges_amount)
@@ -173,7 +173,7 @@
 
     @if($contract->payment_day)
     <div class="clause">
-        <div class="clause-text">Le loyer est dû et payable le <strong>{{ $contract->payment_day }}</strong> de chaque mois.</div>
+        <div class="clause-text">Le montant de location est dû et payable le <strong>{{ $contract->payment_day }}</strong> de chaque mois.</div>
     </div>
     @endif
 
@@ -182,7 +182,7 @@
     @if($contract->included_services && count($contract->included_services))
     <h2>{{ $sectionNum }}. Services inclus</h2>
     <div class="clause">
-        <div class="clause-text">Les services suivants sont inclus dans le loyer : <strong>{{ implode(', ', $contract->included_services) }}</strong>.</div>
+        <div class="clause-text">Les services suivants sont inclus dans la location : <strong>{{ implode(', ', $contract->included_services) }}</strong>.</div>
     </div>
     @php $sectionNum++; @endphp
     @endif
@@ -205,7 +205,7 @@
 
     <div class="clause">
         <div class="clause-title">Obligations du locataire</div>
-        <div class="clause-text">Le locataire s'engage à payer le loyer et les charges aux termes convenus, à user paisiblement des locaux, à ne pas transformer le logement sans l'accord du bailleur, et à restituer le logement en bon état.</div>
+        <div class="clause-text">Le locataire s'engage à payer le montant de location et les charges aux termes convenus, à user paisiblement des locaux, à ne pas transformer le logement sans l'accord du bailleur, et à restituer le logement en bon état.</div>
     </div>
 
     <div class="clause">

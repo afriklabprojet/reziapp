@@ -57,7 +57,7 @@ class TenantReviewResource extends Resource
                             ->preload(),
                         Forms\Components\Select::make('residence_id')
                             ->label('Résidence')
-                            ->relationship('residence', 'title')
+                            ->relationship('residence', 'name')
                             ->searchable()
                             ->preload(),
                         Forms\Components\Toggle::make('is_public')

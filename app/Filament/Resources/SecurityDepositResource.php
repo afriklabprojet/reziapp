@@ -58,7 +58,7 @@ class SecurityDepositResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('residence_id')
                             ->label('Résidence')
-                            ->relationship('residence', 'title')
+                            ->relationship('residence', 'name')
                             ->searchable()
                             ->preload(),
                     ])->columns(2),

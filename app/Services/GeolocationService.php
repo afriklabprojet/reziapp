@@ -6,11 +6,11 @@ namespace App\Services;
 
 use App\Models\City;
 use App\Models\Residence;
-use App\Repositories\ResidenceRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 /**
  * Service de géolocalisation pour REZI
@@ -24,19 +24,13 @@ class GeolocationService
 {
     private const EARTH_RADIUS_METERS = 6371000;
     private const CACHE_TTL = 1800; // 30 minutes
-    private const GEOHASH_PRECISION = 5; // ~4.9km precision
-
-    public function __construct(
-        private ResidenceRepository $repository,
-    ) {
-    }
 
     /**
      * Obtenir les rayons autorisés depuis la config
      */
     public static function getAllowedRadii(): array
     {
-        return config('rezi.search.allowed_radii', [100, 200, 300, 400, 500]);
+        return config('rezi.search.allowed_radii', [2000, 5000, 10000, 25000, 50000]);
     }
 
     /**
@@ -44,7 +38,7 @@ class GeolocationService
      */
     public static function getDefaultRadius(): int
     {
-        return config('rezi.search.default_radius', 300);
+        return config('rezi.search.default_radius', 2000);
     }
 
     /**
@@ -67,11 +61,10 @@ class GeolocationService
             }
 
             // Ajouter les villes actives de la BDD (hors communes déjà dans config)
-            $configKeys = array_keys($result);
             $cities = City::active()->ordered()->with('country')->get();
 
             foreach ($cities as $city) {
-                $key = \Str::slug($city->name);
+                $key = Str::slug($city->name);
                 if (! isset($result[$key])) {
                     $result[$key] = [
                         'lat' => $city->latitude,
@@ -100,7 +93,7 @@ class GeolocationService
      *
      * @param float $latitude Latitude du centre de recherche
      * @param float $longitude Longitude du centre de recherche
-     * @param int $radius Rayon en mètres (100-500)
+        * @param int $radius Rayon en mètres, normalisé selon config('rezi.search.allowed_radii')
      * @param array $filters Filtres (min_price, max_price, bedrooms, commune, amenities, etc.)
      * @param string $sort Tri (distance, price_asc, price_desc, newest, area)
      * @param int $perPage Résultats par page
@@ -138,7 +131,7 @@ class GeolocationService
 
             // Appliquer le tri (si pas déjà fait par withinRadius)
             if (!$sortByDistance) {
-                $this->applySort($query, $sort, $latitude, $longitude);
+                $this->applySort($query, $sort);
             }
 
             return $query->paginate($perPage);
@@ -399,7 +392,7 @@ class GeolocationService
     /**
      * Applique le tri à la requête (pour les tris non-distance)
      */
-    private function applySort($query, string $sort, float $lat, float $lng): void
+    private function applySort($query, string $sort): void
     {
         switch ($sort) {
             case 'price_asc':

@@ -47,7 +47,7 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     <div
                         class="relative p-6 overflow-hidden
-                        {{ $coupon->isValid() ? 'bg-linear-to-br from-[#ff385c] to-[#e00b41]' : ($coupon->is_active && $coupon->expires_at && $coupon->expires_at->isPast() ? 'bg-linear-to-br from-amber-400 to-amber-500' : 'bg-linear-to-br from-gray-300 to-gray-400') }}
+                        {{ $coupon->isValid() ? 'bg-linear-to-br from-[#F16A00] to-[#CC5A00]' : ($coupon->is_active && $coupon->expires_at && $coupon->expires_at->isPast() ? 'bg-linear-to-br from-amber-400 to-amber-500' : 'bg-linear-to-br from-gray-300 to-gray-400') }}
                         text-white">
                         {{-- Ticket holes --}}
                         <div class="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full"></div>
@@ -161,7 +161,7 @@
                         </div>
                         <div class="bg-gray-50 rounded-xl p-4">
                             <p class="text-xs text-gray-500 mb-1">Valeur</p>
-                            <p class="font-semibold text-[#e00b41] text-lg">{{ $coupon->discount_label }}</p>
+                            <p class="font-semibold text-[#CC5A00] text-lg">{{ $coupon->discount_label }}</p>
                         </div>
                         <div class="bg-gray-50 rounded-xl p-4">
                             <p class="text-xs text-gray-500 mb-1">Résidence</p>
@@ -242,9 +242,9 @@
                             @foreach ($coupon->uses as $use)
                                 <div class="px-6 py-4 flex items-center justify-between hover:bg-gray-50/50 transition">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 bg-[#fff0f3] rounded-full flex items-center justify-center">
+                                        <div class="w-9 h-9 bg-[#FFF4EB] rounded-full flex items-center justify-center">
                                             <span
-                                                class="text-sm font-bold text-[#e00b41]">{{ mb_substr($use->user->name ?? 'U', 0, 1) }}</span>
+                                                class="text-sm font-bold text-[#CC5A00]">{{ mb_substr($use->user->name ?? 'U', 0, 1) }}</span>
                                         </div>
                                         <div>
                                             <p class="text-sm font-medium text-gray-900">
@@ -337,8 +337,8 @@
                     <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Actions</h3>
 
                     <a href="{{ route('owner.marketing.coupons.edit', $coupon) }}"
-                        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#fff0f3] transition text-sm font-medium text-gray-700 hover:text-[#b5083a]">
-                        <svg class="w-4.5 h-4.5 text-[#ff385c]" fill="none" stroke="currentColor"
+                        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FFF4EB] transition text-sm font-medium text-gray-700 hover:text-[#A34700]">
+                        <svg class="w-4.5 h-4.5 text-[#F16A00]" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />

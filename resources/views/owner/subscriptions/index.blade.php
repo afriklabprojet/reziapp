@@ -1,275 +1,120 @@
 @extends('layouts.owner')
 
-@section('title', 'Abonnements - REZI')
+@section('title', 'Commission REZI - REZI')
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    {{-- Flash Messages --}}
-    @if(session('success'))
-        <div class="mb-6 rounded-lg bg-green-50 p-4 border border-green-200">
-            <div class="flex">
-                <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-                <p class="ml-3 text-sm text-green-700">{{ session('success') }}</p>
+    @foreach (['success' => 'green', 'error' => 'red', 'info' => 'blue'] as $flashType => $flashColor)
+        @if(session($flashType))
+            <div class="mb-6 rounded-lg border p-4 {{ $flashColor === 'green' ? 'bg-green-50 border-green-200 text-green-700' : ($flashColor === 'red' ? 'bg-red-50 border-red-200 text-red-700' : 'bg-blue-50 border-blue-200 text-blue-700') }}">
+                <p class="text-sm font-medium">{{ session($flashType) }}</p>
+            </div>
+        @endif
+    @endforeach
+
+    <div class="mb-8 rounded-3xl bg-linear-to-br from-gray-950 via-gray-900 to-orange-900 px-6 py-8 text-white shadow-2xl">
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div class="max-w-2xl">
+                <span class="inline-flex rounded-full border border-orange-300/30 bg-orange-400/10 px-4 py-1 text-sm font-semibold text-orange-200">
+                    Aucun abonnement mensuel
+                </span>
+                <h1 class="mt-4 text-3xl font-bold sm:text-4xl">REZI prélève {{ rtrim(rtrim(number_format($commissionRate, 2, ',', ' '), '0'), ',') }}% sur chaque réservation propriétaire</h1>
+                <p class="mt-3 text-base text-white/75 sm:text-lg">
+                    Le modèle économique est simple: pas d'abonnement SaaS, pas de forfait annuel, pas de plan à choisir. La plateforme retient uniquement une commission sur le montant total encaissé pour chaque réservation confirmée.
+                </p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/10 px-5 py-4 backdrop-blur">
+                <p class="text-sm font-medium text-white/70">Exemple</p>
+                <p class="mt-2 text-2xl font-bold">{{ number_format($exampleBookingAmount, 0, ',', ' ') }} FCFA</p>
+                <p class="text-sm text-white/70">montant total réservation</p>
+                <div class="mt-3 h-px bg-white/10"></div>
+                <p class="mt-3 text-lg font-semibold text-orange-200">Commission REZI: {{ number_format($exampleCommissionAmount, 0, ',', ' ') }} FCFA</p>
             </div>
         </div>
-    @endif
-
-    @if(session('error'))
-        <div class="mb-6 rounded-lg bg-red-50 p-4 border border-red-200">
-            <div class="flex">
-                <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                </svg>
-                <p class="ml-3 text-sm text-red-700">{{ session('error') }}</p>
-            </div>
-        </div>
-    @endif
-
-    {{-- Header --}}
-    <div class="mb-8">
-        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Abonnements</h1>
-        <p class="mt-2 text-gray-600">Choisissez le plan qui correspond à vos besoins</p>
     </div>
 
-    {{-- Current Subscription --}}
-    @if($currentSubscription)
-        <div class="mb-8 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div class="flex items-center justify-between">
+    <div class="grid gap-5 md:grid-cols-4">
+        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <p class="text-sm font-medium text-gray-500">Réservations payées</p>
+            <p class="mt-2 text-3xl font-bold text-gray-900">{{ number_format($totalReservations, 0, ',', ' ') }}</p>
+        </div>
+        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <p class="text-sm font-medium text-gray-500">Volume total encaissé</p>
+            <p class="mt-2 text-3xl font-bold text-gray-900">{{ number_format($totalReservationVolume, 0, ',', ' ') }} FCFA</p>
+        </div>
+        <div class="rounded-2xl border border-orange-200 bg-orange-50 p-5 shadow-sm">
+            <p class="text-sm font-medium text-orange-700">Commission REZI</p>
+            <p class="mt-2 text-3xl font-bold text-orange-900">{{ number_format($totalCommission, 0, ',', ' ') }} FCFA</p>
+        </div>
+        <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
+            <p class="text-sm font-medium text-emerald-700">Net propriétaire</p>
+            <p class="mt-2 text-3xl font-bold text-emerald-900">{{ number_format($totalOwnerRevenue, 0, ',', ' ') }} FCFA</p>
+        </div>
+    </div>
+
+    <div class="mt-8 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+        <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
                 <div>
-                    <h2 class="text-lg font-semibold text-gray-900">Votre abonnement actuel</h2>
-                    <p class="text-gray-600 mt-1">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800">
-                            {{ $currentSubscription->plan->name }}
-                        </span>
-                        <span class="ml-2 text-sm">
-                            @if($currentSubscription->status === 'active')
-                                Actif jusqu'au {{ $currentSubscription->current_period_end->format('d/m/Y') }}
-                            @elseif($currentSubscription->status === 'cancelled')
-                                Annulé - Actif jusqu'au {{ $currentSubscription->current_period_end->format('d/m/Y') }}
-                            @endif
-                        </span>
-                    </p>
+                    <h2 class="text-xl font-bold text-gray-900">Dernières commissions calculées</h2>
+                    <p class="mt-1 text-sm text-gray-500">Chaque ligne reprend le montant total de la réservation et la retenue REZI appliquée côté propriétaire.</p>
                 </div>
-                <div class="flex gap-3">
-                    <a href="{{ route('owner.marketing.subscriptions.history') }}" class="btn-secondary">
-                        Historique
-                    </a>
-                    @if($currentSubscription->status === 'active')
-                        <form action="{{ route('owner.marketing.subscriptions.cancel') }}" method="POST" class="inline"
-                              onsubmit="return confirm('Êtes-vous sûr de vouloir annuler votre abonnement ?')">
-                            @csrf
-                            <button type="submit" class="btn-danger">Annuler</button>
-                        </form>
-                    @elseif($currentSubscription->status === 'cancelled')
-                        <form action="{{ route('owner.marketing.subscriptions.resume') }}" method="POST" class="inline">
-                            @csrf
-                            <button type="submit" class="btn-primary">Réactiver</button>
-                        </form>
-                    @endif
-                </div>
+                <a href="{{ route('owner.marketing.subscriptions.history') }}" class="btn-secondary">Voir tout</a>
+            </div>
+
+            <div class="mt-6 overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left font-semibold text-gray-500">Référence</th>
+                            <th class="px-4 py-3 text-left font-semibold text-gray-500">Résidence</th>
+                            <th class="px-4 py-3 text-right font-semibold text-gray-500">Montant total</th>
+                            <th class="px-4 py-3 text-right font-semibold text-gray-500">Commission</th>
+                            <th class="px-4 py-3 text-right font-semibold text-gray-500">Net</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 bg-white">
+                        @forelse($recentBookings as $booking)
+                            <tr>
+                                <td class="px-4 py-3 font-medium text-gray-900">{{ $booking->reference ?? 'RES-'.$booking->id }}</td>
+                                <td class="px-4 py-3 text-gray-600">{{ $booking->residence->name ?? 'Résidence supprimée' }}</td>
+                                <td class="px-4 py-3 text-right font-medium text-gray-900">{{ number_format($booking->total_amount, 0, ',', ' ') }} FCFA</td>
+                                <td class="px-4 py-3 text-right font-medium text-orange-700">{{ number_format($booking->commission_amount, 0, ',', ' ') }} FCFA</td>
+                                <td class="px-4 py-3 text-right font-semibold text-emerald-700">{{ number_format($booking->owner_net_amount, 0, ',', ' ') }} FCFA</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-4 py-10 text-center text-gray-500">Aucune réservation payée pour le moment.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
-    @endif
 
-    {{-- Plans Grid --}}
-    <div class="grid md:grid-cols-3 gap-6">
-        @foreach($plans as $plan)
-            <div class="bg-white rounded-xl shadow-sm border {{ $currentSubscription?->plan_id === $plan->id ? 'border-emerald-500 ring-2 ring-emerald-500' : 'border-gray-200' }} overflow-hidden">
-                {{-- Plan Header --}}
-                <div class="p-6 {{ $plan->is_featured ? 'bg-linear-to-r from-emerald-500 to-teal-500 text-white' : '' }}">
-                    @if($plan->is_featured)
-                        <span class="inline-block px-3 py-1 text-xs font-semibold bg-white/20 rounded-full mb-3">
-                            Le plus populaire
-                        </span>
-                    @endif
-                    <h3 class="text-xl font-bold {{ $plan->is_featured ? 'text-white' : 'text-gray-900' }}">
-                        {{ $plan->name }}
-                    </h3>
-                    <p class="mt-2 text-sm {{ $plan->is_featured ? 'text-white/80' : 'text-gray-500' }}">
-                        {{ $plan->description }}
-                    </p>
-                </div>
+        <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 class="text-xl font-bold text-gray-900">Comment ça marche</h2>
+            <ol class="mt-5 space-y-4 text-sm text-gray-600">
+                <li class="flex gap-3">
+                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-900 text-xs font-bold text-white">1</span>
+                    <span>Le locataire paie sa réservation normalement, sans abonnement SaaS à activer.</span>
+                </li>
+                <li class="flex gap-3">
+                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-orange-500 text-xs font-bold text-white">2</span>
+                    <span>REZI retient {{ rtrim(rtrim(number_format($commissionRate, 2, ',', ' '), '0'), ',') }}% du montant total de la réservation, côté propriétaire.</span>
+                </li>
+                <li class="flex gap-3">
+                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-xs font-bold text-white">3</span>
+                    <span>Le solde net propriétaire est ensuite visible dans votre espace revenus.</span>
+                </li>
+            </ol>
 
-                {{-- Pricing --}}
-                <div class="p-6 border-b border-gray-100">
-                    <div class="flex items-baseline">
-                        <span class="text-3xl sm:text-4xl font-bold text-gray-900">
-                            {{ number_format($plan->monthly_price, 0, ',', ' ') }}
-                        </span>
-                        <span class="ml-1 text-gray-500">FCFA/mois</span>
-                    </div>
-                    @if($plan->yearly_price)
-                        <p class="mt-1 text-sm text-gray-500">
-                            ou {{ number_format($plan->yearly_price, 0, ',', ' ') }} FCFA/an
-                            <span class="text-emerald-600 font-medium">
-                                (-{{ round((1 - ($plan->yearly_price / ($plan->monthly_price * 12))) * 100) }}%)
-                            </span>
-                        </p>
-                    @endif
-                </div>
-
-                {{-- Features --}}
-                <div class="p-6">
-                    <ul class="space-y-3">
-                        <li class="flex items-start">
-                            <svg class="h-5 w-5 text-emerald-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            <span class="ml-3 text-gray-600">
-                                @if($plan->max_residences === -1)
-                                    Annonces illimitées
-                                @else
-                                    Jusqu'à {{ $plan->max_residences }} annonce(s)
-                                @endif
-                            </span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="h-5 w-5 text-emerald-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            <span class="ml-3 text-gray-600">
-                                @if($plan->max_photos_per_residence === -1)
-                                    Photos illimitées
-                                @else
-                                    {{ $plan->max_photos_per_residence }} photos par annonce
-                                @endif
-                            </span>
-                        </li>
-                        @if($plan->features)
-                            @foreach($plan->features as $feature)
-                                <li class="flex items-start">
-                                    <svg class="h-5 w-5 text-emerald-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                    </svg>
-                                    <span class="ml-3 text-gray-600">{{ $feature }}</span>
-                                </li>
-                            @endforeach
-                        @endif
-                    </ul>
-                </div>
-
-                {{-- CTA --}}
-                <div class="p-6 bg-gray-50">
-                    @if($currentSubscription?->plan_id === $plan->id)
-                        <button disabled class="w-full py-3 px-4 rounded-lg bg-gray-300 text-gray-500 font-semibold cursor-not-allowed">
-                            Plan actuel
-                        </button>
-                    @else
-                        <button type="button"
-                                onclick="openPaymentModal({{ $plan->id }}, '{{ $plan->name }}', {{ $plan->monthly_price }}, {{ $plan->yearly_price ?? 0 }})"
-                                class="w-full py-3 px-4 rounded-lg {{ $plan->is_featured ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-gray-900 hover:bg-gray-800' }} text-white font-semibold transition-colors">
-                            @if($currentSubscription)
-                                Changer de plan
-                            @else
-                                Souscrire
-                            @endif
-                        </button>
-                    @endif
-                </div>
+            <div class="mt-6 rounded-2xl bg-gray-50 p-4">
+                <p class="text-sm font-semibold text-gray-900">Important</p>
+                <p class="mt-2 text-sm text-gray-600">Il n'existe plus de plan mensuel, annuel ou formule d'abonnement à souscrire sur REZI pour les propriétaires.</p>
             </div>
-        @endforeach
-    </div>
 
-    {{-- FAQ --}}
-    <div class="mt-12 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h2 class="text-xl font-bold text-gray-900 mb-6">Questions fréquentes</h2>
-        <div class="space-y-4">
-            <details class="group">
-                <summary class="cursor-pointer flex items-center justify-between py-3 font-medium text-gray-900">
-                    Comment fonctionne la facturation ?
-                    <svg class="h-5 w-5 text-gray-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                </summary>
-                <p class="py-3 text-gray-600">
-                    Vous êtes facturé au début de chaque période (mensuelle ou annuelle). Le paiement est effectué via Mobile Money (Wave, Orange Money, MTN MoMo, etc.).
-                </p>
-            </details>
-            <details class="group">
-                <summary class="cursor-pointer flex items-center justify-between py-3 font-medium text-gray-900">
-                    Puis-je changer de plan à tout moment ?
-                    <svg class="h-5 w-5 text-gray-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                </summary>
-                <p class="py-3 text-gray-600">
-                    Oui ! Vous pouvez passer à un plan supérieur à tout moment. La différence de prix sera calculée au prorata. Pour passer à un plan inférieur, le changement prendra effet à la fin de votre période actuelle.
-                </p>
-            </details>
-            <details class="group">
-                <summary class="cursor-pointer flex items-center justify-between py-3 font-medium text-gray-900">
-                    Comment annuler mon abonnement ?
-                    <svg class="h-5 w-5 text-gray-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                </summary>
-                <p class="py-3 text-gray-600">
-                    Vous pouvez annuler à tout moment depuis cette page. Votre abonnement restera actif jusqu'à la fin de la période payée. Vous pouvez réactiver à tout moment avant la fin de cette période.
-                </p>
-            </details>
-        </div>
-    </div>
-</div>
-
-{{-- Payment Modal --}}
-<div id="paymentModal" class="fixed inset-0 z-50 hidden" x-data="{ open: false }">
-    <div class="fixed inset-0 bg-black/50 transition-opacity" onclick="closePaymentModal()"></div>
-    <div class="fixed inset-0 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 relative">
-            <button onclick="closePaymentModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-
-            <h3 class="text-xl font-bold text-gray-900 mb-4">Souscrire à <span id="modalPlanName"></span></h3>
-
-            <form id="subscribeForm" method="POST" action="">
-                @csrf
-
-                {{-- Billing Period --}}
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-3">Période de facturation</label>
-                    <div class="grid grid-cols-2 gap-3">
-                        <label class="relative cursor-pointer">
-                            <input type="radio" name="billing_period" value="monthly" class="peer sr-only" checked>
-                            <div class="p-4 border-2 rounded-lg peer-checked:border-emerald-500 peer-checked:bg-emerald-50 transition-colors">
-                                <p class="font-semibold text-gray-900">Mensuel</p>
-                                <p class="text-sm text-gray-500" id="monthlyPrice"></p>
-                            </div>
-                        </label>
-                        <label class="relative cursor-pointer" id="yearlyOption">
-                            <input type="radio" name="billing_period" value="yearly" class="peer sr-only">
-                            <div class="p-4 border-2 rounded-lg peer-checked:border-emerald-500 peer-checked:bg-emerald-50 transition-colors">
-                                <p class="font-semibold text-gray-900">Annuel</p>
-                                <p class="text-sm text-gray-500" id="yearlyPrice"></p>
-                                <span class="absolute -top-2 -right-2 px-2 py-0.5 text-xs font-bold bg-emerald-500 text-white rounded-full" id="yearlyDiscount"></span>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-
-                {{-- Payment Method --}}
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-3">Mode de paiement</label>
-                    <div class="grid grid-cols-3 gap-3">
-                        @foreach(['wave' => 'Wave', 'orange' => 'Orange Money', 'mtn' => 'MTN MoMo', 'moov' => 'Moov Money', 'djamo' => 'Djamo'] as $code => $label)
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="payment_method" value="{{ $code }}" class="peer sr-only" {{ $loop->first ? 'checked' : '' }}>
-                                <div class="p-3 border-2 rounded-lg peer-checked:border-emerald-500 peer-checked:bg-emerald-50 transition-colors text-center">
-                                    <p class="text-sm font-medium text-gray-900">{{ $label }}</p>
-                                </div>
-                            </label>
-                        @endforeach
-                    </div>
-                </div>
-
-                <button type="submit" class="w-full py-3 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-colors">
-                    Procéder au paiement
-                </button>
-            </form>
+            <a href="{{ route('owner.earnings.index') }}" class="btn-primary mt-6 w-full justify-center">Ouvrir mes revenus</a>
         </div>
     </div>
 </div>
@@ -281,41 +126,5 @@
     .btn-secondary {
         @apply inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors;
     }
-    .btn-danger {
-        @apply inline-flex items-center px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors;
-    }
 </style>
-
-<script>
-    let currentPlanId = null;
-
-    function openPaymentModal(planId, planName, monthlyPrice, yearlyPrice) {
-        currentPlanId = planId;
-        document.getElementById('modalPlanName').textContent = planName;
-        document.getElementById('monthlyPrice').textContent = new Intl.NumberFormat('fr-FR').format(monthlyPrice) + ' FCFA';
-
-        const yearlyOption = document.getElementById('yearlyOption');
-        if (yearlyPrice > 0) {
-            yearlyOption.classList.remove('hidden');
-            document.getElementById('yearlyPrice').textContent = new Intl.NumberFormat('fr-FR').format(yearlyPrice) + ' FCFA';
-            const discount = Math.round((1 - (yearlyPrice / (monthlyPrice * 12))) * 100);
-            document.getElementById('yearlyDiscount').textContent = '-' + discount + '%';
-        } else {
-            yearlyOption.classList.add('hidden');
-        }
-
-        // Set form action based on current subscription
-        const hasSubscription = {{ $currentSubscription ? 'true' : 'false' }};
-        const formAction = hasSubscription
-            ? '{{ route("owner.subscriptions.change-plan", ":id") }}'.replace(':id', planId)
-            : '{{ route("owner.subscriptions.subscribe", ":id") }}'.replace(':id', planId);
-        document.getElementById('subscribeForm').action = formAction;
-
-        document.getElementById('paymentModal').classList.remove('hidden');
-    }
-
-    function closePaymentModal() {
-        document.getElementById('paymentModal').classList.add('hidden');
-    }
-</script>
 @endsection

@@ -20,11 +20,6 @@ use Illuminate\View\View;
  */
 class ResidenceController extends Controller
 {
-    public function __construct(
-        private GeolocationService $geolocationService,
-    ) {
-    }
-
     /**
      * Liste des résidences
      */
@@ -205,7 +200,7 @@ class ResidenceController extends Controller
 
         // Recherche géolocalisée
         if (!empty($validated['latitude']) && !empty($validated['longitude'])) {
-            $radius = $validated['radius'] ?? 500;
+            $radius = $validated['radius'] ?? GeolocationService::getDefaultRadius();
             $query->withinRadius(
                 $validated['latitude'],
                 $validated['longitude'],
@@ -394,7 +389,10 @@ class ResidenceController extends Controller
             case 'newest':
                 $query->orderBy('created_at', 'desc');
                 break;
-                // 'distance' est géré par withinRadius
+            case 'distance':
+            default:
+                // Le tri distance est déjà géré par withinRadius quand des coordonnées sont fournies.
+                break;
         }
 
         $residences = $query->paginate(config('rezi.pagination.residences'))->withQueryString();

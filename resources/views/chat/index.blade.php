@@ -8,8 +8,8 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 sm:p-6 mb-5">
             <div class="flex items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-xl bg-[#ffd1da] flex items-center justify-center">
-                        <svg class="w-5.5 h-5.5 text-[#e00b41]" fill="none" stroke="currentColor" stroke-width="1.8"
+                    <div class="w-11 h-11 rounded-xl bg-[#FFE7D1] flex items-center justify-center">
+                        <svg class="w-5.5 h-5.5 text-[#CC5A00]" fill="none" stroke="currentColor" stroke-width="1.8"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
@@ -18,7 +18,7 @@
                     <div>
                         <h1 class="text-xl font-bold text-gray-900">Messages</h1>
                         @if ($stats['unread_messages'] > 0)
-                            <p class="text-xs text-[#e00b41] font-medium mt-0.5">
+                            <p class="text-xs text-[#CC5A00] font-medium mt-0.5">
                                 {{ $stats['unread_messages'] }} non lu{{ $stats['unread_messages'] > 1 ? 's' : '' }}
                             </p>
                         @else
@@ -31,7 +31,7 @@
                     {{-- New conversation button --}}
                     @if ($residences->count())
                         <button @click="showNewChat = true"
-                            class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold rounded-lg bg-[#ff385c] text-white hover:bg-[#e00b41] transition-colors shadow-sm">
+                            class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold rounded-lg bg-[#F16A00] text-white hover:bg-[#CC5A00] transition-colors shadow-sm">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -42,7 +42,7 @@
                     {{-- Archive toggle --}}
                     <a href="{{ route('chat.index', ['archived' => !$archived]) }}"
                         class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors
-                          {{ $archived ? 'bg-[#ff385c] text-white hover:bg-[#e00b41]' : 'text-gray-600 bg-gray-100 hover:bg-gray-200' }}">
+                          {{ $archived ? 'bg-[#F16A00] text-white hover:bg-[#CC5A00]' : 'text-gray-600 bg-gray-100 hover:bg-gray-200' }}">
                         @if ($archived)
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -68,15 +68,15 @@
                     <path stroke-linecap="round" d="m21 21-4.35-4.35" />
                 </svg>
                 <input type="text" x-model="search" placeholder="Rechercher par nom…"
-                    class="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-lg placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff385c]/20 focus:border-[#ff4d6d] transition-all">
+                    class="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-lg placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F16A00]/20 focus:border-[#FF8A1F] transition-all">
             </div>
         </div>
 
         @if ($conversations->isEmpty())
             {{-- Empty --}}
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-10 sm:p-16 text-center">
-                <div class="w-20 h-20 bg-[#fff0f3] rounded-full flex items-center justify-center mx-auto mb-5">
-                    <svg class="w-10 h-10 text-[#ff4d6d]" fill="none" stroke="currentColor" stroke-width="1.5"
+                <div class="w-20 h-20 bg-[#FFF4EB] rounded-full flex items-center justify-center mx-auto mb-5">
+                    <svg class="w-10 h-10 text-[#FF8A1F]" fill="none" stroke="currentColor" stroke-width="1.5"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
@@ -90,7 +90,7 @@
                 </p>
                 @if (!$archived)
                     <a href="{{ route('home') }}"
-                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#ff385c] text-white text-sm font-semibold rounded-lg hover:bg-[#e00b41] transition-colors">
+                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#F16A00] text-white text-sm font-semibold rounded-lg hover:bg-[#CC5A00] transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
@@ -110,7 +110,7 @@
                     @endphp
                     <a href="{{ route('chat.show', $conversation) }}"
                         x-show="!search || '{{ strtolower(addslashes($other->name)) }}'.includes(search.toLowerCase())"
-                        class="flex items-center gap-3.5 px-4 py-3.5 sm:px-5 border-b border-gray-50 last:border-b-0 hover:bg-[#fff0f3]/40 active:bg-[#fff0f3]/70 transition-colors relative group">
+                        class="flex items-center gap-3.5 px-4 py-3.5 sm:px-5 border-b border-gray-50 last:border-b-0 hover:bg-[#FFF4EB]/40 active:bg-[#FFF4EB]/70 transition-colors relative group">
 
                         {{-- Avatar --}}
                         <div class="relative shrink-0">
@@ -119,7 +119,7 @@
                                     class="w-12 h-12 rounded-full object-cover">
                             @else
                                 <div
-                                    class="w-12 h-12 rounded-full bg-linear-to-br from-[#ff4d6d] to-[#e00b41] flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                                    class="w-12 h-12 rounded-full bg-linear-to-br from-[#FF8A1F] to-[#CC5A00] flex items-center justify-center text-white font-bold text-sm shadow-sm">
                                     {{ strtoupper(mb_substr($other->name, 0, 1)) }}{{ strtoupper(mb_substr(explode(' ', $other->name)[1] ?? '', 0, 1)) }}
                                 </div>
                             @endif
@@ -141,11 +141,11 @@
                                         class="font-semibold text-[15px] truncate {{ $unread > 0 ? 'text-gray-950' : 'text-gray-900' }}">{{ $other->name }}</span>
                                     @if ($other->isOwner())
                                         <span
-                                            class="shrink-0 px-1.5 py-px rounded text-[9px] font-bold uppercase tracking-wider bg-[#ffd1da] text-[#e00b41]">Hôte</span>
+                                            class="shrink-0 px-1.5 py-px rounded text-[9px] font-bold uppercase tracking-wider bg-[#FFE7D1] text-[#CC5A00]">Hôte</span>
                                     @endif
                                 </div>
                                 <span
-                                    class="text-[11px] ml-3 shrink-0 {{ $unread > 0 ? 'text-[#e00b41] font-semibold' : 'text-gray-400' }}">
+                                    class="text-[11px] ml-3 shrink-0 {{ $unread > 0 ? 'text-[#CC5A00] font-semibold' : 'text-gray-400' }}">
                                     {{ $conversation->last_message_at?->diffForHumans(short: true) ?? '' }}
                                 </span>
                             </div>
@@ -198,7 +198,7 @@
                                     @endif
                                     @if ($unread > 0)
                                         <span
-                                            class="inline-flex items-center justify-center min-w-5 h-5 px-1.5 text-[10px] font-bold text-white bg-[#ff385c] rounded-full">
+                                            class="inline-flex items-center justify-center min-w-5 h-5 px-1.5 text-[10px] font-bold text-white bg-[#F16A00] rounded-full">
                                             {{ $unread > 99 ? '99+' : $unread }}
                                         </span>
                                     @endif
@@ -230,8 +230,8 @@
                     {{-- Modal header --}}
                     <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-lg bg-[#ffd1da] flex items-center justify-center">
-                                <svg class="w-5 h-5 text-[#e00b41]" fill="none" stroke="currentColor"
+                            <div class="w-9 h-9 rounded-lg bg-[#FFE7D1] flex items-center justify-center">
+                                <svg class="w-5 h-5 text-[#CC5A00]" fill="none" stroke="currentColor"
                                     stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z" />
@@ -271,7 +271,7 @@
                                     </svg>
                                     <input type="text" x-model="residenceSearch"
                                         placeholder="Rechercher une résidence…"
-                                        class="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff385c]/20 focus:border-[#ff4d6d] transition-all">
+                                        class="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F16A00]/20 focus:border-[#FF8A1F] transition-all">
                                 </div>
                                 <div
                                     class="max-h-48 overflow-y-auto rounded-xl border border-gray-100 divide-y divide-gray-50">
@@ -279,12 +279,12 @@
                                         <label
                                             x-show="!residenceSearch || '{{ strtolower(addslashes($residence->name)) }}'.includes(residenceSearch.toLowerCase()) || '{{ strtolower(addslashes($residence->commune ?? '')) }}'.includes(residenceSearch.toLowerCase())"
                                             class="flex items-center gap-3 px-3.5 py-3 cursor-pointer transition-colors"
-                                            :class="selectedResidence == {{ $residence->id }} ? 'bg-[#fff0f3]' :
+                                            :class="selectedResidence == {{ $residence->id }} ? 'bg-[#FFF4EB]' :
                                                 'hover:bg-gray-50'">
                                             <input type="radio" name="residence_radio" value="{{ $residence->id }}"
                                                 @click="selectedResidence = {{ $residence->id }}"
                                                 :checked="selectedResidence == {{ $residence->id }}"
-                                                class="text-[#ff385c] focus:ring-[#ff385c]/30 border-gray-300">
+                                                class="text-[#F16A00] focus:ring-[#F16A00]/30 border-gray-300">
                                             <div class="flex-1 min-w-0">
                                                 <p class="text-sm font-medium text-gray-800 truncate">
                                                     {{ $residence->name }}</p>
@@ -306,7 +306,7 @@
                                                 </p>
                                             </div>
                                             <div x-show="selectedResidence == {{ $residence->id }}" class="shrink-0">
-                                                <svg class="w-5 h-5 text-[#ff385c]" fill="currentColor"
+                                                <svg class="w-5 h-5 text-[#F16A00]" fill="currentColor"
                                                     viewBox="0 0 20 20">
                                                     <path fill-rule="evenodd"
                                                         d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
@@ -323,7 +323,7 @@
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Message (optionnel)</label>
                                 <textarea name="message" x-model="newChatMessage" rows="3"
                                     placeholder="Bonjour, je suis intéressé(e) par votre résidence…"
-                                    class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl resize-none placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff385c]/20 focus:border-[#ff4d6d] focus:bg-white transition-all"></textarea>
+                                    class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl resize-none placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F16A00]/20 focus:border-[#FF8A1F] focus:bg-white transition-all"></textarea>
                             </div>
                         </div>
 
@@ -336,7 +336,7 @@
                             </button>
                             <button type="submit" :disabled="!selectedResidence"
                                 class="px-5 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200"
-                                :class="selectedResidence ? 'bg-[#ff385c] text-white hover:bg-[#e00b41] shadow-sm' :
+                                :class="selectedResidence ? 'bg-[#F16A00] text-white hover:bg-[#CC5A00] shadow-sm' :
                                     'bg-gray-200 text-gray-400 cursor-not-allowed'">
                                 <span class="flex items-center gap-1.5">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"

@@ -19,7 +19,7 @@
 
         {{-- Referral Code Card --}}
         <div
-            class="bg-linear-to-br from-[#ff385c] via-[#e00b41] to-[#b5083a] rounded-2xl p-8 text-white text-center relative overflow-hidden shadow-lg">
+            class="bg-linear-to-br from-[#F16A00] via-[#CC5A00] to-[#A34700] rounded-2xl p-8 text-white text-center relative overflow-hidden shadow-lg">
             <div class="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
             <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
 
@@ -31,10 +31,10 @@
                             d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197" />
                     </svg>
                 </div>
-                <p class="text-[#ffd1da] text-sm mb-2">Votre code de parrainage</p>
+                <p class="text-[#FFE7D1] text-sm mb-2">Votre code de parrainage</p>
                 <code
                     class="block text-3xl font-mono font-bold tracking-[0.15em] mb-4">{{ auth()->user()->referral_code }}</code>
-                <p class="text-[#ffd1da] text-sm mb-6">
+                <p class="text-[#FFE7D1] text-sm mb-6">
                     Gagnez <strong
                         class="text-white">{{ number_format(config('rezi.referral.referrer_reward', 5000), 0, ',', ' ') }}
                         FCFA</strong> par filleul qualifié
@@ -112,16 +112,16 @@
                 </a>
 
                 <a href="{{ route('owner.marketing.referrals.share', ['channel' => 'email']) }}"
-                    class="flex items-center gap-3 p-4 rounded-xl border border-gray-200 hover:border-[#ffb3c1] hover:bg-[#fff0f3] transition-all group">
+                    class="flex items-center gap-3 p-4 rounded-xl border border-gray-200 hover:border-[#FFD0A3] hover:bg-[#FFF4EB] transition-all group">
                     <div
-                        class="w-12 h-12 bg-[#ff385c] rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm">
+                        class="w-12 h-12 bg-[#F16A00] rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
                     </div>
                     <div>
-                        <p class="font-semibold text-gray-900 text-sm group-hover:text-[#b5083a]">Email</p>
+                        <p class="font-semibold text-gray-900 text-sm group-hover:text-[#A34700]">Email</p>
                         <p class="text-xs text-gray-500">Inviter par email</p>
                     </div>
                 </a>
@@ -134,7 +134,7 @@
             <div class="space-y-4">
                 <div class="flex items-start gap-4">
                     <div
-                        class="w-8 h-8 bg-[#ffd1da] text-[#e00b41] rounded-lg flex items-center justify-center font-bold text-sm shrink-0">
+                        class="w-8 h-8 bg-[#FFE7D1] text-[#CC5A00] rounded-lg flex items-center justify-center font-bold text-sm shrink-0">
                         1</div>
                     <div>
                         <p class="font-medium text-gray-900 text-sm">Partagez votre code</p>

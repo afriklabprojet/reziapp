@@ -11,11 +11,11 @@ class SendRentReminders extends Command
 {
     protected $signature = 'rezi:send-rent-reminders';
 
-    protected $description = 'Envoie automatiquement les relances de loyer aux locataires selon le calendrier configuré';
+    protected $description = 'Envoie automatiquement les relances de paiement aux locataires selon le calendrier configuré';
 
     public function handle(RentReminderService $service): int
     {
-        $this->info('Traitement des relances de loyer automatiques...');
+        $this->info('Traitement des relances de paiement automatiques...');
 
         $result = $service->processAutoReminders();
 

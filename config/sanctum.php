@@ -47,7 +47,7 @@ return [
     |
     */
 
-    'expiration' => env('SANCTUM_TOKEN_EXPIRATION', 1440), // 24h — tokens expirent automatiquement
+    'expiration' => env('SANCTUM_TOKEN_EXPIRATION', 240), // 4h (sécurité : réduit la fenêtre de vol de token)// 4h (sécurité : réduit la fenêtre de vol de token) // 24h — tokens expirent automatiquement
 
     /*
     |--------------------------------------------------------------------------

@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
+use App\Models\SupportMessage;
 use App\Models\SupportTicket;
 use App\Services\SupportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SupportController extends Controller
 {
@@ -60,12 +64,13 @@ class SupportController extends Controller
             'booking_id' => 'nullable|exists:bookings,id',
             'priority' => 'nullable|string|in:'.implode(',', array_keys(SupportTicket::getPriorities())),
             'attachments' => 'nullable|array|max:5',
-            'attachments.*' => 'file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx',
+            'attachments.*' => 'file|max:5120|mimes:jpg,jpeg,png,pdf,doc,docx',
         ]);
 
         try {
             /** @var \App\Models\User $user */
             $user = Auth::user();
+            $bookingId = $this->authorizedBookingId($validated['booking_id'] ?? null, $user);
 
             // Process attachments
             $attachments = [];
@@ -77,12 +82,13 @@ class SupportController extends Controller
 
             $ticket = $this->supportService->createTicket(
                 $user->id,
-                $validated['category'],
-                $validated['subject'],
-                $validated['message'],
-                $validated['booking_id'] ?? null,
-                null,
-                $validated['priority'] ?? 'medium',
+                [
+                    'category' => $validated['category'],
+                    'subject' => $validated['subject'],
+                    'message' => $validated['message'],
+                    'booking_id' => $bookingId,
+                    'priority' => $validated['priority'] ?? 'medium',
+                ],
                 !empty($attachments) ? $attachments : null,
             );
 
@@ -139,7 +145,7 @@ class SupportController extends Controller
         $validated = $request->validate([
             'message' => 'required|string|max:5000',
             'attachments' => 'nullable|array|max:5',
-            'attachments.*' => 'file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx',
+            'attachments.*' => 'file|max:5120|mimes:jpg,jpeg,png,pdf,doc,docx',
         ]);
 
         // Process attachments
@@ -158,6 +164,37 @@ class SupportController extends Controller
         );
 
         return back()->with('success', 'Réponse envoyée.');
+    }
+
+    public function downloadAttachment(SupportTicket $ticket, SupportMessage $message, int $index): StreamedResponse
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if ($ticket->user_id !== $user->id && !$user->isAdmin()) {
+            abort(403);
+        }
+
+        if ((int) $message->support_ticket_id !== (int) $ticket->id) {
+            abort(404);
+        }
+
+        $attachments = $message->attachments ?? [];
+        if (!isset($attachments[$index])) {
+            abort(404);
+        }
+
+        $attachment = $attachments[$index];
+        $diskName = $attachment['disk'] ?? 'public';
+        /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
+        $disk = Storage::disk($diskName);
+        $path = $attachment['path'] ?? '';
+
+        if (!$path || !$disk->exists($path)) {
+            abort(404);
+        }
+
+        return $disk->download($path, $attachment['name'] ?? 'piece-jointe');
     }
 
     /**
@@ -246,12 +283,18 @@ class SupportController extends Controller
         ]);
 
         try {
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+            $bookingId = $this->authorizedBookingId($validated['booking_id'] ?? null, $user);
+
             $ticket = $this->supportService->createTicket(
-                Auth::id(),
-                $validated['category'],
-                $validated['subject'],
-                $validated['message'],
-                $validated['booking_id'] ?? null,
+                $user->id,
+                [
+                    'category' => $validated['category'],
+                    'subject' => $validated['subject'],
+                    'message' => $validated['message'],
+                    'booking_id' => $bookingId,
+                ],
             );
 
             return response()->json([
@@ -335,5 +378,22 @@ class SupportController extends Controller
             'success' => true,
             'data' => ['count' => $count],
         ]);
+    }
+
+    private function authorizedBookingId(?int $bookingId, \App\Models\User $user): ?int
+    {
+        if (!$bookingId) {
+            return null;
+        }
+
+        $booking = Booking::with('residence')->findOrFail($bookingId);
+        $isGuest = (int) $booking->user_id === (int) $user->id;
+        $isOwner = (int) ($booking->residence?->owner_id ?? 0) === (int) $user->id;
+
+        if (!$isGuest && !$isOwner && !$user->isAdmin()) {
+            abort(403);
+        }
+
+        return $booking->id;
     }
 }

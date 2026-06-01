@@ -34,12 +34,12 @@
         @if ($collections->isNotEmpty())
             <div class="flex flex-wrap gap-2 mb-6">
                 <a href="{{ route('favorites.index') }}"
-                    class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ !$collectionId ? 'bg-[#e00b41] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ !$collectionId ? 'bg-[#CC5A00] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                     Tous
                 </a>
                 @foreach ($collections as $collection)
                     <a href="{{ route('favorites.index', ['collection' => $collection->id]) }}"
-                        class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ $collectionId == $collection->id ? 'bg-[#e00b41] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                        class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ $collectionId == $collection->id ? 'bg-[#CC5A00] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                         {{ $collection->name }} ({{ $collection->favorites_count }})
                     </a>
                 @endforeach
@@ -58,7 +58,7 @@
                 <h3 class="text-lg font-semibold text-gray-900 mb-2">Aucun favori</h3>
                 <p class="text-gray-500 mb-4">Vous n'avez pas encore enregistré de résidence en favori.</p>
                 <a href="{{ route('residences.index') }}"
-                    class="inline-flex items-center gap-2 bg-[#e00b41] text-white px-4 py-2 rounded-xl hover:bg-[#b5083a] transition-colors">
+                    class="inline-flex items-center gap-2 bg-[#CC5A00] text-white px-4 py-2 rounded-xl hover:bg-[#A34700] transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -114,7 +114,7 @@
                         <div class="p-4">
                             <a href="{{ route('residences.show', $residence) }}" class="block">
                                 <h3
-                                    class="font-semibold text-gray-900 group-hover:text-[#e00b41] transition-colors line-clamp-1">
+                                    class="font-semibold text-gray-900 group-hover:text-[#CC5A00] transition-colors line-clamp-1">
                                     {{ $residence->title }}
                                 </h3>
                             </a>
@@ -151,7 +151,7 @@
                             <!-- Notes personnelles -->
                             <div class="mt-3 pt-3 border-t border-gray-100">
                                 <button @click="showNotes = !showNotes"
-                                    class="text-sm text-[#e00b41] hover:text-[#b5083a] flex items-center gap-1">
+                                    class="text-sm text-[#CC5A00] hover:text-[#A34700] flex items-center gap-1">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -164,10 +164,10 @@
                                         @csrf
                                         @method('PATCH')
                                         <textarea name="notes" rows="2"
-                                            class="w-full text-sm border-gray-200 rounded-lg focus:border-[#ff385c] focus:ring-[#ff385c]"
+                                            class="w-full text-sm border-gray-200 rounded-lg focus:border-[#F16A00] focus:ring-[#F16A00]"
                                             placeholder="Ajouter une note personnelle...">{{ $favorite->notes }}</textarea>
                                         <button type="submit"
-                                            class="mt-2 text-sm bg-[#e00b41] text-white px-3 py-1 rounded-lg hover:bg-[#b5083a] transition-colors">
+                                            class="mt-2 text-sm bg-[#CC5A00] text-white px-3 py-1 rounded-lg hover:bg-[#A34700] transition-colors">
                                             Enregistrer
                                         </button>
                                     </form>

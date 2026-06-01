@@ -293,7 +293,8 @@
                         <div x-show="showPromo" x-collapse x-cloak class="mt-4">
                             <div class="flex gap-2">
                                 <input type="text" x-model="discountCode" placeholder="Entrez votre code"
-                                    class="flex-1 text-sm rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 min-h-11">
+                                    aria-label="Code de réduction"
+                                    class="flex-1 text-base py-3 rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 min-h-11">
                                 <button type="button" @click="applyCode()" :disabled="!discountCode"
                                     class="px-4 py-2.5 min-h-11 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 active:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
                                     Appliquer
@@ -308,7 +309,7 @@
 
                     {{-- ─── SECTION 4 : Message au propriétaire ─── --}}
                     <section>
-                        <h2 class="text-lg font-semibold text-gray-900 mb-4">
+                        <h2 id="message-label" class="text-lg font-semibold text-gray-900 mb-4">
                             {{ $isInstant ? 'Envoyer un message au propriétaire' : 'Message au propriétaire' }}
                         </h2>
 
@@ -334,7 +335,8 @@
 
                         <textarea x-model="message" rows="4" maxlength="1000"
                             placeholder="{{ $isInstant ? 'Dites bonjour au propriétaire…' : 'Bonjour, je souhaite réserver votre logement pour…' }}"
-                            class="w-full text-sm rounded-xl border-gray-300 focus:border-gray-900 focus:ring-gray-900 resize-none"></textarea>
+                            aria-labelledby="message-label"
+                            class="w-full text-base py-3 rounded-xl border-gray-300 focus:border-gray-900 focus:ring-gray-900 resize-none"></textarea>
                         <p class="text-xs text-gray-400 mt-1 text-right" x-text="message.length + ' / 1 000'"></p>
                     </section>
 
@@ -418,19 +420,19 @@
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                             <template x-for="method in [
                                 { id: 'wave', label: 'Wave', icon: '🌊', color: 'bg-blue-50 border-blue-300 text-blue-700' },
-                                { id: 'orange', label: 'Orange Money', icon: '🟠', color: 'bg-[#fff0f3] border-[#ffb3c1] text-[#b5083a]' },
+                                { id: 'orange', label: 'Orange Money', icon: '🟠', color: 'bg-[#FFF4EB] border-[#FFD0A3] text-[#A34700]' },
                                 { id: 'mtn', label: 'MTN MoMo', icon: '🟡', color: 'bg-yellow-50 border-yellow-300 text-yellow-700' },
                                 { id: 'moov', label: 'Moov Money', icon: '🔵', color: 'bg-cyan-50 border-cyan-300 text-cyan-700' },
                                 { id: 'djamo', label: 'Djamo', icon: '💳', color: 'bg-purple-50 border-purple-300 text-purple-700' },
                             ]" :key="method.id">
                                 <button type="button" @click="paymentMethod = method.id"
                                     :class="paymentMethod === method.id
-                                        ? 'ring-2 ring-[#E21D63] border-[#E21D63] bg-pink-50'
+                                        ? 'ring-2 ring-[#F16A00] border-[#F16A00] bg-pink-50'
                                         : 'border-gray-200 hover:border-gray-300 bg-white'"
                                     class="relative flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all cursor-pointer">
                                     <span class="text-xl" x-text="method.icon"></span>
                                     <span class="text-xs font-medium text-gray-700" x-text="method.label"></span>
-                                    <svg x-show="paymentMethod === method.id" x-cloak class="absolute top-1.5 right-1.5 w-4 h-4 text-[#E21D63]" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg x-show="paymentMethod === method.id" x-cloak class="absolute top-1.5 right-1.5 w-4 h-4 text-[#F16A00]" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                     </svg>
                                 </button>
@@ -528,7 +530,7 @@
 
                             <button type="submit" :disabled="!canSubmit || submitting"
                                 class="w-full py-4 text-white text-base font-semibold rounded-xl transition-all
-                                           bg-linear-to-r from-[#E21D63] to-[#D70466] hover:from-[#C9145A] hover:to-[#BD035D]
+                                           bg-linear-to-r from-[#F16A00] to-[#CC5A00] hover:from-[#B85100] hover:to-[#A34700]
                                            disabled:opacity-50 disabled:cursor-not-allowed
                                            active:scale-[0.98] shadow-lg hover:shadow-xl">
                                 <span x-show="!submitting" class="flex items-center justify-center gap-2">

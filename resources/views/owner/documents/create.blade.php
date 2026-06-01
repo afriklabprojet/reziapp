@@ -17,14 +17,14 @@
 
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Nom du document *</label>
-            <input type="text" name="name" value="{{ old('name') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" placeholder="Ex: Titre foncier Cocody" required>
+            <input type="text" name="name" value="{{ old('name') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#F16A00] focus:border-[#F16A00] text-sm" placeholder="Ex: Titre foncier Cocody" required>
             @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
         </div>
 
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Catégorie *</label>
-                <select name="category" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" required>
+                <select name="category" class="w-full rounded-xl border-gray-200 focus:ring-[#F16A00] focus:border-[#F16A00] text-sm" required>
                     @foreach(\App\Models\OwnerDocument::CATEGORIES as $key => $label)
                         <option value="{{ $key }}" {{ old('category') === $key ? 'selected' : '' }}>{{ $label }}</option>
                     @endforeach
@@ -33,14 +33,14 @@
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Date d'expiration</label>
-                <input type="date" name="expiry_date" value="{{ old('expiry_date') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm">
+                <input type="date" name="expiry_date" value="{{ old('expiry_date') }}" class="w-full rounded-xl border-gray-200 focus:ring-[#F16A00] focus:border-[#F16A00] text-sm">
                 @error('expiry_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
         </div>
 
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Résidence associée</label>
-            <select name="residence_id" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm">
+            <select name="residence_id" class="w-full rounded-xl border-gray-200 focus:ring-[#F16A00] focus:border-[#F16A00] text-sm">
                 <option value="">Aucune (document général)</option>
                 @foreach($residences as $r) <option value="{{ $r->id }}" {{ old('residence_id') == $r->id ? 'selected' : '' }}>{{ $r->name }}</option> @endforeach
             </select>
@@ -56,7 +56,7 @@
 
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Notes</label>
-            <textarea name="notes" rows="2" class="w-full rounded-xl border-gray-200 focus:ring-[#ff385c] focus:border-[#ff385c] text-sm" placeholder="Notes optionnelles...">{{ old('notes') }}</textarea>
+            <textarea name="notes" rows="2" class="w-full rounded-xl border-gray-200 focus:ring-[#F16A00] focus:border-[#F16A00] text-sm" placeholder="Notes optionnelles...">{{ old('notes') }}</textarea>
         </div>
 
         <div class="flex gap-3 pt-2">

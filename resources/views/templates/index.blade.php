@@ -11,7 +11,7 @@
             <p class="text-gray-600 mt-1">Créez des réponses rapides pour gagner du temps</p>
         </div>
         <button @click="showCreateModal = true"
-                class="px-4 py-2 bg-[#e00b41] text-white rounded-lg hover:bg-[#b5083a] flex items-center gap-2">
+                class="px-4 py-2 bg-[#CC5A00] text-white rounded-lg hover:bg-[#A34700] flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
@@ -63,18 +63,18 @@
                 <h3 class="text-lg font-semibold text-gray-900 mb-2">Aucun template</h3>
                 <p class="text-gray-500 mb-6">Créez votre premier template pour répondre plus vite</p>
                 <button @click="showCreateModal = true"
-                        class="inline-flex items-center px-4 py-2 bg-[#e00b41] text-white rounded-lg hover:bg-[#b5083a]">
+                        class="inline-flex items-center px-4 py-2 bg-[#CC5A00] text-white rounded-lg hover:bg-[#A34700]">
                     Créer un template
                 </button>
             </div>
         @else
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach($userTemplates as $template)
-                    <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-[#ff385c] group">
+                    <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-[#F16A00] group">
                         <div class="flex items-start justify-between mb-2">
                             <div>
                                 <h3 class="font-medium text-gray-900">{{ $template->name }}</h3>
-                                <span class="inline-block px-2 py-0.5 text-xs bg-[#ffd1da] text-[#b5083a] rounded-full">
+                                <span class="inline-block px-2 py-0.5 text-xs bg-[#FFE7D1] text-[#A34700] rounded-full">
                                     {{ $categories[$template->category] ?? $template->category }}
                                 </span>
                             </div>
@@ -127,14 +127,14 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
                             <input type="text" x-model="form.name" required
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c]"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00]"
                                    placeholder="Ex: Bienvenue">
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
                             <select x-model="form.category" required
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c]">
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00]">
                                 @foreach($categories as $key => $name)
                                     <option value="{{ $key }}">{{ $name }}</option>
                                 @endforeach
@@ -144,7 +144,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Contenu</label>
                             <textarea x-model="form.content" required rows="4"
-                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c]"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00]"
                                       placeholder="Bonjour {user_name}, merci de votre intérêt pour..."></textarea>
                             <p class="text-xs text-gray-500 mt-1">
                                 Variables disponibles: {user_name}, {residence_name}, {owner_name}
@@ -156,7 +156,7 @@
                             <div class="flex items-center gap-2">
                                 <span class="text-gray-400">/</span>
                                 <input type="text" x-model="form.shortcut"
-                                       class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c]"
+                                       class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00]"
                                        placeholder="bienvenue"
                                        pattern="[a-z0-9_]+">
                             </div>
@@ -171,7 +171,7 @@
                         </button>
                         <button type="submit"
                                 :disabled="saving"
-                                class="px-4 py-2 bg-[#e00b41] text-white rounded-lg hover:bg-[#b5083a] disabled:opacity-50">
+                                class="px-4 py-2 bg-[#CC5A00] text-white rounded-lg hover:bg-[#A34700] disabled:opacity-50">
                             <span x-show="!saving" x-text="showEditModal ? 'Enregistrer' : 'Créer'"></span>
                             <span x-show="saving">Enregistrement...</span>
                         </button>

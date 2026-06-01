@@ -47,7 +47,7 @@
 
         {{-- Referral Code + Share Card --}}
         <div
-            class="bg-linear-to-br from-[#ff385c] via-[#e00b41] to-[#b5083a] rounded-2xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
+            class="bg-linear-to-br from-[#F16A00] via-[#CC5A00] to-[#A34700] rounded-2xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
             {{-- Decorative circles --}}
             <div class="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
             <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
@@ -55,13 +55,13 @@
             <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div class="flex-1">
                     <div class="flex items-center gap-2 mb-3">
-                        <svg class="w-5 h-5 text-[#ffb3c1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 text-[#FFD0A3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197" />
                         </svg>
                         <h2 class="text-lg font-bold">Votre code de parrainage</h2>
                     </div>
-                    <p class="text-[#ffd1da] mb-5 text-sm">
+                    <p class="text-[#FFE7D1] mb-5 text-sm">
                         Partagez ce code et gagnez
                         <strong class="text-white">{{ number_format($referralConfig['referrer_reward'], 0, ',', ' ') }}
                             FCFA</strong>
@@ -245,8 +245,8 @@
             <h3 class="text-lg font-semibold text-gray-900 mb-5">Comment ça marche ?</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="relative text-center p-4">
-                    <div class="w-12 h-12 mx-auto bg-[#ffd1da] rounded-2xl flex items-center justify-center mb-3">
-                        <svg class="w-6 h-6 text-[#e00b41]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-12 h-12 mx-auto bg-[#FFE7D1] rounded-2xl flex items-center justify-center mb-3">
+                        <svg class="w-6 h-6 text-[#CC5A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                         </svg>
@@ -310,7 +310,7 @@
                     <h3 class="text-sm font-semibold text-gray-900 mb-1">Pas encore de filleuls</h3>
                     <p class="text-sm text-gray-500 mb-4">Partagez votre code pour commencer à parrainer !</p>
                     <button @click="copyCode('{{ auth()->user()->referral_code }}')"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-[#e00b41] text-white text-sm font-medium rounded-xl hover:bg-[#b5083a] transition">
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-[#CC5A00] text-white text-sm font-medium rounded-xl hover:bg-[#A34700] transition">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -325,9 +325,9 @@
                         <div class="p-4">
                             <div class="flex items-center justify-between mb-3">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-9 h-9 bg-[#ffd1da] rounded-full flex items-center justify-center">
+                                    <div class="w-9 h-9 bg-[#FFE7D1] rounded-full flex items-center justify-center">
                                         <span
-                                            class="text-[#e00b41] font-semibold text-sm">{{ substr($referral->referred->name ?? 'U', 0, 1) }}</span>
+                                            class="text-[#CC5A00] font-semibold text-sm">{{ substr($referral->referred->name ?? 'U', 0, 1) }}</span>
                                     </div>
                                     <div>
                                         <p class="text-sm font-medium text-gray-900">
@@ -349,7 +349,7 @@
                                         method="POST">
                                         @csrf
                                         <button type="submit"
-                                            class="px-3 py-1.5 bg-[#e00b41] text-white text-xs font-medium rounded-lg hover:bg-[#b5083a] transition">
+                                            class="px-3 py-1.5 bg-[#CC5A00] text-white text-xs font-medium rounded-lg hover:bg-[#A34700] transition">
                                             Réclamer
                                         </button>
                                     </form>
@@ -385,9 +385,9 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center gap-3">
                                             <div
-                                                class="w-9 h-9 bg-[#ffd1da] rounded-full flex items-center justify-center">
+                                                class="w-9 h-9 bg-[#FFE7D1] rounded-full flex items-center justify-center">
                                                 <span
-                                                    class="text-[#e00b41] font-semibold text-sm">{{ substr($referral->referred->name ?? 'U', 0, 1) }}</span>
+                                                    class="text-[#CC5A00] font-semibold text-sm">{{ substr($referral->referred->name ?? 'U', 0, 1) }}</span>
                                             </div>
                                             <div>
                                                 <p class="text-sm font-medium text-gray-900">
@@ -421,7 +421,7 @@
                                                 method="POST" class="inline">
                                                 @csrf
                                                 <button type="submit"
-                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#e00b41] text-white text-xs font-medium rounded-lg hover:bg-[#b5083a] transition shadow-sm">
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#CC5A00] text-white text-xs font-medium rounded-lg hover:bg-[#A34700] transition shadow-sm">
                                                     <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                                                         <path
                                                             d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" />

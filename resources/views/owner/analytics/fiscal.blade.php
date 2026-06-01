@@ -8,7 +8,7 @@
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
             <nav class="text-sm text-gray-500 mb-2">
-                <a href="{{ route('owner.analytics.index') }}" class="hover:text-[#ff385c]">Analytics</a>
+                <a href="{{ route('owner.analytics.index') }}" class="hover:text-[#F16A00]">Analytics</a>
                 <span class="mx-2">›</span>
                 <span class="text-gray-700">Historique fiscal</span>
             </nav>
@@ -28,7 +28,7 @@
             <form method="GET" action="{{ route('owner.analytics.fiscal') }}" class="flex items-center gap-2">
                 <label for="year" class="text-sm text-gray-600">Année:</label>
                 <select name="year" id="year" onchange="this.form.submit()" 
-                        class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-[#ff385c] focus:border-[#ff385c]">
+                        class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-[#F16A00] focus:border-[#F16A00]">
                     @foreach($availableYears as $y)
                     <option value="{{ $y }}" {{ $y == $year ? 'selected' : '' }}>{{ $y }}</option>
                     @endforeach
@@ -49,8 +49,8 @@
     <!-- Informations propriétaire -->
     <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
         <div class="flex items-center gap-4 mb-4">
-            <div class="w-12 h-12 bg-[#ffd1da] rounded-xl flex items-center justify-center">
-                <svg class="w-6 h-6 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-12 h-12 bg-[#FFE7D1] rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6 text-[#F16A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                 </svg>
             </div>
@@ -77,10 +77,10 @@
 
     <!-- Résumé annuel -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-linear-to-br from-[#ff385c] to-[#ff385c] rounded-2xl p-6 text-white">
-            <p class="text-[#ffd1da] text-sm">Revenus bruts annuels</p>
+        <div class="bg-linear-to-br from-[#F16A00] to-[#F16A00] rounded-2xl p-6 text-white">
+            <p class="text-[#FFE7D1] text-sm">Revenus bruts annuels</p>
             <p class="text-3xl font-bold mt-2">{{ number_format($fiscalData['totals']['revenue'], 0, ',', ' ') }}</p>
-            <p class="text-[#ffd1da] text-sm mt-1">FCFA</p>
+            <p class="text-[#FFE7D1] text-sm mt-1">FCFA</p>
         </div>
         
         <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
@@ -137,13 +137,13 @@
                     </tr>
                     @endforeach
                 </tbody>
-                <tfoot class="bg-[#fff0f3]">
+                <tfoot class="bg-[#FFF4EB]">
                     <tr class="font-bold">
                         <td class="px-6 py-4">TOTAL {{ $year }}</td>
                         <td class="px-6 py-4 text-center">{{ $fiscalData['totals']['bookings'] }}</td>
                         <td class="px-6 py-4 text-right">{{ number_format($fiscalData['fiscal']['gross_revenue'], 0, ',', ' ') }} F</td>
                         <td class="px-6 py-4 text-right text-amber-600">{{ number_format($fiscalData['fiscal']['taxe_sejour_amount'], 0, ',', ' ') }} F</td>
-                        <td class="px-6 py-4 text-right text-[#e00b41]">{{ number_format($fiscalData['fiscal']['net_revenue'], 0, ',', ' ') }} F</td>
+                        <td class="px-6 py-4 text-right text-[#CC5A00]">{{ number_format($fiscalData['fiscal']['net_revenue'], 0, ',', ' ') }} F</td>
                     </tr>
                 </tfoot>
             </table>
@@ -171,7 +171,7 @@
             Retour aux analytics
         </a>
         <a href="{{ route('owner.analytics.export.fiscal-pdf', ['year' => $year]) }}" 
-           class="px-6 py-3 bg-[#ff385c] text-white rounded-xl hover:bg-[#e00b41] transition inline-flex items-center gap-2">
+           class="px-6 py-3 bg-[#F16A00] text-white rounded-xl hover:bg-[#CC5A00] transition inline-flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
             </svg>

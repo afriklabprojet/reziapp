@@ -46,7 +46,7 @@ class AutoReplyResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('residence_id')
                             ->label('Résidence (optionnel)')
-                            ->relationship('residence', 'title')
+                            ->relationship('residence', 'name')
                             ->searchable()
                             ->preload(),
                         Forms\Components\TextInput::make('name')

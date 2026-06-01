@@ -49,7 +49,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">Catégorie *</label>
             <select name="category" 
                     required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                 <option value="">Sélectionnez une catégorie</option>
                 @foreach($categories as $value => $label)
                     <option value="{{ $value }}" {{ old('category') === $value ? 'selected' : '' }}>
@@ -71,7 +71,7 @@
                    name="subject" 
                    id="subject"
                    value="{{ old('subject') }}"
-                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]"
                    placeholder="Résumez votre demande en quelques mots..."
                    maxlength="255"
                    required>
@@ -88,7 +88,7 @@
             <textarea name="message" 
                       id="message" 
                       rows="6"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]"
                       placeholder="Décrivez votre problème en détail..."
                       required>{{ old('message') }}</textarea>
             @error('message')
@@ -103,11 +103,11 @@
             </label>
             <div class="grid grid-cols-2 gap-3">
                 @foreach($priorities as $value => $label)
-                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors {{ old('priority', 'medium') === $value ? 'border-[#ff385c] bg-[#fff0f3]' : '' }}">
+                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors {{ old('priority', 'medium') === $value ? 'border-[#F16A00] bg-[#FFF4EB]' : '' }}">
                         <input type="radio" 
                                name="priority" 
                                value="{{ $value }}" 
-                               class="w-4 h-4 text-[#e00b41] border-gray-300 focus:ring-[#ff385c]"
+                               class="w-4 h-4 text-[#CC5A00] border-gray-300 focus:ring-[#F16A00]"
                                {{ old('priority', 'medium') === $value ? 'checked' : '' }}>
                         <span class="ml-3 text-gray-700">{{ $label }}</span>
                     </label>
@@ -126,7 +126,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                 </svg>
                 <p class="mt-2 text-sm text-gray-600">
-                    <label class="text-[#e00b41] hover:text-[#b5083a] cursor-pointer">
+                    <label class="text-[#CC5A00] hover:text-[#A34700] cursor-pointer">
                         <span>Téléverser des fichiers</span>
                         <input type="file" 
                                name="attachments[]" 
@@ -173,7 +173,7 @@
                 Annuler
             </a>
             <button type="submit" 
-                    class="flex-1 px-6 py-3 bg-[#e00b41] text-white rounded-lg font-medium hover:bg-[#b5083a] transition-colors">
+                    class="flex-1 px-6 py-3 bg-[#CC5A00] text-white rounded-lg font-medium hover:bg-[#A34700] transition-colors">
                 Envoyer
             </button>
         </div>

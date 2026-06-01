@@ -31,7 +31,7 @@
     {{-- Carte quittance --}}
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <div class="text-center py-4 border-b border-gray-100 mb-5">
-            <div class="text-lg font-bold text-gray-900">QUITTANCE DE LOYER</div>
+            <div class="text-lg font-bold text-gray-900">REÇU DE LOCATION</div>
             <div class="text-sm text-gray-500">Période : {{ $receipt->period_label }}</div>
         </div>
 
@@ -50,7 +50,7 @@
             </div>
             <div class="border-t border-gray-100 pt-3 mt-3">
                 <div class="flex justify-between">
-                    <span class="text-gray-500">Loyer</span>
+                    <span class="text-gray-500">Montant de location</span>
                     <span class="font-medium">{{ number_format($receipt->rent_amount, 0, ',', ' ') }} FCFA</span>
                 </div>
                 @if($receipt->charges_amount > 0)

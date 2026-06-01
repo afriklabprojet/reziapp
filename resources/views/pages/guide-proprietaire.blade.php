@@ -5,9 +5,9 @@
     <div class="min-h-screen bg-gray-50">
 
         {{-- ===== Hero ===== --}}
-        <div class="bg-linear-to-br from-[#ff385c] via-[#ff385c] to-[#e00b41]">
+        <div class="bg-linear-to-br from-[#F16A00] via-[#F16A00] to-[#CC5A00]">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                <nav class="text-sm text-[#ffd1da] mb-4 flex items-center gap-1.5">
+                <nav class="text-sm text-[#FFE7D1] mb-4 flex items-center gap-1.5">
                     <a href="{{ route('home') }}" class="hover:text-white transition">Accueil</a>
                     <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     <span class="text-white">Guide Propriétaire</span>
@@ -15,7 +15,7 @@
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
                     <div>
                         <h1 class="text-3xl sm:text-4xl font-bold text-white">{{ $content['title'] ?? "Guide du Propriétaire" }}</h1>
-                        <p class="mt-3 text-[#ffd1da] text-lg max-w-xl">{{ $content['subtitle'] ?? "Tout ce que vous devez savoir pour réussir sur REZI" }}</p>
+                        <p class="mt-3 text-[#FFE7D1] text-lg max-w-xl">{{ $content['subtitle'] ?? "Tout ce que vous devez savoir pour réussir sur REZI" }}</p>
                     </div>
                     <div class="shrink-0 flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-2xl px-5 py-3 text-white text-sm font-medium whitespace-nowrap">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -27,15 +27,15 @@
                 <div class="mt-10 grid grid-cols-3 gap-4">
                     <div class="bg-white/15 backdrop-blur-sm rounded-2xl p-4 text-center">
                         <div class="text-2xl font-bold text-white">100%</div>
-                        <div class="text-xs text-[#ffd1da] mt-0.5">Publication gratuite</div>
+                        <div class="text-xs text-[#FFE7D1] mt-0.5">Publication gratuite</div>
                     </div>
                     <div class="bg-white/15 backdrop-blur-sm rounded-2xl p-4 text-center">
                         <div class="text-2xl font-bold text-white">0%</div>
-                        <div class="text-xs text-[#ffd1da] mt-0.5">Commission REZI</div>
+                        <div class="text-xs text-[#FFE7D1] mt-0.5">Commission REZI</div>
                     </div>
                     <div class="bg-white/15 backdrop-blur-sm rounded-2xl p-4 text-center">
                         <div class="text-2xl font-bold text-white">24h</div>
-                        <div class="text-xs text-[#ffd1da] mt-0.5">Délai modération</div>
+                        <div class="text-xs text-[#FFE7D1] mt-0.5">Délai modération</div>
                     </div>
                 </div>
             </div>
@@ -45,8 +45,8 @@
         @if(!empty($content['introduction']))
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 flex gap-4">
-                <div class="shrink-0 w-10 h-10 bg-[#ffd1da] rounded-xl flex items-center justify-center">
-                    <svg class="w-5 h-5 text-[#e00b41]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <div class="shrink-0 w-10 h-10 bg-[#FFE7D1] rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-[#CC5A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
                 <p class="text-gray-600 leading-relaxed text-base">{{ $content['introduction'] }}</p>
             </div>
@@ -56,12 +56,12 @@
         {{-- ===== Sommaire ===== --}}
         @if(!empty($content['steps']))
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-            <div class="bg-[#fff0f3] border border-[#ffd1da] rounded-2xl p-5">
-                <p class="text-xs font-semibold text-[#b5083a] uppercase tracking-wider mb-3">Sommaire</p>
+            <div class="bg-[#FFF4EB] border border-[#FFE7D1] rounded-2xl p-5">
+                <p class="text-xs font-semibold text-[#A34700] uppercase tracking-wider mb-3">Sommaire</p>
                 <div class="grid sm:grid-cols-2 gap-x-6 gap-y-1.5">
                     @foreach($content['steps'] as $i => $step)
-                    <a href="#step-{{ $i + 1 }}" class="flex items-center gap-2 text-sm text-[#8e0730] hover:text-[#e00b41] transition group">
-                        <span class="w-5 h-5 bg-[#ffb3c1] rounded-full flex items-center justify-center text-xs font-bold text-[#b5083a] shrink-0 group-hover:bg-[#ff7a96] transition">{{ $i + 1 }}</span>
+                    <a href="#step-{{ $i + 1 }}" class="flex items-center gap-2 text-sm text-[#8e0730] hover:text-[#CC5A00] transition group">
+                        <span class="w-5 h-5 bg-[#FFD0A3] rounded-full flex items-center justify-center text-xs font-bold text-[#A34700] shrink-0 group-hover:bg-[#FFB46F] transition">{{ $i + 1 }}</span>
                         {{ $step['title'] }}
                     </a>
                     @endforeach
@@ -77,13 +77,13 @@
                 <div id="step-{{ $stepIndex + 1 }}" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden scroll-mt-6">
 
                     {{-- Step Header --}}
-                    <div class="bg-linear-to-r from-[#ff385c] to-[#e00b41] p-6">
+                    <div class="bg-linear-to-r from-[#F16A00] to-[#CC5A00] p-6">
                         <div class="flex items-start gap-4">
                             <span class="shrink-0 w-11 h-11 bg-white/20 text-white rounded-xl flex items-center justify-center font-bold text-lg">{{ $stepIndex + 1 }}</span>
                             <div>
                                 <h2 class="text-xl font-bold text-white">{{ $step['title'] }}</h2>
                                 @if(!empty($step['description']))
-                                <p class="text-[#ffd1da] mt-1 text-sm leading-relaxed">{{ $step['description'] }}</p>
+                                <p class="text-[#FFE7D1] mt-1 text-sm leading-relaxed">{{ $step['description'] }}</p>
                                 @endif
                             </div>
                         </div>
@@ -96,7 +96,7 @@
                         <div class="space-y-2.5">
                             @foreach($step['substeps'] as $idx => $substep)
                             <div class="flex items-start gap-3">
-                                <span class="shrink-0 w-6 h-6 bg-[#ffd1da] text-[#b5083a] rounded-full flex items-center justify-center text-xs font-bold mt-0.5">{{ $idx + 1 }}</span>
+                                <span class="shrink-0 w-6 h-6 bg-[#FFE7D1] text-[#A34700] rounded-full flex items-center justify-center text-xs font-bold mt-0.5">{{ $idx + 1 }}</span>
                                 <span class="text-gray-700 text-sm leading-relaxed">{{ $substep }}</span>
                             </div>
                             @endforeach
@@ -150,7 +150,7 @@
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-5 border-b border-gray-100">
                     <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <svg class="w-5 h-5 text-[#F16A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         Questions fréquentes
                     </h2>
                 </div>
@@ -178,16 +178,16 @@
 
         {{-- ===== CTA ===== --}}
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-            <div class="bg-linear-to-br from-[#ff385c] to-[#e00b41] rounded-2xl p-8 sm:p-10 text-center">
+            <div class="bg-linear-to-br from-[#F16A00] to-[#CC5A00] rounded-2xl p-8 sm:p-10 text-center">
                 <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                 </div>
                 <h3 class="text-2xl font-bold text-white mb-2">Prêt à publier votre résidence ?</h3>
-                <p class="text-[#ffd1da] mb-8 max-w-md mx-auto">Publication gratuite, sans commission. Rejoignez les propriétaires qui font confiance à REZI.</p>
+                <p class="text-[#FFE7D1] mb-8 max-w-md mx-auto">Publication gratuite, sans commission. Rejoignez les propriétaires qui font confiance à REZI.</p>
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
                     @auth
                     <a href="{{ route('owner.residences.create') }}"
-                        class="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#e00b41] font-semibold rounded-xl hover:bg-[#fff0f3] transition shadow-sm">
+                        class="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#CC5A00] font-semibold rounded-xl hover:bg-[#FFF4EB] transition shadow-sm">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                         Publier une résidence
                     </a>
@@ -197,7 +197,7 @@
                     </a>
                     @else
                     <a href="{{ route('register') }}"
-                        class="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#e00b41] font-semibold rounded-xl hover:bg-[#fff0f3] transition shadow-sm">
+                        class="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#CC5A00] font-semibold rounded-xl hover:bg-[#FFF4EB] transition shadow-sm">
                         Créer un compte gratuitement
                     </a>
                     <a href="{{ route('login') }}"

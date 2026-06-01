@@ -6,7 +6,7 @@
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {{-- Retour --}}
         <a href="{{ route('owner.cohosts.show', [$residence, $cohost]) }}"
-            class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#ff385c] transition mb-6">
+            class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#F16A00] transition mb-6">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
@@ -46,8 +46,8 @@
                             'can_manage_pricing' => [
                                 'label' => 'Gérer les tarifs',
                                 'desc' => 'Peut modifier les prix et promotions',
-                                'bg' => 'bg-[#fff0f3]',
-                                'text' => 'text-[#e00b41]',
+                                'bg' => 'bg-[#FFF4EB]',
+                                'text' => 'text-[#CC5A00]',
                                 'icon' =>
                                     'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
                             ],
@@ -79,10 +79,10 @@
                     @foreach ($permissions as $key => $perm)
                         <input type="hidden" name="{{ $key }}" value="0">
                         <label
-                            class="flex items-start gap-4 p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 has-checked:border-[#ff385c] has-checked:bg-[#fff0f3]/50 transition">
+                            class="flex items-start gap-4 p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB]/50 transition">
                             <input type="checkbox" name="{{ $key }}" value="1"
                                 {{ $cohost->$key ? 'checked' : '' }}
-                                class="mt-1 w-4 h-4 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
+                                class="mt-1 w-4 h-4 text-[#F16A00] border-gray-300 rounded focus:ring-[#F16A00]">
                             <div class="flex items-start gap-3 flex-1">
                                 <div
                                     class="w-9 h-9 rounded-lg {{ $perm['bg'] }} flex items-center justify-center shrink-0 mt-0.5">
@@ -110,7 +110,7 @@
                     <input type="number" id="commission_percent" name="commission_percent"
                         value="{{ old('commission_percent', $cohost->commission_percent) }}" min="0" max="100"
                         step="0.5" placeholder="0"
-                        class="w-24 px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-center focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] transition">
+                        class="w-24 px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-center focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00] transition">
                     <span class="text-sm text-gray-500">%</span>
                 </div>
             </div>
@@ -119,7 +119,7 @@
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <label for="notes" class="block text-base font-bold text-gray-900 mb-2">Notes internes</label>
                 <textarea id="notes" name="notes" rows="3" placeholder="Notes internes..."
-                    class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] transition resize-y">{{ old('notes', $cohost->notes) }}</textarea>
+                    class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00] transition resize-y">{{ old('notes', $cohost->notes) }}</textarea>
             </div>
 
             {{-- Actions --}}
@@ -129,7 +129,7 @@
                     Annuler
                 </a>
                 <button type="submit"
-                    class="flex-1 px-6 py-3 bg-[#ff385c] text-white text-sm font-semibold rounded-xl hover:bg-[#e00b41] transition shadow-sm">
+                    class="flex-1 px-6 py-3 bg-[#F16A00] text-white text-sm font-semibold rounded-xl hover:bg-[#CC5A00] transition shadow-sm">
                     Enregistrer
                 </button>
             </div>

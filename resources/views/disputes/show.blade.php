@@ -43,18 +43,20 @@
                 <div class="bg-white rounded-lg shadow-sm border p-6">
                     <h2 class="font-semibold text-gray-900 mb-4">Pièces justificatives</h2>
                     <div class="grid grid-cols-2 gap-4">
-                        @foreach($dispute->evidence as $evidence)
+                        @foreach($dispute->evidence as $index => $evidence)
                             <div class="border rounded-lg p-3">
                                 @if(in_array(pathinfo($evidence['name'], PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png']))
-                                    <img loading="lazy" src="{{ storage_url($evidence['path']) }}" 
-                                         alt="{{ $evidence['name'] }}"
-                                         class="w-full h-32 object-cover rounded mb-2">
+                                    <a href="{{ route('disputes.evidence.download', [$dispute, $index]) }}" target="_blank">
+                                        <img loading="lazy" src="{{ route('disputes.evidence.download', [$dispute, $index]) }}"
+                                             alt="{{ $evidence['name'] }}"
+                                             class="w-full h-32 object-cover rounded mb-2">
+                                    </a>
                                 @else
-                                    <div class="w-full h-32 bg-gray-100 rounded flex items-center justify-center mb-2">
+                                    <a href="{{ route('disputes.evidence.download', [$dispute, $index]) }}" target="_blank" class="w-full h-32 bg-gray-100 rounded flex items-center justify-center mb-2">
                                         <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                         </svg>
-                                    </div>
+                                    </a>
                                 @endif
                                 <p class="text-sm text-gray-600 truncate">{{ $evidence['name'] }}</p>
                                 @if(isset($evidence['description']))
@@ -65,22 +67,22 @@
                     </div>
 
                     @if($dispute->isOpen())
-                        <form action="{{ route('disputes.add-evidence', $dispute) }}" 
-                              method="POST" 
+                        <form action="{{ route('disputes.add-evidence', $dispute) }}"
+                              method="POST"
                               enctype="multipart/form-data"
                               class="mt-4 pt-4 border-t">
                             @csrf
                             <div class="flex space-x-4">
-                                <input type="file" 
-                                       name="file" 
+                                <input type="file"
+                                       name="file"
                                        required
                                        class="flex-1 text-sm text-gray-600">
-                                <input type="text" 
-                                       name="description" 
+                                <input type="text"
+                                       name="description"
                                        placeholder="Description..."
                                        class="flex-1 px-3 py-1 border rounded text-sm">
-                                <button type="submit" 
-                                        class="px-4 py-1 bg-[#e00b41] text-white rounded text-sm hover:bg-[#b5083a]">
+                                <button type="submit"
+                                        class="px-4 py-1 bg-[#CC5A00] text-white rounded text-sm hover:bg-[#A34700]">
                                     Ajouter
                                 </button>
                             </div>
@@ -114,7 +116,7 @@
                     <h2 class="font-semibold text-gray-900 mb-4">Tickets de support associés</h2>
                     <div class="space-y-3">
                         @foreach($dispute->supportTickets as $ticket)
-                            <a href="{{ route('support.show', $ticket) }}" 
+                            <a href="{{ route('support.show', $ticket) }}"
                                class="block p-4 border rounded-lg hover:bg-gray-50 transition-colors">
                                 <div class="flex items-center justify-between">
                                     <div>
@@ -140,7 +142,7 @@
                     <h3 class="font-semibold text-gray-900 mb-4">Réservation concernée</h3>
                     <div class="space-y-4">
                         @if($dispute->booking->residence->mainPhoto)
-                            <img loading="lazy" src="{{ storage_url($dispute->booking->residence->mainPhoto->path) }}" 
+                            <img loading="lazy" src="{{ storage_url($dispute->booking->residence->mainPhoto->path) }}"
                                  alt="{{ $dispute->booking->residence->name }}"
                                  class="w-full h-32 object-cover rounded-lg">
                         @endif
@@ -194,8 +196,8 @@
 
                     @if($dispute->escalated_at)
                         <div class="flex items-start">
-                            <div class="w-8 h-8 bg-[#ffd1da] rounded-full flex items-center justify-center mr-3">
-                                <svg class="w-4 h-4 text-[#e00b41]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-8 h-8 bg-[#FFE7D1] rounded-full flex items-center justify-center mr-3">
+                                <svg class="w-4 h-4 text-[#CC5A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                                 </svg>
                             </div>
@@ -228,7 +230,7 @@
                 <p class="text-sm text-blue-800 mb-3">
                     Notre équipe est disponible pour répondre à vos questions.
                 </p>
-                <a href="{{ route('support.create', ['dispute_id' => $dispute->id]) }}" 
+                <a href="{{ route('support.create', ['dispute_id' => $dispute->id]) }}"
                    class="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-700">
                     Contacter le support
                     <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

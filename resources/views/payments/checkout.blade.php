@@ -18,9 +18,9 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
+
             <!-- Formulaire de paiement -->
-            <div class="lg:col-span-2">
+            <div class="lg:col-span-2 order-2 lg:order-1">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     
                     <!-- Méthodes de paiement -->
@@ -34,7 +34,7 @@
                                 <input type="radio" name="operator" value="{{ $code }}" 
                                        x-model="selected"
                                        class="sr-only peer">
-                                <div class="flex flex-col items-center p-4 border-2 rounded-lg peer-checked:border-[#ff385c] peer-checked:bg-[#fff0f3] hover:bg-gray-50 transition-colors">
+                                <div class="flex flex-col items-center p-4 border-2 rounded-lg peer-checked:border-[#F16A00] peer-checked:bg-[#FFF4EB] hover:bg-gray-50 transition-colors">
                                     <img loading="lazy" src="{{ $operator['logo'] }}" alt="{{ $operator['name'] }}" class="h-10 w-auto mb-2">
                                     <span class="text-xs font-medium text-gray-700">{{ $operator['name'] }}</span>
                                 </div>
@@ -60,12 +60,13 @@
                                 <span class="inline-flex items-center px-4 rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
                                     +225
                                 </span>
-                                <input type="tel" 
-                                       id="phone_number" 
+                                <input type="tel"
+                                       id="phone_number"
                                        name="phone_number"
                                        x-model="phoneNumber"
                                        placeholder="07 00 00 00 00"
-                                       class="flex-1 block w-full rounded-none rounded-r-lg border-gray-300 focus:ring-[#ff385c] focus:border-[#ff385c]"
+                                       inputmode="numeric"
+                                       class="flex-1 block w-full rounded-none rounded-r-lg border-gray-300 focus:ring-[#F16A00] focus:border-[#F16A00] py-3"
                                        maxlength="10"
                                        required>
                             </div>
@@ -83,14 +84,14 @@
                                 <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
                                     <input type="radio" name="saved_method" value="{{ $method->id }}" 
                                            @change="phoneNumber = '{{ $method->phone_number }}'"
-                                           class="text-[#e00b41] focus:ring-[#ff385c]">
+                                           class="text-[#CC5A00] focus:ring-[#F16A00]">
                                     <div class="ml-3 flex items-center">
                                         <img loading="lazy" src="{{ $method->provider->logo ?? '/images/payment/mobile.png' }}" 
                                              alt="{{ $method->provider->name ?? 'Mobile Money' }}" 
                                              class="h-6 w-auto mr-2">
                                         <span class="text-sm text-gray-900">{{ $method->display_name }}</span>
                                         @if($method->is_default)
-                                        <span class="ml-2 px-2 py-0.5 text-xs bg-[#ffd1da] text-[#b5083a] rounded-full">Par défaut</span>
+                                        <span class="ml-2 px-2 py-0.5 text-xs bg-[#FFE7D1] text-[#A34700] rounded-full">Par défaut</span>
                                         @endif
                                     </div>
                                 </label>
@@ -102,7 +103,7 @@
                         <!-- Sauvegarder la méthode -->
                         <div class="flex items-center">
                             <input type="checkbox" id="save_method" name="save_method" x-model="saveMethod"
-                                   class="h-4 w-4 text-[#e00b41] focus:ring-[#ff385c] border-gray-300 rounded">
+                                   class="h-4 w-4 text-[#CC5A00] focus:ring-[#F16A00] border-gray-300 rounded">
                             <label for="save_method" class="ml-2 text-sm text-gray-600">
                                 Enregistrer cette méthode pour mes prochains paiements
                             </label>
@@ -110,7 +111,7 @@
 
                         <!-- Bouton de paiement -->
                         <button type="submit" 
-                                class="w-full flex items-center justify-center px-6 py-4 bg-[#e00b41] text-white font-semibold rounded-lg hover:bg-[#b5083a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#ff385c] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                class="w-full flex items-center justify-center px-6 py-4 bg-[#CC5A00] text-white font-semibold rounded-lg hover:bg-[#A34700] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F16A00] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                 :disabled="loading"
                                 @click.prevent="initiatePayment">
                             <span x-show="!loading">
@@ -147,8 +148,8 @@
                             
                             <div class="relative bg-white rounded-xl shadow-xl max-w-md w-full p-6 z-10">
                                 <div class="text-center">
-                                    <div class="mx-auto w-16 h-16 bg-[#ffd1da] rounded-full flex items-center justify-center mb-4">
-                                        <svg class="w-8 h-8 text-[#e00b41]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="mx-auto w-16 h-16 bg-[#FFE7D1] rounded-full flex items-center justify-center mb-4">
+                                        <svg class="w-8 h-8 text-[#CC5A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                                         </svg>
                                     </div>
@@ -161,18 +162,20 @@
                                 <form @submit.prevent="verifyOtp">
                                     <div class="mb-6">
                                         <label for="otp" class="block text-sm font-medium text-gray-700 mb-2">Code de confirmation</label>
-                                        <input type="text" 
-                                               id="otp" 
+                                        <input type="text"
+                                               id="otp"
                                                x-model="otp"
                                                placeholder="000000"
-                                               class="block w-full text-center text-2xl tracking-widest border-gray-300 rounded-lg focus:ring-[#ff385c] focus:border-[#ff385c]"
+                                               inputmode="numeric"
+                                               pattern="[0-9]*"
+                                               class="block w-full text-center text-2xl tracking-widest border-gray-300 rounded-lg focus:ring-[#F16A00] focus:border-[#F16A00]"
                                                maxlength="6"
                                                autocomplete="one-time-code"
                                                required>
                                     </div>
 
                                     <button type="submit" 
-                                            class="w-full py-3 bg-[#e00b41] text-white font-semibold rounded-lg hover:bg-[#b5083a] disabled:opacity-50"
+                                            class="w-full py-3 bg-[#CC5A00] text-white font-semibold rounded-lg hover:bg-[#A34700] disabled:opacity-50"
                                             :disabled="loading || otp.length !== 6">
                                         <span x-show="!loading">Confirmer le paiement</span>
                                         <span x-show="loading">Vérification...</span>
@@ -209,9 +212,9 @@
                 </div>
             </div>
 
-            <!-- Récapitulatif -->
-            <div class="lg:col-span-1">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sticky top-6">
+            <!-- Récapitulatif — affiché en premier sur mobile -->
+            <div class="lg:col-span-1 order-1 lg:order-2">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:sticky lg:top-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Récapitulatif</h3>
                     
                     <!-- Résidence -->
@@ -267,7 +270,7 @@
                     <div class="pt-4">
                         <div class="flex justify-between items-center">
                             <span class="text-lg font-semibold text-gray-900">Total</span>
-                            <span class="text-xl font-bold text-[#e00b41]">{{ number_format($booking->total_amount, 0, ',', ' ') }} FCFA</span>
+                            <span class="text-xl font-bold text-[#CC5A00]">{{ number_format($booking->total_amount, 0, ',', ' ') }} FCFA</span>
                         </div>
                     </div>
                 </div>

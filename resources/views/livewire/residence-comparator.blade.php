@@ -10,7 +10,7 @@
                     </h3>
                     <div class="flex items-center gap-2">
                         <a href="{{ route('residences.compare') }}"
-                            class="px-4 py-2 bg-[#e00b41] text-white text-sm font-medium rounded-lg hover:bg-[#b5083a] transition-colors">
+                            class="px-4 py-2 bg-[#CC5A00] text-white text-sm font-medium rounded-lg hover:bg-[#A34700] transition-colors">
                             Voir la comparaison
                         </a>
                         <button wire:click="clearComparison"
@@ -62,7 +62,7 @@
                 <div class="flex items-center justify-between mb-6">
                     <div>
                         <a href="{{ route('residences.index') }}"
-                            class="inline-flex items-center text-gray-600 hover:text-[#e00b41] mb-2">
+                            class="inline-flex items-center text-gray-600 hover:text-[#CC5A00] mb-2">
                             <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 19l-7-7 7-7" />
@@ -92,7 +92,7 @@
                         <p class="text-gray-600 mb-6">Ajoutez des résidences à la comparaison depuis la page de
                             recherche.</p>
                         <a href="{{ route('residences.index') }}"
-                            class="inline-flex items-center px-6 py-3 bg-[#e00b41] text-white font-medium rounded-lg hover:bg-[#b5083a] transition-colors">
+                            class="inline-flex items-center px-6 py-3 bg-[#CC5A00] text-white font-medium rounded-lg hover:bg-[#A34700] transition-colors">
                             Parcourir les résidences
                         </a>
                     </div>
@@ -127,7 +127,7 @@
                                                         <h3 class="font-semibold text-gray-900 line-clamp-2 mb-1">
                                                             {{ $residence->title }}
                                                         </h3>
-                                                        <p class="text-[#e00b41] font-bold">
+                                                        <p class="text-[#CC5A00] font-bold">
                                                             {{ number_format($residence->price_per_night, 0, ',', ' ') }}
                                                             FCFA/jour
                                                         </p>
@@ -141,7 +141,7 @@
                                 <tbody>
                                     @foreach ($comparisonData as $sectionKey => $section)
                                         {{-- Section Header --}}
-                                        <tr class="bg-[#fff0f3]">
+                                        <tr class="bg-[#FFF4EB]">
                                             <td colspan="{{ count($residences) + 1 }}"
                                                 class="px-4 py-3 font-semibold text-[#8e0730]">
                                                 {{ $section['label'] }}
@@ -256,7 +256,7 @@
                                         Voir les détails
                                     </a>
                                     <a href="{{ route('bookings.create', ['residence' => $residence->id]) }}"
-                                        class="w-full px-4 py-2.5 bg-[#e00b41] text-white text-center text-sm font-medium rounded-lg hover:bg-[#b5083a] transition-colors">
+                                        class="w-full px-4 py-2.5 bg-[#CC5A00] text-white text-center text-sm font-medium rounded-lg hover:bg-[#A34700] transition-colors">
                                         Réserver
                                     </a>
                                 </div>

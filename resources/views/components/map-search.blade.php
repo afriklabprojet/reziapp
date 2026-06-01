@@ -67,7 +67,7 @@
 
     <!-- Légende -->
     <div
-        class="absolute bottom-3 sm:bottom-4 left-2 sm:left-4 right-2 sm:right-auto bg-white/95 backdrop-blur-sm rounded-lg shadow-md p-2 sm:p-3 z-10">
+        class="absolute bottom-3 left-4 z-10 hidden rounded-lg bg-white/95 p-3 shadow-md backdrop-blur-sm sm:bottom-4 sm:block">
         <div class="flex flex-wrap items-center gap-2 sm:gap-4 text-[10px] sm:text-xs">
             <div class="flex items-center gap-1">
                 <span class="w-3 h-3 bg-emerald-600 rounded-full"></span>
@@ -89,7 +89,7 @@
     </div>
 
     <!-- Compteur de résidences -->
-    <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg shadow-md px-4 py-2 z-10">
+    <div class="absolute left-3 top-3 z-10 rounded-full bg-white/95 px-3 py-2 shadow-md backdrop-blur-sm sm:left-4 sm:top-4 sm:rounded-lg sm:px-4">
         <span class="text-sm font-medium text-gray-700">
             <span x-text="visibleCount" class="text-blue-600 font-bold"></span> résidence(s) visible(s)
         </span>
@@ -140,15 +140,14 @@
                             </span>
                         </div>
                         <div class="absolute bottom-2 left-2">
-                            <span class="px-2 py-1 bg-[#ff385c] text-white text-xs font-semibold rounded">
+                            <span class="px-2 py-1 bg-[#F16A00] text-white text-xs font-semibold rounded">
                                 <span x-text="formatPrice(selectedResidence.price)"></span> FCFA
                             </span>
                         </div>
                     </div>
                     <!-- Contenu -->
                     <div class="p-3">
-                        <h4 class="font-semibold text-gray-900 text-sm line-clamp-1" x-text="selectedResidence.title">
-                        </h4>
+                        <p class="font-semibold text-gray-900 text-sm line-clamp-1" x-text="selectedResidence.title"></p>
                         <p class="text-xs text-gray-500 mt-1 flex items-center">
                             <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -166,7 +165,7 @@
                         </p>
                         <a :href="'/residences/' + selectedResidence.id"
                             class="mt-3 block w-full text-center py-2 rounded-lg text-sm font-medium transition-colors"
-                            :class="selectedResidence.is_available !== false ? 'bg-[#ff385c] text-white hover:bg-[#e00b41]' :
+                            :class="selectedResidence.is_available !== false ? 'bg-[#F16A00] text-white hover:bg-[#CC5A00]' :
                                 'bg-gray-200 text-gray-600 hover:bg-gray-300'">
                             <span
                                 x-text="selectedResidence.is_available !== false ? 'Voir les détails' : 'Voir la fiche'"></span>
@@ -180,8 +179,8 @@
 
 @once
     @push('styles')
-        <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet" />
-        <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
+        <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet" integrity="sha384-SDYx9Nwa5fE1fRuBplOPejrcbPOK/ql0Uym6hsGsTvnlC784P5LZhBJIbo8O/O+0" crossorigin="anonymous" />
+        <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js" integrity="sha384-GCe89tb5amHPhp10tMEUmIOUpgyTbhqwThspGxJoQMvr5I6Zfq7lYU6ydn7dVKA6" crossorigin="anonymous"></script>
     @endpush
 @endonce
 

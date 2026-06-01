@@ -13,7 +13,7 @@
             <div>
                 <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2.5">
                     <span
-                        class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-linear-to-br from-[#ff385c] to-red-500 text-white shadow-sm">
+                        class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-linear-to-br from-[#F16A00] to-red-500 text-white shadow-sm">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
@@ -138,7 +138,7 @@
                 <form method="GET" class="flex flex-wrap items-center gap-3 flex-1">
                     <div class="min-w-48 flex-1">
                         <select name="residence_id"
-                            class="w-full text-sm border-gray-200 rounded-lg focus:ring-[#ff385c] focus:border-[#ff385c] bg-gray-50">
+                            class="w-full text-sm border-gray-200 rounded-lg focus:ring-[#F16A00] focus:border-[#F16A00] bg-gray-50">
                             <option value="">Toutes les résidences</option>
                             @foreach ($residences as $residence)
                                 <option value="{{ $residence->id }}"
@@ -150,7 +150,7 @@
                     </div>
                     <div class="min-w-36">
                         <select name="status"
-                            class="w-full text-sm border-gray-200 rounded-lg focus:ring-[#ff385c] focus:border-[#ff385c] bg-gray-50">
+                            class="w-full text-sm border-gray-200 rounded-lg focus:ring-[#F16A00] focus:border-[#F16A00] bg-gray-50">
                             <option value="">Tous les statuts</option>
                             <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Actives
                             </option>
@@ -174,7 +174,7 @@
                 <div class="flex items-center bg-gray-100 rounded-lg p-0.5">
                     <button @click="setView('cards')" type="button"
                         class="p-2 rounded-md transition-all"
-                        :class="view === 'cards' ? 'bg-white shadow-sm text-[#e00b41]' : 'text-gray-400 hover:text-gray-600'">
+                        :class="view === 'cards' ? 'bg-white shadow-sm text-[#CC5A00]' : 'text-gray-400 hover:text-gray-600'">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25a2.25 2.25 0 0 1-2.25-2.25v-2.25Z" />
@@ -182,7 +182,7 @@
                     </button>
                     <button @click="setView('table')" type="button"
                         class="p-2 rounded-md transition-all"
-                        :class="view === 'table' ? 'bg-white shadow-sm text-[#e00b41]' : 'text-gray-400 hover:text-gray-600'">
+                        :class="view === 'table' ? 'bg-white shadow-sm text-[#CC5A00]' : 'text-gray-400 hover:text-gray-600'">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
@@ -208,8 +208,8 @@
         {{-- ====== Empty state ====== --}}
         @if ($promotions->isEmpty())
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
-                <div class="w-16 h-16 bg-[#fff0f3] rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-8 h-8 text-[#ff4d6d]" fill="none" stroke="currentColor" stroke-width="1.5"
+                <div class="w-16 h-16 bg-[#FFF4EB] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-[#FF8A1F]" fill="none" stroke="currentColor" stroke-width="1.5"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
@@ -252,7 +252,7 @@
                             <div class="shrink-0">
                                 <div
                                     class="w-18 h-18 rounded-2xl flex flex-col items-center justify-center font-bold transition-transform group-hover:scale-105
-                                    {{ $isActive ? 'bg-linear-to-br from-red-500 to-[#ff385c] text-white shadow-lg shadow-red-500/20' : ($isExpired ? 'bg-gray-100 text-gray-400' : ($isUpcoming ? 'bg-linear-to-br from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-500/20' : 'bg-gray-100 text-gray-500')) }}">
+                                    {{ $isActive ? 'bg-linear-to-br from-red-500 to-[#F16A00] text-white shadow-lg shadow-red-500/20' : ($isExpired ? 'bg-gray-100 text-gray-400' : ($isUpcoming ? 'bg-linear-to-br from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-500/20' : 'bg-gray-100 text-gray-500')) }}">
                                     @if ($promotion->discount_type === 'percentage')
                                         <span class="text-xl leading-none font-extrabold">-{{ intval($promotion->discount_value) }}%</span>
                                     @elseif($promotion->discount_type === 'fixed')
@@ -359,7 +359,7 @@
                                             <span class="font-semibold">{{ $progressPercent }}%</span>
                                         </div>
                                         <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                                            <div class="h-full rounded-full transition-all duration-500 {{ $progressPercent >= 80 ? 'bg-red-500' : ($progressPercent >= 50 ? 'bg-[#ff4d6d]' : 'bg-green-500') }}"
+                                            <div class="h-full rounded-full transition-all duration-500 {{ $progressPercent >= 80 ? 'bg-red-500' : ($progressPercent >= 50 ? 'bg-[#FF8A1F]' : 'bg-green-500') }}"
                                                 style="width: {{ $progressPercent }}%"></div>
                                         </div>
                                     </div>
@@ -392,7 +392,7 @@
                                 </form>
 
                                 <a href="{{ route('owner.marketing.promotions.edit', $promotion) }}"
-                                    class="p-2 text-gray-400 hover:text-[#e00b41] hover:bg-[#fff0f3] rounded-lg transition-colors"
+                                    class="p-2 text-gray-400 hover:text-[#CC5A00] hover:bg-[#FFF4EB] rounded-lg transition-colors"
                                     title="Modifier">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
                                         viewBox="0 0 24 24">
@@ -501,7 +501,7 @@
                                                     </button>
                                                 </form>
                                                 <a href="{{ route('owner.marketing.promotions.edit', $promotion) }}"
-                                                    class="p-1.5 text-gray-400 hover:text-[#e00b41] hover:bg-[#fff0f3] rounded-lg transition-colors"
+                                                    class="p-1.5 text-gray-400 hover:text-[#CC5A00] hover:bg-[#FFF4EB] rounded-lg transition-colors"
                                                     title="Modifier">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125" />

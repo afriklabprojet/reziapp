@@ -164,7 +164,7 @@
         <div class="space-y-3">
             @auth
                 <a href="{{ route('bookings.index') }}"
-                    class="block w-full py-3.5 text-center bg-linear-to-r from-[#E61E4D] to-[#D70466] text-white font-semibold rounded-xl hover:shadow-lg transition-all">
+                    class="block w-full py-3.5 text-center bg-linear-to-r from-[#F16A00] to-[#CC5A00] text-white font-semibold rounded-xl hover:shadow-lg transition-all">
                     Voir mes réservations
                 </a>
             @endauth

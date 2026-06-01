@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @php($cspNonce = \Illuminate\Support\Facades\Vite::cspNonce())
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
@@ -18,7 +19,7 @@
 
     @production
     <!-- Microsoft Clarity -->
-    <script type="text/javascript">
+    <script type="text/javascript" nonce="{{ $cspNonce }}">
         (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
             t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
@@ -28,15 +29,15 @@
     @endproduction
 </head>
 
-<body class="font-sans text-[#222222] antialiased">
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-[#f7f7f7]">
+<body class="font-sans text-[#0F0F0F] antialiased">
+    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-[#F2F2F2]">
         <div>
             <a href="/">
                 <x-application-logo size="large" />
             </a>
         </div>
 
-        <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white overflow-hidden sm:rounded-[14px]" style="box-shadow: rgba(0,0,0,0.02) 0 0 0 1px, rgba(0,0,0,0.04) 0 2px 6px, rgba(0,0,0,0.1) 0 4px 8px;">
+        <div class="w-full sm:max-w-md mt-6 px-4 sm:px-6 py-4 bg-white overflow-hidden sm:rounded-md" style="box-shadow: rgba(0,0,0,0.02) 0 0 0 1px, rgba(0,0,0,0.04) 0 2px 6px, rgba(0,0,0,0.1) 0 4px 8px;">
             {{ $slot }}
         </div>
     </div>

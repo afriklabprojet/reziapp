@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Services\GeolocationService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -117,8 +118,8 @@ class GeoSearchCollection extends ResourceCollection
             'meta' => [
                 'currency' => 'XOF',
                 'distance_unit' => 'meters',
-                'allowed_radii' => [100, 200, 300, 400, 500],
-                'max_radius' => 500,
+                'allowed_radii' => GeolocationService::getAllowedRadii(),
+                'max_radius' => max(GeolocationService::getAllowedRadii()),
                 'api_version' => 'v1',
             ],
             'links' => [

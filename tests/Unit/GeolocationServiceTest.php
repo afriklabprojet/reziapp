@@ -6,7 +6,6 @@ namespace Tests\Unit;
 
 use App\Models\Residence;
 use App\Models\User;
-use App\Repositories\ResidenceRepository;
 use App\Services\GeolocationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
@@ -18,15 +17,13 @@ class GeolocationServiceTest extends TestCase
     use RefreshDatabase;
 
     protected GeolocationService $service;
-    protected ResidenceRepository $repository;
     protected User $owner;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->repository = app(ResidenceRepository::class);
-        $this->service = new GeolocationService($this->repository);
+        $this->service = new GeolocationService();
         $this->owner = User::factory()->create(['role' => 'owner']);
     }
 

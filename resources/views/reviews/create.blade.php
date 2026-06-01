@@ -59,12 +59,12 @@
                     </div>
 
                     <!-- Note moyenne calculée -->
-                    <div class="mt-6 p-4 bg-[#fff0f3] rounded-xl">
+                    <div class="mt-6 p-4 bg-[#FFF4EB] rounded-xl">
                         <div class="flex items-center justify-between">
                             <span class="text-sm font-medium text-primary-900">Note globale</span>
                             <div class="flex items-center gap-2">
-                                <span class="text-2xl font-bold text-[#e00b41]" x-text="overallRating.toFixed(1)"></span>
-                                <span class="text-[#e00b41]">/5</span>
+                                <span class="text-2xl font-bold text-[#CC5A00]" x-text="overallRating.toFixed(1)"></span>
+                                <span class="text-[#CC5A00]">/5</span>
                             </div>
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                         <label for="comment" class="block text-sm font-medium text-gray-900 mb-1">Votre commentaire</label>
                         <p class="text-xs text-gray-500 mb-2">Partagez les détails de votre expérience (optionnel mais recommandé)</p>
                         <textarea name="comment" id="comment" rows="5" 
-                                  class="w-full border-gray-300 rounded-xl focus:border-[#ff385c] focus:ring-[#ff385c]"
+                                  class="w-full border-gray-300 rounded-xl focus:border-[#F16A00] focus:ring-[#F16A00]"
                                   placeholder="Décrivez votre séjour, les points positifs et négatifs...">{{ old('comment') }}</textarea>
                         @error('comment')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -87,7 +87,7 @@
                             Annuler
                         </a>
                         <button type="submit" 
-                                class="inline-flex items-center gap-2 bg-[#e00b41] text-white px-6 py-3 rounded-xl hover:bg-[#b5083a] transition-colors"
+                                class="inline-flex items-center gap-2 bg-[#CC5A00] text-white px-6 py-3 rounded-xl hover:bg-[#A34700] transition-colors"
                                 :disabled="!isValid"
                                 :class="{ 'opacity-50 cursor-not-allowed': !isValid }">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

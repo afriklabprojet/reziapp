@@ -127,18 +127,18 @@
                 <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Bloquer des dates</h4>
                 <form wire:submit="blockDates" class="space-y-3">
                     <div>
-                        <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Date début</label>
-                        <input type="date" wire:model="blockStartDate" min="{{ now()->format('Y-m-d') }}"
+                        <label for="block-start-date" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Date début</label>
+                        <input id="block-start-date" type="date" wire:model="blockStartDate" min="{{ now()->format('Y-m-d') }}"
                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-sm">
                     </div>
                     <div>
-                        <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Date fin</label>
-                        <input type="date" wire:model="blockEndDate" min="{{ now()->format('Y-m-d') }}"
+                        <label for="block-end-date" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Date fin</label>
+                        <input id="block-end-date" type="date" wire:model="blockEndDate" min="{{ now()->format('Y-m-d') }}"
                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-sm">
                     </div>
                     <div>
-                        <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Note (optionnel)</label>
-                        <input type="text" wire:model="blockNote" placeholder="Ex: Rénovations..."
+                        <label for="block-note" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Note (optionnel)</label>
+                        <input id="block-note" type="text" wire:model="blockNote" placeholder="Ex: Rénovations..."
                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-sm">
                     </div>
                     <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white rounded-lg py-2 text-sm font-medium transition">
@@ -153,19 +153,19 @@
                 <form wire:submit="setCustomPrice" class="space-y-3">
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Du</label>
-                            <input type="date" wire:model="priceStartDate" 
+                            <label for="price-start-date" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Du</label>
+                            <input id="price-start-date" type="date" wire:model="priceStartDate" 
                                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-sm">
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Au</label>
-                            <input type="date" wire:model="priceEndDate"
+                            <label for="price-end-date" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Au</label>
+                            <input id="price-end-date" type="date" wire:model="priceEndDate"
                                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-sm">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Prix/jour (FCFA)</label>
-                        <input type="number" wire:model="customPrice" placeholder="{{ $residence->price_per_day }}"
+                        <label for="custom-price" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Prix/jour (FCFA)</label>
+                        <input id="custom-price" type="number" wire:model="customPrice" placeholder="{{ $residence->price_per_day }}"
                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-sm">
                     </div>
                     <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white rounded-lg py-2 text-sm font-medium transition">
@@ -231,19 +231,23 @@
         {{-- Formulaire nouveau tarif --}}
         <form wire:submit="addSeasonalPricing" class="grid grid-cols-1 md:grid-cols-6 gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
             <div class="md:col-span-2">
-                <input type="text" wire:model="seasonName" placeholder="Nom (ex: Haute saison)"
+                <label for="season-name" class="sr-only">Nom de la saison</label>
+                <input id="season-name" type="text" wire:model="seasonName" placeholder="Nom (ex: Haute saison)"
                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-sm">
             </div>
             <div>
-                <input type="date" wire:model="seasonStartDate" 
+                <label for="season-start-date" class="sr-only">Date de début de saison</label>
+                <input id="season-start-date" type="date" wire:model="seasonStartDate" 
                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-sm">
             </div>
             <div>
-                <input type="date" wire:model="seasonEndDate"
+                <label for="season-end-date" class="sr-only">Date de fin de saison</label>
+                <input id="season-end-date" type="date" wire:model="seasonEndDate"
                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-sm">
             </div>
             <div>
-                <input type="number" wire:model="seasonMultiplier" step="0.1" min="0.1" max="5" placeholder="Mult. (1.0)"
+                <label for="season-multiplier" class="sr-only">Multiplicateur de prix</label>
+                <input id="season-multiplier" type="number" wire:model="seasonMultiplier" step="0.1" min="0.1" max="5" placeholder="Mult. (1.0)"
                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-sm">
             </div>
             <div>

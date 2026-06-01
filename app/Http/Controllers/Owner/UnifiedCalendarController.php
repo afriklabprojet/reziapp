@@ -81,7 +81,7 @@ class UnifiedCalendarController extends Controller
         foreach ($reminders as $reminder) {
             $events[] = [
                 'id'    => 'rent-'.$reminder->id,
-                'title' => '💰 Loyer '.($reminder->residence?->name ?? ''),
+                'title' => '💰 Paiement '.($reminder->residence?->name ?? ''),
                 'start' => $reminder->due_date->toDateString(),
                 'color' => $reminder->isOverdue() ? '#EF4444' : '#F59E0B', // Red or Amber
                 'type'  => 'rent_reminder',

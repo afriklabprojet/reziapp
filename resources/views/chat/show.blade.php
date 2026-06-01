@@ -34,7 +34,7 @@
             {{-- Sidebar header --}}
             <div class="flex items-center gap-2 px-4 py-3.5 border-b border-gray-100">
                 <a href="{{ route('chat.index') }}"
-                    class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 hover:text-[#e00b41] transition-colors">
+                    class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 hover:text-[#CC5A00] transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
@@ -54,13 +54,13 @@
                     @endphp
                     <a href="{{ route('chat.show', $conv) }}"
                         class="flex items-center gap-3 px-4 py-3 border-b border-gray-50 transition-all
-                          {{ $isActive ? 'bg-[#fff0f3] border-l-2 border-l-orange-500' : 'hover:bg-gray-100/60' }}">
+                          {{ $isActive ? 'bg-[#FFF4EB] border-l-2 border-l-orange-500' : 'hover:bg-gray-100/60' }}">
                         <div class="relative shrink-0">
                             @if ($convOther->avatar)
                                 <img src="{{ $convOther->getAvatarUrl() }}" class="w-10 h-10 rounded-full object-cover" alt="Avatar">
                             @else
                                 <div
-                                    class="w-10 h-10 rounded-full bg-linear-to-br from-[#ff4d6d] to-[#e00b41] flex items-center justify-center text-white font-bold text-xs">
+                                    class="w-10 h-10 rounded-full bg-linear-to-br from-[#FF8A1F] to-[#CC5A00] flex items-center justify-center text-white font-bold text-xs">
                                     {{ strtoupper(mb_substr($convOther->name, 0, 1)) }}
                                 </div>
                             @endif
@@ -68,11 +68,11 @@
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center justify-between">
                                 <span
-                                    class="text-sm font-semibold truncate {{ $isActive ? 'text-[#b5083a]' : ($convUnread > 0 ? 'text-gray-950' : 'text-gray-800') }}">
+                                    class="text-sm font-semibold truncate {{ $isActive ? 'text-[#A34700]' : ($convUnread > 0 ? 'text-gray-950' : 'text-gray-800') }}">
                                     {{ $convOther->name }}
                                 </span>
                                 <span
-                                    class="text-[10px] shrink-0 ml-2 {{ $convUnread > 0 ? 'text-[#e00b41] font-semibold' : 'text-gray-400' }}">
+                                    class="text-[10px] shrink-0 ml-2 {{ $convUnread > 0 ? 'text-[#CC5A00] font-semibold' : 'text-gray-400' }}">
                                     {{ $conv->last_message_at?->diffForHumans(short: true) ?? '' }}
                                 </span>
                             </div>
@@ -83,7 +83,7 @@
                                 </p>
                                 @if ($convUnread > 0)
                                     <span
-                                        class="shrink-0 inline-flex items-center justify-center min-w-4 h-4 px-1 text-[9px] font-bold text-white bg-[#ff385c] rounded-full">
+                                        class="shrink-0 inline-flex items-center justify-center min-w-4 h-4 px-1 text-[9px] font-bold text-white bg-[#F16A00] rounded-full">
                                         {{ $convUnread > 99 ? '99+' : $convUnread }}
                                     </span>
                                 @endif
@@ -114,7 +114,7 @@
                             class="w-10 h-10 rounded-full object-cover ring-2 ring-orange-100">
                     @else
                         <div
-                            class="w-10 h-10 rounded-full bg-linear-to-br from-[#ff4d6d] to-[#e00b41] flex items-center justify-center text-white font-bold text-sm ring-2 ring-orange-100">
+                            class="w-10 h-10 rounded-full bg-linear-to-br from-[#FF8A1F] to-[#CC5A00] flex items-center justify-center text-white font-bold text-sm ring-2 ring-orange-100">
                             {{ strtoupper(mb_substr($other->name, 0, 1)) }}
                         </div>
                     @endif
@@ -147,7 +147,7 @@
                     {{-- Search in conversation --}}
                     <button @click="showSearchPanel = !showSearchPanel"
                         class="p-2 rounded-lg transition-colors"
-                        :class="showSearchPanel ? 'text-[#e00b41] bg-[#fff0f3]' : 'text-gray-400 hover:text-[#ff385c] hover:bg-[#fff0f3]'"
+                        :class="showSearchPanel ? 'text-[#CC5A00] bg-[#FFF4EB]' : 'text-gray-400 hover:text-[#F16A00] hover:bg-[#FFF4EB]'"
                         title="Rechercher (Ctrl+F)">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
@@ -157,7 +157,7 @@
                     {{-- Documents --}}
                     @if ($conversation->sharedDocuments->count())
                         <button @click="showDocuments = !showDocuments"
-                            class="p-2 text-gray-400 hover:text-[#ff385c] hover:bg-[#fff0f3] rounded-lg transition-colors"
+                            class="p-2 text-gray-400 hover:text-[#F16A00] hover:bg-[#FFF4EB] rounded-lg transition-colors"
                             title="Documents partagés">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5"
                                 viewBox="0 0 24 24">
@@ -233,10 +233,11 @@
                         <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                         </svg>
-                        <input type="text" x-model="searchQuery" @input.debounce.400ms="searchInConversation()"
+                        <input id="conversation-search" type="text" x-model="searchQuery" @input.debounce.400ms="searchInConversation()"
                             @keydown.escape="showSearchPanel = false"
                             placeholder="Rechercher dans la conversation…"
-                            class="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ffb3c1] focus:border-[#ff4d6d] focus:bg-white transition-all">
+                            aria-label="Rechercher dans la conversation"
+                            class="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#FFD0A3] focus:border-[#FF8A1F] focus:bg-white transition-all">
                     </div>
                     <span x-show="searchResults.length > 0" class="text-xs text-gray-400 shrink-0" x-text="searchResults.length + ' résultat(s)'"></span>
                     <button @click="showSearchPanel = false; searchQuery = ''; searchResults = []"
@@ -248,9 +249,9 @@
                 </div>
                 <div x-show="searchResults.length > 0" class="mt-2 max-h-40 overflow-y-auto space-y-1">
                     <template x-for="result in searchResults" :key="result.id">
-                        <button @click="scrollToMessage(result.id)" class="w-full text-left flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg hover:bg-[#fff0f3] transition-colors">
+                        <button @click="scrollToMessage(result.id)" class="w-full text-left flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg hover:bg-[#FFF4EB] transition-colors">
                             <span class="text-[10px] text-gray-400 shrink-0" x-text="result.date"></span>
-                            <span class="truncate" :class="result.is_own ? 'text-[#e00b41]' : 'text-gray-700'" x-text="result.content"></span>
+                            <span class="truncate" :class="result.is_own ? 'text-[#CC5A00]' : 'text-gray-700'" x-text="result.content"></span>
                         </button>
                     </template>
                 </div>
@@ -265,7 +266,7 @@
                     <span class="inline-block w-5 h-5 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin"></span>
                 </div>
                 <div x-show="hasMoreMessages && !loadingMore" class="flex justify-center py-2">
-                    <button @click="loadOlderMessages()" class="text-xs text-[#ff385c] hover:text-[#e00b41] font-medium">Charger les messages précédents</button>
+                    <button @click="loadOlderMessages()" class="text-xs text-[#F16A00] hover:text-[#CC5A00] font-medium">Charger les messages précédents</button>
                 </div>
 
                 {{-- Date grouped messages --}}
@@ -338,10 +339,10 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         @foreach ($conversation->sharedDocuments as $doc)
                             <a href="{{ Storage::url($doc->file_path) }}" target="_blank"
-                                class="group flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-[#fff0f3]/60 bg-white border border-gray-100 hover:border-[#ffb3c1] shadow-sm transition-all">
+                                class="group flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-[#FFF4EB]/60 bg-white border border-gray-100 hover:border-[#FFD0A3] shadow-sm transition-all">
                                 <div
-                                    class="w-9 h-9 rounded-lg bg-[#ffd1da] group-hover:bg-[#ffb3c1] flex items-center justify-center shrink-0 transition-colors">
-                                    <svg class="w-4 h-4 text-[#e00b41]" fill="none" stroke="currentColor"
+                                    class="w-9 h-9 rounded-lg bg-[#FFE7D1] group-hover:bg-[#FFD0A3] flex items-center justify-center shrink-0 transition-colors">
+                                    <svg class="w-4 h-4 text-[#CC5A00]" fill="none" stroke="currentColor"
                                         stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
@@ -349,11 +350,11 @@
                                 </div>
                                 <div class="min-w-0 flex-1">
                                     <p
-                                        class="text-sm font-medium text-gray-700 group-hover:text-[#b5083a] truncate transition-colors">
+                                        class="text-sm font-medium text-gray-700 group-hover:text-[#A34700] truncate transition-colors">
                                         {{ $doc->name ?? ($doc->title ?? 'Document') }}</p>
                                     <p class="text-xs text-gray-400">{{ $doc->created_at->diffForHumans() }}</p>
                                 </div>
-                                <svg class="w-3.5 h-3.5 text-gray-300 group-hover:text-[#ff4d6d] shrink-0 transition-colors"
+                                <svg class="w-3.5 h-3.5 text-gray-300 group-hover:text-[#FF8A1F] shrink-0 transition-colors"
                                     fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
@@ -366,11 +367,11 @@
 
             {{-- ========= Templates panel ========= --}}
             <div x-show="showTemplates" x-transition
-                class="border-t border-gray-100 bg-linear-to-b from-[#fff0f3]/40 to-white px-4 sm:px-5 py-3 max-h-40 overflow-y-auto">
+                class="border-t border-gray-100 bg-linear-to-b from-[#FFF4EB]/40 to-white px-4 sm:px-5 py-3 max-h-40 overflow-y-auto">
                 <div class="flex items-center justify-between mb-2.5">
                     <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-md bg-[#ffd1da] flex items-center justify-center">
-                            <svg class="w-3.5 h-3.5 text-[#e00b41]" fill="none" stroke="currentColor"
+                        <div class="w-6 h-6 rounded-md bg-[#FFE7D1] flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 text-[#CC5A00]" fill="none" stroke="currentColor"
                                 stroke-width="2.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
@@ -389,8 +390,8 @@
                 <div class="flex flex-wrap gap-1.5">
                     @foreach ($templates as $template)
                         <button @click="useTemplate({{ $template->id }}, @js($template->content))"
-                            class="group inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium text-gray-600 bg-white hover:bg-[#fff0f3] hover:text-[#b5083a] rounded-xl border border-gray-200/80 hover:border-[#ffb3c1] shadow-sm hover:shadow transition-all active:scale-95">
-                            <svg class="w-3.5 h-3.5 text-gray-300 group-hover:text-[#ff385c] transition-colors shrink-0"
+                            class="group inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium text-gray-600 bg-white hover:bg-[#FFF4EB] hover:text-[#A34700] rounded-xl border border-gray-200/80 hover:border-[#FFD0A3] shadow-sm hover:shadow transition-all active:scale-95">
+                            <svg class="w-3.5 h-3.5 text-gray-300 group-hover:text-[#F16A00] transition-colors shrink-0"
                                 fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
@@ -454,17 +455,17 @@
 
             {{-- ========= Reply preview ========= --}}
             <div x-show="replyTo" x-transition.scale.y.origin.bottom
-                class="border-t border-[#ffb3c1]/60 bg-linear-to-r from-[#fff0f3] to-amber-50/50 px-4 sm:px-5 py-2.5">
+                class="border-t border-[#FFD0A3]/60 bg-linear-to-r from-[#FFF4EB] to-amber-50/50 px-4 sm:px-5 py-2.5">
                 <div class="flex items-center gap-3">
-                    <div class="w-1 h-8 bg-linear-to-b from-[#ff4d6d] to-[#ff385c] rounded-full shrink-0"></div>
+                    <div class="w-1 h-8 bg-linear-to-b from-[#FF8A1F] to-[#F16A00] rounded-full shrink-0"></div>
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-1.5">
-                            <svg class="w-3.5 h-3.5 text-[#ff385c] shrink-0" fill="none" stroke="currentColor"
+                            <svg class="w-3.5 h-3.5 text-[#F16A00] shrink-0" fill="none" stroke="currentColor"
                                 stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
                             </svg>
-                            <p class="text-xs font-bold text-[#e00b41] uppercase tracking-wider">Réponse à</p>
+                            <p class="text-xs font-bold text-[#CC5A00] uppercase tracking-wider">Réponse à</p>
                         </div>
                         <p class="text-sm text-gray-600 truncate mt-0.5" x-text="replyToContent"></p>
                     </div>
@@ -489,7 +490,8 @@
                     class="mb-2 bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden">
                     <div class="flex items-center gap-2 px-3 py-2.5 border-b border-gray-100">
                         <svg class="w-4 h-4 text-purple-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>
-                        <input type="text" x-model="gifSearchQuery" @input.debounce.500ms="searchGifs()" placeholder="Rechercher un GIF…"
+                        <input id="gif-search" type="text" x-model="gifSearchQuery" @input.debounce.500ms="searchGifs()" placeholder="Rechercher un GIF…"
+                            aria-label="Rechercher un GIF"
                             class="flex-1 text-sm bg-gray-50 border-none rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-purple-300 focus:bg-white placeholder:text-gray-400">
                     </div>
                     <div class="p-2 max-h-56 overflow-y-auto">
@@ -533,7 +535,7 @@
                     <div class="flex items-center gap-1 px-3 py-2 border-b border-gray-100 bg-gray-50/50">
                         <template x-for="(cat, idx) in emojiCategories" :key="idx">
                             <button @click="emojiTab = idx" class="p-1.5 rounded-lg text-lg transition-all"
-                                :class="emojiTab === idx ? 'bg-[#ffd1da] scale-110' : 'hover:bg-gray-100'"
+                                :class="emojiTab === idx ? 'bg-[#FFE7D1] scale-110' : 'hover:bg-gray-100'"
                                 :title="cat.name" x-text="cat.icon">
                             </button>
                         </template>
@@ -543,7 +545,7 @@
                         <div class="grid grid-cols-8 sm:grid-cols-10 gap-0.5">
                             <template x-for="emoji in emojiCategories[emojiTab]?.emojis || []" :key="emoji">
                                 <button @click="insertEmoji(emoji)"
-                                    class="w-9 h-9 flex items-center justify-center text-xl rounded-lg hover:bg-[#fff0f3] hover:scale-125 active:scale-95 transition-all cursor-pointer"
+                                    class="w-9 h-9 flex items-center justify-center text-xl rounded-lg hover:bg-[#FFF4EB] hover:scale-125 active:scale-95 transition-all cursor-pointer"
                                     x-text="emoji">
                                 </button>
                             </template>
@@ -558,8 +560,8 @@
                         <button
                             @click="showEmojiPicker = !showEmojiPicker; showTemplates = false; showQuickReplies = false"
                             class="p-2 rounded-xl transition-all active:scale-90"
-                            :class="showEmojiPicker ? 'text-[#e00b41] bg-[#fff0f3]' :
-                                'text-gray-400 hover:text-[#ff385c] hover:bg-[#fff0f3]'"
+                            :class="showEmojiPicker ? 'text-[#CC5A00] bg-[#FFF4EB]' :
+                                'text-gray-400 hover:text-[#F16A00] hover:bg-[#FFF4EB]'"
                             title="Emojis">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8"
                                 viewBox="0 0 24 24">
@@ -570,14 +572,16 @@
 
                         {{-- Attach --}}
                         <label
-                            class="group relative p-2 text-gray-400 hover:text-[#ff385c] rounded-xl cursor-pointer transition-all hover:bg-[#fff0f3] active:scale-90"
+                            class="group relative p-2 text-gray-400 hover:text-[#F16A00] rounded-xl cursor-pointer transition-all hover:bg-[#FFF4EB] active:scale-90"
                             title="Joindre un fichier">
                             <svg class="w-5 h-5 transition-transform group-hover:rotate-[-15deg]" fill="none"
                                 stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
                             </svg>
-                            <input type="file" class="hidden" @change="uploadFile($event)"
+                            <input id="file-upload-hidden" type="file" class="hidden" @change="uploadFile($event)"
+                                   accept="image/*,.pdf,.doc,.docx,.txt"
+                                   aria-label="Sélectionner un fichier à envoyer">
                                 accept="image/*,.pdf,.doc,.docx,.xls,.xlsx">
                         </label>
 
@@ -603,8 +607,8 @@
                         @if ($templates->count())
                             <button @click="showTemplates = !showTemplates; showQuickReplies = false"
                                 class="p-2 rounded-xl transition-all active:scale-90"
-                                :class="showTemplates ? 'text-[#e00b41] bg-[#fff0f3]' :
-                                    'text-gray-400 hover:text-[#ff385c] hover:bg-[#fff0f3]'"
+                                :class="showTemplates ? 'text-[#CC5A00] bg-[#FFF4EB]' :
+                                    'text-gray-400 hover:text-[#F16A00] hover:bg-[#FFF4EB]'"
                                 title="Réponses rapides">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8"
                                     viewBox="0 0 24 24">
@@ -632,9 +636,11 @@
 
                     {{-- Message input card --}}
                     <div
-                        class="flex-1 flex items-end bg-white border border-gray-200 rounded-2xl shadow-sm focus-within:border-[#ff4d6d] focus-within:ring-2 focus-within:ring-[#ff385c]/10 focus-within:shadow-md transition-all overflow-hidden">
-                        <textarea x-ref="messageInput" x-model="newMessage" @input="autoResize($el); emitTyping()"
+                        class="flex-1 flex items-end bg-white border border-gray-200 rounded-2xl shadow-sm focus-within:border-[#FF8A1F] focus-within:ring-2 focus-within:ring-[#F16A00]/10 focus-within:shadow-md transition-all overflow-hidden">
+                        <label for="message-input" class="sr-only">Votre message</label>
+                        <textarea id="message-input" x-ref="messageInput" x-model="newMessage" @input="autoResize($el); emitTyping()"
                             @keydown.enter.prevent="if(!$event.shiftKey) sendMessage()" placeholder="Votre message…" rows="1"
+                            aria-label="Tapez votre message ici"
                             class="w-full px-4 py-3 text-base bg-transparent border-none resize-none placeholder:text-gray-400 focus:outline-none focus:ring-0"
                             style="max-height: 120px"></textarea>
                     </div>
@@ -644,7 +650,7 @@
                         <button @click="sendMessage()" :disabled="!newMessage.trim() || sending"
                             class="relative p-2.5 rounded-xl transition-all duration-200"
                             :class="newMessage.trim() && !sending ?
-                                'bg-linear-to-br from-[#ff385c] to-[#e00b41] text-white shadow-md shadow-none hover:shadow-lg hover:shadow-none hover:from-[#e00b41] hover:to-[#b5083a] active:scale-90' :
+                                'bg-linear-to-br from-[#F16A00] to-[#CC5A00] text-white shadow-md shadow-none hover:shadow-lg hover:shadow-none hover:from-[#CC5A00] hover:to-[#A34700] active:scale-90' :
                                 'bg-gray-100 text-gray-300 cursor-not-allowed'">
                             <svg x-show="!sending" class="w-5 h-5 transition-transform"
                                 :class="newMessage.trim() ? 'translate-x-0.5' : ''" fill="none" stroke="currentColor"

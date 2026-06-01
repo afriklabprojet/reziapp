@@ -29,6 +29,11 @@ class SubscriptionPaymentResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'reference';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->with(['subscription.user', 'user']);

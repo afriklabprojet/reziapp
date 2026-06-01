@@ -54,7 +54,7 @@
                                         <p class="text-xs text-gray-500 mt-0.5">Vérifiez votre identité pour publier plus
                                             d'une annonce.</p>
                                         <a href="{{ route('verification.dashboard') }}"
-                                            class="inline-flex items-center gap-1 text-xs font-semibold text-[#e00b41] hover:text-[#b5083a] mt-2">
+                                            class="inline-flex items-center gap-1 text-xs font-semibold text-[#CC5A00] hover:text-[#A34700] mt-2">
                                             Vérifier mon identité
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2"
                                                 viewBox="0 0 24 24">
@@ -82,7 +82,7 @@
                                 <span class="font-semibold">Limite atteinte :</span> les comptes non vérifiés sont limités à
                                 1 annonce.
                                 <a href="{{ route('verification.dashboard') }}"
-                                    class="font-semibold text-[#e00b41] hover:text-[#b5083a] underline underline-offset-2">Vérifier
+                                    class="font-semibold text-[#CC5A00] hover:text-[#A34700] underline underline-offset-2">Vérifier
                                     mon identité →</a>
                             </p>
                         </div>
@@ -168,12 +168,12 @@
                         </svg>
                         <input type="text" name="search" value="{{ request('search') }}"
                             placeholder="Rechercher par nom, commune..."
-                            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#ff385c]/20 focus:border-[#ff385c] transition-colors">
+                            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#F16A00]/20 focus:border-[#F16A00] transition-colors">
                     </div>
 
                     {{-- Tri --}}
                     <select name="sort"
-                        class="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:ring-2 focus:ring-[#ff385c]/20 focus:border-[#ff385c]"
+                        class="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:ring-2 focus:ring-[#F16A00]/20 focus:border-[#F16A00]"
                         onchange="this.form.submit()">
                         <option value="">Trier par date</option>
                         <option value="price" {{ request('sort') === 'price' ? 'selected' : '' }}>Prix</option>
@@ -196,7 +196,7 @@
 
                     {{-- Bouton rechercher --}}
                     <button type="submit"
-                        class="inline-flex items-center justify-center px-4 py-2.5 bg-[#ff385c] text-white rounded-xl text-sm font-semibold hover:bg-[#e00b41] transition-colors gap-2 shrink-0">
+                        class="inline-flex items-center justify-center px-4 py-2.5 bg-[#F16A00] text-white rounded-xl text-sm font-semibold hover:bg-[#CC5A00] transition-colors gap-2 shrink-0">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
@@ -221,8 +221,8 @@
             @if ($residences->isEmpty())
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 sm:p-16 text-center">
                     <div
-                        class="w-20 h-20 bg-linear-to-br from-[#ffd1da] to-[#fff0f3] rounded-2xl flex items-center justify-center mx-auto mb-5">
-                        <svg class="w-10 h-10 text-[#ff4d6d]" fill="none" stroke="currentColor" stroke-width="1.5"
+                        class="w-20 h-20 bg-linear-to-br from-[#FFE7D1] to-[#FFF4EB] rounded-2xl flex items-center justify-center mx-auto mb-5">
+                        <svg class="w-10 h-10 text-[#FF8A1F]" fill="none" stroke="currentColor" stroke-width="1.5"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
@@ -254,7 +254,7 @@
                         @else
                             <p class="text-sm text-amber-700 bg-amber-50 px-4 py-3 rounded-xl inline-block">
                                 <a href="{{ route('verification.dashboard') }}"
-                                    class="font-semibold text-[#e00b41] hover:text-[#b5083a] underline underline-offset-2">Vérifiez
+                                    class="font-semibold text-[#CC5A00] hover:text-[#A34700] underline underline-offset-2">Vérifiez
                                     votre identité</a>
                                 pour publier plus d'annonces.
                             </p>
@@ -291,7 +291,7 @@
                                         $statusBadge = match ($residence->status) {
                                             'active', 'approved' => ['bg-green-500 text-white', 'Publiée'],
                                             'pending' => ['bg-yellow-400 text-yellow-900', 'En attente'],
-                                            'needs_changes' => ['bg-[#ff385c] text-white', 'À modifier'],
+                                            'needs_changes' => ['bg-[#F16A00] text-white', 'À modifier'],
                                             'draft' => ['bg-gray-600 text-white', 'Brouillon'],
                                             'inactive' => ['bg-gray-500 text-white', 'Inactive'],
                                             default => ['bg-red-500 text-white', 'Rejetée'],
@@ -390,7 +390,7 @@
                                             <div class="my-1 border-t border-gray-100"></div>
                                             <button
                                                 @click="toggleAvailability({{ $residence->id }}, {{ $residence->is_available ? 'true' : 'false' }}); open = false"
-                                                class="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm hover:bg-gray-50 transition-colors {{ $residence->is_available ? 'text-[#e00b41]' : 'text-green-600' }}">
+                                                class="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm hover:bg-gray-50 transition-colors {{ $residence->is_available ? 'text-[#CC5A00]' : 'text-green-600' }}">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                     stroke-width="1.5" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -448,7 +448,7 @@
                                     </a>
                                 @else
                                     <a href="{{ route('owner.listing-score.show', $residence) }}"
-                                        class="inline-flex items-center gap-1 mb-3 text-[11px] text-gray-400 hover:text-[#ff385c] transition-colors">
+                                        class="inline-flex items-center gap-1 mb-3 text-[11px] text-gray-400 hover:text-[#F16A00] transition-colors">
                                         ⭐ Score non calculé
                                     </a>
                                 @endif
@@ -513,7 +513,7 @@
                                     </a>
                                     @if (in_array($residence->status, ['active', 'approved']))
                                         <a href="{{ route('residences.show', $residence) }}" target="_blank"
-                                            class="flex-1 text-center px-3 py-2 bg-[#fff0f3] text-[#b5083a] rounded-xl text-xs font-semibold hover:bg-[#ffd1da] transition-colors">
+                                            class="flex-1 text-center px-3 py-2 bg-[#FFF4EB] text-[#A34700] rounded-xl text-xs font-semibold hover:bg-[#FFE7D1] transition-colors">
                                             Voir l'annonce
                                         </a>
                                     @else

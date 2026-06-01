@@ -13,12 +13,12 @@
     <div class="border-b border-gray-200 mb-6">
         <nav class="flex gap-8">
             <a href="{{ route('reviews.my', ['type' => 'given']) }}"
-               class="pb-4 px-1 border-b-2 font-medium text-sm {{ $type === 'given' ? 'border-[#ff385c] text-[#ff385c]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+               class="pb-4 px-1 border-b-2 font-medium text-sm {{ $type === 'given' ? 'border-[#F16A00] text-[#F16A00]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                 Avis donnés
             </a>
             @if(Auth::user()->isOwner())
                 <a href="{{ route('reviews.my', ['type' => 'received']) }}"
-                   class="pb-4 px-1 border-b-2 font-medium text-sm {{ $type === 'received' ? 'border-[#ff385c] text-[#ff385c]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                   class="pb-4 px-1 border-b-2 font-medium text-sm {{ $type === 'received' ? 'border-[#F16A00] text-[#F16A00]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                     Avis reçus
                 </a>
             @endif
@@ -59,7 +59,7 @@
                                 <div>
                                     @if($type === 'given')
                                         <a href="{{ route('residences.show', $review->residence) }}"
-                                           class="font-semibold text-gray-900 hover:text-[#ff385c]">
+                                           class="font-semibold text-gray-900 hover:text-[#F16A00]">
                                             {{ $review->residence->title }}
                                         </a>
                                         <p class="text-sm text-gray-500">{{ $review->residence->commune }}</p>
@@ -90,7 +90,7 @@
                             <!-- Badges -->
                             <div class="flex flex-wrap gap-2 mt-2">
                                 @if($review->is_verified)
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[#ffd1da] text-[#b5083a]">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[#FFE7D1] text-[#A34700]">
                                         <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                         </svg>
@@ -114,7 +114,7 @@
 
                             <!-- Réponse du propriétaire (pour avis donnés) -->
                             @if($type === 'given' && $review->owner_response)
-                                <div class="mt-4 pl-4 border-l-2 border-[#ffb3c1] bg-[#fff0f3] rounded-r-lg p-3">
+                                <div class="mt-4 pl-4 border-l-2 border-[#FFD0A3] bg-[#FFF4EB] rounded-r-lg p-3">
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="text-sm font-medium text-gray-900">Réponse du propriétaire</span>
                                     </div>
@@ -126,7 +126,7 @@
                             @if($type === 'received' && !$review->owner_response)
                                 <div class="mt-4" x-data="{ showForm: false }">
                                     <button @click="showForm = !showForm"
-                                            class="text-[#ff385c] hover:text-[#e00b41] text-sm font-medium">
+                                            class="text-[#F16A00] hover:text-[#CC5A00] text-sm font-medium">
                                         Répondre à cet avis
                                     </button>
 
@@ -136,7 +136,7 @@
                                           class="mt-4">
                                         @csrf
                                         <textarea name="owner_response" rows="3" required
-                                                  class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]"
+                                                  class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]"
                                                   placeholder="Écrivez votre réponse..."></textarea>
                                         <div class="flex justify-end gap-2 mt-2">
                                             <button type="button" @click="showForm = false"
@@ -144,14 +144,14 @@
                                                 Annuler
                                             </button>
                                             <button type="submit"
-                                                    class="px-4 py-2 bg-[#ff385c] hover:bg-[#e00b41] text-white text-sm font-medium rounded-lg">
+                                                    class="px-4 py-2 bg-[#F16A00] hover:bg-[#CC5A00] text-white text-sm font-medium rounded-lg">
                                                 Publier
                                             </button>
                                         </div>
                                     </form>
                                 </div>
                             @elseif($type === 'received' && $review->owner_response)
-                                <div class="mt-4 pl-4 border-l-2 border-[#ffb3c1] bg-[#fff0f3] rounded-r-lg p-3">
+                                <div class="mt-4 pl-4 border-l-2 border-[#FFD0A3] bg-[#FFF4EB] rounded-r-lg p-3">
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="text-sm font-medium text-gray-900">Votre réponse</span>
                                     </div>
@@ -189,7 +189,7 @@
             </p>
             @if($type === 'given')
                 <a href="{{ route('residences.index') }}"
-                   class="inline-flex items-center gap-2 px-4 py-2 bg-[#ff385c] hover:bg-[#e00b41] text-white font-medium rounded-lg transition">
+                   class="inline-flex items-center gap-2 px-4 py-2 bg-[#F16A00] hover:bg-[#CC5A00] text-white font-medium rounded-lg transition">
                     Parcourir les résidences
                 </a>
             @endif

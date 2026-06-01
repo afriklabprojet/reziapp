@@ -142,7 +142,7 @@
 
             .photo-grid .photo-main {
                 grid-row: span 1;
-                height: 280px;
+                height: min(55vw, 260px);
             }
 
             .photo-grid .photo-item:not(.photo-main) {
@@ -153,13 +153,15 @@
                 position: static;
                 box-shadow: none;
                 border: none;
-                padding: 0;
+                border-top: 2px solid #F2F2F2;
+                padding: 20px 0 0 0;
+                margin-top: 8px;
             }
         }
 
-        @media (max-width: 640px) {
+        @media (max-width: 480px) {
             .photo-grid .photo-main {
-                height: 240px;
+                height: 52vw;
             }
         }
 
@@ -231,7 +233,7 @@
              class="fixed top-16 left-0 right-0 z-20 bg-white border-b border-gray-200 hidden md:block"
              x-cloak>
             <div class="max-w-280 mx-auto px-6">
-                <nav class="flex items-center gap-8 hide-scrollbar overflow-x-auto">
+                <nav class="flex items-center gap-8 hide-scrollbar overflow-x-auto" aria-label="Sections de la résidence">
                     <button @click="navScrollTo('photos')" class="section-nav-link" :class="{ active: navActive === 'photos' }">Photos</button>
                     <button @click="navScrollTo('equipements')" class="section-nav-link" :class="{ active: navActive === 'equipements' }">Équipements</button>
                     <button @click="navScrollTo('calendrier')" class="section-nav-link" :class="{ active: navActive === 'calendrier' }">Disponibilités</button>
@@ -248,12 +250,12 @@
         {{-- Breadcrumb localisation --}}
         <div class="max-w-280 mx-auto px-4 sm:px-6 pt-4 sm:pt-3">
             <nav class="flex items-center gap-1.5 text-sm text-gray-500 flex-wrap" aria-label="Breadcrumb">
-                <a href="{{ route('home') }}" class="hover:text-[#e00b41] transition-colors">Accueil</a>
+                <a href="{{ route('home') }}" class="hover:text-[#CC5A00] transition-colors">Accueil</a>
                 <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-                <a href="{{ route('residences.index', ['city' => $residence->city]) }}" class="hover:text-[#e00b41] transition-colors">{{ $residence->city ?? 'Abidjan' }}</a>
+                <a href="{{ route('residences.index', ['city' => $residence->city]) }}" class="hover:text-[#CC5A00] transition-colors">{{ $residence->city ?? 'Abidjan' }}</a>
                 @if ($residence->commune)
                     <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-                    <a href="{{ route('residences.index', ['commune' => $residence->commune]) }}" class="hover:text-[#e00b41] transition-colors">{{ $residence->commune }}</a>
+                    <a href="{{ route('residences.index', ['commune' => $residence->commune]) }}" class="hover:text-[#CC5A00] transition-colors">{{ $residence->commune }}</a>
                 @endif
                 <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
                 <span class="text-gray-900 font-medium truncate max-w-48 sm:max-w-xs">{{ Str::limit($residence->title, 40) }}</span>
@@ -284,10 +286,10 @@
             @if (($activeViewers ?? 0) > 0 || ($bookingsThisMonth ?? 0) > 0 || ($lastBookedDaysAgo ?? 0) > 0)
                 <div class="flex flex-wrap items-center gap-2 mt-2.5">
                     @if (($activeViewers ?? 0) >= 3)
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#fff0f3] text-[#b5083a] text-xs font-semibold rounded-full border border-[#ffb3c1]">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#FFF4EB] text-[#A34700] text-xs font-semibold rounded-full border border-[#FFD0A3]">
                             <span class="relative flex h-2 w-2">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff4d6d] opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2 w-2 bg-[#ff385c]"></span>
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF8A1F] opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-[#F16A00]"></span>
                             </span>
                             {{ $activeViewers }} personnes regardent ce logement
                         </span>
@@ -316,7 +318,7 @@
                         <span class="font-bold text-gray-900">{{ number_format($residence->average_rating, 1) }}</span>
                         <span class="text-gray-400 mx-0.5">·</span>
                         <a href="#avis"
-                            class="underline font-medium text-gray-900 hover:text-[#e00b41]">{{ $residence->reviews_count }}
+                            class="underline font-medium text-gray-900 hover:text-[#CC5A00]">{{ $residence->reviews_count }}
                             commentaire{{ $residence->reviews_count > 1 ? 's' : '' }}</a>
                         <span class="text-gray-400 mx-0.5">·</span>
                     @endif
@@ -340,7 +342,7 @@
                 </div>
                 <div class="flex items-center gap-1">
                     <button @click="shareResidence()"
-                        class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition text-sm font-medium text-gray-900">
+                        class="flex items-center gap-2 px-3 py-2.5 min-h-11 rounded-lg hover:bg-gray-100 transition text-sm font-medium text-gray-900">
                         <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -352,7 +354,7 @@
                         <form action="{{ route('favorites.toggle', $residence) }}" method="POST">
                             @csrf
                             <button type="submit"
-                                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition text-sm font-medium text-gray-900">
+                                class="flex items-center gap-2 px-3 py-2.5 min-h-11 rounded-lg hover:bg-gray-100 transition text-sm font-medium text-gray-900">
                                 @if (method_exists($residence, 'isFavoritedBy') && $residence->isFavoritedBy(auth()->user()))
                                     <svg aria-hidden="true" class="w-4 h-4 text-rose-500" fill="currentColor"
                                         viewBox="0 0 20 20">
@@ -401,7 +403,7 @@
                 @foreach ($sidePhotos as $index => $photo)
                     <div class="photo-item" @click="openGallery({{ $index + 1 }})">
                         <img loading="lazy" src="{{ storage_url($photo->path) }}"
-                            alt="{{ $residence->title }} - Photo {{ $index + 2 }}">
+                            alt="{{ $residence->title }} {{ $index + 2 }}">
                     </div>
                 @endforeach
                 @for ($i = $sidePhotos->count(); $i < 4; $i++)
@@ -425,7 +427,7 @@
          Gallery Lightbox Modal
     ═══════════════════════════════════ --}}
         <div x-show="galleryOpen" x-transition.opacity class="gallery-modal" @keydown.escape.window="galleryOpen = false"
-            x-cloak role="dialog" aria-modal="true">
+            x-cloak role="dialog" aria-modal="true" aria-label="Galerie photos">
             <button @click="galleryOpen = false"
                 class="absolute top-5 left-5 text-white bg-black/40 hover:bg-black/60 rounded-full p-2.5 transition z-10"
                 aria-label="Fermer">
@@ -438,7 +440,7 @@
                 <span x-text="currentPhoto + 1"></span> / {{ $totalPhotos }}
             </div>
             <button @click="prevPhoto()"
-                class="absolute left-4 sm:left-6 text-white bg-black/40 hover:bg-black/60 rounded-full p-3 transition"
+                class="absolute left-4 sm:left-6 text-white bg-black/40 hover:bg-black/60 rounded-full w-10 h-10 flex items-center justify-center transition"
                 aria-label="Précédent">
                 <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
                     viewBox="0 0 24 24">
@@ -446,7 +448,7 @@
                 </svg>
             </button>
             <button @click="nextPhoto()"
-                class="absolute right-4 sm:right-6 text-white bg-black/40 hover:bg-black/60 rounded-full p-3 transition"
+                class="absolute right-4 sm:right-6 text-white bg-black/40 hover:bg-black/60 rounded-full w-10 h-10 flex items-center justify-center transition"
                 aria-label="Suivant">
                 <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
                     viewBox="0 0 24 24">
@@ -466,7 +468,7 @@
         {{-- ═══════════════════════════════════
          SECTION 3 — Two-Column Layout
     ═══════════════════════════════════ --}}
-        <div class="max-w-280 mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-24 lg:pb-12">
+        <div class="max-w-280 mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-32 sm:pb-24 lg:pb-12">
             <div class="flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-24">
 
                 {{-- ─── LEFT COLUMN ─── --}}
@@ -536,9 +538,9 @@
                             </div>
                         @endif
                         @if ($residence->commune || $residence->city)
-                            <div class="flex gap-4 items-start p-4 bg-[#fff0f3] rounded-2xl border border-[#ffd1da]">
-                                <div class="shrink-0 w-10 h-10 bg-[#ffd1da] rounded-xl flex items-center justify-center">
-                                    <svg aria-hidden="true" class="w-5 h-5 text-[#ff385c]" fill="none"
+                            <div class="flex gap-4 items-start p-4 bg-[#FFF4EB] rounded-2xl border border-[#FFE7D1]">
+                                <div class="shrink-0 w-10 h-10 bg-[#FFE7D1] rounded-xl flex items-center justify-center">
+                                    <svg aria-hidden="true" class="w-5 h-5 text-[#F16A00]" fill="none"
                                         stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -561,7 +563,7 @@
                         @endphp
                         @if ($cancelLabel)
                             <div class="flex gap-4 items-start p-4 {{ $isFlex48 ? 'bg-emerald-50 border-emerald-100' : 'bg-white border-sand-200' }} rounded-2xl border">
-                                <div class="shrink-0 w-10 h-10 {{ $isFlex48 ? 'bg-emerald-100' : 'bg-[#f7f7f7]' }} rounded-xl flex items-center justify-center">
+                                <div class="shrink-0 w-10 h-10 {{ $isFlex48 ? 'bg-emerald-100' : 'bg-[#F2F2F2]' }} rounded-xl flex items-center justify-center">
                                     @if ($isFlex48)
                                         <svg aria-hidden="true" class="w-5 h-5 text-emerald-600" fill="none"
                                             stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
@@ -769,8 +771,8 @@
                         dayClass(d, m, y) {
                             if (this.isBlocked(d, m, y)) return 'text-gray-300 line-through cursor-not-allowed';
                             if (this.isCheckIn(d,m,y) || this.isCheckOut(d,m,y)) return 'bg-gray-900 text-white font-semibold cursor-pointer rounded-full';
-                            if (this.inRange(d,m,y)) return 'bg-[#ffd1da] text-[#8e0730] cursor-pointer rounded-none';
-                            if (this.isT(d,m,y)) return 'ring-2 ring-[#ff4d6d] text-gray-900 font-semibold cursor-pointer rounded-full hover:bg-gray-100';
+                            if (this.inRange(d,m,y)) return 'bg-[#FFE7D1] text-[#8e0730] cursor-pointer rounded-none';
+                            if (this.isT(d,m,y)) return 'ring-2 ring-[#FF8A1F] text-gray-900 font-semibold cursor-pointer rounded-full hover:bg-gray-100';
                             return 'text-gray-700 hover:bg-gray-100 cursor-pointer rounded-full';
                         }
                     }">
@@ -920,7 +922,7 @@
                                                     class="w-10 h-10 rounded-full object-cover">
                                             @else
                                                 <div
-                                                    class="w-10 h-10 rounded-full bg-gradient-to-br from-[#ff4d6d] to-[#e00b41] flex items-center justify-center text-white font-semibold">
+                                                    class="w-10 h-10 rounded-full bg-linear-to-br from-[#FF8A1F] to-[#CC5A00] flex items-center justify-center text-white font-semibold">
                                                     {{ substr($review->user->name ?? 'A', 0, 1) }}</div>
                                             @endif
                                             <div>
@@ -1265,20 +1267,20 @@
                                                     @csrf
                                                     <input type="hidden" name="residence_id" value="{{ $residence->id }}">
                                                     <textarea x-model="message" name="message" rows="3" required
-                                                        class="w-full rounded-lg border-gray-300 text-sm focus:border-[#ff385c] focus:ring-[#ff385c]"
+                                                        class="w-full rounded-lg border-gray-300 text-sm focus:border-[#F16A00] focus:ring-[#F16A00]"
                                                         placeholder="Bonjour, je suis intéressé(e) par votre résidence..."></textarea>
                                                     <button type="submit" :disabled="!message.trim()"
-                                                        class="px-5 py-2.5 bg-[#ff385c] text-white rounded-lg text-sm font-semibold hover:bg-[#e00b41] transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                                        class="px-5 py-2.5 bg-[#F16A00] text-white rounded-lg text-sm font-semibold hover:bg-[#CC5A00] transition disabled:opacity-50 disabled:cursor-not-allowed">
                                                         Envoyer
                                                     </button>
                                                 </form>
                                             </div>
                                         @else
-                                            <div class="mb-6 p-4 bg-[#fff0f3] border border-[#ffd1da] rounded-xl">
+                                            <div class="mb-6 p-4 bg-[#FFF4EB] border border-[#FFE7D1] rounded-xl">
                                                 <p class="text-sm text-[#8e0730] font-medium mb-1">Réservation requise</p>
-                                                <p class="text-sm text-[#b5083a] mb-3">Pour contacter le propriétaire, vous devez d'abord effectuer une réservation.</p>
+                                                <p class="text-sm text-[#A34700] mb-3">Pour contacter le propriétaire, vous devez d'abord effectuer une réservation.</p>
                                                 <a href="{{ route('bookings.create', $residence) }}"
-                                                    class="inline-flex items-center px-5 py-2.5 bg-[#ff385c] hover:bg-[#e00b41] text-white text-sm font-semibold rounded-lg transition">
+                                                    class="inline-flex items-center px-5 py-2.5 bg-[#F16A00] hover:bg-[#CC5A00] text-white text-sm font-semibold rounded-lg transition">
                                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                                     Réserver maintenant
                                                 </a>
@@ -1404,7 +1406,7 @@
                                 </svg>
                                 <span class="font-bold text-gray-900">{{ number_format($residence->average_rating, 1) }}</span>
                                 <span class="text-gray-300">·</span>
-                                <a href="#avis" class="underline text-gray-500 hover:text-[#e00b41]">
+                                <a href="#avis" class="underline text-gray-500 hover:text-[#CC5A00]">
                                     {{ $residence->reviews_count }}
                                     commentaire{{ $residence->reviews_count > 1 ? 's' : '' }}
                                 </a>
@@ -1426,16 +1428,16 @@
                                 <div class="grid grid-cols-2">
                                     <div
                                         class="p-3 border-r border-gray-300 cursor-pointer hover:bg-gray-50 transition-colors">
-                                        <label
-                                            class="block text-[10px] font-bold uppercase tracking-wider text-gray-700">Arrivée</label>
-                                        <input type="date" name="check_in" x-model="checkIn"
+                                        <label for="check_in"
+                                            class="block text-xs font-bold uppercase tracking-wider text-gray-700">Arrivée</label>
+                                        <input type="date" id="check_in" name="check_in" x-model="checkIn"
                                             class="w-full border-0 p-0 mt-0.5 focus:ring-0 text-sm text-gray-900 bg-transparent cursor-pointer font-medium"
                                             :min="todayStr" required>
                                     </div>
                                     <div class="p-3 cursor-pointer hover:bg-gray-50 transition-colors">
-                                        <label
-                                            class="block text-[10px] font-bold uppercase tracking-wider text-gray-700">Départ</label>
-                                        <input type="date" name="check_out" x-model="checkOut"
+                                        <label for="check_out"
+                                            class="block text-xs font-bold uppercase tracking-wider text-gray-700">Départ</label>
+                                        <input type="date" id="check_out" name="check_out" x-model="checkOut"
                                             class="w-full border-0 p-0 mt-0.5 focus:ring-0 text-sm text-gray-900 bg-transparent cursor-pointer font-medium"
                                             :min="checkIn || todayStr" required>
                                     </div>
@@ -1444,9 +1446,10 @@
                                 {{-- Voyageurs --}}
                                 <div class="border-t border-gray-300 relative">
                                     <div class="p-3 cursor-pointer hover:bg-gray-50 transition-colors"
-                                        @click="showGuestPicker = !showGuestPicker" x-ref="guestTrigger">
-                                        <label
-                                            class="block text-[10px] font-bold uppercase tracking-wider text-gray-700">Voyageurs</label>
+                                        @click="showGuestPicker = !showGuestPicker" x-ref="guestTrigger"
+                                        role="button" aria-expanded="showGuestPicker" aria-labelledby="label-voyageurs">
+                                        <label id="label-voyageurs"
+                                            class="block text-xs font-bold uppercase tracking-wider text-gray-700 pointer-events-none">Voyageurs</label>
                                         <div class="flex items-center justify-between mt-0.5">
                                             <span class="text-sm text-gray-900 font-medium" x-text="guestLabel"></span>
                                             <svg aria-hidden="true" class="w-4 h-4 text-gray-500 transition-transform"
@@ -1745,9 +1748,9 @@
                                                     body: JSON.stringify({ fraud_type: $el.fraud_type.value, description: $el.description.value })
                                                 }).then(r => { reportSent = true; reportLoading = false; }).catch(() => { reportLoading = false; })
                                             ">
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Type de problème</label>
-                                            <select name="fraud_type" required
-                                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-3 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                            <label for="fraud_type" class="block text-sm font-medium text-gray-700 mb-1">Type de problème</label>
+                                            <select id="fraud_type" name="fraud_type" required
+                                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-3 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                                 <option value="">-- Sélectionnez --</option>
                                                 <option value="fake_listing">Annonce fictive / fausse</option>
                                                 <option value="misleading_photos">Photos trompeuses</option>
@@ -1758,10 +1761,10 @@
                                                 <option value="other">Autre</option>
                                             </select>
 
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                                            <textarea name="description" required rows="3" minlength="10" maxlength="1000"
+                                            <label for="fraud_description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                            <textarea id="fraud_description" name="description" required rows="3" minlength="10" maxlength="1000"
                                                 placeholder="Décrivez le problème en détail..."
-                                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-4 focus:ring-[#ff385c] focus:border-[#ff385c]"></textarea>
+                                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-4 focus:ring-[#F16A00] focus:border-[#F16A00]"></textarea>
 
                                             <div class="flex gap-3 justify-end">
                                                 <button type="button" @click="showReportModal = false"
@@ -1807,7 +1810,7 @@
                             <p class="mt-1 text-sm text-gray-500">D'autres logements qui pourraient vous intéresser</p>
                         </div>
                         <a href="{{ route('residences.index', ['commune' => $residence->commune]) }}"
-                            class="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-[#ff385c] hover:text-[#e00b41] transition group">
+                            class="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-[#F16A00] hover:text-[#CC5A00] transition group">
                             Voir tout à {{ $residence->commune }}
                             <svg aria-hidden="true" class="w-4 h-4 group-hover:translate-x-1 transition-transform"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1826,7 +1829,7 @@
                     {{-- Mobile link --}}
                     <div class="mt-6 text-center sm:hidden">
                         <a href="{{ route('residences.index', ['commune' => $residence->commune]) }}"
-                            class="inline-flex items-center gap-2 text-sm font-semibold text-[#ff385c] hover:text-[#e00b41] transition">
+                            class="inline-flex items-center gap-2 text-sm font-semibold text-[#F16A00] hover:text-[#CC5A00] transition">
                             Voir tout à {{ $residence->commune }}
                             <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -1867,7 +1870,8 @@
             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-y-full opacity-0"
             x-transition:enter-end="translate-y-0 opacity-100" x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="translate-y-0 opacity-100" x-transition:leave-end="translate-y-full opacity-0"
-            class="fixed bottom-16 md:bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 sm:px-5 py-3 sm:py-4 lg:hidden z-50 pb-safe"
+            class="fixed bottom-16 md:bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 sm:px-5 pt-3 sm:pt-4 lg:hidden z-50"
+            style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom))"
             x-cloak>
             <div class="flex items-center justify-between max-w-lg mx-auto">
                 <div>
@@ -1894,7 +1898,7 @@
                     @endif
                 </div>
                 <a :href="bookingUrl"
-                    class="px-6 py-3 bg-linear-to-r from-[#E61E4D] to-[#D70466] text-white rounded-lg font-semibold text-sm active:scale-95 transition-all">
+                    class="px-6 py-3 bg-linear-to-r from-[#F16A00] to-[#CC5A00] text-white rounded-lg font-semibold text-sm active:scale-95 transition-all">
                     Réserver
                 </a>
             </div>
@@ -1904,13 +1908,14 @@
 @endsection
 
 @push('scripts')
+    @php($cspNonce = \Illuminate\Support\Facades\Vite::cspNonce())
     @if ($residence->latitude && $residence->longitude)
         {{-- Mapbox GL for isochrone/maps widgets --}}
         <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet" />
         <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
 
         @vite('resources/js/leaflet.js')
-        <script>
+        <script nonce="{{ $cspNonce }}">
             document.addEventListener('DOMContentLoaded', function() {
                 const config = @js(['lat' => $residence->latitude, 'lng' => $residence->longitude]);
                 if (window.initResidenceMap) {
@@ -1920,7 +1925,7 @@
         </script>
 
         {{-- Maps Alpine.js widgets --}}
-        <script>
+        <script nonce="{{ $cspNonce }}">
             const RESIDENCE_ID = {{ $residence->id }};
             const API_BASE = '/api/v1/maps';
 
@@ -2075,7 +2080,7 @@
 
                         this.map.on('load', () => {
                             // Add marker for residence
-                            new mapboxgl.Marker({ color: '#E61E4D' })
+                            new mapboxgl.Marker({ color: '#F16A00' })
                                 .setLngLat([{{ $residence->longitude }}, {{ $residence->latitude }}])
                                 .addTo(this.map);
 
@@ -2127,7 +2132,7 @@
     @endif
 
     {{-- Sticky Section Navigation Alpine component --}}
-    <script>
+    <script nonce="{{ $cspNonce }}">
         function stickyNav() {
             return {
                 visible: false,

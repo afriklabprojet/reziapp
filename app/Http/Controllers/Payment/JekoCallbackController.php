@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\SponsoredListing;
 use App\Services\JekoPaymentService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 
 class JekoCallbackController extends Controller
 {
@@ -25,19 +25,7 @@ class JekoCallbackController extends Controller
      */
     public function success(Request $request)
     {
-        $sponsoredId = $request->query('sponsored_id');
-
-        if (! $sponsoredId) {
-            return redirect()->route('owner.marketing.sponsored.index')
-                ->with('error', 'Référence de paiement invalide.');
-        }
-
-        $sponsored = SponsoredListing::find($sponsoredId);
-
-        if (! $sponsored) {
-            return redirect()->route('owner.marketing.sponsored.index')
-                ->with('error', 'Campagne sponsorisée introuvable.');
-        }
+        $sponsored = $this->resolveSignedSponsoredListing($request);
 
         // If the webhook already confirmed it, redirect directly
         if ($sponsored->is_paid && $sponsored->payment_status === 'success') {
@@ -66,7 +54,17 @@ class JekoCallbackController extends Controller
         }
 
         // Payment likely pending — show the waiting page
-        return view('owner.marketing.sponsored.payment-processing', compact('sponsored'));
+        $checkStatusUrl = URL::temporarySignedRoute(
+            'payment.jeko.check',
+            now()->addDay(),
+            [
+                'sponsored' => $sponsored->getKey(),
+                'reference' => $sponsored->jeko_reference,
+            ],
+            absolute: false,
+        );
+
+        return view('owner.marketing.sponsored.payment-processing', compact('sponsored', 'checkStatusUrl'));
     }
 
     /**
@@ -76,30 +74,18 @@ class JekoCallbackController extends Controller
      */
     public function error(Request $request)
     {
-        $sponsoredId = $request->query('sponsored_id');
+        $sponsored = $this->resolveSignedSponsoredListing($request);
 
-        if (! $sponsoredId) {
-            return redirect()->route('owner.marketing.sponsored.index')
-                ->with('error', 'Le paiement a échoué.');
-        }
+        $sponsored->update([
+            'payment_status' => 'error',
+        ]);
 
-        $sponsored = SponsoredListing::find($sponsoredId);
+        Log::info('Jeko callback: User redirected to error URL', [
+            'sponsored_id' => $sponsored->id,
+        ]);
 
-        if ($sponsored) {
-            $sponsored->update([
-                'payment_status' => 'error',
-            ]);
-
-            Log::info('Jeko callback: User redirected to error URL', [
-                'sponsored_id' => $sponsored->id,
-            ]);
-
-            return redirect()->route('owner.marketing.sponsored.payment', $sponsored)
-                ->with('error', 'Le paiement a échoué ou a été annulé. Veuillez réessayer.');
-        }
-
-        return redirect()->route('owner.marketing.sponsored.index')
-            ->with('error', 'Le paiement a échoué. Veuillez réessayer.');
+        return redirect()->route('owner.marketing.sponsored.payment', $sponsored)
+            ->with('error', 'Le paiement a échoué ou a été annulé. Veuillez réessayer.');
     }
 
     /**
@@ -107,9 +93,8 @@ class JekoCallbackController extends Controller
      */
     public function checkStatus(Request $request, SponsoredListing $sponsored)
     {
-        // Security: Ensure the user owns this listing
-        if ($sponsored->user_id !== Auth::id()) {
-            return response()->json(['error' => 'Non autorisé'], 403);
+        if (! $this->hasValidSignedAccess($request, $sponsored)) {
+            return response()->json(['error' => 'Lien de vérification invalide'], 403);
         }
 
         // Check DB first (webhook may have updated it)
@@ -152,5 +137,37 @@ class JekoCallbackController extends Controller
         return response()->json([
             'status' => 'pending',
         ]);
+    }
+
+    protected function resolveSignedSponsoredListing(Request $request): SponsoredListing
+    {
+        $sponsoredId = $request->query('sponsored_id');
+
+        if (! $sponsoredId) {
+            abort(403, 'Référence de paiement invalide.');
+        }
+
+        $sponsored = SponsoredListing::findOrFail($sponsoredId);
+
+        if (! $this->hasValidSignedAccess($request, $sponsored)) {
+            Log::warning('Jeko callback: Invalid signed access', [
+                'sponsored_id' => $sponsoredId,
+                'ip' => $request->ip(),
+            ]);
+
+            abort(403, 'Lien de paiement invalide.');
+        }
+
+        return $sponsored;
+    }
+
+    protected function hasValidSignedAccess(Request $request, SponsoredListing $sponsored): bool
+    {
+        $reference = (string) $request->query('reference', '');
+
+        return $request->hasValidRelativeSignature()
+            && $reference !== ''
+            && $sponsored->jeko_reference !== null
+            && hash_equals((string) $sponsored->jeko_reference, $reference);
     }
 }

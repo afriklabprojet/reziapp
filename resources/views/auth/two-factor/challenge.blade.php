@@ -21,8 +21,8 @@
                     {{-- Icône animée --}}
                     <div class="text-center mb-5">
                         <div
-                            class="w-16 h-16 rounded-full bg-[#fff0f3] flex items-center justify-center mx-auto mb-4 animate-pulse-slow">
-                            <svg class="w-8 h-8 text-[#e00b41]" fill="none" stroke="currentColor" stroke-width="1.5"
+                            class="w-16 h-16 rounded-full bg-[#FFF4EB] flex items-center justify-center mx-auto mb-4 animate-pulse-slow">
+                            <svg class="w-8 h-8 text-[#CC5A00]" fill="none" stroke="currentColor" stroke-width="1.5"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
@@ -190,7 +190,7 @@
                         <p class="text-[11px] text-gray-400">
                             Besoin d'aide ?
                             <a href="{{ route('pages.contact') }}"
-                                class="text-[#e00b41] hover:text-[#b5083a] font-medium">Contacter le support</a>
+                                class="text-[#CC5A00] hover:text-[#A34700] font-medium">Contacter le support</a>
                         </p>
                     </div>
                 </div>

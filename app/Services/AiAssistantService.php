@@ -197,7 +197,7 @@ Tu es un juriste spécialisé en droit immobilier ivoirien (OHADA). Rédige des 
 
 Informations du contrat :
 - Type : {$typeLabel}
-- Loyer : {$rent} FCFA/mois
+- Montant de location : {$rent} FCFA/mois
 - Dépôt de garantie : {$deposit} FCFA
 - Bien : {$residence} à {$commune}
 - {$servicesText}
@@ -232,12 +232,12 @@ PROMPT;
         $rent    = (int) ($contractData['monthly_rent'] ?? 0);
 
         $prompt = <<<PROMPT
-Tu es un expert en gestion immobilière à Abidjan. Pour un contrat de bail ({$type}) avec un loyer de {$rent} FCFA/mois à {$commune}, suggère les services qui devraient être inclus dans le loyer.
+Tu es un expert en gestion immobilière à Abidjan. Pour un contrat de bail ({$type}) avec un montant mensuel de location de {$rent} FCFA/mois à {$commune}, suggère les services qui devraient être inclus dans la location.
 
 Retourne UNIQUEMENT une liste JSON de services, sans explication.
 Exemple : ["Électricité", "Eau", "Wifi", "Gardiennage"]
 
-Maximum 8 services pertinents pour le type de bien et le standing (basé sur le loyer).
+Maximum 8 services pertinents pour le type de bien et le standing (basé sur le montant mensuel).
 
 Liste JSON :
 PROMPT;

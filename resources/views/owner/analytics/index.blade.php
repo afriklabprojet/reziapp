@@ -13,7 +13,7 @@
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">
                     <span class="inline-flex items-center gap-2">
-                        <svg class="w-7 h-7 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-7 h-7 text-[#F16A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
@@ -28,7 +28,7 @@
                 <div class="flex bg-gray-100 rounded-lg p-1">
                     @foreach ($quickPeriods as $key => $period)
                         <a href="{{ route('owner.analytics.index', ['period' => $key]) }}"
-                            class="px-3 py-1.5 text-sm rounded-md transition {{ request('period', 'month') === $key ? 'bg-white text-[#ff385c] shadow-sm' : 'text-gray-600 hover:text-gray-900' }}">
+                            class="px-3 py-1.5 text-sm rounded-md transition {{ request('period', 'month') === $key ? 'bg-white text-[#F16A00] shadow-sm' : 'text-gray-600 hover:text-gray-900' }}">
                             {{ $period['label'] }}
                         </a>
                     @endforeach
@@ -78,8 +78,8 @@
             <!-- Revenus -->
             <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-[#ffd1da] rounded-xl flex items-center justify-center">
-                        <svg class="w-6 h-6 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-12 h-12 bg-[#FFE7D1] rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-[#F16A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -161,8 +161,8 @@
             <!-- Conversion -->
             <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-[#ffd1da] rounded-xl flex items-center justify-center">
-                        <svg class="w-6 h-6 text-[#e00b41]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-12 h-12 bg-[#FFE7D1] rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-[#CC5A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                         </svg>
@@ -184,7 +184,7 @@
                     <h3 class="font-semibold text-gray-900">Évolution des revenus</h3>
                     <div class="flex items-center gap-2 text-sm">
                         <span class="inline-flex items-center gap-1">
-                            <span class="w-3 h-3 bg-[#ff385c] rounded-full"></span>
+                            <span class="w-3 h-3 bg-[#F16A00] rounded-full"></span>
                             Revenus
                         </span>
                     </div>
@@ -204,7 +204,7 @@
                             Vues
                         </span>
                         <span class="inline-flex items-center gap-1">
-                            <span class="w-3 h-3 bg-[#ff385c] rounded-full"></span>
+                            <span class="w-3 h-3 bg-[#F16A00] rounded-full"></span>
                             Contacts
                         </span>
                     </div>
@@ -229,7 +229,7 @@
                                     class="text-sm font-medium text-gray-900">{{ number_format($stage['count'], 0, ',', ' ') }}</span>
                             </div>
                             <div class="h-8 bg-gray-100 rounded-lg overflow-hidden relative">
-                                <div class="h-full {{ $index === 0 ? 'bg-purple-500' : ($index === 1 ? 'bg-blue-500' : 'bg-[#ff385c]') }} rounded-lg transition-all duration-500"
+                                <div class="h-full {{ $index === 0 ? 'bg-purple-500' : ($index === 1 ? 'bg-blue-500' : 'bg-[#F16A00]') }} rounded-lg transition-all duration-500"
                                     style="width: {{ $stage['rate'] }}%">
                                 </div>
                                 <span
@@ -253,7 +253,7 @@
                                 <div class="absolute inset-0 flex items-center justify-center">
                                     <div
                                         class="w-10 h-10 rounded-full flex items-center justify-center text-xs font-medium
-                                {{ $day['rate'] >= 70 ? 'bg-[#ff385c] text-white' : ($day['rate'] >= 40 ? 'bg-[#ffb3c1] text-[#b5083a]' : 'bg-gray-100 text-gray-600') }}">
+                                {{ $day['rate'] >= 70 ? 'bg-[#F16A00] text-white' : ($day['rate'] >= 40 ? 'bg-[#FFD0A3] text-[#A34700]' : 'bg-gray-100 text-gray-600') }}">
                                         {{ $day['rate'] }}%
                                     </div>
                                 </div>
@@ -266,10 +266,10 @@
                         <span class="w-3 h-3 bg-gray-100 rounded-full"></span> &lt;40%
                     </span>
                     <span class="inline-flex items-center gap-1">
-                        <span class="w-3 h-3 bg-[#ffb3c1] rounded-full"></span> 40-70%
+                        <span class="w-3 h-3 bg-[#FFD0A3] rounded-full"></span> 40-70%
                     </span>
                     <span class="inline-flex items-center gap-1">
-                        <span class="w-3 h-3 bg-[#ff385c] rounded-full"></span> &gt;70%
+                        <span class="w-3 h-3 bg-[#F16A00] rounded-full"></span> &gt;70%
                     </span>
                 </div>
             </div>
@@ -351,7 +351,7 @@
         <!-- Actions rapides -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <a href="{{ route('owner.analytics.fiscal') }}"
-                class="bg-white rounded-xl p-4 border border-gray-200 hover:border-[#ffb3c1] hover:shadow-md transition flex items-center gap-4">
+                class="bg-white rounded-xl p-4 border border-gray-200 hover:border-[#FFD0A3] hover:shadow-md transition flex items-center gap-4">
                 <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                     <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -365,7 +365,7 @@
             </a>
 
             <a href="{{ route('owner.analytics.export.pdf', ['start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}"
-                class="bg-white rounded-xl p-4 border border-gray-200 hover:border-[#ffb3c1] hover:shadow-md transition flex items-center gap-4">
+                class="bg-white rounded-xl p-4 border border-gray-200 hover:border-[#FFD0A3] hover:shadow-md transition flex items-center gap-4">
                 <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
                     <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd"
@@ -379,7 +379,7 @@
             </a>
 
             <a href="{{ route('owner.pricing.index', $firstResidenceId) }}"
-                class="bg-white rounded-xl p-4 border border-gray-200 hover:border-[#ffb3c1] hover:shadow-md transition flex items-center gap-4">
+                class="bg-white rounded-xl p-4 border border-gray-200 hover:border-[#FFD0A3] hover:shadow-md transition flex items-center gap-4">
                 <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                     <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

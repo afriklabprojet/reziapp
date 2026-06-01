@@ -41,7 +41,7 @@ class StoreRentReceiptRequest extends FormRequest
             'period_start.required' => 'La date de début de période est obligatoire.',
             'period_end.required'   => 'La date de fin de période est obligatoire.',
             'period_end.after_or_equal' => 'La fin de période doit être après le début.',
-            'rent_amount.required'  => 'Le montant du loyer est obligatoire.',
+            'rent_amount.required'  => 'Le montant de location est obligatoire.',
             'payment_date.required' => 'La date de paiement est obligatoire.',
             'payment_date.before_or_equal' => 'La date de paiement ne peut pas être dans le futur.',
         ];

@@ -19,11 +19,11 @@ class RentReminderResource extends Resource
 
     protected static ?string $navigationGroup = 'Contrats & Cautions';
 
-    protected static ?string $navigationLabel = 'Rappels de loyer';
+    protected static ?string $navigationLabel = 'Rappels de paiement';
 
-    protected static ?string $modelLabel = 'Rappel de loyer';
+    protected static ?string $modelLabel = 'Rappel de paiement';
 
-    protected static ?string $pluralModelLabel = 'Rappels de loyer';
+    protected static ?string $pluralModelLabel = 'Rappels de paiement';
 
     protected static ?int $navigationSort = 4;
 
@@ -52,7 +52,7 @@ class RentReminderResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('residence_id')
                             ->label('Résidence')
-                            ->relationship('residence', 'title')
+                            ->relationship('residence', 'name')
                             ->searchable()
                             ->preload()
                             ->required(),

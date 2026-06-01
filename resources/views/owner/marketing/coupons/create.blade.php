@@ -16,8 +16,8 @@
                 Retour aux codes promo
             </a>
             <div class="flex items-center gap-3">
-                <div class="p-2.5 bg-[#ffd1da] rounded-xl">
-                    <svg class="w-6 h-6 text-[#e00b41]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-2.5 bg-[#FFE7D1] rounded-xl">
+                    <svg class="w-6 h-6 text-[#CC5A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
                     </svg>
@@ -38,7 +38,7 @@
                     class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all border"
                     :class="activePreset === 'welcome'
                         ?
-                        'bg-[#fff0f3] border-[#ffb3c1] text-[#b5083a]' :
+                        'bg-[#FFF4EB] border-[#FFD0A3] text-[#A34700]' :
                         'bg-white border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300'">
                     🎉 <span>Bienvenue -10%</span>
                 </button>
@@ -46,7 +46,7 @@
                     class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all border"
                     :class="activePreset === 'summer'
                         ?
-                        'bg-[#fff0f3] border-[#ffb3c1] text-[#b5083a]' :
+                        'bg-[#FFF4EB] border-[#FFD0A3] text-[#A34700]' :
                         'bg-white border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300'">
                     ☀️ <span>Été -5 000 F</span>
                 </button>
@@ -54,7 +54,7 @@
                     class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all border"
                     :class="activePreset === 'vip'
                         ?
-                        'bg-[#fff0f3] border-[#ffb3c1] text-[#b5083a]' :
+                        'bg-[#FFF4EB] border-[#FFD0A3] text-[#A34700]' :
                         'bg-white border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300'">
                     ⭐ <span>VIP -20%</span>
                 </button>
@@ -62,7 +62,7 @@
                     class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all border"
                     :class="activePreset === 'flash'
                         ?
-                        'bg-[#fff0f3] border-[#ffb3c1] text-[#b5083a]' :
+                        'bg-[#FFF4EB] border-[#FFD0A3] text-[#A34700]' :
                         'bg-white border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300'">
                     ⚡ <span>Flash -15%</span>
                 </button>
@@ -70,7 +70,7 @@
                     class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all border"
                     :class="activePreset === 'fidelity'
                         ?
-                        'bg-[#fff0f3] border-[#ffb3c1] text-[#b5083a]' :
+                        'bg-[#FFF4EB] border-[#FFD0A3] text-[#A34700]' :
                         'bg-white border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300'">
                     💎 <span>Fidélité -10 000 F</span>
                 </button>
@@ -120,7 +120,7 @@
                                     <div class="relative flex-1">
                                         <input type="text" name="code" id="code" x-model="code"
                                             placeholder="REZI2024" maxlength="50"
-                                            class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] uppercase tracking-wider font-mono text-lg pl-4 pr-10 py-3 bg-gray-50 focus:bg-white transition"
+                                            class="w-full border-gray-200 rounded-xl focus:ring-[#F16A00] focus:border-[#F16A00] uppercase tracking-wider font-mono text-lg pl-4 pr-10 py-3 bg-gray-50 focus:bg-white transition"
                                             @input="activePreset = null">
                                         <div x-show="code.length > 0" x-transition
                                             class="absolute right-3 top-1/2 -translate-y-1/2">
@@ -156,7 +156,7 @@
                                     class="block text-sm font-medium text-gray-700 mb-1.5">Résidence</label>
                                 <div class="relative">
                                     <select name="residence_id" id="residence_id" x-model="residenceId"
-                                        class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] py-3 bg-gray-50 focus:bg-white transition appearance-none pl-4 pr-10"
+                                        class="w-full border-gray-200 rounded-xl focus:ring-[#F16A00] focus:border-[#F16A00] py-3 bg-gray-50 focus:bg-white transition appearance-none pl-4 pr-10"
                                         @change="activePreset = null">
                                         <option value="">🌐 Toutes mes résidences (code global)</option>
                                         @foreach ($residences as $residence)
@@ -188,7 +188,7 @@
                                     <span class="text-gray-400 font-normal">(interne)</span></label>
                                 <textarea name="description" id="description" x-model="description" rows="2" maxlength="500"
                                     placeholder="Ex: Code pour la campagne d'été 2025..."
-                                    class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] py-3 bg-gray-50 focus:bg-white transition resize-none">{{ old('description') }}</textarea>
+                                    class="w-full border-gray-200 rounded-xl focus:ring-[#F16A00] focus:border-[#F16A00] py-3 bg-gray-50 focus:bg-white transition resize-none">{{ old('description') }}</textarea>
                                 <div class="flex justify-between mt-1">
                                     <p class="text-xs text-gray-400">Visible uniquement par vous</p>
                                     <p class="text-xs text-gray-400" x-text="description.length + '/500'"></p>
@@ -216,12 +216,12 @@
                                         class="relative flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all"
                                         :class="discountType === 'percentage'
                                             ?
-                                            'border-[#ff385c] bg-[#fff0f3] ring-1 ring-[#ff385c]/20' :
+                                            'border-[#F16A00] bg-[#FFF4EB] ring-1 ring-[#F16A00]/20' :
                                             'border-gray-200 bg-white hover:border-gray-300'">
                                         <input type="radio" name="discount_type" value="percentage"
                                             x-model="discountType" class="sr-only" @change="activePreset = null">
                                         <div class="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-colors"
-                                            :class="discountType === 'percentage' ? 'bg-[#ffd1da]' : 'bg-gray-100'">
+                                            :class="discountType === 'percentage' ? 'bg-[#FFE7D1]' : 'bg-gray-100'">
                                             %
                                         </div>
                                         <div>
@@ -229,7 +229,7 @@
                                             <p class="text-xs text-gray-500">Réduction en %</p>
                                         </div>
                                         <div x-show="discountType === 'percentage'"
-                                            class="absolute top-2 right-2 text-[#ff385c]">
+                                            class="absolute top-2 right-2 text-[#F16A00]">
                                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd"
                                                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -241,12 +241,12 @@
                                         class="relative flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all"
                                         :class="discountType === 'fixed'
                                             ?
-                                            'border-[#ff385c] bg-[#fff0f3] ring-1 ring-[#ff385c]/20' :
+                                            'border-[#F16A00] bg-[#FFF4EB] ring-1 ring-[#F16A00]/20' :
                                             'border-gray-200 bg-white hover:border-gray-300'">
                                         <input type="radio" name="discount_type" value="fixed" x-model="discountType"
                                             class="sr-only" @change="activePreset = null">
                                         <div class="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-colors"
-                                            :class="discountType === 'fixed' ? 'bg-[#ffd1da]' : 'bg-gray-100'">
+                                            :class="discountType === 'fixed' ? 'bg-[#FFE7D1]' : 'bg-gray-100'">
                                             F
                                         </div>
                                         <div>
@@ -254,7 +254,7 @@
                                             <p class="text-xs text-gray-500">Réduction en FCFA</p>
                                         </div>
                                         <div x-show="discountType === 'fixed'"
-                                            class="absolute top-2 right-2 text-[#ff385c]">
+                                            class="absolute top-2 right-2 text-[#F16A00]">
                                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd"
                                                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -275,7 +275,7 @@
                                         x-model="discountValue" required min="1"
                                         :max="discountType === 'percentage' ? 90 : 999999" step="1"
                                         :placeholder="discountType === 'percentage' ? 'Ex: 15' : 'Ex: 5000'"
-                                        class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] py-3 bg-gray-50 focus:bg-white transition pl-4 pr-16 text-lg font-semibold"
+                                        class="w-full border-gray-200 rounded-xl focus:ring-[#F16A00] focus:border-[#F16A00] py-3 bg-gray-50 focus:bg-white transition pl-4 pr-16 text-lg font-semibold"
                                         @input="activePreset = null">
                                     <div
                                         class="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-400">
@@ -317,7 +317,7 @@
                                 <div class="relative">
                                     <input type="number" name="max_discount" id="max_discount" x-model="maxDiscount"
                                         min="0" placeholder="Pas de limite"
-                                        class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] py-3 bg-gray-50 focus:bg-white transition pl-4 pr-16">
+                                        class="w-full border-gray-200 rounded-xl focus:ring-[#F16A00] focus:border-[#F16A00] py-3 bg-gray-50 focus:bg-white transition pl-4 pr-16">
                                     <div
                                         class="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-400">
                                         FCFA
@@ -346,7 +346,7 @@
                                 <div class="relative">
                                     <input type="number" name="min_amount" id="min_amount" x-model="minAmount"
                                         min="0" placeholder="Aucun minimum"
-                                        class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] py-3 bg-gray-50 focus:bg-white transition pl-4 pr-16">
+                                        class="w-full border-gray-200 rounded-xl focus:ring-[#F16A00] focus:border-[#F16A00] py-3 bg-gray-50 focus:bg-white transition pl-4 pr-16">
                                     <div
                                         class="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-400">
                                         FCFA
@@ -361,14 +361,14 @@
                                         class="block text-sm font-medium text-gray-700 mb-1.5">Utilisations totales</label>
                                     <input type="number" name="max_uses" id="max_uses" x-model="maxUses"
                                         min="1" placeholder="♾️ Illimité"
-                                        class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] py-3 bg-gray-50 focus:bg-white transition">
+                                        class="w-full border-gray-200 rounded-xl focus:ring-[#F16A00] focus:border-[#F16A00] py-3 bg-gray-50 focus:bg-white transition">
                                 </div>
                                 <div>
                                     <label for="max_uses_per_user"
                                         class="block text-sm font-medium text-gray-700 mb-1.5">Par client</label>
                                     <input type="number" name="max_uses_per_user" id="max_uses_per_user"
                                         x-model="maxUsesPerUser" min="1" placeholder="1 par défaut"
-                                        class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] py-3 bg-gray-50 focus:bg-white transition">
+                                        class="w-full border-gray-200 rounded-xl focus:ring-[#F16A00] focus:border-[#F16A00] py-3 bg-gray-50 focus:bg-white transition">
                                 </div>
                             </div>
                             <p class="text-xs text-gray-400 -mt-2">Laissez vide pour des utilisations illimitées</p>
@@ -446,13 +446,13 @@
                                     <label for="starts_at"
                                         class="block text-sm font-medium text-gray-700 mb-1.5">Début</label>
                                     <input type="date" name="starts_at" id="starts_at" x-model="startsAt"
-                                        class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] py-3 bg-gray-50 focus:bg-white transition">
+                                        class="w-full border-gray-200 rounded-xl focus:ring-[#F16A00] focus:border-[#F16A00] py-3 bg-gray-50 focus:bg-white transition">
                                 </div>
                                 <div>
                                     <label for="expires_at"
                                         class="block text-sm font-medium text-gray-700 mb-1.5">Expiration</label>
                                     <input type="date" name="expires_at" id="expires_at" x-model="expiresAt"
-                                        class="w-full border-gray-200 rounded-xl focus:ring-[#ff385c] focus:border-[#ff385c] py-3 bg-gray-50 focus:bg-white transition">
+                                        class="w-full border-gray-200 rounded-xl focus:ring-[#F16A00] focus:border-[#F16A00] py-3 bg-gray-50 focus:bg-white transition">
                                 </div>
                             </div>
 
@@ -525,7 +525,7 @@
                             {{-- Coupon visual --}}
                             <div class="p-5">
                                 <div
-                                    class="relative bg-linear-to-br from-[#ff385c] to-[#e00b41] rounded-2xl p-5 text-white overflow-hidden">
+                                    class="relative bg-linear-to-br from-[#F16A00] to-[#CC5A00] rounded-2xl p-5 text-white overflow-hidden">
                                     {{-- Decorative circles (ticket holes) --}}
                                     <div class="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full">
                                     </div>
@@ -599,7 +599,7 @@
                                 </div>
                                 <div class="flex items-center justify-between py-2 border-b border-gray-50">
                                     <span class="text-sm text-gray-500">Valeur</span>
-                                    <span class="text-sm font-semibold text-[#e00b41]"
+                                    <span class="text-sm font-semibold text-[#CC5A00]"
                                         x-text="previewDiscountLabel || '-'"></span>
                                 </div>
                                 <div class="flex items-center justify-between py-2 border-b border-gray-50">

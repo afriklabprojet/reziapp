@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Quittances de loyer')
+@section('title', 'Reçus de location')
 
 @section('owner-content')
 <div class="space-y-6">
@@ -8,7 +8,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <span class="text-2xl">🧾</span> Quittances de loyer
+                <span class="text-2xl">🧾</span> Reçus de location
             </h1>
             <p class="text-gray-500 text-sm mt-1">Émettez et gérez les quittances de vos locataires</p>
         </div>

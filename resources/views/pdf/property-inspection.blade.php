@@ -5,7 +5,7 @@
     <title>État des lieux – {{ $inspection->reference }}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11px; line-height: 1.5; color: #1a1a1a; padding: 35px; }
+        body { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11px; line-height: 1.5; color: #0F0F0F; padding: 35px; }
 
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; border-bottom: 3px solid #3b82f6; padding-bottom: 16px; }
         .logo { font-size: 24px; font-weight: bold; color: #059669; }

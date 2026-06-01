@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\CoHost;
 use App\Models\Residence;
 use App\Models\User;
+use App\Notifications\CoHostInvitation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Notification;
@@ -97,6 +98,28 @@ class CoHostInvitationTest extends TestCase
             'name' => 'Jean Dupont',
             'status' => 'pending',
         ]);
+    }
+
+    #[Test]
+    public function invitation_email_uses_public_invitation_route(): void
+    {
+        $cohost = CoHost::create([
+            'residence_id' => $this->residence->id,
+            'owner_id' => $this->owner->id,
+            'email' => 'cohost@example.com',
+            'name' => 'Jean Dupont',
+            'status' => 'pending',
+            'invitation_token' => 'mail-token-'.Str::random(48),
+            'invited_at' => now(),
+            'expires_at' => now()->addDays(7),
+        ]);
+
+        $message = (new CoHostInvitation($cohost, $this->residence))->toMail($this->owner);
+
+        $this->assertSame(
+            route('cohost.invitation', $cohost->invitation_token),
+            $message->actionUrl,
+        );
     }
 
     #[Test]

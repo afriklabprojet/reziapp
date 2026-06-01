@@ -8,7 +8,7 @@
             <!-- Header -->
             <div class="mb-8">
                 <nav class="flex items-center gap-2 text-sm text-gray-500 mb-4">
-                    <a href="{{ route('owner.pricing.index', $residence) }}" class="hover:text-[#ff385c]">← Retour au
+                    <a href="{{ route('owner.pricing.index', $residence) }}" class="hover:text-[#F16A00]">← Retour au
                         calendrier</a>
                 </nav>
                 <h1 class="text-3xl font-bold text-gray-900">Nouvelle saison tarifaire</h1>
@@ -27,7 +27,7 @@
                             *</label>
                         <input type="text" name="name" id="name" value="{{ old('name') }}"
                             placeholder="Ex: Haute saison, Noël, Vacances scolaires..."
-                            class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] {{ $errors->has('name') ? 'border-red-500' : 'border-gray-300' }}">
+                            class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00] {{ $errors->has('name') ? 'border-red-500' : 'border-gray-300' }}">
                         @error('name')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -40,7 +40,7 @@
                                 *</label>
                             <input type="date" name="start_date" id="start_date" value="{{ old('start_date') }}"
                                 min="{{ now()->format('Y-m-d') }}"
-                                class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] {{ $errors->has('start_date') ? 'border-red-500' : 'border-gray-300' }}">
+                                class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00] {{ $errors->has('start_date') ? 'border-red-500' : 'border-gray-300' }}">
                             @error('start_date')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -48,7 +48,7 @@
                         <div>
                             <label for="end_date" class="block text-sm font-medium text-gray-700 mb-2">Date de fin *</label>
                             <input type="date" name="end_date" id="end_date" value="{{ old('end_date') }}"
-                                class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] {{ $errors->has('end_date') ? 'border-red-500' : 'border-gray-300' }}">
+                                class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00] {{ $errors->has('end_date') ? 'border-red-500' : 'border-gray-300' }}">
                             @error('end_date')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -56,8 +56,8 @@
                     </div>
 
                     <!-- Prix -->
-                    <div class="bg-[#fff0f3] rounded-xl p-4">
-                        <h3 class="font-medium text-[#b5083a] mb-4">Tarification</h3>
+                    <div class="bg-[#FFF4EB] rounded-xl p-4">
+                        <h3 class="font-medium text-[#A34700] mb-4">Tarification</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label for="price_per_night" class="block text-sm font-medium text-gray-700 mb-2">Prix par
@@ -65,7 +65,7 @@
                                 <input type="number" name="price_per_night" id="price_per_night"
                                     value="{{ old('price_per_night', $residence->price_per_day) }}" min="0"
                                     step="100"
-                                    class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] {{ $errors->has('price_per_night') ? 'border-red-500' : 'border-gray-300' }}">
+                                    class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00] {{ $errors->has('price_per_night') ? 'border-red-500' : 'border-gray-300' }}">
                                 @error('price_per_night')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -76,7 +76,7 @@
                                 <input type="number" name="price_per_week" id="price_per_week"
                                     value="{{ old('price_per_week') }}" min="0" step="100"
                                     placeholder="Optionnel"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                             </div>
                             <div>
                                 <label for="price_per_month" class="block text-sm font-medium text-gray-700 mb-2">Prix par
@@ -84,7 +84,7 @@
                                 <input type="number" name="price_per_month" id="price_per_month"
                                     value="{{ old('price_per_month') }}" min="0" step="100"
                                     placeholder="Optionnel"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                             </div>
                         </div>
                     </div>
@@ -92,7 +92,7 @@
                     <!-- Options avancées -->
                     <div x-data="{ showAdvanced: false }">
                         <button type="button" @click="showAdvanced = !showAdvanced"
-                            class="text-[#ff385c] hover:text-[#e00b41] text-sm font-medium flex items-center gap-1">
+                            class="text-[#F16A00] hover:text-[#CC5A00] text-sm font-medium flex items-center gap-1">
                             <span x-text="showAdvanced ? 'Masquer' : 'Afficher'"></span> les options avancées
                             <svg class="w-4 h-4 transition-transform" :class="showAdvanced && 'rotate-180'" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
@@ -107,13 +107,13 @@
                                         minimum</label>
                                     <input type="number" name="min_nights" id="min_nights"
                                         value="{{ old('min_nights', 1) }}" min="1" max="30"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 </div>
                                 <div>
                                     <label for="priority"
                                         class="block text-sm font-medium text-gray-700 mb-2">Priorité</label>
                                     <select name="priority" id="priority"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                         <option value="low" {{ old('priority') == 'low' ? 'selected' : '' }}>Basse
                                         </option>
                                         <option value="normal"
@@ -129,7 +129,7 @@
                                 <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">Notes
                                     internes</label>
                                 <textarea name="notes" id="notes" rows="2" placeholder="Notes visibles uniquement par vous..."
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">{{ old('notes') }}</textarea>
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">{{ old('notes') }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -142,7 +142,7 @@
                         Annuler
                     </a>
                     <button type="submit"
-                        class="flex-1 px-6 py-3 bg-[#ff385c] text-white rounded-xl hover:bg-[#e00b41] transition">
+                        class="flex-1 px-6 py-3 bg-[#F16A00] text-white rounded-xl hover:bg-[#CC5A00] transition">
                         Créer la saison
                     </button>
                 </div>

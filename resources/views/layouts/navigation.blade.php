@@ -1,6 +1,6 @@
 <nav x-data="{ open: false, scrolled: false }"
     x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 8 })"
-    :class="scrolled ? 'border-transparent' : 'border-[#dddddd]'"
+    :class="scrolled ? 'border-transparent' : 'border-[#F2F2F2]'"
     :style="scrolled ? 'box-shadow: rgba(0,0,0,0.02) 0 0 0 1px, rgba(0,0,0,0.04) 0 2px 6px, rgba(0,0,0,0.08) 0 4px 8px;' : ''"
     class="bg-white border-b sticky top-0 z-30 transition-all duration-200">
     <!-- Primary Navigation Menu -->
@@ -43,7 +43,7 @@
                     {{-- CTA "Publier" uniquement pour les propriétaires (accès rapide création annonce) --}}
                     @if (Auth::user()->isOwner())
                         <a href="{{ route('owner.residences.create') }}"
-                            class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 bg-[#ff385c] hover:bg-[#e00b41] text-white text-sm font-medium rounded-lg transition-colors duration-200">
+                            class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 bg-[#F16A00] hover:bg-[#CC5A00] text-white text-sm font-medium rounded-lg transition-colors duration-200">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                             </svg>
@@ -54,10 +54,10 @@
                     <x-dropdown align="right" width="52">
                         <x-slot name="trigger">
                             <button
-                                class="inline-flex items-center gap-2.5 px-2.5 py-1.5 text-sm font-medium rounded-full border border-[#dddddd] hover:shadow-md focus:outline-none transition-all duration-200 group">
+                                class="inline-flex items-center gap-2.5 px-2.5 py-1.5 text-sm font-medium rounded-full border border-[#F2F2F2] hover:shadow-md focus:outline-none transition-all duration-200 group">
                                 {{-- Avatar circulaire --}}
                                 @php $avatarUrl = Auth::user()->getAvatarUrl(); $hasPhoto = Auth::user()->avatar || Auth::user()->profile_photo; @endphp
-                                <div class="w-8 h-8 rounded-full shrink-0 overflow-hidden bg-[#ff385c] flex items-center justify-center">
+                                <div class="w-8 h-8 rounded-full shrink-0 overflow-hidden bg-[#F16A00] flex items-center justify-center">
                                     @if ($hasPhoto)
                                         <img src="{{ $avatarUrl }}" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
                                     @else
@@ -66,7 +66,7 @@
                                         </span>
                                     @endif
                                 </div>
-                                <span class="hidden lg:block text-[#222222] max-w-[120px] truncate">{{ Auth::user()->name }}</span>
+                                <span class="hidden lg:block text-[#0F0F0F] max-w-[120px] truncate">{{ Auth::user()->name }}</span>
                                 <svg aria-hidden="true" class="fill-current h-3.5 w-3.5 text-gray-400 group-hover:text-gray-600 transition-colors"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd"
@@ -169,21 +169,19 @@
                             <!-- Authentication -->
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-
-                                <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-													this.closest('form').submit();">
+                                <button type="submit"
+                                    class="block w-full px-4 py-2.5 text-start text-sm leading-5 text-[#0F0F0F] hover:text-[#0F0F0F] hover:bg-[#F2F2F2] focus:outline-none focus:bg-[#F2F2F2] transition-colors duration-150">
                                     {{ __('Log Out') }}
-                                </x-dropdown-link>
+                                </button>
                             </form>
                         </x-slot>
                     </x-dropdown>
                 @else
                     <div class="flex items-center space-x-3">
                         <a href="{{ route('login') }}"
-                            class="text-sm font-medium text-[#222222] hover:underline transition-colors duration-200">Connexion</a>
+                            class="text-sm font-medium text-[#0F0F0F] hover:underline transition-colors duration-200">Connexion</a>
                         <a href="{{ route('register') }}"
-                            class="inline-flex items-center px-5 py-2.5 bg-[#222222] hover:bg-[#1a1a1a] rounded-lg text-sm font-medium text-white transition-colors duration-200">
+                            class="inline-flex items-center px-5 py-2.5 bg-[#0F0F0F] hover:bg-[#0F0F0F] rounded-lg text-sm font-medium text-white transition-colors duration-200">
                             Inscription
                         </a>
                     </div>
@@ -193,7 +191,7 @@
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open"
-                    class="inline-flex items-center justify-center p-2 rounded-full text-[#222222] hover:bg-[#f7f7f7] focus:outline-none transition-colors duration-200">
+                    class="inline-flex items-center justify-center p-2 rounded-full text-[#0F0F0F] hover:bg-[#F2F2F2] focus:outline-none transition-colors duration-200">
                     <svg aria-hidden="true" class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{ 'hidden': open, 'inline-flex': !open }" class="inline-flex"
                             stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -258,12 +256,10 @@
                     <!-- Authentication -->
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-
-                        <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-											this.closest('form').submit();">
+                        <button type="submit"
+                            class="block w-full ps-3 pe-4 py-2.5 border-l-4 border-transparent text-start text-base font-medium text-[#0F0F0F] hover:text-[#0F0F0F] hover:bg-[#F2F2F2] hover:border-[#F2F2F2] focus:outline-none transition-all duration-200">
                             {{ __('Log Out') }}
-                        </x-responsive-nav-link>
+                        </button>
                     </form>
                 </div>
             </div>

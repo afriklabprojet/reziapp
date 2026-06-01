@@ -6,6 +6,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Vite;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -48,7 +49,7 @@ class SecurityHeaders
      * En développement, le serveur Vite HMR (port 4000 par défaut) est
      * autorisé sur toutes ses variantes d'adresse locale.
      */
-    private function buildCsp(bool $isProduction): string
+    private function buildCsp(bool $isProduction, string $nonce): string
     {
         // Polices externes utilisées par le projet
         $externalFontHosts = 'https://fonts.bunny.net';
@@ -64,10 +65,9 @@ class SecurityHeaders
 
         $directives = [
             "default-src 'self'",
-            // Alpine.js (build CSP requis), Livewire et Filament nécessitent unsafe-inline.
-            // unsafe-eval est volontairement absent : le build @alpinejs/csp ne l'exige pas.
-            // Mapbox GL JS + Google Maps Places API + Microsoft Clarity
-            "script-src 'self' 'unsafe-inline' {$mapboxCdn} {$googleMaps} {$clarity}",
+            // Nonce par requête + unsafe-inline pour Livewire/Filament.
+            // unsafe-eval volontairement absent : le build @alpinejs/csp ne l'exige pas.
+            "script-src 'self' 'nonce-{$nonce}' 'unsafe-inline' {$mapboxCdn} {$googleMaps} {$clarity}",
             // Tailwind v4 injecte des styles inline ; fonts.bunny.net pour Figtree
             // Mapbox GL CSS + Google Fonts
             "style-src 'self' 'unsafe-inline' {$externalFontHosts} {$mapboxCdn} {$googleFonts}",
@@ -139,6 +139,11 @@ class SecurityHeaders
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Générer la nonce CSP AVANT le rendu — Livewire/Filament injectent leurs scripts pendant $next()
+        $nonce = base64_encode(random_bytes(16));
+        app()->instance('csp-nonce', $nonce);
+        Vite::useCspNonce($nonce);
+
         $response = $next($request);
 
         $isProduction = app()->environment('production');
@@ -154,7 +159,7 @@ class SecurityHeaders
         }
 
         // Content Security Policy
-        $response->headers->set('Content-Security-Policy', $this->buildCsp($isProduction));
+        $response->headers->set('Content-Security-Policy', $this->buildCsp($isProduction, $nonce));
 
         // HSTS (seulement en production avec HTTPS)
         if ($isProduction && $request->secure()) {

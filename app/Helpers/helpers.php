@@ -2,6 +2,17 @@
 
 use Illuminate\Support\Facades\Storage;
 
+if (! function_exists('csp_nonce')) {
+    /**
+     * Retourne la nonce CSP de la requête courante.
+     * Usage Blade : <script nonce="{{ csp_nonce() }}">
+     */
+    function csp_nonce(): string
+    {
+        return app()->has('csp-nonce') ? app('csp-nonce') : '';
+    }
+}
+
 if (!function_exists('storage_url')) {
     /**
      * Get the URL for a storage path.

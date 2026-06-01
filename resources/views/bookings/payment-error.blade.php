@@ -43,7 +43,7 @@
         {{-- Actions --}}
         <div class="space-y-3">
             <a href="{{ route('bookings.create', $booking->residence_id) }}?check_in={{ $booking->check_in?->format('Y-m-d') }}&check_out={{ $booking->check_out?->format('Y-m-d') }}&guests={{ $booking->guests }}"
-                class="block w-full py-3 bg-linear-to-r from-[#E61E4D] to-[#D70466] text-white font-semibold rounded-xl hover:shadow-lg transition-all">
+                class="block w-full py-3 bg-linear-to-r from-[#F16A00] to-[#CC5A00] text-white font-semibold rounded-xl hover:shadow-lg transition-all">
                 Réessayer le paiement
             </a>
             <a href="{{ route('residences.show', $booking->residence_id) }}"

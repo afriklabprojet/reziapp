@@ -6,39 +6,33 @@ use App\Models\SupportMessage;
 use App\Models\SupportTicket;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
+use InvalidArgumentException;
 
 class SupportService
 {
     /**
      * Create a new support ticket
      */
-    public function createTicket(
-        int $userId,
-        string $category,
-        string $subject,
-        string $message,
-        ?int $bookingId = null,
-        ?int $disputeId = null,
-        string $priority = 'medium',
-        ?array $attachments = null,
-    ): SupportTicket {
+    public function createTicket(int $userId, array $data, ?array $attachments = null): SupportTicket
+    {
         $ticket = SupportTicket::create([
             'user_id' => $userId,
-            'booking_id' => $bookingId,
-            'description' => $message,
-            'category' => $category,
-            'subject' => $subject,
-            'priority' => $priority,
+            'booking_id' => $data['booking_id'] ?? null,
+            'dispute_id' => $data['dispute_id'] ?? null,
+            'description' => $data['message'],
+            'category' => $data['category'],
+            'subject' => $data['subject'],
+            'priority' => $data['priority'] ?? 'medium',
             'status' => 'open',
         ]);
 
         // Add initial message
-        $ticket->addMessage($userId, $message, $attachments, false);
+        $ticket->addMessage($userId, $data['message'], $attachments, false);
 
         Log::info('Support ticket created', [
             'ticket_id' => $ticket->id,
             'user_id' => $userId,
-            'category' => $category,
+            'category' => $data['category'],
         ]);
 
         return $ticket;
@@ -127,7 +121,7 @@ class SupportService
     public function rateTicket(SupportTicket $ticket, int $rating, ?string $comment = null): SupportTicket
     {
         if ($rating < 1 || $rating > 5) {
-            throw new \Exception('La note doit être entre 1 et 5.');
+            throw new InvalidArgumentException('La note doit être entre 1 et 5.');
         }
 
         $ticket->rate($rating, $comment);
@@ -145,10 +139,11 @@ class SupportService
      */
     public function uploadAttachment($file, int $ticketId): array
     {
-        $path = $file->store("support/tickets/{$ticketId}", 'public');
+        $path = $file->store("support/tickets/{$ticketId}", 'private');
 
         return [
             'path' => $path,
+            'disk' => 'private',
             'name' => $file->getClientOriginalName(),
             'type' => $file->getMimeType(),
             'size' => $file->getSize(),

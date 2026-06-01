@@ -1,82 +1,62 @@
 @extends('layouts.owner')
 
-@section('title', 'Historique des paiements - REZI')
+@section('title', 'Historique des commissions - REZI')
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     {{-- Header --}}
     <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Historique des paiements</h1>
-            <p class="mt-2 text-gray-600">Consultez tous vos paiements d'abonnement</p>
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Historique des commissions</h1>
+            <p class="mt-2 text-gray-600">Commission REZI prélevée à {{ rtrim(rtrim(number_format($commissionRate, 2, ',', ' '), '0'), ',') }}% sur chaque réservation payée</p>
         </div>
         <a href="{{ route('owner.marketing.subscriptions.index') }}" class="btn-secondary">
             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
             </svg>
-            Retour aux abonnements
+            Retour au modèle REZI
         </a>
     </div>
 
-    {{-- Payments Table --}}
+    {{-- Commissions Table --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        @if($payments->count() > 0)
+        @if($bookings->count() > 0)
             <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Période</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Réf. paiement</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Résidence</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant total</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Commission REZI</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net propriétaire</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Référence</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach($payments as $payment)
+                    @foreach($bookings as $booking)
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $payment->created_at->format('d/m/Y H:i') }}
+                                {{ optional($booking->paid_at ?? $booking->check_out)->format('d/m/Y H:i') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $payment->subscription?->plan?->name ?? '-' }}
+                                {{ $booking->reference ?? 'RES-'.$booking->id }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                @if($payment->period_start && $payment->period_end)
-                                    {{ $payment->period_start->format('d/m/Y') }} - {{ $payment->period_end->format('d/m/Y') }}
-                                @else
-                                    -
-                                @endif
+                                {{ $booking->residence->name ?? 'Résidence supprimée' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                {{ number_format($payment->amount, 0, ',', ' ') }} {{ $payment->currency }}
+                                {{ number_format($booking->total_amount, 0, ',', ' ') }} FCFA
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                @switch($payment->status)
-                                    @case('paid')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            Payé
-                                        </span>
-                                        @break
-                                    @case('pending')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                            En attente
-                                        </span>
-                                        @break
-                                    @case('failed')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                            Échoué
-                                        </span>
-                                        @break
-                                    @default
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                            {{ $payment->status }}
-                                        </span>
-                                @endswitch
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-orange-700">
+                                {{ number_format($booking->commission_amount, 0, ',', ' ') }} FCFA
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-emerald-700">
+                                {{ number_format($booking->owner_net_amount, 0, ',', ' ') }} FCFA
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                                {{ $payment->reference }}
+                                {{ $booking->payment_reference ?? '-' }}
                             </td>
                         </tr>
                     @endforeach
@@ -86,17 +66,17 @@
 
             {{-- Pagination --}}
             <div class="px-6 py-4 border-t border-gray-200">
-                {{ $payments->links() }}
+                {{ $bookings->links() }}
             </div>
         @else
             <div class="px-6 py-12 text-center">
                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                 </svg>
-                <h3 class="mt-4 text-lg font-medium text-gray-900">Aucun paiement</h3>
-                <p class="mt-2 text-gray-500">Vous n'avez pas encore effectué de paiement d'abonnement.</p>
+                <h3 class="mt-4 text-lg font-medium text-gray-900">Aucune commission enregistrée</h3>
+                <p class="mt-2 text-gray-500">Les commissions apparaîtront ici dès que vous aurez des réservations payées.</p>
                 <a href="{{ route('owner.marketing.subscriptions.index') }}" class="mt-4 inline-flex items-center btn-primary">
-                    Voir les plans
+                    Voir le modèle REZI
                 </a>
             </div>
         @endif

@@ -12,15 +12,14 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                0 FCFA de commission sur la location
+                Locataire: 0 FCFA • Propriétaire: 10% par réservation
             </div>
             <h1 class="font-sans text-4xl sm:text-5xl font-extrabold mb-4">
                 Un modèle simple,<br>
-                <span class="text-[#ff4d6d]">transparent et juste</span>
+                <span class="text-[#FF8A1F]">transparent et juste</span>
             </h1>
             <p class="text-gray-300 text-lg max-w-2xl mx-auto">
-                Chez REZI, locataires et propriétaires ne paient aucune commission. La mise en relation est 100% gratuite.
-                Nous proposons des options premium pour aller plus vite.
+                Chez REZI, les locataires ne paient aucun frais de plateforme. Côté propriétaire, REZI prélève 10% sur le montant total de chaque réservation confirmée, sans abonnement mensuel ni annuel.
             </p>
         </div>
     </section>
@@ -30,7 +29,7 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
             <div class="text-center mb-12">
                 <h2 class="font-sans text-3xl sm:text-4xl font-extrabold text-gray-900">Pour qui, combien ?</h2>
-                <p class="mt-3 text-gray-500 max-w-xl mx-auto">Deux profils, une seule règle : vous gardez tout.</p>
+                <p class="mt-3 text-gray-500 max-w-xl mx-auto">Deux profils, une règle simple : gratuit côté locataire, commission de 10% côté propriétaire.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -53,7 +52,7 @@
                             'Recherche géolocalisée avancée',
                             'Accès à toutes les résidences',
                             'Contact direct WhatsApp / appel',
-                            'Aucune commission sur la transaction',
+                            'Aucun frais de plateforme à payer',
                             'Sans inscription obligatoire',
                             'Comparaison de résidences',
                         ] as $item)
@@ -74,25 +73,26 @@
                 </div>
 
                 {{-- PROPRIÉTAIRES --}}
-                <div class="relative bg-linear-to-br from-[#fff0f3] to-amber-50 border border-[#ffb3c1] rounded-3xl p-8">
-                    <div class="absolute top-4 right-4 bg-[#ff385c] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow">
+                <div class="relative bg-linear-to-br from-[#FFF4EB] to-amber-50 border border-[#FFD0A3] rounded-3xl p-8">
+                    <div class="absolute top-4 right-4 bg-[#F16A00] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow">
                         ⭐ Recommandé
                     </div>
-                    <div class="w-14 h-14 bg-[#ff385c] rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-none">
+                    <div class="w-14 h-14 bg-[#F16A00] rounded-2xl flex items-center justify-center mb-6 shadow-lg">
                         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                         </svg>
                     </div>
-                    <div class="inline-block bg-[#ffd1da] text-[#b5083a] text-xs font-bold px-3 py-1 rounded-full mb-4">PROPRIÉTAIRES</div>
+                    <div class="inline-block bg-[#FFE7D1] text-[#A34700] text-xs font-bold px-3 py-1 rounded-full mb-4">PROPRIÉTAIRES</div>
                     <div class="flex items-end gap-2 mb-2">
-                        <span class="text-5xl font-extrabold text-gray-900">0</span>
-                        <span class="text-xl font-bold text-gray-500 mb-2">FCFA</span>
+                        <span class="text-5xl font-extrabold text-gray-900">10%</span>
+                        <span class="text-xl font-bold text-gray-500 mb-2">/ réservation</span>
                     </div>
-                    <p class="text-sm text-gray-500 mb-6">Publication de base — sans abonnement</p>
+                    <p class="text-sm text-gray-500 mb-6">Prélevé uniquement sur le montant total encaissé — sans abonnement</p>
                     <ul class="space-y-3">
                         @foreach([
                             'Publication en moins de 5 minutes',
-                            '0% de commission sur vos loyers',
+                            'Aucun abonnement mensuel ou annuel',
+                            '10% prélevés sur chaque réservation confirmée',
                             'Tableau de bord propriétaire complet',
                             'Chat et réservations intégrés',
                             'Contrats & documents automatisés',
@@ -108,7 +108,7 @@
                     </ul>
                     <div class="mt-8">
                         <a href="{{ route('owner.residences.create') }}"
-                            class="block w-full text-center py-3 bg-[#ff385c] hover:bg-[#e00b41] text-white font-bold rounded-xl transition-colors shadow-lg shadow-none">
+                            class="block w-full text-center py-3 bg-[#F16A00] hover:bg-[#CC5A00] text-white font-bold rounded-xl transition-colors shadow-lg">
                             Publier gratuitement →
                         </a>
                     </div>
@@ -132,22 +132,22 @@
                     Boostez votre visibilité
                 </h2>
                 <p class="mt-3 text-gray-500 max-w-2xl mx-auto">
-                    Publiez gratuitement. Si vous souhaitez aller plus vite, nos options Boost placent votre annonce en tête des résultats.
+                    La commission de 10% constitue le modèle économique principal. Les options Boost restent facultatives si vous souhaitez accélérer votre visibilité.
                 </p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 @foreach($boostPlans as $plan)
                 @php $popular = !empty($plan['popular']); @endphp
-                <div class="bg-white rounded-2xl {{ $popular ? 'border-2 border-[#ff4d6d] shadow-xl shadow-orange-100' : 'border border-gray-200 hover:border-[#ffb3c1] hover:shadow-lg' }} p-6 text-center transition-all relative">
+                <div class="bg-white rounded-2xl {{ $popular ? 'border-2 border-[#FF8A1F] shadow-xl shadow-orange-100' : 'border border-gray-200 hover:border-[#FFD0A3] hover:shadow-lg' }} p-6 text-center transition-all relative">
                     @if(!empty($plan['badge']))
-                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#ff385c] text-white text-xs font-bold px-4 py-1 rounded-full">
+                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#F16A00] text-white text-xs font-bold px-4 py-1 rounded-full">
                         {{ $plan['badge'] }}
                     </div>
                     @endif
                     <div class="text-2xl mb-3">{{ $plan['emoji'] ?? '' }}</div>
                     <h3 class="font-bold text-gray-900 text-lg mb-1">{{ $plan['name'] }}</h3>
-                    <div class="text-3xl font-extrabold text-[#ff385c] mb-1">{{ number_format($plan['price'], 0, ',', ' ') }} <span class="text-base font-normal text-gray-400">FCFA</span></div>
+                    <div class="text-3xl font-extrabold text-[#F16A00] mb-1">{{ number_format($plan['price'], 0, ',', ' ') }} <span class="text-base font-normal text-gray-400">FCFA</span></div>
                     <p class="text-xs text-gray-400 mb-5">{{ $plan['duration_label'] }}</p>
                     <ul class="space-y-2 text-sm text-left text-gray-600 mb-6">
                         @foreach($plan['features'] ?? [] as $feature)
@@ -155,7 +155,7 @@
                         @endforeach
                     </ul>
                     <a href="{{ route('owner.residences.create') }}"
-                        class="block w-full py-2.5 rounded-xl {{ $popular ? 'bg-[#ff385c] hover:bg-[#e00b41] text-white shadow-lg shadow-none' : 'bg-gray-100 hover:bg-[#ff385c] hover:text-white text-gray-700' }} font-semibold text-sm transition-all">
+                        class="block w-full py-2.5 rounded-xl {{ $popular ? 'bg-[#F16A00] hover:bg-[#CC5A00] text-white shadow-lg' : 'bg-gray-100 hover:bg-[#F16A00] hover:text-white text-gray-700' }} font-semibold text-sm transition-all">
                         {{ $popular ? 'Choisir ' . $plan['name'] : 'Commencer' }}
                     </a>
                 </div>
@@ -176,15 +176,15 @@
                     <thead>
                         <tr class="bg-gray-50 border-b border-gray-200">
                             <th class="px-6 py-4 text-left font-semibold text-gray-500">Critère</th>
-                            <th class="px-6 py-4 text-center font-bold text-[#e00b41]">REZI</th>
+                            <th class="px-6 py-4 text-center font-bold text-[#CC5A00]">REZI</th>
                             <th class="px-6 py-4 text-center font-semibold text-gray-400">Agences traditionnelles</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @foreach([
                             ['Publication annonce', '✅ Gratuit', '❌ 5 000–50 000 FCFA'],
-                            ['Commission location', '✅ 0%', '❌ 50–100% du loyer'],
-                            ['Frais d\'agence locataire', '✅ 0 FCFA', '❌ 1–2 mois de loyer'],
+                            ['Commission propriétaire', '✅ 10% du montant total réservé', '❌ 50–100% du montant de location'],
+                            ['Frais d\'agence locataire', '✅ 0 FCFA', '❌ 1–2 mois de location'],
                             ['Délai publication', '✅ < 5 minutes', '❌ 1–5 jours ouvrés'],
                             ['Contact direct propriétaire', '✅ WhatsApp/Appel direct', '❌ Intermédiaire obligatoire'],
                             ['Disponibilité', '✅ 24h/7j', '❌ Horaires bureau'],
@@ -212,7 +212,7 @@
                 @foreach($faqItems as $i => $faq)
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                     <button @click="open = open === {{ $i }} ? null : {{ $i }}"
-                        class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:text-[#e00b41] transition-colors">
+                        class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:text-[#CC5A00] transition-colors">
                         <span>{{ $faq['q'] }}</span>
                         <svg class="w-5 h-5 text-gray-400 shrink-0 transition-transform" :class="open === {{ $i }} ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -228,24 +228,24 @@
     </section>
 
     {{-- CTA FINAL --}}
-    <section class="py-16 sm:py-20 bg-linear-to-br from-[#ff385c] to-[#e00b41]">
+    <section class="py-16 sm:py-20 bg-linear-to-br from-[#F16A00] to-[#CC5A00]">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center text-white">
             <h2 class="font-sans text-3xl sm:text-4xl font-extrabold mb-4">
                 Prêt à commencer gratuitement ?
             </h2>
-            <p class="text-[#ffd1da] text-lg mb-8">
+            <p class="text-[#FFE7D1] text-lg mb-8">
                 Rejoignez les propriétaires qui font confiance à REZI pour louer plus vite et sans intermédiaire.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="{{ route('owner.residences.create') }}"
-                    class="inline-flex items-center justify-center gap-2 bg-white text-[#e00b41] hover:bg-[#fff0f3] px-8 py-4 rounded-2xl font-bold text-base shadow-xl transition-all hover:scale-105">
+                    class="inline-flex items-center justify-center gap-2 bg-white text-[#CC5A00] hover:bg-[#FFF4EB] px-8 py-4 rounded-2xl font-bold text-base shadow-xl transition-all hover:scale-105">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
                     Publier ma résidence
                 </a>
                 <a href="{{ route('residences.index') }}"
-                    class="inline-flex items-center justify-center gap-2 bg-[#e00b41]/50 hover:bg-[#e00b41]/70 text-white border border-white/30 px-8 py-4 rounded-2xl font-bold text-base transition-all">
+                    class="inline-flex items-center justify-center gap-2 bg-[#CC5A00]/50 hover:bg-[#CC5A00]/70 text-white border border-white/30 px-8 py-4 rounded-2xl font-bold text-base transition-all">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>

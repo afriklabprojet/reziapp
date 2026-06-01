@@ -29,7 +29,7 @@
                 @if($ticket->isActive())
                     <form action="{{ route('support.close', $ticket) }}" method="POST">
                         @csrf
-                        <button type="submit" 
+                        <button type="submit"
                                 class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm">
                             Fermer le ticket
                         </button>
@@ -37,7 +37,7 @@
                 @else
                     <form action="{{ route('support.reopen', $ticket) }}" method="POST">
                         @csrf
-                        <button type="submit" 
+                        <button type="submit"
                                 class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm">
                             Réouvrir
                         </button>
@@ -78,11 +78,11 @@
                                         </span>
                                     </div>
                                     <div class="text-gray-700 whitespace-pre-line">{{ $message->message }}</div>
-                                    
+
                                     @if($message->has_attachments)
                                         <div class="mt-3 flex flex-wrap gap-2">
-                                            @foreach($message->attachments as $attachment)
-                                                <a href="{{ storage_url($attachment['path']) }}" 
+                                            @foreach($message->attachments as $index => $attachment)
+                                                <a href="{{ route('support.attachments.download', [$ticket, $message, $index]) }}"
                                                    target="_blank"
                                                    class="inline-flex items-center px-3 py-1 bg-gray-100 rounded text-sm text-gray-700 hover:bg-gray-200">
                                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,12 +104,12 @@
                     <div class="p-4 border-t bg-gray-50">
                         <form action="{{ route('support.reply', $ticket) }}" method="POST" enctype="multipart/form-data">
                             @csrf
-                            <textarea name="message" 
-                                      rows="3" 
-                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]"
+                            <textarea name="message"
+                                      rows="3"
+                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]"
                                       placeholder="Écrivez votre réponse..."
                                       required></textarea>
-                            
+
                             <div class="flex items-center justify-between mt-3">
                                 <label class="inline-flex items-center text-sm text-gray-600 cursor-pointer hover:text-gray-900">
                                     <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -118,8 +118,8 @@
                                     Joindre un fichier
                                     <input type="file" name="attachments[]" multiple class="sr-only">
                                 </label>
-                                <button type="submit" 
-                                        class="px-6 py-2 bg-[#e00b41] text-white rounded-lg hover:bg-[#b5083a]">
+                                <button type="submit"
+                                        class="px-6 py-2 bg-[#CC5A00] text-white rounded-lg hover:bg-[#A34700]">
                                     Envoyer
                                 </button>
                             </div>
@@ -127,10 +127,10 @@
                     </div>
                 @else
                     <div class="p-4 border-t bg-gray-50 text-center text-gray-500">
-                        Ce ticket est fermé. 
+                        Ce ticket est fermé.
                         <form action="{{ route('support.reopen', $ticket) }}" method="POST" class="inline">
                             @csrf
-                            <button type="submit" class="text-[#e00b41] hover:underline">Réouvrir</button>
+                            <button type="submit" class="text-[#CC5A00] hover:underline">Réouvrir</button>
                         </form>
                         pour répondre.
                     </div>
@@ -145,7 +145,7 @@
                         @csrf
                         <div class="flex items-center space-x-2 mb-4" x-data="{ rating: 0 }">
                             @for($i = 1; $i <= 5; $i++)
-                                <button type="button" 
+                                <button type="button"
                                         x-on:click="rating = {{ $i }}; $refs.ratingInput.value = {{ $i }}"
                                         x-bind:class="rating >= {{ $i }} ? 'text-yellow-400' : 'text-gray-300'"
                                         class="hover:text-yellow-400 transition-colors">
@@ -156,11 +156,11 @@
                             @endfor
                             <input type="hidden" name="rating" x-ref="ratingInput" required>
                         </div>
-                        <textarea name="comment" 
+                        <textarea name="comment"
                                   rows="2"
                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
                                   placeholder="Un commentaire ? (optionnel)"></textarea>
-                        <button type="submit" 
+                        <button type="submit"
                                 class="mt-3 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
                             Envoyer mon avis
                         </button>
@@ -169,7 +169,7 @@
             @elseif($ticket->satisfaction_rating)
                 <div class="mt-6 bg-gray-50 border rounded-lg p-4">
                     <p class="text-sm text-gray-600">
-                        Vous avez noté ce support 
+                        Vous avez noté ce support
                         @for($i = 1; $i <= 5; $i++)
                             <span class="{{ $i <= $ticket->satisfaction_rating ? 'text-yellow-400' : 'text-gray-300' }}">★</span>
                         @endfor
@@ -217,7 +217,7 @@
                     <h3 class="font-semibold text-gray-900 mb-4">Réservation liée</h3>
                     <div class="space-y-3">
                         @if($ticket->booking->residence->mainPhoto)
-                            <img loading="lazy" src="{{ storage_url($ticket->booking->residence->mainPhoto->path) }}" 
+                            <img loading="lazy" src="{{ storage_url($ticket->booking->residence->mainPhoto->path) }}"
                                  alt="{{ $ticket->booking->residence->name }}"
                                  class="w-full h-24 object-cover rounded-lg">
                         @endif
@@ -227,7 +227,7 @@
                                 {{ $ticket->booking->check_in->format('d M') }} - {{ $ticket->booking->check_out->format('d M Y') }}
                             </p>
                         </div>
-                        <a href="{{ route('bookings.show', $ticket->booking) }}" 
+                        <a href="{{ route('bookings.show', $ticket->booking) }}"
                            class="block text-center px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
                             Voir la réservation
                         </a>
@@ -246,7 +246,7 @@
                                 {{ $ticket->dispute->status_label }}
                             </span>
                         </div>
-                        <a href="{{ route('disputes.show', $ticket->dispute) }}" 
+                        <a href="{{ route('disputes.show', $ticket->dispute) }}"
                            class="block text-center px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
                             Voir le litige
                         </a>

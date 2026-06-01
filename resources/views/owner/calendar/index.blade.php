@@ -26,7 +26,7 @@
             </div>
             <div class="flex items-center gap-2">
                 <div class="w-3 h-3 rounded-full bg-amber-500"></div>
-                <span class="text-xs text-gray-600">Relances loyer</span>
+                <span class="text-xs text-gray-600">Relances paiement</span>
             </div>
             <div class="flex items-center gap-2">
                 <div class="w-3 h-3 rounded-full bg-red-500"></div>

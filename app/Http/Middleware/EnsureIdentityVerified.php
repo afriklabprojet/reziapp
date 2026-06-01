@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class EnsureIdentityVerified
 {
-    public function handle(Request $request, Closure $next, string $mode = 'soft'): Response
+    public function handle(Request $request, Closure $next, string $mode = 'strict'): Response
     {
         $user = $request->user();
 

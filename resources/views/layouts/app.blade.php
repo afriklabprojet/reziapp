@@ -5,9 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @php($cspNonce = \Illuminate\Support\Facades\Vite::cspNonce())
 
     {{-- Dark mode: apply immediately to prevent flash of wrong theme --}}
-    <script>
+    <script nonce="{{ $cspNonce }}">
         (function() {
             var t = localStorage.getItem('theme');
             if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -24,7 +25,7 @@
     @stack('meta')
 
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#ff385c">
+    <meta name="theme-color" content="#F16A00">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -35,7 +36,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/icons/favicon-16x16.png">
     <link rel="shortcut icon" href="/favicon.ico">
-    <meta name="msapplication-TileColor" content="#ff385c">
+    <meta name="msapplication-TileColor" content="#F16A00">
     <meta name="msapplication-config" content="/browserconfig.xml">
 
     <!-- Fonts: Plus Jakarta Sans (Airbnb Cereal / Circular fallback) -->
@@ -51,7 +52,7 @@
 
     @production
     <!-- Microsoft Clarity -->
-    <script type="text/javascript">
+    <script type="text/javascript" nonce="{{ $cspNonce }}">
         (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
             t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
@@ -64,20 +65,22 @@
 <body class="font-sans antialiased">
     {{-- Skip to content (accessibilité) --}}
     <a href="#main-content"
-        class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-60 focus:bg-[#ff385c] focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:outline-none">
+        class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-60 focus:bg-[#F16A00] focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:outline-none">
         Aller au contenu principal
     </a>
 
-    <div class="min-h-screen bg-[#f7f7f7]/60 dark:bg-[#111111]">
+    <div class="min-h-screen bg-[#F2F2F2]/60 dark:bg-[#0F0F0F]">
         {{-- Header desktop classique --}}
         <div class="hidden md:block">
             @include('layouts.navigation')
         </div>
 
         {{-- Header mobile --}}
-        <div class="md:hidden">
-            <x-mobile-header :title="$mobileTitle ?? null" />
-        </div>
+        @unless (request()->routeIs('home'))
+            <div class="md:hidden">
+                <x-mobile-header :title="$mobileTitle ?? null" />
+            </div>
+        @endunless
 
         <!-- Page Heading -->
         @isset($header)
@@ -89,7 +92,7 @@
         @endisset
 
         <!-- Page Content -->
-        <main id="main-content" class="pb-20 md:pb-0">
+        <main id="main-content" class="pb-16 md:pb-0">
             @hasSection('content')
                 @yield('content')
             @else
@@ -98,7 +101,9 @@
         </main>
 
         {{-- Navigation mobile --}}
-        <x-mobile-nav />
+        @unless (request()->routeIs('home'))
+            <x-mobile-nav />
+        @endunless
 
         {{-- Footer (hidden on mobile where bottom nav is visible) --}}
         <div class="hidden md:block">
@@ -113,7 +118,7 @@
     @stack('scripts')
 
     <!-- Fallback global pour les images manquantes -->
-    <script>
+    <script nonce="{{ $cspNonce }}">
     (function () {
         var PLACEHOLDER = '/images/placeholder-residence.jpg';
         var AVATAR_PLACEHOLDER = '/images/placeholder.jpg';
@@ -136,13 +141,15 @@
     })();
     </script>
 
-    {{-- Chatbot IA REZI — widget flottant 24/7 --}}
-    <x-chatbot
-        :commune="request()->query('commune') ?: null"
-    />
+    {{-- Chatbot IA REZI — masqué sur mobile (évite collision avec la bottom nav) --}}
+    <div class="hidden md:block">
+        <x-chatbot
+            :commune="request()->query('commune') ?: null"
+        />
+    </div>
 
     <!-- Service Worker Registration -->
-    <script>
+    <script nonce="{{ $cspNonce }}">
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/sw.js')

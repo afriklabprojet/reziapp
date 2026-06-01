@@ -112,6 +112,40 @@ class PrivacyCleanupTest extends TestCase
         $this->assertDatabaseHas('contacts', ['id' => $contactId]);
     }
 
+    #[Test]
+    public function test_chunking_anonymizes_all_contacts_above_chunk_size(): void
+    {
+        // Arrange : créer plus de 500 contacts éligibles pour déclencher plusieurs chunks
+        $oldDate   = now()->subDays(100);
+        $batchSize = 550;
+
+        $insertData = [];
+        for ($i = 0; $i < $batchSize; $i++) {
+            $insertData[] = [
+                'name'           => "Contact {$i}",
+                'email'          => "contact{$i}@example.com",
+                'phone'          => '+2250700000000',
+                'message'        => 'Message test',
+                'user_latitude'  => 5.3599,
+                'user_longitude' => -4.0083,
+                'created_at'     => $oldDate,
+                'updated_at'     => $oldDate,
+            ];
+        }
+        DB::table('contacts')->insert($insertData);
+
+        // Act
+        $this->artisan('privacy:cleanup')->assertSuccessful();
+
+        // Assert : tous les contacts doivent avoir leurs GPS nullifiés
+        $remaining = DB::table('contacts')
+            ->whereNotNull('user_latitude')
+            ->where('created_at', '<', now()->subDays(90))
+            ->count();
+
+        $this->assertSame(0, $remaining, "Tous les {$batchSize} contacts éligibles doivent être anonymisés.");
+    }
+
     // ----------------------------------------------------------------
     // Tests search_histories
     // ----------------------------------------------------------------
@@ -163,12 +197,45 @@ class PrivacyCleanupTest extends TestCase
     }
 
     #[Test]
-    public function test_old_identified_view_histories_are_kept(): void
+    public function test_recent_anonymous_view_histories_are_kept(): void
     {
-        // Les view_histories liés à un utilisateur connecté ne doivent PAS être purgés
+        // Arrange : view_history anonyme récent (dans le TTL de 365 jours)
+        $recentDate = now()->subDays(30);
+        $viewId     = $this->createViewHistory($recentDate, userId: null);
+
+        // Act
+        $this->artisan('privacy:cleanup')->assertSuccessful();
+
+        // Assert
+        $this->assertDatabaseHas('view_histories', ['id' => $viewId]);
+    }
+
+    // ----------------------------------------------------------------
+    // Tests view_histories authentifiés (RGPD)
+    // ----------------------------------------------------------------
+
+    #[Test]
+    public function test_cleanup_deletes_old_authenticated_view_histories(): void
+    {
+        // Les view_histories d'utilisateurs identifiés > 365 j doivent être purgés (RGPD).
         // Arrange
         $oldDate = now()->subDays(400);
         $viewId  = $this->createViewHistory($oldDate, userId: 1);
+
+        // Act
+        $this->artisan('privacy:cleanup')->assertSuccessful();
+
+        // Assert
+        $this->assertDatabaseMissing('view_histories', ['id' => $viewId]);
+    }
+
+    #[Test]
+    public function test_recent_authenticated_view_histories_are_kept(): void
+    {
+        // Les view_histories d'utilisateurs identifiés récents (dans le TTL) doivent être préservés.
+        // Arrange
+        $recentDate = now()->subDays(30);
+        $viewId     = $this->createViewHistory($recentDate, userId: 1);
 
         // Act
         $this->artisan('privacy:cleanup')->assertSuccessful();
@@ -192,7 +259,8 @@ class PrivacyCleanupTest extends TestCase
         $historyId  = $this->createSearchHistory($searchOldDate);
 
         $viewOldDate = now()->subDays(400);
-        $viewId      = $this->createViewHistory($viewOldDate, userId: null);
+        $anonViewId  = $this->createViewHistory($viewOldDate, userId: null);
+        $authViewId  = $this->createViewHistory($viewOldDate, userId: 1);
 
         // Act
         $this->artisan('privacy:cleanup --dry-run')->assertSuccessful();
@@ -202,7 +270,8 @@ class PrivacyCleanupTest extends TestCase
         $this->assertNotNull($contact->user_latitude, 'Dry-run ne doit pas modifier les coordonnées GPS.');
 
         $this->assertDatabaseHas('search_histories', ['id' => $historyId]);
-        $this->assertDatabaseHas('view_histories', ['id' => $viewId]);
+        $this->assertDatabaseHas('view_histories', ['id' => $anonViewId]);
+        $this->assertDatabaseHas('view_histories', ['id' => $authViewId]);
     }
 
     #[Test]

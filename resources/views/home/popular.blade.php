@@ -1,26 +1,15 @@
                 {{-- 5. SECTION LES PLUS POPULAIRES --}}
-                <section class="py-10 sm:py-16 bg-[#f7f7f7]">
+                <section class="py-6 sm:py-16 bg-[#F2F2F2]">
                     <div class="max-w-7xl mx-auto px-4 sm:px-6">
                         {{-- Section Header --}}
-                        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10 reveal-hidden"
+                        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6 sm:mb-10 reveal-hidden"
                             x-intersect.once="$el.classList.add('reveal-visible')">
                             <div>
-                                <div
-                                    class="inline-flex items-center gap-2 bg-rose-100 text-rose-600 px-3 py-1.5 rounded-full text-xs font-bold mb-3">
-                                    <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
-                                    </svg>
-                                    Tendances
-                                </div>
-                                <h2 class="font-sans text-2xl sm:text-3xl font-bold text-gray-900">Les plus populaires 🔥</h2>
+                                <h2 class="font-sans text-xl sm:text-3xl font-bold text-gray-900">Les plus populaires 🔥</h2>
                                 <p class="mt-2 text-sm text-gray-500">Les résidences les plus consultées cette semaine</p>
                             </div>
                             <a href="{{ route('residences.index') }}?sort=popular"
-                                class="inline-flex items-center gap-2 text-sm font-semibold text-[#ff385c] hover:text-[#e00b41] transition group">
+                                class="inline-flex items-center gap-2 text-sm font-semibold text-[#F16A00] hover:text-[#CC5A00] transition group">
                                 Voir le classement complet
                                 <svg aria-hidden="true" class="w-4 h-4 group-hover:translate-x-1 transition-transform"
                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,7 +20,7 @@
                         </div>
 
                         {{-- Popular Grid - Dynamic from Database --}}
-                        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
 
                             @php
                                 $rankColors = [
@@ -45,7 +34,7 @@
                             @forelse($popularZones as $index => $zone)
                                 <a href="{{ route('residences.index', ['commune' => $zone['name']]) }}"
                                     x-intersect.once="$el.classList.add('reveal-visible')"
-                                    class="group relative reveal-card card-lift-warm {{ $staggerClasses[$index] ?? '' }} bg-white rounded-2xl shadow-md overflow-hidden {{ $index === 0 ? 'ring-2 ring-rose-200' : '' }}">
+                                    class="group relative reveal-card card-lift-warm {{ $staggerClasses[$index] ?? '' }} bg-white rounded-2xl shadow-md overflow-hidden {{ $index === 0 ? 'ring-2 ring-rose-200' : '' }} min-h-[120px] sm:min-h-0">
                                     {{-- Rank Badge --}}
                                     <div
                                         class="absolute top-4 left-4 z-10 w-10 h-10 {{ $index < 3 ? 'bg-linear-to-br ' . ($rankColors[$index] ?? $rankColors[3]) : $rankColors[3] }} rounded-full flex items-center justify-center shadow-lg">
@@ -98,7 +87,7 @@
                                             </div>
                                         </div>
                                         <div class="mt-3 flex items-center justify-between">
-                                            <span class="text-xs text-[#ff385c] font-semibold">Voir les résidences →</span>
+                                            <span class="text-xs text-[#F16A00] font-semibold">Voir les résidences →</span>
                                         </div>
                                     </div>
                                 </a>

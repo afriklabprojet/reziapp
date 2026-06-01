@@ -1,139 +1,139 @@
 ---
 version: alpha
-name: Airbnb
-description: A warm, generous consumer marketplace anchored on a clean white canvas and Airbnb Rausch (#ff385c), the single brand voltage that carries every primary CTA, search-button orb, and rating dot. Type runs Airbnb Cereal VF at modest weights — display sits at 22–28px in weight 500/600 rather than the heavy 700+ that fintech and enterprise systems use; the brand trusts photography and generous whitespace over typographic muscle. Three product entries (Homes, Experiences, Services) sit in the top nav with hand-illustrated 32-icon glyphs and "NEW" badges, signaling a marketplace expansion rather than a feature dump. Pill-shaped search bars (`{rounded.full}`), softly rounded property cards (`{rounded.lg}` ~14px), and 32px button radii read as friendly and human — there is no hard corner anywhere except the body grid.
+name: REZI Orange
+description: A bold residential marketplace anchored on a high-contrast system: pure white canvas, deep black typography, controlled dark gray for secondary copy, and a single vivid orange (#F16A00) for every primary action. The interface should feel direct, legible, and practical rather than ornamental. Rounded cards and pill actions remain, but the identity is now driven by contrast and warmth instead of pink gradients.
 
 colors:
-  primary: "#ff385c"
-  primary-active: "#e00b41"
-  primary-disabled: "#ffd1da"
+  primary: "#F16A00"
+  primary-active: "#CC5A00"
+  primary-disabled: "#FFE7D1"
   primary-error-text: "#c13515"
   primary-error-text-hover: "#b32505"
   luxe: "#460479"
   plus: "#92174d"
-  ink: "#222222"
-  body: "#3f3f3f"
-  muted: "#6a6a6a"
-  muted-soft: "#929292"
-  hairline: "#dddddd"
-  hairline-soft: "#ebebeb"
-  border-strong: "#c1c1c1"
-  canvas: "#ffffff"
-  surface-soft: "#f7f7f7"
-  surface-card: "#ffffff"
-  surface-strong: "#f2f2f2"
-  on-primary: "#ffffff"
-  on-dark: "#ffffff"
+  ink: "#0F0F0F"
+  body: "#555555"
+  muted: "#555555"
+  muted-soft: "#555555"
+  hairline: "#F2F2F2"
+  hairline-soft: "#F2F2F2"
+  border-strong: "#F2F2F2"
+  canvas: "#FFFFFF"
+  surface-soft: "#F2F2F2"
+  surface-card: "#FFFFFF"
+  surface-strong: "#F2F2F2"
+  on-primary: "#FFFFFF"
+  on-dark: "#FFFFFF"
   legal-link: "#428bff"
-  star-rating: "#222222"
+  star-rating: "#0F0F0F"
   scrim: "#000000"
 
 typography:
   display-xl:
-    fontFamily: "'Airbnb Cereal VF', Circular, -apple-system, system-ui, Roboto, 'Helvetica Neue', sans-serif"
+    fontFamily: "'Plus Jakarta Sans', Circular, -apple-system, system-ui, Roboto, 'Helvetica Neue', sans-serif"
     fontSize: 28px
     fontWeight: 700
     lineHeight: 1.43
     letterSpacing: 0
   display-lg:
-    fontFamily: "'Airbnb Cereal VF', Circular, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', Circular, sans-serif"
     fontSize: 22px
     fontWeight: 500
     lineHeight: 1.18
     letterSpacing: -0.44px
   display-md:
-    fontFamily: "'Airbnb Cereal VF', Circular, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', Circular, sans-serif"
     fontSize: 21px
     fontWeight: 700
     lineHeight: 1.43
     letterSpacing: 0
   display-sm:
-    fontFamily: "'Airbnb Cereal VF', Circular, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', Circular, sans-serif"
     fontSize: 20px
     fontWeight: 600
     lineHeight: 1.20
     letterSpacing: -0.18px
   title-md:
-    fontFamily: "'Airbnb Cereal VF', Circular, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', Circular, sans-serif"
     fontSize: 16px
     fontWeight: 600
     lineHeight: 1.25
     letterSpacing: 0
   title-sm:
-    fontFamily: "'Airbnb Cereal VF', Circular, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', Circular, sans-serif"
     fontSize: 16px
     fontWeight: 500
     lineHeight: 1.25
     letterSpacing: 0
   rating-display:
-    fontFamily: "'Airbnb Cereal VF', Circular, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', Circular, sans-serif"
     fontSize: 64px
     fontWeight: 700
     lineHeight: 1.1
     letterSpacing: -1px
   body-md:
-    fontFamily: "'Airbnb Cereal VF', Circular, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', Circular, sans-serif"
     fontSize: 16px
     fontWeight: 400
     lineHeight: 1.5
     letterSpacing: 0
   body-sm:
-    fontFamily: "'Airbnb Cereal VF', Circular, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', Circular, sans-serif"
     fontSize: 14px
     fontWeight: 400
     lineHeight: 1.43
     letterSpacing: 0
   caption:
-    fontFamily: "'Airbnb Cereal VF', Circular, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', Circular, sans-serif"
     fontSize: 14px
     fontWeight: 500
     lineHeight: 1.29
     letterSpacing: 0
   caption-sm:
-    fontFamily: "'Airbnb Cereal VF', Circular, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', Circular, sans-serif"
     fontSize: 13px
     fontWeight: 400
     lineHeight: 1.23
     letterSpacing: 0
   badge:
-    fontFamily: "'Airbnb Cereal VF', Circular, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', Circular, sans-serif"
     fontSize: 11px
     fontWeight: 600
     lineHeight: 1.18
     letterSpacing: 0
   micro-label:
-    fontFamily: "'Airbnb Cereal VF', Circular, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', Circular, sans-serif"
     fontSize: 12px
     fontWeight: 700
     lineHeight: 1.33
     letterSpacing: 0
   uppercase-tag:
-    fontFamily: "'Airbnb Cereal VF', Circular, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', Circular, sans-serif"
     fontSize: 8px
     fontWeight: 700
     lineHeight: 1.25
     letterSpacing: 0.32px
     textTransform: uppercase
   button-md:
-    fontFamily: "'Airbnb Cereal VF', Circular, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', Circular, sans-serif"
     fontSize: 16px
     fontWeight: 500
     lineHeight: 1.25
     letterSpacing: 0
   button-sm:
-    fontFamily: "'Airbnb Cereal VF', Circular, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', Circular, sans-serif"
     fontSize: 14px
     fontWeight: 500
     lineHeight: 1.29
     letterSpacing: 0
   link:
-    fontFamily: "'Airbnb Cereal VF', Circular, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', Circular, sans-serif"
     fontSize: 14px
     fontWeight: 400
     lineHeight: 1.43
     letterSpacing: 0
   nav-link:
-    fontFamily: "'Airbnb Cereal VF', Circular, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', Circular, sans-serif"
     fontSize: 16px
     fontWeight: 600
     lineHeight: 1.25
@@ -328,15 +328,15 @@ components:
 
 ## Overview
 
-Airbnb is the canonical example of a generous, photography-led consumer marketplace. The base canvas is **pure white** (`{colors.canvas}` — #ffffff) with deep near-black ink (`{colors.ink}` — #222222) for headlines and body, and a single voltage of **Rausch** (`{colors.primary}` — #ff385c) carrying every primary CTA, the search-button orb, the heart save state, and inline brand links. There is no secondary brand color in mainline marketing — the **Luxe purple** (`{colors.luxe}` — #460479) and **Plus magenta** (`{colors.plus}` — #92174d) tokens are sub-brand accents that only appear inside Airbnb Luxe / Plus contexts.
+REZI uses a direct, high-contrast marketplace language. The base canvas is **pure white** (`{colors.canvas}` — #FFFFFF), headlines and primary labels use deep black (`{colors.ink}` — #0F0F0F), secondary copy uses dark gray (`{colors.body}` — #555555), and a single accent of **orange principal** (`{colors.primary}` — #F16A00) carries every important action: CTA backgrounds, interactive highlights, active states, and key wayfinding moments.
 
-Type runs **Airbnb Cereal VF** (a custom variable font Airbnb licenses), with **Circular** as the historic in-house fallback and a system stack underneath. Cereal sits at modest weights — display headlines render at 22–28px in weight 500–600, not the heavy 700+ weights that financial or enterprise systems lean on. The hero h1 ("Inspiration for future getaways") on the homepage is just 28px / 700, which would feel small on a typical SaaS page; here it works because the layout leans on photography (city collage, property cards) for visual weight rather than typographic muscle.
+Type runs **Plus Jakarta Sans** with Circular and the system stack as fallbacks. Headlines stay compact and readable, with visual emphasis coming from contrast, spacing, and imagery instead of oversized display weights.
 
 The shape language is **soft**. Buttons are 8px radius (`{rounded.sm}`), property cards are ~14px (`{rounded.md}`), the search bar is fully pill-shaped (`{rounded.full}`), wishlist hearts and search orbs are circles (`{rounded.full}`), and category strip rounded corners run at 32px (`{rounded.xl}`). There is essentially no hard corner anywhere except the body grid itself — every interactive element is rounded.
 
 **Key Characteristics:**
-- Single accent color: `{colors.primary}` (#ff385c — "Rausch") carries every primary CTA, the search orb, the heart save state, and the brand wordmark. Used scarcely — most pages are 90% white + ink with one or two Rausch moments.
-- Custom variable type: `Airbnb Cereal VF`. Display weights sit at 500–700, body at 400. Modest weight is intentional — the system trusts photography for visual heft.
+- Single accent color: `{colors.primary}` (#F16A00 — orange principal) carries every primary CTA, active icon, highlight badge, and key conversion moment. Most pages stay largely white, black, and gray, with orange used as the only strong accent.
+- Primary typeface: `Plus Jakarta Sans`. Display weights stay controlled; hierarchy comes from spacing, contrast, and composition rather than heavy branding.
 - Three-product top nav: Homes, Experiences, Services — each with a hand-illustrated 32px icon and "NEW" badges (`{component.new-tag}`) on the two newer products. Active tab uses an underline rule (`{component.product-tab-active}`).
 - Pill-shaped global search bar: white surface, fully rounded (`{rounded.full}`), divided by 1px hairlines into Where / When / Who segments, terminated by a circular Rausch search orb (`{component.search-orb}`).
 - Property cards are photo-first: aspect-ratio rectangles with `{rounded.md}` corner clipping, swipeable image carousel, "Guest favorite" floating badge top-left, heart icon top-right, then 4–5 lines of meta beneath.
@@ -347,29 +347,29 @@ The shape language is **soft**. Buttons are 8px radius (`{rounded.sm}`), propert
 ## Colors
 
 ### Brand & Accent
-- **Rausch** (`{colors.primary}` — #ff385c): The single brand color. Used for primary CTA backgrounds (Reserve, Continue), the search orb, the heart save state on property cards, and inline brand links. The most recognizable color in consumer travel.
-- **Rausch Active** (`{colors.primary-active}` — #e00b41): The press / pointer-down variant — slightly more saturated. Used on `{component.button-primary-active}`.
-- **Rausch Disabled** (`{colors.primary-disabled}` — #ffd1da): A pale tint used on disabled CTAs.
-- **Luxe Purple** (`{colors.luxe}` — #460479): Sub-brand accent for Airbnb Luxe. Only appears inside Luxe-branded surfaces — never in mainline marketing.
-- **Plus Magenta** (`{colors.plus}` — #92174d): Sub-brand accent for Airbnb Plus. Same scoping as Luxe — sub-product only.
+- **Orange principal** (`{colors.primary}` — #F16A00): The single brand color. Used for primary CTA backgrounds, active chips, prominent links, and highlight states.
+- **Orange actif** (`{colors.primary-active}` — #CC5A00): Darker hover and pressed state for primary actions.
+- **Orange doux** (`{colors.primary-disabled}` — #FFE7D1): Soft tint used for subtle fills, hover backgrounds, and inactive emphasis.
+- **Noir profond** (`{colors.ink}` — #0F0F0F): Primary text, strong borders, and high-contrast anchors.
+- **Gris foncé** (`{colors.body}` — #555555): Secondary text, supporting labels, and muted content.
 
 ### Surface
-- **Canvas** (`{colors.canvas}` — #ffffff): The default page floor for every public page. Airbnb does not have a dark mode on the public web.
-- **Surface Soft** (`{colors.surface-soft}` — #f7f7f7): The lightest fill — used on disabled fields, sub-nav hover backgrounds, and the inline search filter band.
-- **Surface Strong** (`{colors.surface-strong}` — #f2f2f2): Slightly heavier fill — circular icon-button surface (e.g., the breadcrumb back-arrow and listing toolbar buttons).
+- **Canvas** (`{colors.canvas}` — #FFFFFF): The default page floor for every public page.
+- **Surface Soft** (`{colors.surface-soft}` — #F2F2F2): The lightest fill — used on disabled fields, sub-nav hover backgrounds, and the inline search filter band.
+- **Surface Strong** (`{colors.surface-strong}` — #F2F2F2): Slightly heavier fill for cards, bands, and calm UI surfaces.
 
 ### Hairlines & Borders
-- **Hairline** (`{colors.hairline}` — #dddddd): The default 1px border tone — search bar dividers, table separators, footer column splitters, card 1px borders.
-- **Hairline Soft** (`{colors.hairline-soft}` — #ebebeb): A lighter divider used on long-scrolling editorial body separators.
-- **Border Strong** (`{colors.border-strong}` — #c1c1c1): A heavier stroke used on disabled outline buttons and form input outlines after focus.
+- **Hairline** (`{colors.hairline}` — #F2F2F2): The default 1px border tone — search bar dividers, table separators, footer column splitters, card 1px borders.
+- **Hairline Soft** (`{colors.hairline-soft}` — #F2F2F2): A lighter divider used on long-scrolling editorial body separators.
+- **Border Strong** (`{colors.border-strong}` — #F2F2F2): A heavier stroke used on disabled outline buttons and form input outlines after focus.
 
 ### Text
-- **Ink** (`{colors.ink}` — #222222): The dominant text color on light surfaces. Display headlines, body paragraphs, primary nav links, and most inline link text. Never pure black.
-- **Body** (`{colors.body}` — #3f3f3f): A secondary running-text color used inside long-form review and amenity copy where ink would feel too heavy.
-- **Muted** (`{colors.muted}` — #6a6a6a): Sub-titles inside city link blocks ("Cottage rentals", "Villa rentals"), inactive product-tab labels, footer category sub-labels, "View all" links.
-- **Muted Soft** (`{colors.muted-soft}` — #929292): Disabled link text. Used very sparingly.
-- **Star Rating** (`{colors.star-rating}` — #222222): The same ink token — Airbnb's star icon and "4.81" rating numbers all render in ink rather than a yellow/gold color, which is a deliberate brand choice (yellow stars feel cheap in travel context).
-- **On Primary** (`{colors.on-primary}` — #ffffff): White text on Rausch CTAs.
+- **Ink** (`{colors.ink}` — #0F0F0F): The dominant text color on light surfaces. Display headlines, body paragraphs, primary nav links, and most inline link text. Never pure black.
+- **Body** (`{colors.body}` — #555555): A secondary running-text color used inside long-form review and amenity copy where ink would feel too heavy.
+- **Muted** (`{colors.muted}` — #555555): Sub-titles inside city link blocks ("Cottage rentals", "Villa rentals"), inactive product-tab labels, footer category sub-labels, "View all" links.
+- **Muted Soft** (`{colors.muted-soft}` — #555555): Disabled link text. Used very sparingly.
+- **Star Rating** (`{colors.star-rating}` — #0F0F0F): The same ink token — Airbnb's star icon and "4.81" rating numbers all render in ink rather than a yellow/gold color, which is a deliberate brand choice (yellow stars feel cheap in travel context).
+- **On Primary** (`{colors.on-primary}` — #FFFFFF): White text on orange CTAs.
 
 ### Semantic
 - **Error** (`{colors.primary-error-text}` — #c13515): Inline error text for form validation. Distinct from Rausch — slightly darker, more saturated red.
@@ -382,7 +382,7 @@ The shape language is **soft**. Buttons are 8px radius (`{rounded.sm}`), propert
 ## Typography
 
 ### Font Family
-The system runs **Airbnb Cereal VF** for everything — display, body, navigation, captions, microcopy. Fallbacks walk `Circular, -apple-system, system-ui, Roboto, "Helvetica Neue", sans-serif`. **Circular** is the historic in-house typeface still kept as the first non-variable fallback; system stacks back it up.
+The system runs **Plus Jakarta Sans** for everything — display, body, navigation, captions, and microcopy. Fallbacks walk `Circular, -apple-system, system-ui, Roboto, "Helvetica Neue", sans-serif`.
 
 There is no separate display family. The variable font carries the entire scale.
 
@@ -415,7 +415,7 @@ Display weights stay modest. The homepage h1 at 28px / 700 is deliberately small
 The single typographically loud moment in the entire system is the **rating display** (`{typography.rating-display}` — 64px / 700) on listing pages. That is the only place the system trusts type alone to carry hierarchy — rating numbers are a peak trust signal, so they get the loudest treatment.
 
 ### Note on Font Substitutes
-If Airbnb Cereal VF and Circular are unavailable, **Inter** is the closest open-source substitute. Adjust display headlines down by ~2% in line-height to match Cereal's slightly tighter cap height; otherwise the proportions transfer cleanly.
+If Plus Jakarta Sans and Circular are unavailable, **Inter** is the closest open-source substitute.
 
 ## Layout
 
@@ -453,7 +453,7 @@ There are no progressive elevation tiers — the system either has the one shado
 
 **`button-primary-active`** — The press state. Background flips to `{colors.primary-active}`. No transform, no shadow change.
 
-**`button-primary-disabled`** — Pale Rausch tint at #ffd1da with white text. Cursor not-allowed.
+**`button-primary-disabled`** — Pale Rausch tint at #FFE7D1 with white text. Cursor not-allowed.
 
 **`button-secondary`** — White fill with ink text and a 1px ink outline. 8px radius. Used for "Save", "Cancel", and inverse CTAs over Rausch surfaces.
 

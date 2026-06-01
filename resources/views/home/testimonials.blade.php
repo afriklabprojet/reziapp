@@ -1,7 +1,7 @@
                 {{-- 7. TÉMOIGNAGES CLIENTS —— Carousel infini --}}
                 @php
                 $testimonials = [
-                    ['initials' => 'SA', 'name' => 'Sarah Adjoua', 'city' => 'Cocody', 'color' => 'from-[#ff4d6d] to-[#e00b41]', 'stars' => 5,
+                    ['initials' => 'SA', 'name' => 'Sarah Adjoua', 'city' => 'Cocody', 'color' => 'from-[#FF8A1F] to-[#CC5A00]', 'stars' => 5,
                      'text' => '"J\'arrivais de France pour un contrat de 2 ans. En 3 jours j\'ai visité 5 appartements à Riviera via REZI. Le propriétaire m\'a aidée pour l\'électricité et internet. Parfait !"'],
                     ['initials' => 'KD', 'name' => 'Konan Désirée', 'city' => 'Marcory', 'color' => 'from-blue-400 to-blue-600', 'stars' => 5,
                      'text' => '"Budget serré, étudiante en master. REZI m\'a montré des studios meublés dans mon budget à Marcory. J\'ai pu négocier 2 mois d\'avance au lieu de 6. Super !"'],
@@ -20,7 +20,7 @@
                 ];
                 @endphp
 
-                <section class="py-10 sm:py-14 bg-[#f7f7f7] overflow-hidden">
+                <section class="py-10 sm:py-14 bg-[#F2F2F2] overflow-hidden">
 
                     <style>
                         @keyframes rezi-marquee {
@@ -44,7 +44,7 @@
                     <div class="max-w-5xl mx-auto px-4 sm:px-6 mb-8">
                         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                             <div>
-                                <p class="text-xs font-semibold text-[#ff385c] uppercase tracking-widest mb-1">Avis vérifiés</p>
+                                <p class="text-xs font-semibold text-[#F16A00] uppercase tracking-widest mb-1">Avis vérifiés</p>
                                 <h2 class="font-sans text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight">
                                     Ils ont trouvé leur logement
                                     <span class="text-gradient-primary">avec REZI</span>
@@ -66,7 +66,7 @@
 
                     {{-- Carousel marquee infini --}}
                     <div class="rezi-marquee-wrap">
-                        <div class="rezi-marquee-track" role="list" aria-label="Témoignages clients">
+                        <div id="testimonials-track" class="rezi-marquee-track" role="list" aria-label="Témoignages clients">
                             @foreach(array_merge($testimonials, $testimonials) as $t)
                             <article role="listitem" class="w-72 shrink-0 bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col gap-3 hover:shadow-md transition-shadow duration-200">
                                 {{-- Stars --}}
@@ -85,7 +85,7 @@
                                     <div class="flex-1 min-w-0">
                                         <div class="font-semibold text-gray-900 text-sm leading-none truncate">{{ $t['name'] }}</div>
                                         <div class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
-                                            <svg class="w-2.5 h-2.5 text-[#ff4d6d] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                            <svg class="w-2.5 h-2.5 text-[#FF8A1F] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                             </svg>
                                             {{ $t['city'] }}, Abidjan
@@ -102,4 +102,17 @@
                     </div>
 
                 </section>
+
+                <script nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
+                (function () {
+                    var tracks = document.querySelectorAll('.rezi-marquee-track');
+                    if (!tracks.length || typeof IntersectionObserver === 'undefined') return;
+                    var observer = new IntersectionObserver(function (entries) {
+                        entries.forEach(function (entry) {
+                            entry.target.style.animationPlayState = entry.isIntersecting ? 'running' : 'paused';
+                        });
+                    }, { threshold: 0 });
+                    tracks.forEach(function (track) { observer.observe(track); });
+                })();
+                </script>
 

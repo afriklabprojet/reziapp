@@ -2,10 +2,10 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Quittance de loyer – {{ $receipt->reference }}</title>
+    <title>Reçu de location – {{ $receipt->reference }}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 12px; line-height: 1.6; color: #1a1a1a; padding: 50px; }
+        body { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 12px; line-height: 1.6; color: #0F0F0F; padding: 50px; }
 
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; }
         .logo { font-size: 28px; font-weight: bold; color: #059669; }
@@ -61,7 +61,7 @@
             <div class="logo-sub">Plateforme immobilière Abidjan</div>
         </div>
         <div class="doc-title">
-            <h1>QUITTANCE DE LOYER</h1>
+            <h1>REÇU DE LOCATION</h1>
             <div class="ref">Référence : {{ $receipt->reference }}</div>
             <div class="ref">Émise le : {{ $receipt->created_at->format('d/m/Y') }}</div>
         </div>
@@ -73,7 +73,7 @@
         <h2>Je soussigné(e), {{ $receipt->owner->name }}, propriétaire</h2>
         <div class="period">déclare avoir reçu de <strong>{{ $receipt->tenant->name }}</strong></div>
         <div class="amount-big">{{ number_format($receipt->total_amount, 0, ',', ' ') }} FCFA</div>
-        <div class="period">au titre du loyer du logement ci-dessous désigné</div>
+        <div class="period">au titre de la location du logement ci-dessous désigné</div>
         <div class="period" style="margin-top: 8px; font-weight: bold;">
             pour la période du {{ $receipt->period_start->format('d/m/Y') }} au {{ $receipt->period_end->format('d/m/Y') }}
         </div>
@@ -113,7 +113,7 @@
             <th style="text-align:right;">Montant (FCFA)</th>
         </tr>
         <tr>
-            <td>Loyer principal</td>
+            <td>Montant principal de location</td>
             <td class="amount">{{ number_format($receipt->rent_amount, 0, ',', ' ') }} FCFA</td>
         </tr>
         @if($receipt->charges_amount > 0)
@@ -147,7 +147,7 @@
     <div class="declaration">
         Et donne quittance au locataire {{ $receipt->tenant->name }} pour la somme de
         <strong>{{ number_format($receipt->total_amount, 0, ',', ' ') }} francs CFA</strong>
-        représentant le loyer et les charges du {{ $receipt->period_start->format('d/m/Y') }} au {{ $receipt->period_end->format('d/m/Y') }},
+        représentant le montant de location et les charges du {{ $receipt->period_start->format('d/m/Y') }} au {{ $receipt->period_end->format('d/m/Y') }},
         sous réserve de tous mes autres droits.
     </div>
 
@@ -171,7 +171,7 @@
     {{-- Pied de page --}}
     <div class="footer">
         REZI – Plateforme immobilière Abidjan | Document généré le {{ now()->format('d/m/Y à H:i') }}<br>
-        Ce document fait foi de paiement du loyer pour la période indiquée.
+        Ce document fait foi de paiement de la location pour la période indiquée.
     </div>
 
 </body>

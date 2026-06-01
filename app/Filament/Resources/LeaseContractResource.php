@@ -19,11 +19,11 @@ class LeaseContractResource extends Resource
 
     protected static ?string $navigationGroup = 'Contrats & Cautions';
 
-    protected static ?string $navigationLabel = 'Contrats de bail';
+    protected static ?string $navigationLabel = 'Contrats de location';
 
-    protected static ?string $modelLabel = 'Contrat de bail';
+    protected static ?string $modelLabel = 'Contrat de location';
 
-    protected static ?string $pluralModelLabel = 'Contrats de bail';
+    protected static ?string $pluralModelLabel = 'Contrats de location';
 
     protected static ?int $navigationSort = 1;
 
@@ -58,7 +58,7 @@ class LeaseContractResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('residence_id')
                             ->label('Résidence')
-                            ->relationship('residence', 'title')
+                            ->relationship('residence', 'name')
                             ->searchable()
                             ->preload()
                             ->required(),
@@ -91,7 +91,7 @@ class LeaseContractResource extends Resource
                         Forms\Components\DatePicker::make('end_date')
                             ->label('Date de fin'),
                         Forms\Components\TextInput::make('monthly_rent')
-                            ->label('Loyer mensuel (FCFA)')
+                            ->label('Montant mensuel de location (FCFA)')
                             ->numeric()
                             ->required(),
                         Forms\Components\TextInput::make('deposit_amount')
@@ -166,7 +166,7 @@ class LeaseContractResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('monthly_rent')
                     ->badge()
-                    ->label('Loyer')
+                    ->label('Montant de location')
                     ->formatStateUsing(fn ($state) => number_format($state, 0, ',', ' ').' FCFA')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')

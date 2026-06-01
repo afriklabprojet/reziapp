@@ -61,7 +61,7 @@
                             <div class="p-4 flex-1">
                                 <h2 class="font-semibold text-lg">
                                     <a href="{{ route('residences.show', $booking->residence) }}"
-                                        class="hover:text-[#ff385c]">
+                                        class="hover:text-[#F16A00]">
                                         {{ $booking->residence->title }}
                                     </a>
                                 </h2>
@@ -133,9 +133,9 @@
                                     alt="{{ $booking->residence->owner->first_name }}"
                                     class="w-16 h-16 rounded-full object-cover">
                             @else
-                                <div class="w-16 h-16 rounded-full bg-[#ffd1da] flex items-center justify-center">
+                                <div class="w-16 h-16 rounded-full bg-[#FFE7D1] flex items-center justify-center">
                                     <span
-                                        class="text-2xl font-bold text-[#e00b41]">{{ substr($booking->residence->owner->first_name, 0, 1) }}</span>
+                                        class="text-2xl font-bold text-[#CC5A00]">{{ substr($booking->residence->owner->first_name, 0, 1) }}</span>
                                 </div>
                             @endif
                             <div class="ml-4">
@@ -172,7 +172,7 @@
                             <div class="flex flex-wrap gap-3">
                                 @if ($booking->status === 'pending' && $booking->payment_status !== 'paid')
                                     <a href="{{ route('payments.checkout', ['booking' => $booking->id]) }}"
-                                        class="px-6 py-3 bg-[#ff385c] text-white rounded-lg hover:bg-[#e00b41] font-medium">
+                                        class="px-6 py-3 bg-[#F16A00] text-white rounded-lg hover:bg-[#CC5A00] font-medium">
                                         Payer maintenant
                                     </a>
                                 @endif
@@ -246,7 +246,7 @@
 
                         <div class="flex justify-between items-center font-bold text-lg">
                             <span>Total</span>
-                            <span class="text-[#e00b41]">{{ number_format($booking->total_amount, 0, ',', ' ') }}
+                            <span class="text-[#CC5A00]">{{ number_format($booking->total_amount, 0, ',', ' ') }}
                                 FCFA</span>
                         </div>
 
@@ -307,7 +307,7 @@
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Raison de l'annulation</label>
                     <textarea name="reason" rows="3" required
-                        class="w-full rounded-lg border-gray-300 focus:border-[#ff385c] focus:ring-[#ff385c]"
+                        class="w-full rounded-lg border-gray-300 focus:border-[#F16A00] focus:ring-[#F16A00]"
                         placeholder="Expliquez la raison de votre annulation..."></textarea>
                 </div>
 

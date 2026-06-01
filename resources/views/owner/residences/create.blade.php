@@ -8,7 +8,7 @@
 
             <div class="mb-8">
                 <a href="{{ route('owner.residences.index') }}"
-                    class="inline-flex items-center text-[#ff385c] hover:text-[#e00b41] mb-4">
+                    class="inline-flex items-center text-[#F16A00] hover:text-[#CC5A00] mb-4">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
@@ -134,7 +134,7 @@
                 {{-- SECTION 1: INFORMATIONS GÉNÉRALES --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center mb-6">
-                        <span class="flex items-center justify-center w-8 h-8 bg-[#ffd1da] text-[#ff385c] rounded-full text-sm font-bold mr-3">1</span>
+                        <span class="flex items-center justify-center w-8 h-8 bg-[#FFE7D1] text-[#F16A00] rounded-full text-sm font-bold mr-3">1</span>
                         <h2 class="text-xl font-semibold text-gray-900">Informations générales</h2>
                         <span class="ml-auto inline-flex items-center gap-1 px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full text-[10px] font-bold uppercase tracking-wide">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -164,7 +164,7 @@
                             </div>
                             <input type="text" id="name" name="name" value="{{ old('name') }}"
                                 placeholder="Ex: Belle Villa à Cocody" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                             @error('name')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -176,7 +176,7 @@
                                 Type de résidence <span class="text-red-500">*</span>
                             </label>
                             <select id="type" name="type" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 <option value="">Sélectionnez un type</option>
                                 <option value="studio" {{ old('type') == 'studio' ? 'selected' : '' }}>Studio</option>
                                 <option value="apartment" {{ old('type') == 'apartment' ? 'selected' : '' }}>Appartement</option>
@@ -196,7 +196,7 @@
                                 Type de location <span class="text-red-500">*</span>
                             </label>
                             <select id="type_location" name="type_location" required x-model="typeLocation"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 <option value="residence_meublee" {{ old('type_location', 'residence_meublee') == 'residence_meublee' ? 'selected' : '' }}>Résidence meublée</option>
                                 <option value="apartment" {{ old('type_location') == 'apartment' ? 'selected' : '' }}>Appartement (location longue durée)</option>
                                 <option value="hotel" {{ old('type_location') == 'hotel' ? 'selected' : '' }}>Hôtel</option>
@@ -235,9 +235,9 @@
                             <textarea id="description" name="description" rows="4"
                                 placeholder="Décrivez votre résidence en détail : ambiance, voisinage, points forts..."
                                 required minlength="50" x-model="description"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] resize-none">{{ old('description') }}</textarea>
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00] resize-none">{{ old('description') }}</textarea>
                             <div class="flex justify-end mt-1">
-                                <span class="text-sm" :class="description.length >= 50 ? 'text-[#ff385c]' : 'text-gray-400'">
+                                <span class="text-sm" :class="description.length >= 50 ? 'text-[#F16A00]' : 'text-gray-400'">
                                     <span x-text="description.length"></span>/50
                                 </span>
                             </div>
@@ -251,7 +251,7 @@
                 {{-- SECTION 2: CARACTÉRISTIQUES --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center mb-6">
-                        <span class="flex items-center justify-center w-8 h-8 bg-[#ffd1da] text-[#ff385c] rounded-full text-sm font-bold mr-3">2</span>
+                        <span class="flex items-center justify-center w-8 h-8 bg-[#FFE7D1] text-[#F16A00] rounded-full text-sm font-bold mr-3">2</span>
                         <h2 class="text-xl font-semibold text-gray-900">Caractéristiques</h2>
                     </div>
 
@@ -262,7 +262,7 @@
                                 Chambres <span class="text-red-500">*</span>
                             </label>
                             <select id="bedrooms" name="bedrooms" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 <option value="0" {{ old('bedrooms') == '0' ? 'selected' : '' }}>Studio</option>
                                 @for ($i = 1; $i <= 10; $i++)
                                     <option value="{{ $i }}" {{ old('bedrooms', 1) == $i ? 'selected' : '' }}>{{ $i }}</option>
@@ -279,7 +279,7 @@
                                 Salles de bain <span class="text-red-500">*</span>
                             </label>
                             <select id="bathrooms" name="bathrooms" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 @for ($i = 1; $i <= 5; $i++)
                                     <option value="{{ $i }}" {{ old('bathrooms', 1) == $i ? 'selected' : '' }}>{{ $i }}</option>
                                 @endfor
@@ -296,7 +296,7 @@
                             </label>
                             <input type="number" id="surface_area" name="surface_area" value="{{ old('surface_area') }}"
                                 placeholder="75" min="5" max="10000"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                             @error('surface_area')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -308,7 +308,7 @@
                                 Capacité <span class="text-red-500">*</span>
                             </label>
                             <select id="max_guests" name="max_guests" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 @for ($i = 1; $i <= 20; $i++)
                                     <option value="{{ $i }}" {{ old('max_guests', 2) == $i ? 'selected' : '' }}>{{ $i }} pers.</option>
                                 @endfor
@@ -324,7 +324,7 @@
                                 Étage
                             </label>
                             <select id="floor" name="floor"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 <option value="">Non applicable</option>
                                 <option value="-1" {{ old('floor') == '-1' ? 'selected' : '' }}>Sous-sol</option>
                                 <option value="0" {{ old('floor') == '0' ? 'selected' : '' }}>Rez-de-chaussée</option>
@@ -339,9 +339,9 @@
 
                         {{-- Ascenseur --}}
                         <div class="flex items-center">
-                            <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] w-full">
+                            <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] w-full">
                                 <input type="checkbox" name="has_elevator" value="1"
-                                    class="w-5 h-5 text-[#ff385c] rounded" {{ old('has_elevator') ? 'checked' : '' }}>
+                                    class="w-5 h-5 text-[#F16A00] rounded" {{ old('has_elevator') ? 'checked' : '' }}>
                                 <div>
                                     <span class="font-medium text-gray-700">Ascenseur</span>
                                 </div>
@@ -353,7 +353,7 @@
                 {{-- SECTION 3: TARIFICATION --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center mb-6">
-                        <span class="flex items-center justify-center w-8 h-8 bg-[#ffd1da] text-[#ff385c] rounded-full text-sm font-bold mr-3">3</span>
+                        <span class="flex items-center justify-center w-8 h-8 bg-[#FFE7D1] text-[#F16A00] rounded-full text-sm font-bold mr-3">3</span>
                         <h2 class="text-xl font-semibold text-gray-900">Tarification</h2>
                     </div>
 
@@ -361,7 +361,7 @@
                     <div class="mb-6 p-3 rounded-lg text-sm flex items-center gap-2"
                         :class="{
                             'bg-blue-50 text-blue-700': typeLocation === 'apartment',
-                            'bg-[#fff0f3] text-[#b5083a]': typeLocation === 'residence_meublee',
+                            'bg-[#FFF4EB] text-[#A34700]': typeLocation === 'residence_meublee',
                             'bg-purple-50 text-purple-700': typeLocation === 'hotel'
                         }">
                         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
@@ -379,7 +379,7 @@
                             <div>
                                 <input type="number" name="price_per_day" value="{{ old('price_per_day') }}"
                                     placeholder="15000" min="1000" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 @error('price_per_day')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -392,9 +392,9 @@
                         <h3 class="text-sm font-semibold text-gray-700 mb-4">Caution</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="flex items-center">
-                                <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] w-full">
+                                <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] w-full">
                                     <input type="checkbox" name="deposit_negotiable" value="1"
-                                        class="w-5 h-5 text-[#ff385c] rounded" {{ old('deposit_negotiable') ? 'checked' : '' }}>
+                                        class="w-5 h-5 text-[#F16A00] rounded" {{ old('deposit_negotiable') ? 'checked' : '' }}>
                                     <div>
                                         <span class="font-medium text-gray-700">Caution négociable</span>
                                         <p class="text-sm text-gray-500">Le montant peut être discuté</p>
@@ -406,8 +406,8 @@
                                     Conditions de caution
                                 </label>
                                 <input type="text" id="deposit_terms" name="deposit_terms" value="{{ old('deposit_terms') }}"
-                                    placeholder="Ex: 2 mois de loyer, remboursable à la fin du bail"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                    placeholder="Ex: équivalent à 2 mois de location, remboursable à la fin du bail"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 @error('deposit_terms')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -419,7 +419,7 @@
                 {{-- SECTION 4: LOCALISATION --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center mb-6">
-                        <span class="flex items-center justify-center w-8 h-8 bg-[#ffd1da] text-[#ff385c] rounded-full text-sm font-bold mr-3">4</span>
+                        <span class="flex items-center justify-center w-8 h-8 bg-[#FFE7D1] text-[#F16A00] rounded-full text-sm font-bold mr-3">4</span>
                         <h2 class="text-xl font-semibold text-gray-900">Localisation</h2>
                     </div>
 
@@ -443,7 +443,7 @@
                             </label>
                             <select id="country_code" name="country_code" required x-model="selectedCountry"
                                 @change="selectedCity = ''"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 <template x-for="country in countries" :key="country.code">
                                     <option :value="country.code" x-text="country.name"></option>
                                 </template>
@@ -459,7 +459,7 @@
                                 Ville <span class="text-red-500">*</span>
                             </label>
                             <select id="city" name="city" required x-model="selectedCity"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 <option value="">Sélectionnez une ville</option>
                                 <template x-for="city in filteredCities" :key="city.name">
                                     <option :value="city.name" x-text="city.name"></option>
@@ -477,7 +477,7 @@
                             </label>
                             <template x-if="filteredCommunes.length > 0">
                                 <select id="commune" name="commune" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                     <option value="">Sélectionnez une commune</option>
                                     <template x-for="commune in filteredCommunes" :key="commune">
                                         <option :value="commune" x-text="commune"
@@ -488,7 +488,7 @@
                             <template x-if="filteredCommunes.length === 0">
                                 <input type="text" id="commune" name="commune" value="{{ old('commune') }}"
                                     placeholder="Nom de la commune..." required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                             </template>
                             @error('commune')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -502,7 +502,7 @@
                             </label>
                             <input type="text" id="quartier" name="quartier" value="{{ old('quartier') }}"
                                 placeholder="Ex: Riviera 3, Angré..." required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                             @error('quartier')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -519,7 +519,7 @@
                                     placeholder="Commencez à taper une adresse..."
                                     autocomplete="off"
                                     required
-                                    class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                    class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
@@ -570,16 +570,16 @@
                 {{-- SECTION 5: DISPONIBILITÉ --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center mb-6">
-                        <span class="flex items-center justify-center w-8 h-8 bg-[#ffd1da] text-[#ff385c] rounded-full text-sm font-bold mr-3">5</span>
+                        <span class="flex items-center justify-center w-8 h-8 bg-[#FFE7D1] text-[#F16A00] rounded-full text-sm font-bold mr-3">5</span>
                         <h2 class="text-xl font-semibold text-gray-900">Disponibilité</h2>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {{-- Disponibilité immédiate --}}
                         <div class="flex items-center">
-                            <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] w-full">
+                            <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] w-full">
                                 <input type="checkbox" name="is_available" value="1"
-                                    class="w-5 h-5 text-[#ff385c] rounded" {{ old('is_available', true) ? 'checked' : '' }}>
+                                    class="w-5 h-5 text-[#F16A00] rounded" {{ old('is_available', true) ? 'checked' : '' }}>
                                 <div>
                                     <span class="font-medium text-gray-700">Disponible immédiatement</span>
                                     <p class="text-sm text-gray-500">La résidence est prête à accueillir des locataires</p>
@@ -594,7 +594,7 @@
                             </label>
                             <input type="date" id="available_from" name="available_from" value="{{ old('available_from') }}"
                                 min="{{ date('Y-m-d') }}"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                             @error('available_from')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -602,9 +602,9 @@
 
                         {{-- Réservation instantanée --}}
                         <div class="flex items-center md:col-span-2">
-                            <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] w-full">
+                            <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] w-full">
                                 <input type="checkbox" name="instant_book" value="1"
-                                    class="w-5 h-5 text-[#ff385c] rounded" {{ old('instant_book') ? 'checked' : '' }}>
+                                    class="w-5 h-5 text-[#F16A00] rounded" {{ old('instant_book') ? 'checked' : '' }}>
                                 <div>
                                     <span class="font-medium text-gray-700">Réservation instantanée</span>
                                     <p class="text-sm text-gray-500">Les locataires peuvent réserver sans validation</p>
@@ -623,7 +623,7 @@
                                 </label>
                                 <input type="number" id="min_nights" name="min_nights" value="{{ old('min_nights', 1) }}"
                                     placeholder="1" min="1" max="365"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 @error('min_nights')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -634,7 +634,7 @@
                                 </label>
                                 <input type="number" id="max_nights" name="max_nights" value="{{ old('max_nights') }}"
                                     placeholder="Illimité" min="1" max="365"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 @error('max_nights')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -651,7 +651,7 @@
                                     Heure d'arrivée (check-in)
                                 </label>
                                 <input type="time" id="check_in_time" name="check_in_time" value="{{ old('check_in_time', '14:00') }}"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 @error('check_in_time')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -661,7 +661,7 @@
                                     Heure de départ (check-out)
                                 </label>
                                 <input type="time" id="check_out_time" name="check_out_time" value="{{ old('check_out_time', '11:00') }}"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 @error('check_out_time')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -673,15 +673,15 @@
                 {{-- SECTION 6: RÈGLES DE LA MAISON --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center mb-6">
-                        <span class="flex items-center justify-center w-8 h-8 bg-[#ffd1da] text-[#ff385c] rounded-full text-sm font-bold mr-3">6</span>
+                        <span class="flex items-center justify-center w-8 h-8 bg-[#FFE7D1] text-[#F16A00] rounded-full text-sm font-bold mr-3">6</span>
                         <h2 class="text-xl font-semibold text-gray-900">Règles de la maison</h2>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         {{-- Animaux --}}
-                        <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] has-checked:border-[#ff385c] has-checked:bg-[#fff0f3]">
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB]">
                             <input type="checkbox" name="pets_allowed" value="1"
-                                class="w-5 h-5 text-[#ff385c] rounded" {{ old('pets_allowed') ? 'checked' : '' }}>
+                                class="w-5 h-5 text-[#F16A00] rounded" {{ old('pets_allowed') ? 'checked' : '' }}>
                             <div class="ml-3">
                                 <span class="font-medium text-gray-700">Animaux acceptés</span>
                                 <p class="text-sm text-gray-500">Chiens, chats...</p>
@@ -689,9 +689,9 @@
                         </label>
 
                         {{-- Fumeurs --}}
-                        <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] has-checked:border-[#ff385c] has-checked:bg-[#fff0f3]">
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB]">
                             <input type="checkbox" name="smoking_allowed" value="1"
-                                class="w-5 h-5 text-[#ff385c] rounded" {{ old('smoking_allowed') ? 'checked' : '' }}>
+                                class="w-5 h-5 text-[#F16A00] rounded" {{ old('smoking_allowed') ? 'checked' : '' }}>
                             <div class="ml-3">
                                 <span class="font-medium text-gray-700">Fumeurs acceptés</span>
                                 <p class="text-sm text-gray-500">Fumer autorisé</p>
@@ -699,9 +699,9 @@
                         </label>
 
                         {{-- Fêtes --}}
-                        <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] has-checked:border-[#ff385c] has-checked:bg-[#fff0f3]">
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB]">
                             <input type="checkbox" name="parties_allowed" value="1"
-                                class="w-5 h-5 text-[#ff385c] rounded" {{ old('parties_allowed') ? 'checked' : '' }}>
+                                class="w-5 h-5 text-[#F16A00] rounded" {{ old('parties_allowed') ? 'checked' : '' }}>
                             <div class="ml-3">
                                 <span class="font-medium text-gray-700">Fêtes autorisées</span>
                                 <p class="text-sm text-gray-500">Événements, soirées</p>
@@ -716,7 +716,7 @@
                         </label>
                         <textarea id="house_rules" name="house_rules" rows="3" x-model="houseRules"
                             placeholder="Ex: Pas de bruit après 22h, respecter le voisinage, enlever les chaussures..."
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] resize-none">{{ old('house_rules') }}</textarea>
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00] resize-none">{{ old('house_rules') }}</textarea>
                         <div class="flex justify-end mt-1">
                             <span class="text-sm text-gray-400"><span x-text="houseRules.length"></span>/2000</span>
                         </div>
@@ -729,29 +729,29 @@
                     <div class="mt-6 pt-6 border-t border-gray-200">
                         <h3 class="text-sm font-semibold text-gray-700 mb-4">Locataires idéaux</h3>
                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] has-checked:border-[#ff385c] has-checked:bg-[#fff0f3]">
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB]">
                                 <input type="checkbox" name="target_tenants[]" value="students"
-                                    class="w-4 h-4 text-[#ff385c] rounded" {{ in_array('students', old('target_tenants', [])) ? 'checked' : '' }}>
+                                    class="w-4 h-4 text-[#F16A00] rounded" {{ in_array('students', old('target_tenants', [])) ? 'checked' : '' }}>
                                 <span class="ml-2 text-sm text-gray-700">Étudiants</span>
                             </label>
-                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] has-checked:border-[#ff385c] has-checked:bg-[#fff0f3]">
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB]">
                                 <input type="checkbox" name="target_tenants[]" value="families"
-                                    class="w-4 h-4 text-[#ff385c] rounded" {{ in_array('families', old('target_tenants', [])) ? 'checked' : '' }}>
+                                    class="w-4 h-4 text-[#F16A00] rounded" {{ in_array('families', old('target_tenants', [])) ? 'checked' : '' }}>
                                 <span class="ml-2 text-sm text-gray-700">Familles</span>
                             </label>
-                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] has-checked:border-[#ff385c] has-checked:bg-[#fff0f3]">
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB]">
                                 <input type="checkbox" name="target_tenants[]" value="professionals"
-                                    class="w-4 h-4 text-[#ff385c] rounded" {{ in_array('professionals', old('target_tenants', [])) ? 'checked' : '' }}>
+                                    class="w-4 h-4 text-[#F16A00] rounded" {{ in_array('professionals', old('target_tenants', [])) ? 'checked' : '' }}>
                                 <span class="ml-2 text-sm text-gray-700">Professionnels</span>
                             </label>
-                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] has-checked:border-[#ff385c] has-checked:bg-[#fff0f3]">
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB]">
                                 <input type="checkbox" name="target_tenants[]" value="couples"
-                                    class="w-4 h-4 text-[#ff385c] rounded" {{ in_array('couples', old('target_tenants', [])) ? 'checked' : '' }}>
+                                    class="w-4 h-4 text-[#F16A00] rounded" {{ in_array('couples', old('target_tenants', [])) ? 'checked' : '' }}>
                                 <span class="ml-2 text-sm text-gray-700">Couples</span>
                             </label>
-                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] has-checked:border-[#ff385c] has-checked:bg-[#fff0f3]">
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB]">
                                 <input type="checkbox" name="target_tenants[]" value="tourists"
-                                    class="w-4 h-4 text-[#ff385c] rounded" {{ in_array('tourists', old('target_tenants', [])) ? 'checked' : '' }}>
+                                    class="w-4 h-4 text-[#F16A00] rounded" {{ in_array('tourists', old('target_tenants', [])) ? 'checked' : '' }}>
                                 <span class="ml-2 text-sm text-gray-700">Touristes</span>
                             </label>
                         </div>
@@ -761,14 +761,14 @@
                 {{-- SECTION 7: ACCESSIBILITÉ --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center mb-6">
-                        <span class="flex items-center justify-center w-8 h-8 bg-[#ffd1da] text-[#ff385c] rounded-full text-sm font-bold mr-3">7</span>
+                        <span class="flex items-center justify-center w-8 h-8 bg-[#FFE7D1] text-[#F16A00] rounded-full text-sm font-bold mr-3">7</span>
                         <h2 class="text-xl font-semibold text-gray-900">Accessibilité</h2>
                     </div>
 
                     <div class="space-y-4">
-                        <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1]">
+                        <label class="flex items-center gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3]">
                             <input type="checkbox" name="is_accessible" value="1"
-                                class="w-5 h-5 text-[#ff385c] rounded" {{ old('is_accessible') ? 'checked' : '' }}>
+                                class="w-5 h-5 text-[#F16A00] rounded" {{ old('is_accessible') ? 'checked' : '' }}>
                             <div>
                                 <span class="font-medium text-gray-700">Accessible aux personnes à mobilité réduite (PMR)</span>
                                 <p class="text-sm text-gray-500">Accès fauteuil roulant, plain-pied ou ascenseur</p>
@@ -776,34 +776,34 @@
                         </label>
 
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] has-checked:border-[#ff385c] has-checked:bg-[#fff0f3]">
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB]">
                                 <input type="checkbox" name="accessibility_features[]" value="wheelchair_ramp"
-                                    class="w-4 h-4 text-[#ff385c] rounded" {{ in_array('wheelchair_ramp', old('accessibility_features', [])) ? 'checked' : '' }}>
+                                    class="w-4 h-4 text-[#F16A00] rounded" {{ in_array('wheelchair_ramp', old('accessibility_features', [])) ? 'checked' : '' }}>
                                 <span class="ml-2 text-sm text-gray-700">Rampe d'accès</span>
                             </label>
-                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] has-checked:border-[#ff385c] has-checked:bg-[#fff0f3]">
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB]">
                                 <input type="checkbox" name="accessibility_features[]" value="wide_doors"
-                                    class="w-4 h-4 text-[#ff385c] rounded" {{ in_array('wide_doors', old('accessibility_features', [])) ? 'checked' : '' }}>
+                                    class="w-4 h-4 text-[#F16A00] rounded" {{ in_array('wide_doors', old('accessibility_features', [])) ? 'checked' : '' }}>
                                 <span class="ml-2 text-sm text-gray-700">Portes larges</span>
                             </label>
-                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] has-checked:border-[#ff385c] has-checked:bg-[#fff0f3]">
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB]">
                                 <input type="checkbox" name="accessibility_features[]" value="accessible_bathroom"
-                                    class="w-4 h-4 text-[#ff385c] rounded" {{ in_array('accessible_bathroom', old('accessibility_features', [])) ? 'checked' : '' }}>
+                                    class="w-4 h-4 text-[#F16A00] rounded" {{ in_array('accessible_bathroom', old('accessibility_features', [])) ? 'checked' : '' }}>
                                 <span class="ml-2 text-sm text-gray-700">Salle de bain adaptée</span>
                             </label>
-                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] has-checked:border-[#ff385c] has-checked:bg-[#fff0f3]">
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB]">
                                 <input type="checkbox" name="accessibility_features[]" value="grab_bars"
-                                    class="w-4 h-4 text-[#ff385c] rounded" {{ in_array('grab_bars', old('accessibility_features', [])) ? 'checked' : '' }}>
+                                    class="w-4 h-4 text-[#F16A00] rounded" {{ in_array('grab_bars', old('accessibility_features', [])) ? 'checked' : '' }}>
                                 <span class="ml-2 text-sm text-gray-700">Barres d'appui</span>
                             </label>
-                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] has-checked:border-[#ff385c] has-checked:bg-[#fff0f3]">
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB]">
                                 <input type="checkbox" name="accessibility_features[]" value="step_free"
-                                    class="w-4 h-4 text-[#ff385c] rounded" {{ in_array('step_free', old('accessibility_features', [])) ? 'checked' : '' }}>
+                                    class="w-4 h-4 text-[#F16A00] rounded" {{ in_array('step_free', old('accessibility_features', [])) ? 'checked' : '' }}>
                                 <span class="ml-2 text-sm text-gray-700">Sans marches</span>
                             </label>
-                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] has-checked:border-[#ff385c] has-checked:bg-[#fff0f3]">
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB]">
                                 <input type="checkbox" name="accessibility_features[]" value="accessible_parking"
-                                    class="w-4 h-4 text-[#ff385c] rounded" {{ in_array('accessible_parking', old('accessibility_features', [])) ? 'checked' : '' }}>
+                                    class="w-4 h-4 text-[#F16A00] rounded" {{ in_array('accessible_parking', old('accessibility_features', [])) ? 'checked' : '' }}>
                                 <span class="ml-2 text-sm text-gray-700">Parking PMR</span>
                             </label>
                         </div>
@@ -813,15 +813,15 @@
                 {{-- SECTION 8: ÉQUIPEMENTS --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center mb-6">
-                        <span class="flex items-center justify-center w-8 h-8 bg-[#ffd1da] text-[#ff385c] rounded-full text-sm font-bold mr-3">8</span>
+                        <span class="flex items-center justify-center w-8 h-8 bg-[#FFE7D1] text-[#F16A00] rounded-full text-sm font-bold mr-3">8</span>
                         <h2 class="text-xl font-semibold text-gray-900">Équipements</h2>
                     </div>
 
                     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         @foreach($amenities ?? [] as $amenity)
-                            <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-[#ffb3c1] hover:bg-[#fff0f3] has-checked:border-[#ff385c] has-checked:bg-[#fff0f3]">
+                            <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-[#FFD0A3] hover:bg-[#FFF4EB] has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB]">
                                 <input type="checkbox" name="amenities[]" value="{{ $amenity->id }}"
-                                    class="w-5 h-5 text-[#ff385c] rounded"
+                                    class="w-5 h-5 text-[#F16A00] rounded"
                                     {{ in_array($amenity->id, old('amenities', [])) ? 'checked' : '' }}>
                                 <span class="ml-3 text-sm font-medium text-gray-700">{{ $amenity->name }}</span>
                             </label>
@@ -835,7 +835,7 @@
                 {{-- SECTION 9: PHOTOS --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center mb-6">
-                        <span class="flex items-center justify-center w-8 h-8 bg-[#ffd1da] text-[#ff385c] rounded-full text-sm font-bold mr-3">9</span>
+                        <span class="flex items-center justify-center w-8 h-8 bg-[#FFE7D1] text-[#F16A00] rounded-full text-sm font-bold mr-3">9</span>
                         <h2 class="text-xl font-semibold text-gray-900">Photos</h2>
                     </div>
 
@@ -877,15 +877,15 @@
                         }
                     }" class="space-y-4">
                         <div class="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition"
-                            :class="isDragging ? 'border-[#ff385c] bg-[#fff0f3]' : 'border-gray-300 hover:border-[#ff4d6d]'"
+                            :class="isDragging ? 'border-[#F16A00] bg-[#FFF4EB]' : 'border-gray-300 hover:border-[#FF8A1F]'"
                             @dragover.prevent="isDragging = true" @dragleave.prevent="isDragging = false"
                             @drop.prevent="isDragging = false; handlePhotos($event.dataTransfer.files)"
                             @click="$refs.photos.click()">
                             <input type="file" name="photos[]" multiple accept="image/*" class="hidden"
                                 x-ref="photos" @change="handlePhotos($event.target.files)">
                             <div class="flex flex-col items-center">
-                                <div class="w-16 h-16 bg-[#ffd1da] rounded-full flex items-center justify-center mb-4">
-                                    <svg class="w-8 h-8 text-[#ff385c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="w-16 h-16 bg-[#FFE7D1] rounded-full flex items-center justify-center mb-4">
+                                    <svg class="w-8 h-8 text-[#F16A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
@@ -908,7 +908,7 @@
                                         </svg>
                                     </button>
                                     <span x-show="index === 0"
-                                        class="absolute bottom-2 left-2 px-2 py-1 bg-[#ff385c] text-white text-xs rounded">Principale</span>
+                                        class="absolute bottom-2 left-2 px-2 py-1 bg-[#F16A00] text-white text-xs rounded">Principale</span>
                                 </div>
                             </template>
                         </div>
@@ -924,7 +924,7 @@
                 {{-- SECTION 10: VISITE VIRTUELLE (Optionnel) --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center mb-6">
-                        <span class="flex items-center justify-center w-8 h-8 bg-[#ffd1da] text-[#ff385c] rounded-full text-sm font-bold mr-3">10</span>
+                        <span class="flex items-center justify-center w-8 h-8 bg-[#FFE7D1] text-[#F16A00] rounded-full text-sm font-bold mr-3">10</span>
                         <h2 class="text-xl font-semibold text-gray-900">Visite virtuelle</h2>
                         <span class="ml-2 text-sm text-gray-400">(Optionnel)</span>
                     </div>
@@ -935,7 +935,7 @@
                         </label>
                         <input type="url" id="virtual_tour_url" name="virtual_tour_url" value="{{ old('virtual_tour_url') }}"
                             placeholder="https://my.matterport.com/... ou lien YouTube 360°"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                         <p class="text-sm text-gray-500 mt-1">Matterport, YouTube 360°, ou tout autre service de visite virtuelle</p>
                         @error('virtual_tour_url')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -950,7 +950,7 @@
                         Annuler
                     </a>
                     <button type="submit"
-                        class="px-8 py-3 bg-[#ff385c] text-white rounded-lg hover:bg-[#e00b41] font-medium flex items-center justify-center gap-2">
+                        class="px-8 py-3 bg-[#F16A00] text-white rounded-lg hover:bg-[#CC5A00] font-medium flex items-center justify-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6" />

@@ -46,10 +46,48 @@ class WhatsAppWebhookController extends Controller
     }
 
     /**
+     * Vérifier la signature HMAC-SHA256 envoyée par Meta.
+     *
+     * Meta envoie le header X-Hub-Signature-256: sha256=<hex>
+     * Calculé avec HMAC-SHA256(app_secret, raw_body).
+     */
+    private function verifySignature(Request $request): bool
+    {
+        $secret = config('services.whatsapp.webhook_secret');
+
+        // Si aucun secret n'est configuré, on bloque par défaut (fail-secure)
+        if (empty($secret)) {
+            Log::error('WhatsApp webhook: WHATSAPP_WEBHOOK_SECRET non configuré');
+
+            return false;
+        }
+
+        $signature = $request->header('X-Hub-Signature-256');
+
+        if (! $signature) {
+            return false;
+        }
+
+        $expected = 'sha256='.hash_hmac('sha256', $request->getContent(), $secret);
+
+        return hash_equals($expected, $signature);
+    }
+
+    /**
      * Recevoir les événements webhook
      */
     public function handle(Request $request)
     {
+        // Vérification HMAC obligatoire avant tout traitement
+        if (! $this->verifySignature($request)) {
+            Log::warning('WhatsApp webhook: signature invalide ou absente', [
+                'ip' => $request->ip(),
+                'signature' => $request->header('X-Hub-Signature-256'),
+            ]);
+
+            return response('Unauthorized', 401);
+        }
+
         $payload = $request->all();
 
         Log::info('WhatsApp webhook received', ['payload' => $payload]);

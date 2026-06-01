@@ -28,7 +28,7 @@
             <p class="text-xs text-gray-500 mt-1">Avec réponse</p>
         </div>
         <div class="bg-white rounded-2xl border border-gray-100 p-4 text-center">
-            <p class="text-2xl font-bold text-[#ff385c]">{{ number_format($stats['avg_rating'] ?? 0, 1) }}</p>
+            <p class="text-2xl font-bold text-[#F16A00]">{{ number_format($stats['avg_rating'] ?? 0, 1) }}</p>
             <p class="text-xs text-gray-500 mt-1">Note moyenne</p>
         </div>
     </div>
@@ -47,7 +47,7 @@
                    class="px-4 py-2 rounded-xl text-sm font-medium transition-colors {{ $filter === $key ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
                     {{ $label }}
                     @if($key === 'pending' && $stats['pending'] > 0)
-                        <span class="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-xs {{ $filter === $key ? 'bg-white/20 text-white' : 'bg-[#ff385c] text-white' }}">{{ $stats['pending'] }}</span>
+                        <span class="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-xs {{ $filter === $key ? 'bg-white/20 text-white' : 'bg-[#F16A00] text-white' }}">{{ $stats['pending'] }}</span>
                     @endif
                 </a>
             @endforeach
@@ -63,8 +63,7 @@
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center shrink-0 overflow-hidden">
                             @if($review->user->profile_photo || $review->user->avatar)
-                                <img src="{{ $review-
-                alt="{{ $review->user->name ?? '' }}">user->getAvatarUrl() }}" alt="{{ $review->user->name }}" class="w-full h-full object-cover">
+                                <img src="{{ $review->user->getAvatarUrl() }}" alt="{{ $review->user->name ?? '' }}" class="w-full h-full object-cover">
                             @else
                                 <span class="text-sm font-semibold text-gray-600">{{ strtoupper(substr($review->user->name, 0, 1)) }}</span>
                             @endif
@@ -92,10 +91,10 @@
 
                 {{-- Réponse existante --}}
                 @if($review->owner_response)
-                    <div class="mt-4 bg-gray-50 rounded-xl p-4 border-l-4 border-[#ff4d6d]">
+                    <div class="mt-4 bg-gray-50 rounded-xl p-4 border-l-4 border-[#FF8A1F]">
                         <p class="text-xs font-semibold text-gray-500 mb-1">Votre réponse · {{ $review->owner_response_at?->format('d M Y') }}</p>
                         <p class="text-sm text-gray-700">{{ $review->owner_response }}</p>
-                        <button @click="respondingTo = {{ $review->id }}" class="mt-2 text-xs text-[#e00b41] hover:text-[#b5083a] font-medium">Modifier</button>
+                        <button @click="respondingTo = {{ $review->id }}" class="mt-2 text-xs text-[#CC5A00] hover:text-[#A34700] font-medium">Modifier</button>
                     </div>
                 @endif
 
@@ -103,7 +102,7 @@
                 @if(is_null($review->owner_response))
                     <div class="mt-4">
                         <button @click="respondingTo = (respondingTo === {{ $review->id }} ? null : {{ $review->id }})"
-                                class="inline-flex items-center gap-2 px-4 py-2 bg-[#ff385c] hover:bg-[#e00b41] text-white text-sm font-semibold rounded-xl transition-colors">
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-[#F16A00] hover:bg-[#CC5A00] text-white text-sm font-semibold rounded-xl transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6 6-6"/>
                             </svg>
@@ -120,7 +119,7 @@
                             name="owner_response"
                             rows="4"
                             placeholder="Rédigez une réponse professionnelle et courtoise (min. 10 caractères)..."
-                            class="w-full rounded-xl border border-gray-200 text-sm p-3 focus:ring-2 focus:ring-[#ffb3c1] focus:border-[#ff4d6d] outline-none resize-none"
+                            class="w-full rounded-xl border border-gray-200 text-sm p-3 focus:ring-2 focus:ring-[#FFD0A3] focus:border-[#FF8A1F] outline-none resize-none"
                             required
                             minlength="10"
                             maxlength="1000">{{ $review->owner_response }}</textarea>

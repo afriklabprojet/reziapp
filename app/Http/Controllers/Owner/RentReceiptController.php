@@ -15,7 +15,7 @@ use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 /**
- * Gestion des quittances de loyer pour les propriétaires.
+ * Gestion des reçus de location pour les propriétaires.
  */
 class RentReceiptController extends Controller
 {

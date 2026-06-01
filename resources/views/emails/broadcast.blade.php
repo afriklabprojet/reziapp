@@ -33,7 +33,7 @@
             color: #f97316;
         }
         h1 {
-            color: #1a1a1a;
+            color: #0F0F0F;
             font-size: 24px;
             margin-bottom: 20px;
         }

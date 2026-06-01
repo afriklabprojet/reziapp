@@ -10,14 +10,14 @@
             <h1 class="text-2xl font-bold text-gray-900">Centre d'aide</h1>
             <p class="text-gray-600 mt-1">
                 @if($unreadCount > 0)
-                    <span class="text-[#e00b41] font-medium">{{ $unreadCount }} message(s) non lu(s)</span>
+                    <span class="text-[#CC5A00] font-medium">{{ $unreadCount }} message(s) non lu(s)</span>
                 @else
                     Vos demandes d'assistance
                 @endif
             </p>
         </div>
         <a href="{{ route('support.create') }}" 
-           class="inline-flex items-center px-4 py-2 bg-[#e00b41] text-white rounded-lg hover:bg-[#b5083a] transition-colors">
+           class="inline-flex items-center px-4 py-2 bg-[#CC5A00] text-white rounded-lg hover:bg-[#A34700] transition-colors">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
@@ -66,7 +66,7 @@
             <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune demande</h3>
             <p class="text-gray-600 mb-4">Vous n'avez pas encore contacté notre support.</p>
             <a href="{{ route('support.create') }}" 
-               class="inline-flex items-center px-4 py-2 bg-[#e00b41] text-white rounded-lg hover:bg-[#b5083a]">
+               class="inline-flex items-center px-4 py-2 bg-[#CC5A00] text-white rounded-lg hover:bg-[#A34700]">
                 Créer une demande
             </a>
         </div>
@@ -97,7 +97,7 @@
                             <div class="ml-4 text-right">
                                 <p class="text-sm text-gray-500">{{ $ticket->updated_at->diffForHumans() }}</p>
                                 @if($ticket->messages->where('read_at', null)->where('user_id', '!=', auth()->id())->count() > 0)
-                                    <span class="inline-flex items-center justify-center w-5 h-5 bg-[#e00b41] rounded-full text-xs text-white mt-1">
+                                    <span class="inline-flex items-center justify-center w-5 h-5 bg-[#CC5A00] rounded-full text-xs text-white mt-1">
                                         {{ $ticket->messages->where('read_at', null)->where('user_id', '!=', auth()->id())->count() }}
                                     </span>
                                 @endif

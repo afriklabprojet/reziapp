@@ -369,7 +369,7 @@ Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
         });
 
         // ============================================
-        // Quittances de loyer
+        // Reçus de location
         // ============================================
         Route::prefix('rent-receipts')->name('rent-receipts.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Owner\RentReceiptController::class, 'index'])->name('index');
@@ -417,7 +417,7 @@ Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
         });
 
         // ============================================
-        // Relances de loyer
+        // Relances de paiement
         // ============================================
         Route::prefix('rent-reminders')->name('rent-reminders.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Owner\RentReminderController::class, 'index'])->name('index');

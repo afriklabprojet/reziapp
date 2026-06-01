@@ -56,7 +56,7 @@ class LeaseContractReadyNotification extends Notification implements ShouldQueue
             ->line('**Détails du contrat :')
             ->line("Référence : {$this->contract->reference}")
             ->line('Période : '.$this->contract->start_date->format('d/m/Y').' → '.($this->contract->end_date?->format('d/m/Y') ?? 'Indéterminée'))
-            ->line('Loyer : '.number_format($this->contract->monthly_rent, 0, ',', ' ').' '.$this->contract->currency)
+            ->line('Montant de location : '.number_format($this->contract->monthly_rent, 0, ',', ' ').' '.$this->contract->currency)
             ->action($actionLabel, $signUrl)
             ->line('Ce contrat est disponible en ligne sur REZI.')
             ->salutation('L\'équipe REZI');

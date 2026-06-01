@@ -8,7 +8,7 @@
                 <div class="flex flex-col md:flex-row md:items-start gap-6">
                     <!-- Image -->
                     <div
-                        class="w-full md:w-48 aspect-video rounded-xl overflow-hidden bg-linear-to-br from-[#ffd1da] to-[#ffb3c1]">
+                        class="w-full md:w-48 aspect-video rounded-xl overflow-hidden bg-linear-to-br from-[#FFE7D1] to-[#FFD0A3]">
                         @if ($collection->getCoverImageUrl())
                             <img loading="lazy" src="{{ $collection->getCoverImageUrl() }}" alt="{{ $collection->name }}"
                                 class="w-full h-full object-cover">
@@ -88,7 +88,7 @@
                                     <input type="text" readonly value="{{ $collection->getShareUrl() }}"
                                         class="flex-1 text-sm rounded-lg border-gray-300 bg-white" id="shareUrl">
                                     <button onclick="copyShareLink('{{ $collection->getShareUrl() }}')"
-                                        class="p-2 bg-[#e00b41] text-white rounded-lg hover:bg-[#b5083a]"
+                                        class="p-2 bg-[#CC5A00] text-white rounded-lg hover:bg-[#A34700]"
                                         aria-label="Copier le lien de partage">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                             aria-hidden="true">
@@ -114,7 +114,7 @@
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Collection vide</h3>
                     <p class="text-gray-500 mb-4">Ajoutez des favoris à cette collection.</p>
                     <a href="{{ route('residences.index') }}"
-                        class="inline-flex items-center gap-2 bg-[#e00b41] text-white px-4 py-2 rounded-xl hover:bg-[#b5083a] transition-colors">
+                        class="inline-flex items-center gap-2 bg-[#CC5A00] text-white px-4 py-2 rounded-xl hover:bg-[#A34700] transition-colors">
                         Parcourir les résidences
                     </a>
                 </div>
@@ -142,11 +142,11 @@
                             </div>
 
                             <div class="p-4">
-                                <a href="{{ route('residences.show', $residence) }}" class="hover:text-[#e00b41]">
+                                <a href="{{ route('residences.show', $residence) }}" class="hover:text-[#CC5A00]">
                                     <h3 class="font-semibold text-gray-900">{{ $residence->title }}</h3>
                                 </a>
                                 <p class="text-sm text-gray-500 mt-1">{{ $residence->quartier->name ?? '' }}</p>
-                                <p class="text-[#e00b41] font-semibold mt-2">
+                                <p class="text-[#CC5A00] font-semibold mt-2">
                                     {{ number_format($residence->price, 0, ',', ' ') }} FCFA<span
                                         class="text-gray-400 font-normal">/{{ $residence->price_label }}</span>
                                 </p>

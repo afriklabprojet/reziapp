@@ -24,7 +24,7 @@
                         <div class="flex items-center gap-4">
                             @php
                                 $avatarColors = [
-                                    'bg-linear-to-br from-[#ff4d6d] to-[#ff385c]',
+                                    'bg-linear-to-br from-[#FF8A1F] to-[#F16A00]',
                                     'bg-linear-to-br from-blue-400 to-blue-500',
                                     'bg-linear-to-br from-purple-400 to-purple-500',
                                     'bg-linear-to-br from-green-400 to-green-500',
@@ -151,14 +151,14 @@
                                         </div>
                                     @endif
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-bold text-gray-900 group-hover:text-[#e00b41] transition-colors truncate">
+                                        <p class="text-sm font-bold text-gray-900 group-hover:text-[#CC5A00] transition-colors truncate">
                                             {{ $contact->residence->name }}</p>
                                         @if ($contact->residence->commune)
                                             <p class="text-xs text-gray-500 mt-0.5">{{ $contact->residence->commune }}
                                             </p>
                                         @endif
                                     </div>
-                                    <svg class="w-4 h-4 text-gray-400 group-hover:text-[#ff385c] transition-colors shrink-0"
+                                    <svg class="w-4 h-4 text-gray-400 group-hover:text-[#F16A00] transition-colors shrink-0"
                                         fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="m8.25 4.5 7.5 7.5-7.5 7.5" />
@@ -217,7 +217,7 @@
                                         @method('PATCH')
                                         <input type="hidden" name="status" value="responded">
                                         <button type="submit"
-                                            class="inline-flex items-center gap-2 px-4 py-2.5 bg-[#ff385c] text-white text-sm font-semibold rounded-xl hover:bg-[#e00b41] transition-colors shadow-sm">
+                                            class="inline-flex items-center gap-2 px-4 py-2.5 bg-[#F16A00] text-white text-sm font-semibold rounded-xl hover:bg-[#CC5A00] transition-colors shadow-sm">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round"

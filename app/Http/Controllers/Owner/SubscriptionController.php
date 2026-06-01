@@ -3,260 +3,144 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
-use App\Models\Subscription;
-use App\Models\SubscriptionPayment;
+use App\Models\Booking;
+use App\Models\PlatformSetting;
 use App\Models\SubscriptionPlan;
-use App\Services\JekoPaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class SubscriptionController extends Controller
 {
-    public function __construct(
-        protected JekoPaymentService $jekoService,
-    ) {
-    }
-
     /**
-     * Afficher les plans d'abonnement disponibles
+     * Afficher le modèle de commission propriétaire.
      */
-    public function index()
+    public function index(): View
     {
         $user = Auth::user();
-        $plans = SubscriptionPlan::active()->ordered()->get();
-        $currentSubscription = $user->activeSubscription();
+        $commissionRate = PlatformSetting::getCommissionRate();
+        $commissionRateDecimal = $commissionRate / 100;
 
-        return view('owner.subscriptions.index', compact('plans', 'currentSubscription'));
+        $completedBookingsQuery = Booking::forOwner($user->id)
+            ->completed()
+            ->where('payment_status', 'paid');
+
+        $totalReservations = (clone $completedBookingsQuery)->count();
+        $totalReservationVolume = (float) (clone $completedBookingsQuery)->sum('total_amount');
+        $totalCommission = round($totalReservationVolume * $commissionRateDecimal, 0);
+        $totalOwnerRevenue = $totalReservationVolume - $totalCommission;
+
+        $recentBookings = (clone $completedBookingsQuery)
+            ->with(['residence:id,name'])
+            ->orderByDesc('paid_at')
+            ->orderByDesc('check_out')
+            ->limit(8)
+            ->get()
+            ->map(function (Booking $booking) use ($commissionRateDecimal) {
+                $commissionAmount = round(((float) $booking->total_amount) * $commissionRateDecimal, 0);
+                $booking->commission_amount = $commissionAmount;
+                $booking->owner_net_amount = (float) $booking->total_amount - $commissionAmount;
+
+                return $booking;
+            });
+
+        $exampleBookingAmount = 150000;
+        $exampleCommissionAmount = round($exampleBookingAmount * $commissionRateDecimal, 0);
+
+        return view('owner.subscriptions.index', compact(
+            'commissionRate',
+            'totalReservations',
+            'totalReservationVolume',
+            'totalCommission',
+            'totalOwnerRevenue',
+            'recentBookings',
+            'exampleBookingAmount',
+            'exampleCommissionAmount',
+        ));
     }
 
     /**
-     * Souscrire à un plan
+     * Ancienne action d'abonnement désormais neutralisée.
      */
     public function subscribe(Request $request, SubscriptionPlan $plan)
     {
-        $request->validate([
-            'billing_period' => 'required|in:monthly,yearly',
-            'payment_method' => 'required|in:wave,orange,mtn,moov,djamo',
-        ]);
-
-        $user = Auth::user();
-
-        // Vérifier si l'utilisateur a déjà un abonnement actif
-        $currentSubscription = $user->activeSubscription();
-        if ($currentSubscription && $currentSubscription->subscription_plan_id === $plan->id) {
-            return back()->with('error', 'Vous êtes déjà abonné à ce plan.');
-        }
-
-        // Calculer le prix selon la période
-        $billingPeriod = $request->billing_period;
-        $amount = $billingPeriod === 'yearly'
-            ? $plan->yearly_price
-            : $plan->monthly_price;
-
-        // Créer l'abonnement (en attente de paiement)
-        $subscription = Subscription::create([
-            'user_id' => $user->id,
-            'subscription_plan_id' => $plan->id,
-            'status' => 'pending',
-            'billing_cycle' => $billingPeriod,
-            'amount' => $amount,
-            'current_period_start' => now(),
-            'current_period_end' => $billingPeriod === 'yearly'
-                ? now()->addYear()
-                : now()->addMonth(),
-        ]);
-
-        // Créer le paiement
-        $reference = 'REZI-SUB-'.$subscription->id.'-'.Str::random(8);
-        $subscriptionPayment = SubscriptionPayment::create([
-            'subscription_id' => $subscription->id,
-            'amount' => $amount,
-            'currency' => 'XOF',
-            'period_start' => $subscription->current_period_start,
-            'period_end' => $subscription->current_period_end,
-            'status' => 'pending',
-            'payment_provider' => 'jeko',
-            'reference' => $reference,
-        ]);
-
-        // Initier le paiement Jeko
-        $result = $this->jekoService->createSubscriptionPayment(
-            $subscriptionPayment,
-            $request->payment_method,
-            $plan->name.' - '.($billingPeriod === 'yearly' ? 'Annuel' : 'Mensuel'),
-        );
-
-        if ($result['success']) {
-            return redirect($result['redirect_url']);
-        }
-
-        // En cas d'erreur, supprimer l'abonnement créé
-        $subscriptionPayment->delete();
-        $subscription->delete();
-
-        return back()->with('error', $result['error'] ?? 'Erreur lors de l\'initiation du paiement.');
+        return redirect()->route('owner.marketing.subscriptions.index')
+            ->with('info', 'REZI ne fonctionne pas avec des abonnements. La plateforme prélève uniquement 10% sur le montant total de chaque réservation, côté propriétaire.');
     }
 
     /**
-     * Changer de plan
+     * Ancienne action de changement de plan désormais neutralisée.
      */
     public function changePlan(Request $request, SubscriptionPlan $plan)
     {
-        $request->validate([
-            'payment_method' => 'required|in:wave,orange,mtn,moov,djamo',
-        ]);
-
-        $user = Auth::user();
-        $currentSubscription = $user->activeSubscription();
-
-        if (!$currentSubscription) {
-            return redirect()->route('owner.subscriptions.index')
-                ->with('error', 'Vous n\'avez pas d\'abonnement actif.');
-        }
-
-        if ($currentSubscription->subscription_plan_id === $plan->id) {
-            return back()->with('error', 'Vous êtes déjà abonné à ce plan.');
-        }
-
-        // Calculer le prorata ou la différence à payer
-        $currentPlan = $currentSubscription->plan;
-        $daysRemaining = now()->diffInDays($currentSubscription->current_period_end);
-        $totalDays = $currentSubscription->current_period_start->diffInDays($currentSubscription->current_period_end);
-
-        $currentValue = ($currentPlan->monthly_price / $totalDays) * $daysRemaining;
-        $newValue = ($plan->monthly_price / $totalDays) * $daysRemaining;
-        $difference = max(0, $newValue - $currentValue);
-
-        if ($difference > 0) {
-            // Créer un paiement pour la différence
-            $reference = 'REZI-SUB-UPG-'.$currentSubscription->id.'-'.Str::random(8);
-            $subscriptionPayment = SubscriptionPayment::create([
-                'subscription_id' => $currentSubscription->id,
-                'amount' => round($difference),
-                'currency' => 'XOF',
-                'period_start' => now(),
-                'period_end' => $currentSubscription->current_period_end,
-                'status' => 'pending',
-                'payment_provider' => 'jeko',
-                'reference' => $reference,
-                'metadata' => [
-                    'type' => 'upgrade',
-                    'from_plan' => $currentPlan->id,
-                    'to_plan' => $plan->id,
-                ],
-            ]);
-
-            $result = $this->jekoService->createSubscriptionPayment(
-                $subscriptionPayment,
-                $request->payment_method,
-                'Mise à niveau vers '.$plan->name,
-            );
-
-            if ($result['success']) {
-                // Stocker le plan cible pour le traitement après paiement
-                $currentSubscription->update([
-                    'metadata' => array_merge($currentSubscription->metadata ?? [], [
-                        'pending_plan_change' => $plan->id,
-                    ]),
-                ]);
-
-                return redirect($result['redirect_url']);
-            }
-
-            $subscriptionPayment->delete();
-
-            return back()->with('error', $result['error'] ?? 'Erreur lors du paiement.');
-        }
-
-        // Downgrade gratuit ou plan moins cher
-        $currentSubscription->changePlan($plan);
-
-        return redirect()->route('owner.subscriptions.index')
-            ->with('success', 'Votre abonnement a été modifié avec succès.');
+        return redirect()->route('owner.marketing.subscriptions.index')
+            ->with('info', 'Aucun changement de plan n\'est nécessaire: REZI applique un modèle unique de commission de 10% sur chaque réservation propriétaire.');
     }
 
     /**
-     * Annuler l'abonnement
+     * Ancienne action d'annulation désormais neutralisée.
      */
     public function cancel(Request $request)
     {
-        $user = Auth::user();
-        $subscription = $user->activeSubscription();
-
-        if (!$subscription) {
-            return back()->with('error', 'Vous n\'avez pas d\'abonnement actif.');
-        }
-
-        $subscription->cancel($request->input('reason'));
-
-        return redirect()->route('owner.subscriptions.index')
-            ->with('success', 'Votre abonnement a été annulé. Il restera actif jusqu\'au '.$subscription->current_period_end->format('d/m/Y'));
+        return redirect()->route('owner.marketing.subscriptions.index')
+            ->with('info', 'Aucun abonnement à annuler: REZI facture uniquement une commission de 10% sur les réservations encaissées par le propriétaire.');
     }
 
     /**
-     * Réactiver l'abonnement annulé
+     * Ancienne action de réactivation désormais neutralisée.
      */
     public function resume()
     {
-        $user = Auth::user();
-        $subscription = $user->subscriptions()
-            ->where('status', 'cancelled')
-            ->where('current_period_end', '>', now())
-            ->first();
-
-        if (!$subscription) {
-            return back()->with('error', 'Aucun abonnement annulé à réactiver.');
-        }
-
-        $subscription->resume();
-
-        return redirect()->route('owner.subscriptions.index')
-            ->with('success', 'Votre abonnement a été réactivé.');
+        return redirect()->route('owner.marketing.subscriptions.index')
+            ->with('info', 'REZI n\'utilise pas de réactivation d\'abonnement. Le modèle économique repose sur une commission propriétaire de 10% par réservation.');
     }
 
     /**
-     * Historique des paiements
+     * Historique des commissions calculées à partir des réservations payées.
      */
-    public function history()
+    public function history(): View
     {
         $user = Auth::user();
-        $payments = SubscriptionPayment::whereHas('subscription', function ($q) use ($user) {
-            $q->where('user_id', $user->id);
-        })->with('subscription.plan')->latest()->paginate(20);
+        $commissionRate = PlatformSetting::getCommissionRate();
+        $commissionRateDecimal = $commissionRate / 100;
 
-        return view('owner.subscriptions.history', compact('payments'));
+        $bookings = Booking::forOwner($user->id)
+            ->completed()
+            ->where('payment_status', 'paid')
+            ->with(['residence:id,name'])
+            ->orderByDesc('paid_at')
+            ->orderByDesc('check_out')
+            ->paginate(20);
+
+        $bookings->getCollection()->transform(function (Booking $booking) use ($commissionRateDecimal) {
+            $commissionAmount = round(((float) $booking->total_amount) * $commissionRateDecimal, 0);
+            $booking->commission_amount = $commissionAmount;
+            $booking->owner_net_amount = (float) $booking->total_amount - $commissionAmount;
+
+            return $booking;
+        });
+
+        return view('owner.subscriptions.history', [
+            'bookings' => $bookings,
+            'commissionRate' => $commissionRate,
+        ]);
     }
 
     /**
-     * Callback de succès Jeko
+     * Ancien callback de succès désormais neutralisé.
      */
     public function paymentSuccess(Request $request)
     {
-        $subscriptionPayment = SubscriptionPayment::where('reference', $request->reference)->first();
-
-        if (!$subscriptionPayment) {
-            return redirect()->route('owner.subscriptions.index')
-                ->with('error', 'Paiement non trouvé.');
-        }
-
-        // Le webhook gère la mise à jour, mais on vérifie le statut
-        if ($subscriptionPayment->status === 'paid') {
-            return redirect()->route('owner.subscriptions.index')
-                ->with('success', 'Votre abonnement a été activé avec succès !');
-        }
-
-        // Attendre la confirmation webhook
-        return redirect()->route('owner.subscriptions.index')
-            ->with('info', 'Paiement en cours de traitement. Vous recevrez une confirmation.');
+        return redirect()->route('owner.marketing.subscriptions.index')
+            ->with('info', 'Aucun paiement d\'abonnement n\'est attendu. REZI prélève directement 10% sur le montant total de chaque réservation propriétaire.');
     }
 
     /**
-     * Callback d'erreur Jeko
+     * Ancien callback d'erreur désormais neutralisé.
      */
     public function paymentError(Request $request)
     {
-        return redirect()->route('owner.subscriptions.index')
-            ->with('error', 'Le paiement a échoué. Veuillez réessayer.');
+        return redirect()->route('owner.marketing.subscriptions.index')
+            ->with('info', 'Cette page d\'erreur d\'abonnement n\'est plus utilisée. Le modèle REZI est une commission propriétaire de 10% par réservation.');
     }
 }

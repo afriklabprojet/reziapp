@@ -15,8 +15,8 @@
                                 <div class="hidden sm:block absolute top-5 left-1/6 right-1/6 h-px bg-white/20 z-0"></div>
 
                                 @foreach([
-                                    ['num' => '1', 'title' => 'Créez votre compte', 'desc' => 'En moins de 2 minutes avec votre email', 'color' => 'bg-[#ff385c]'],
-                                    ['num' => '2', 'title' => 'Décrivez votre résidence', 'desc' => 'Photos, prix, équipements, localisation', 'color' => 'bg-[#ff385c]'],
+                                    ['num' => '1', 'title' => 'Créez votre compte', 'desc' => 'En moins de 2 minutes avec votre email', 'color' => 'bg-[#F16A00]'],
+                                    ['num' => '2', 'title' => 'Décrivez votre résidence', 'desc' => 'Photos, prix, équipements, localisation', 'color' => 'bg-[#F16A00]'],
                                     ['num' => '3', 'title' => 'Publiez et recevez', 'desc' => 'Visibilité immédiate, réservation instantanée', 'color' => 'bg-green-500'],
                                 ] as $step)
                                 <div class="relative z-10 flex flex-col items-center text-center">
@@ -40,7 +40,7 @@
                                     ['val' => 48, 'label' => 'h délai moyen', 'suffix' => 'h'],
                                 ] as $stat)
                                 <div class="text-center">
-                                    <div class="text-2xl font-extrabold text-[#ff4d6d]">
+                                    <div class="text-2xl font-extrabold text-[#FF8A1F]">
                                         {{ number_format($stat['val']) }}{{ $stat['suffix'] }}
                                     </div>
                                     <div class="text-xs text-gray-400 mt-0.5">{{ $stat['label'] }}</div>

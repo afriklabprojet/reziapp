@@ -81,7 +81,7 @@
                         <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">Référence</th>
                         <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">Locataire</th>
                         <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">Résidence</th>
-                        <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">Loyer/mois</th>
+                        <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">Montant/mois</th>
                         <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">Période</th>
                         <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">Statut</th>
                         <th class="px-5 py-3"></th>

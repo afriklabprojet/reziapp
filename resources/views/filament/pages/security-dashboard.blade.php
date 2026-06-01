@@ -1,9 +1,16 @@
 <x-filament-panels::page>
     <div class="space-y-6">
+        <x-filament.admin.hero
+            eyebrow="Sécurité & conformité"
+            title="Tableau de bord sécurité"
+            subtitle="Centralisez les alertes urgentes, la vérification d’identité, les fraudes et les actions de modération sensibles."
+            icon="heroicon-o-shield-exclamation"
+            tone="red"
+        />
 
         {{-- Alertes Urgentes --}}
         @if ($activeAlerts->count() > 0)
-            <div class="p-4 bg-red-50 border border-red-200 rounded-xl">
+            <div class="rounded-2xl border border-red-200 bg-red-50 p-4 shadow-sm dark:border-red-500/20 dark:bg-red-500/10">
                 <div class="flex items-center gap-2 mb-3">
                     <x-heroicon-o-exclamation-triangle class="w-6 h-6 text-red-600" />
                     <h3 class="text-lg font-bold text-red-800">🚨 Alertes urgentes actives ({{ $activeAlerts->count() }})
@@ -33,90 +40,34 @@
 
         {{-- Statistiques --}}
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {{-- Vérifications d'identité --}}
-            <div class="bg-white rounded-xl shadow-sm border p-5">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500">Identités en attente</p>
-                        <p class="text-3xl font-bold text-amber-600 mt-1">{{ $stats['identity_pending'] }}</p>
-                    </div>
-                    <div class="p-3 bg-amber-50 rounded-xl">
-                        <x-heroicon-o-identification class="w-7 h-7 text-amber-600" />
-                    </div>
-                </div>
-                <p class="text-xs text-gray-400 mt-2">{{ $stats['identity_approved'] }} approuvées sur
-                    {{ $stats['identity_total'] }} total</p>
-            </div>
-
-            {{-- Signalements de fraude --}}
-            <div class="bg-white rounded-xl shadow-sm border p-5">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500">Fraudes en attente</p>
-                        <p class="text-3xl font-bold text-red-600 mt-1">{{ $stats['fraud_pending'] }}</p>
-                    </div>
-                    <div class="p-3 bg-red-50 rounded-xl">
-                        <x-heroicon-o-flag class="w-7 h-7 text-red-600" />
-                    </div>
-                </div>
-                <p class="text-xs text-gray-400 mt-2">{{ $stats['fraud_confirmed'] }} confirmées sur
-                    {{ $stats['fraud_total'] }} total</p>
-            </div>
-
-            {{-- Alertes urgentes --}}
-            <div class="bg-white rounded-xl shadow-sm border p-5">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500">Alertes actives</p>
-                        <p
-                            class="text-3xl font-bold {{ $stats['alerts_active'] > 0 ? 'text-red-600' : 'text-green-600' }} mt-1">
-                            {{ $stats['alerts_active'] }}</p>
-                    </div>
-                    <div class="p-3 {{ $stats['alerts_active'] > 0 ? 'bg-red-50' : 'bg-green-50' }} rounded-xl">
-                        <x-heroicon-o-bell-alert
-                            class="w-7 h-7 {{ $stats['alerts_active'] > 0 ? 'text-red-600' : 'text-green-600' }}" />
-                    </div>
-                </div>
-                <p class="text-xs text-gray-400 mt-2">{{ $stats['alerts_total'] }} alertes au total</p>
-            </div>
-
-            {{-- Blacklist --}}
-            <div class="bg-white rounded-xl shadow-sm border p-5">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500">Utilisateurs blacklistés</p>
-                        <p class="text-3xl font-bold text-gray-800 mt-1">{{ $stats['blacklist_count'] }}</p>
-                    </div>
-                    <div class="p-3 bg-gray-100 rounded-xl">
-                        <x-heroicon-o-no-symbol class="w-7 h-7 text-gray-600" />
-                    </div>
-                </div>
-                <p class="text-xs text-gray-400 mt-2">Comptes bannis actifs</p>
-            </div>
+            <x-filament.admin.metric-card label="Identités en attente" :value="$stats['identity_pending']" icon="heroicon-o-identification" accent="amber" :meta="$stats['identity_approved'].' approuvées'" :note="$stats['identity_total'].' demandes au total'" />
+            <x-filament.admin.metric-card label="Fraudes en attente" :value="$stats['fraud_pending']" icon="heroicon-o-flag" accent="rose" :meta="$stats['fraud_confirmed'].' confirmées'" :note="$stats['fraud_total'].' signalements au total'" />
+            <x-filament.admin.metric-card label="Alertes actives" :value="$stats['alerts_active']" icon="heroicon-o-bell-alert" :accent="$stats['alerts_active'] > 0 ? 'rose' : 'emerald'" :meta="$stats['alerts_total'].' alertes au total'" />
+            <x-filament.admin.metric-card label="Utilisateurs blacklistés" :value="$stats['blacklist_count']" icon="heroicon-o-no-symbol" accent="slate" note="Comptes bannis actifs" />
         </div>
 
         {{-- Raccourcis vers les ressources Filament --}}
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <a href="{{ route('filament.admin.resources.identity-verifications.index') }}"
-                class="block p-4 bg-white rounded-xl shadow-sm border hover:shadow-md transition-shadow text-center">
+                class="block rounded-2xl bg-white p-4 text-center shadow-sm ring-1 ring-gray-950/5 transition hover:-translate-y-0.5 hover:shadow-md dark:bg-white/5 dark:ring-white/10">
                 <x-heroicon-o-identification class="w-8 h-8 mx-auto text-amber-500 mb-2" />
                 <p class="font-semibold text-gray-900">Vérifications d'identité</p>
                 <p class="text-sm text-gray-500">Gérer les demandes</p>
             </a>
             <a href="{{ route('filament.admin.resources.fraud-reports.index') }}"
-                class="block p-4 bg-white rounded-xl shadow-sm border hover:shadow-md transition-shadow text-center">
+                class="block rounded-2xl bg-white p-4 text-center shadow-sm ring-1 ring-gray-950/5 transition hover:-translate-y-0.5 hover:shadow-md dark:bg-white/5 dark:ring-white/10">
                 <x-heroicon-o-flag class="w-8 h-8 mx-auto text-red-500 mb-2" />
                 <p class="font-semibold text-gray-900">Signalements de fraude</p>
                 <p class="text-sm text-gray-500">Gérer les signalements</p>
             </a>
             <a href="{{ route('filament.admin.resources.support-tickets.index') }}"
-                class="block p-4 bg-white rounded-xl shadow-sm border hover:shadow-md transition-shadow text-center">
+                class="block rounded-2xl bg-white p-4 text-center shadow-sm ring-1 ring-gray-950/5 transition hover:-translate-y-0.5 hover:shadow-md dark:bg-white/5 dark:ring-white/10">
                 <x-heroicon-o-ticket class="w-8 h-8 mx-auto text-blue-500 mb-2" />
                 <p class="font-semibold text-gray-900">Tickets support</p>
                 <p class="text-sm text-gray-500">Gérer les demandes</p>
             </a>
             <a href="{{ route('filament.admin.resources.disputes.index') }}"
-                class="block p-4 bg-white rounded-xl shadow-sm border hover:shadow-md transition-shadow text-center">
+                class="block rounded-2xl bg-white p-4 text-center shadow-sm ring-1 ring-gray-950/5 transition hover:-translate-y-0.5 hover:shadow-md dark:bg-white/5 dark:ring-white/10">
                 <x-heroicon-o-scale class="w-8 h-8 mx-auto text-purple-500 mb-2" />
                 <p class="font-semibold text-gray-900">Litiges</p>
                 <p class="text-sm text-gray-500">Résoudre les litiges</p>

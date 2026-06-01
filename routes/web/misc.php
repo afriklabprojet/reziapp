@@ -6,6 +6,12 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
+defined('REZI_ROUTE_COLLECTION') || define('REZI_ROUTE_COLLECTION', '/{collection}');
+defined('REZI_ROUTE_CREATE') || define('REZI_ROUTE_CREATE', '/create');
+defined('REZI_ROUTE_DOCUMENT') || define('REZI_ROUTE_DOCUMENT', '/{document}');
+defined('REZI_ROUTE_RESIDENCE_PARAM') || define('REZI_ROUTE_RESIDENCE_PARAM', '/{residence}');
+defined('REZI_ROUTE_TEMPLATE') || define('REZI_ROUTE_TEMPLATE', '/{template}');
+
 /*
 |--------------------------------------------------------------------------
 | Routes Administrateur (Admin) - MIGRÉ VERS FILAMENT /admin
@@ -42,8 +48,8 @@ Route::middleware(['auth', 'verified'])
     ->name('reviews.')
     ->group(function () {
         Route::get('/my', [ReviewController::class, 'myReviews'])->name('my');
-        Route::get('/create/{residence}', [ReviewController::class, 'create'])->name('create');
-        Route::post('/{residence}', [ReviewController::class, 'store'])
+        Route::get(REZI_ROUTE_CREATE.REZI_ROUTE_RESIDENCE_PARAM, [ReviewController::class, 'create'])->name('create');
+        Route::post(REZI_ROUTE_RESIDENCE_PARAM, [ReviewController::class, 'store'])
             ->middleware('throttle:5,60')
             ->name('store');
         Route::get('/{review}', [ReviewController::class, 'show'])->name('show');
@@ -229,12 +235,12 @@ Route::middleware(['auth', 'verified'])
     ->name('templates.')
     ->group(function () {
         Route::get('/', [App\Http\Controllers\MessageTemplateController::class, 'index'])->name('index');
-        Route::get('/create', [App\Http\Controllers\MessageTemplateController::class, 'create'])->name('create');
+        Route::get(REZI_ROUTE_CREATE, [App\Http\Controllers\MessageTemplateController::class, 'create'])->name('create');
         Route::post('/', [App\Http\Controllers\MessageTemplateController::class, 'store'])->name('store');
-        Route::get('/{template}', [App\Http\Controllers\MessageTemplateController::class, 'show'])->name('show');
+        Route::get(REZI_ROUTE_TEMPLATE, [App\Http\Controllers\MessageTemplateController::class, 'show'])->name('show');
         Route::get('/{template}/edit', [App\Http\Controllers\MessageTemplateController::class, 'edit'])->name('edit');
-        Route::put('/{template}', [App\Http\Controllers\MessageTemplateController::class, 'update'])->name('update');
-        Route::delete('/{template}', [App\Http\Controllers\MessageTemplateController::class, 'destroy'])->name('destroy');
+        Route::put(REZI_ROUTE_TEMPLATE, [App\Http\Controllers\MessageTemplateController::class, 'update'])->name('update');
+        Route::delete(REZI_ROUTE_TEMPLATE, [App\Http\Controllers\MessageTemplateController::class, 'destroy'])->name('destroy');
         Route::post('/{template}/duplicate', [App\Http\Controllers\MessageTemplateController::class, 'duplicate'])->name('duplicate');
         Route::post('/{template}/preview', [App\Http\Controllers\MessageTemplateController::class, 'preview'])->name('preview');
         Route::get('/shortcut/search', [App\Http\Controllers\MessageTemplateController::class, 'byShortcut'])->name('shortcut');
@@ -251,12 +257,12 @@ Route::middleware(['auth', 'verified'])
     ->name('documents.')
     ->group(function () {
         Route::get('/', [App\Http\Controllers\SharedDocumentController::class, 'index'])->name('index');
-        Route::get('/create', [App\Http\Controllers\SharedDocumentController::class, 'create'])->name('create');
+        Route::get(REZI_ROUTE_CREATE, [App\Http\Controllers\SharedDocumentController::class, 'create'])->name('create');
         Route::post('/', [App\Http\Controllers\SharedDocumentController::class, 'store'])->name('store');
-        Route::get('/{document}', [App\Http\Controllers\SharedDocumentController::class, 'show'])->name('show');
+        Route::get(REZI_ROUTE_DOCUMENT, [App\Http\Controllers\SharedDocumentController::class, 'show'])->name('show');
         Route::get('/{document}/download', [App\Http\Controllers\SharedDocumentController::class, 'download'])->name('download');
-        Route::put('/{document}', [App\Http\Controllers\SharedDocumentController::class, 'update'])->name('update');
-        Route::delete('/{document}', [App\Http\Controllers\SharedDocumentController::class, 'destroy'])->name('destroy');
+        Route::put(REZI_ROUTE_DOCUMENT, [App\Http\Controllers\SharedDocumentController::class, 'update'])->name('update');
+        Route::delete(REZI_ROUTE_DOCUMENT, [App\Http\Controllers\SharedDocumentController::class, 'destroy'])->name('destroy');
 
         // API pour récupérer les documents
         Route::get('/residence/{residence}', [App\Http\Controllers\SharedDocumentController::class, 'forResidence'])->name('residence');
@@ -275,7 +281,7 @@ Route::middleware(['auth', 'verified'])
     ->group(function () {
         Route::get('/', [FavoriteController::class, 'index'])->name('index');
         Route::post('/store', [FavoriteController::class, 'store'])->name('store');
-        Route::post('/{residence}/toggle', [FavoriteController::class, 'toggle'])->name('toggle');
+        Route::post(REZI_ROUTE_RESIDENCE_PARAM.'/toggle', [FavoriteController::class, 'toggle'])->name('toggle');
         Route::patch('/{favorite}/note', [FavoriteController::class, 'updateNote'])->name('note');
         Route::patch('/{residenceId}/move', [FavoriteController::class, 'moveToCollection'])->name('move');
         Route::get('/{residenceId}/check', [FavoriteController::class, 'check'])->name('check');
@@ -288,11 +294,11 @@ Route::middleware(['auth', 'verified'])
     ->name('collections.')
     ->group(function () {
         Route::get('/', [App\Http\Controllers\CollectionController::class, 'index'])->name('index');
-        Route::get('/create', [App\Http\Controllers\CollectionController::class, 'create'])->name('create');
+        Route::get(REZI_ROUTE_CREATE, [App\Http\Controllers\CollectionController::class, 'create'])->name('create');
         Route::post('/', [App\Http\Controllers\CollectionController::class, 'store'])->name('store');
-        Route::get('/{collection}', [App\Http\Controllers\CollectionController::class, 'show'])->name('show');
-        Route::patch('/{collection}', [App\Http\Controllers\CollectionController::class, 'update'])->name('update');
-        Route::delete('/{collection}', [App\Http\Controllers\CollectionController::class, 'destroy'])->name('destroy');
+        Route::get(REZI_ROUTE_COLLECTION, [App\Http\Controllers\CollectionController::class, 'show'])->name('show');
+        Route::patch(REZI_ROUTE_COLLECTION, [App\Http\Controllers\CollectionController::class, 'update'])->name('update');
+        Route::delete(REZI_ROUTE_COLLECTION, [App\Http\Controllers\CollectionController::class, 'destroy'])->name('destroy');
         Route::post('/{collection}/regenerate-token', [App\Http\Controllers\CollectionController::class, 'regenerateToken'])->name('regenerate-token');
     });
 
@@ -388,18 +394,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // === DISPUTES ===
     Route::prefix('disputes')->name('disputes.')->group(function () {
         Route::get('/', [App\Http\Controllers\DisputeController::class, 'index'])->name('index');
-        Route::get('/create', [App\Http\Controllers\DisputeController::class, 'create'])->name('create');
+        Route::get(REZI_ROUTE_CREATE, [App\Http\Controllers\DisputeController::class, 'create'])->name('create');
         Route::post('/', [App\Http\Controllers\DisputeController::class, 'store'])->name('store');
         Route::get('/{dispute}', [App\Http\Controllers\DisputeController::class, 'show'])->name('show');
+        Route::get('/{dispute}/evidence/{index}', [App\Http\Controllers\DisputeController::class, 'downloadEvidence'])
+            ->whereNumber('index')
+            ->name('evidence.download');
         Route::post('/{dispute}/evidence', [App\Http\Controllers\DisputeController::class, 'addEvidence'])->name('add-evidence');
     });
 
     // === SUPPORT ===
     Route::prefix('support')->name('support.')->group(function () {
         Route::get('/', [App\Http\Controllers\SupportController::class, 'index'])->name('index');
-        Route::get('/create', [App\Http\Controllers\SupportController::class, 'create'])->name('create');
+        Route::get(REZI_ROUTE_CREATE, [App\Http\Controllers\SupportController::class, 'create'])->name('create');
         Route::post('/', [App\Http\Controllers\SupportController::class, 'store'])->name('store');
         Route::get('/{ticket}', [App\Http\Controllers\SupportController::class, 'show'])->name('show');
+        Route::get('/{ticket}/messages/{message}/attachments/{index}', [App\Http\Controllers\SupportController::class, 'downloadAttachment'])
+            ->whereNumber('index')
+            ->name('attachments.download');
         Route::post('/{ticket}/reply', [App\Http\Controllers\SupportController::class, 'reply'])->name('reply');
         Route::post('/{ticket}/close', [App\Http\Controllers\SupportController::class, 'close'])->name('close');
         Route::post('/{ticket}/reopen', [App\Http\Controllers\SupportController::class, 'reopen'])->name('reopen');
@@ -509,7 +521,7 @@ Route::middleware(['throttle:30,1'])->group(function () {
 // Routes de réservation pour invités (sans auth)
 Route::middleware(['throttle:10,1'])->prefix('bookings')->name('bookings.')->group(function () {
     // Formulaire de réservation (accessible aux invités)
-    Route::get('/create/{residence}', [App\Http\Controllers\BookingController::class, 'create'])->name('create');
+    Route::get(REZI_ROUTE_CREATE.REZI_ROUTE_RESIDENCE_PARAM, [App\Http\Controllers\BookingController::class, 'create'])->name('create');
 
     // Soumission réservation invité
     Route::post('/store/guest/{residence}', [App\Http\Controllers\BookingController::class, 'storeGuestRequest'])->name('store.guest');

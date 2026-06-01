@@ -19,11 +19,11 @@ class RentReceiptResource extends Resource
 
     protected static ?string $navigationGroup = 'Contrats & Cautions';
 
-    protected static ?string $navigationLabel = 'Quittances de loyer';
+    protected static ?string $navigationLabel = 'Reçus de location';
 
-    protected static ?string $modelLabel = 'Quittance';
+    protected static ?string $modelLabel = 'Reçu de location';
 
-    protected static ?string $pluralModelLabel = 'Quittances de loyer';
+    protected static ?string $pluralModelLabel = 'Reçus de location';
 
     protected static ?int $navigationSort = 3;
 
@@ -38,7 +38,7 @@ class RentReceiptResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Quittance')
+                Forms\Components\Section::make('Reçu de location')
                     ->schema([
                         Forms\Components\TextInput::make('reference')
                             ->label('Référence')
@@ -58,7 +58,7 @@ class RentReceiptResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('residence_id')
                             ->label('Résidence')
-                            ->relationship('residence', 'title')
+                            ->relationship('residence', 'name')
                             ->searchable()
                             ->preload()
                             ->required(),
@@ -81,7 +81,7 @@ class RentReceiptResource extends Resource
                             ->label('Fin période')
                             ->required(),
                         Forms\Components\TextInput::make('rent_amount')
-                            ->label('Loyer (FCFA)')
+                            ->label('Montant de location (FCFA)')
                             ->numeric()
                             ->required(),
                         Forms\Components\TextInput::make('charges_amount')

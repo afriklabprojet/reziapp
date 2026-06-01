@@ -1,15 +1,19 @@
 {{-- Footer Component — Single source of truth for all layouts --}}
-<footer class="bg-white text-[#6a6a6a] mt-auto" role="contentinfo">
+<footer class="bg-white text-[#555555] mt-auto" role="contentinfo">
 
     @php
         $fc = \Illuminate\Support\Facades\Cache::remember('footer_all_settings', 3600,
             fn() => \App\Models\PlatformSetting::getByGroup('footer')
         );
+        $platformEmail = \App\Models\PlatformSetting::getValue('platform_email', config('rezi.company.email'));
+        $platformPhone = \App\Models\PlatformSetting::getValue('platform_phone', config('rezi.company.phone'));
+        $platformPhoneTel = preg_replace('/[^\d+]/', '', (string) $platformPhone) ?: config('rezi.company.phone_raw');
+        $platformPhoneWhatsapp = ltrim(preg_replace('/\D+/', '', (string) $platformPhone), '0') ?: ltrim(config('rezi.company.phone_raw'), '+');
     @endphp
 
     @if($fc['footer_newsletter_enabled'] ?? true)
     {{-- ─── Newsletter CTA ─── --}}
-    <div class="bg-[#ff385c]">
+    <div class="bg-[#F16A00]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
             <div class="flex flex-col md:flex-row items-center justify-between gap-6" x-data="{
                 email: '',
@@ -72,7 +76,7 @@
                                 class="px-5 py-3 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/25 w-full sm:w-72 transition disabled:opacity-50">
                         </div>
                         <button type="submit" :disabled="loading || !email"
-                            class="px-6 py-3 bg-white text-[#ff385c] font-medium rounded-lg hover:bg-[#fff0f3] active:scale-95 transition-all shadow-lg whitespace-nowrap disabled:opacity-60 flex items-center justify-center gap-2">
+                            class="px-6 py-3 bg-white text-[#F16A00] font-medium rounded-lg hover:bg-[#FFF4EB] active:scale-95 transition-all shadow-lg whitespace-nowrap disabled:opacity-60 flex items-center justify-center gap-2">
                             <svg aria-hidden="true" x-show="loading" class="animate-spin w-5 h-5" fill="none"
                                 viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
@@ -124,7 +128,7 @@
                     @if($fc['footer_social_facebook_enabled'] ?? true)
                     <a href="{{ $fc['footer_social_facebook_url'] ?? config('rezi.social.facebook') }}" target="_blank" rel="noopener noreferrer"
                         aria-label="Facebook"
-                        class="w-10 h-10 bg-[#f2f2f2] hover:bg-[#ff385c] rounded-full flex items-center justify-center transition-colors duration-200">
+                        class="w-10 h-10 bg-[#f2f2f2] hover:bg-[#F16A00] rounded-full flex items-center justify-center transition-colors duration-200">
                         <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                             <path
                                 d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -134,7 +138,7 @@
                     @if($fc['footer_social_instagram_enabled'] ?? true)
                     <a href="{{ $fc['footer_social_instagram_url'] ?? config('rezi.social.instagram') }}" target="_blank" rel="noopener noreferrer"
                         aria-label="Instagram"
-                        class="w-10 h-10 bg-[#f2f2f2] hover:bg-[#ff385c] rounded-full flex items-center justify-center transition-colors duration-200">
+                        class="w-10 h-10 bg-[#f2f2f2] hover:bg-[#F16A00] rounded-full flex items-center justify-center transition-colors duration-200">
                         <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                             <path
                                 d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
@@ -142,7 +146,7 @@
                     </a>
                     @endif
                     @if($fc['footer_social_whatsapp_enabled'] ?? true)
-                    <a href="{{ $fc['footer_social_whatsapp_url'] ?? 'https://wa.me/'.str_replace('+', '', config('rezi.company.phone_raw')) }}" target="_blank"
+                    <a href="{{ $fc['footer_social_whatsapp_url'] ?? 'https://wa.me/'.$platformPhoneWhatsapp }}" target="_blank"
                         rel="noopener noreferrer" aria-label="WhatsApp"
                         class="w-10 h-10 bg-[#f2f2f2] hover:bg-green-500 rounded-full flex items-center justify-center transition-colors duration-200">
                         <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -154,7 +158,7 @@
                     @if($fc['footer_social_twitter_enabled'] ?? true)
                     <a href="{{ $fc['footer_social_twitter_url'] ?? 'https://twitter.com/rezi_ci' }}" target="_blank" rel="noopener noreferrer"
                         aria-label="X (Twitter)"
-                        class="w-10 h-10 bg-[#f2f2f2] hover:bg-[#ff385c] rounded-full flex items-center justify-center transition-colors duration-200">
+                        class="w-10 h-10 bg-[#f2f2f2] hover:bg-[#F16A00] rounded-full flex items-center justify-center transition-colors duration-200">
                         <svg aria-hidden="true" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                             <path
                                 d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -174,7 +178,7 @@
                     @if($fc['footer_social_tiktok_enabled'] ?? true)
                     <a href="{{ $fc['footer_social_tiktok_url'] ?? config('rezi.social.tiktok') }}" target="_blank" rel="noopener noreferrer"
                         aria-label="TikTok"
-                        class="w-10 h-10 bg-[#f2f2f2] hover:bg-[#222222] rounded-full flex items-center justify-center transition-colors duration-200">
+                        class="w-10 h-10 bg-[#f2f2f2] hover:bg-[#0F0F0F] rounded-full flex items-center justify-center transition-colors duration-200">
                         <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                             <path
                                 d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
@@ -186,75 +190,75 @@
 
             {{-- Navigation --}}
             <div class="lg:col-span-2">
-                <h4 class="text-sm font-semibold text-[#222222] mb-4">Explorer</h4>
+                <h4 class="text-sm font-semibold text-[#0F0F0F] mb-4">Explorer</h4>
                 <ul class="space-y-1 text-sm">
                     <li><a href="{{ route('home') }}"
-                            class="hover:text-[#ff385c] transition-colors block py-1.5">Accueil</a></li>
+                            class="hover:text-[#F16A00] transition-colors block py-1.5">Accueil</a></li>
                     <li><a href="{{ route('residences.index') }}"
-                            class="hover:text-[#ff385c] transition-colors block py-1.5">Toutes les résidences</a></li>
+                            class="hover:text-[#F16A00] transition-colors block py-1.5">Toutes les résidences</a></li>
                     <li><a href="{{ route('residences.map') }}"
-                            class="hover:text-[#ff385c] transition-colors block py-1.5">Carte
+                            class="hover:text-[#F16A00] transition-colors block py-1.5">Carte
                             interactive</a></li>
                     <li><a href="{{ route('pages.about') }}"
-                            class="hover:text-[#ff385c] transition-colors block py-1.5">À
+                            class="hover:text-[#F16A00] transition-colors block py-1.5">À
                             propos</a></li>
                     <li><a href="{{ route('pages.faq') }}"
-                            class="hover:text-[#ff385c] transition-colors block py-1.5">FAQ</a>
+                            class="hover:text-[#F16A00] transition-colors block py-1.5">FAQ</a>
                     </li>
                 </ul>
             </div>
 
             {{-- Propriétaires --}}
             <div class="lg:col-span-2">
-                <h4 class="text-sm font-semibold text-[#222222] mb-4">Propriétaires</h4>
+                <h4 class="text-sm font-semibold text-[#0F0F0F] mb-4">Propriétaires</h4>
                 <ul class="space-y-3 text-sm">
                     @auth
                         @if (Auth::user()->isOwner())
                             <li><a href="{{ route('owner.dashboard') }}"
-                                    class="hover:text-[#ff385c] transition-colors">Tableau de bord</a></li>
+                                    class="hover:text-[#F16A00] transition-colors">Tableau de bord</a></li>
                             <li><a href="{{ route('owner.residences.create') }}"
-                                    class="hover:text-[#ff385c] transition-colors">Publier une annonce</a></li>
+                                    class="hover:text-[#F16A00] transition-colors">Publier une annonce</a></li>
                             <li><a href="{{ route('owner.residences.index') }}"
-                                    class="hover:text-[#ff385c] transition-colors">Mes résidences</a></li>
+                                    class="hover:text-[#F16A00] transition-colors">Mes résidences</a></li>
                         @else
-                            <li><a href="{{ route('register') }}" class="hover:text-[#ff385c] transition-colors">Devenir
+                            <li><a href="{{ route('register') }}" class="hover:text-[#F16A00] transition-colors">Devenir
                                     propriétaire</a></li>
                         @endif
                     @else
-                        <li><a href="{{ route('register') }}" class="hover:text-[#ff385c] transition-colors">Devenir
+                        <li><a href="{{ route('register') }}" class="hover:text-[#F16A00] transition-colors">Devenir
                                 propriétaire</a></li>
-                        <li><a href="{{ route('login') }}" class="hover:text-[#ff385c] transition-colors">Se
+                        <li><a href="{{ route('login') }}" class="hover:text-[#F16A00] transition-colors">Se
                                 connecter</a></li>
                     @endauth
                     <li><a href="{{ route('pages.guide-proprietaire') }}"
-                            class="hover:text-[#ff385c] transition-colors">Guide propriétaire</a></li>
+                            class="hover:text-[#F16A00] transition-colors">Guide propriétaire</a></li>
                 </ul>
             </div>
 
             {{-- Locataires --}}
             <div class="lg:col-span-2">
-                <h4 class="text-sm font-semibold text-[#222222] mb-4">Locataires</h4>
+                <h4 class="text-sm font-semibold text-[#0F0F0F] mb-4">Locataires</h4>
                 <ul class="space-y-1 text-sm">
                     @auth
-                        <li><a href="{{ route('client.dashboard') }}" class="hover:text-[#ff385c] transition-colors block py-1.5">Mon espace</a></li>
-                        <li><a href="{{ route('favorites.index') }}" class="hover:text-[#ff385c] transition-colors block py-1.5">Mes favoris</a></li>
-                        <li><a href="{{ route('client.contacts') }}" class="hover:text-[#ff385c] transition-colors block py-1.5">Mes demandes</a></li>
-                        <li><a href="{{ route('client.contracts') }}" class="hover:text-[#ff385c] transition-colors block py-1.5">Mes contrats</a></li>
+                        <li><a href="{{ route('client.dashboard') }}" class="hover:text-[#F16A00] transition-colors block py-1.5">Mon espace</a></li>
+                        <li><a href="{{ route('favorites.index') }}" class="hover:text-[#F16A00] transition-colors block py-1.5">Mes favoris</a></li>
+                        <li><a href="{{ route('client.contacts') }}" class="hover:text-[#F16A00] transition-colors block py-1.5">Mes demandes</a></li>
+                        <li><a href="{{ route('client.contracts') }}" class="hover:text-[#F16A00] transition-colors block py-1.5">Mes contrats</a></li>
                     @else
-                        <li><a href="{{ route('register') }}" class="hover:text-[#ff385c] transition-colors block py-1.5">Créer un compte</a></li>
-                        <li><a href="{{ route('login') }}" class="hover:text-[#ff385c] transition-colors block py-1.5">Se connecter</a></li>
+                        <li><a href="{{ route('register') }}" class="hover:text-[#F16A00] transition-colors block py-1.5">Créer un compte</a></li>
+                        <li><a href="{{ route('login') }}" class="hover:text-[#F16A00] transition-colors block py-1.5">Se connecter</a></li>
                     @endauth
-                    <li><a href="{{ route('residences.index') }}" class="hover:text-[#ff385c] transition-colors block py-1.5">Trouver un logement</a></li>
+                    <li><a href="{{ route('residences.index') }}" class="hover:text-[#F16A00] transition-colors block py-1.5">Trouver un logement</a></li>
                 </ul>
             </div>
 
             {{-- Contact + Horaires --}}
             <div class="col-span-2 lg:col-span-2">
-                <h4 class="text-sm font-semibold text-[#222222] mb-4">Contact</h4>
+                <h4 class="text-sm font-semibold text-[#0F0F0F] mb-4">Contact</h4>
                 <ul class="space-y-4 text-sm">
                     <li class="flex items-start gap-3">
                         <div class="w-9 h-9 bg-[#f2f2f2] rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                            <svg aria-hidden="true" class="w-4 h-4 text-[#ff385c]" fill="none"
+                            <svg aria-hidden="true" class="w-4 h-4 text-[#F16A00]" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -269,30 +273,30 @@
                     </li>
                     <li class="flex items-center gap-3">
                         <div class="w-9 h-9 bg-[#f2f2f2] rounded-lg flex items-center justify-center shrink-0">
-                            <svg aria-hidden="true" class="w-4 h-4 text-[#ff385c]" fill="none"
+                            <svg aria-hidden="true" class="w-4 h-4 text-[#F16A00]" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
                         </div>
-                        <a href="mailto:{{ config('rezi.company.email') }}"
-                            class="hover:text-[#ff385c] transition-colors">{{ config('rezi.company.email') }}</a>
+                        <a href="mailto:{{ $platformEmail }}"
+                            class="hover:text-[#F16A00] transition-colors">{{ $platformEmail }}</a>
                     </li>
                     <li class="flex items-center gap-3">
                         <div class="w-9 h-9 bg-[#f2f2f2] rounded-lg flex items-center justify-center shrink-0">
-                            <svg aria-hidden="true" class="w-4 h-4 text-[#ff385c]" fill="none"
+                            <svg aria-hidden="true" class="w-4 h-4 text-[#F16A00]" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                             </svg>
                         </div>
-                        <a href="tel:{{ config('rezi.company.phone_raw') }}"
-                            class="hover:text-[#ff385c] transition-colors">{{ config('rezi.company.phone') }}</a>
+                        <a href="tel:{{ $platformPhoneTel }}"
+                            class="hover:text-[#F16A00] transition-colors">{{ $platformPhone }}</a>
                     </li>
                     @if($fc['footer_support_enabled'] ?? true)
                     <li class="flex items-center gap-3">
                         <div class="w-9 h-9 bg-[#f2f2f2] rounded-lg flex items-center justify-center shrink-0">
-                            <svg aria-hidden="true" class="w-4 h-4 text-[#ff385c]" fill="none"
+                            <svg aria-hidden="true" class="w-4 h-4 text-[#F16A00]" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -312,42 +316,42 @@
     </div>
 
     {{-- ─── Bottom Bar ─── --}}
-    <div class="border-t border-[#ebebeb]">
+    <div class="border-t border-[#F2F2F2]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
                 {{-- Copyright --}}
-                <p class="text-xs text-[#6a6a6a] text-center lg:text-left">
+                <p class="text-xs text-[#555555] text-center lg:text-left">
                     © {{ date('Y') }} REZI. Tous droits réservés.
                 </p>
 
                 {{-- Legal Links --}}
                 <div class="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs">
                     <a href="{{ route('pages.cgu') }}"
-                        class="text-gray-500 hover:text-[#ff385c] transition-colors">Conditions d'utilisation</a>
+                        class="text-gray-500 hover:text-[#F16A00] transition-colors">Conditions d'utilisation</a>
                     <a href="{{ route('pages.confidentialite') }}"
-                        class="text-gray-500 hover:text-[#ff385c] transition-colors">Confidentialité</a>
+                        class="text-gray-500 hover:text-[#F16A00] transition-colors">Confidentialité</a>
                     <a href="{{ route('pages.mentions-legales') }}"
-                        class="text-gray-500 hover:text-[#ff385c] transition-colors">Mentions légales</a>
+                        class="text-gray-500 hover:text-[#F16A00] transition-colors">Mentions légales</a>
                 </div>
 
                 {{-- Payment Methods --}}
                 <div class="flex items-center gap-3">
-                    <span class="text-[#6a6a6a] text-xs">Paiements sécurisés</span>
+                    <span class="text-[#555555] text-xs">Paiements sécurisés</span>
                     <div class="flex gap-1.5">
                         <div
-                            class="h-7 px-2 bg-[#f2f2f2] rounded-md flex items-center justify-center border border-[#ebebeb]">
-                            <span class="text-xs text-[#6a6a6a]">💳 Visa</span>
+                            class="h-7 px-2 bg-[#f2f2f2] rounded-md flex items-center justify-center border border-[#F2F2F2]">
+                            <span class="text-xs text-[#555555]">💳 Visa</span>
                         </div>
                         <div
-                            class="h-7 px-2 bg-[#f2f2f2] rounded-md flex items-center justify-center border border-[#ebebeb]">
-                            <span class="text-xs font-bold text-[#ff385c]">OM</span>
+                            class="h-7 px-2 bg-[#f2f2f2] rounded-md flex items-center justify-center border border-[#F2F2F2]">
+                            <span class="text-xs font-bold text-[#F16A00]">OM</span>
                         </div>
                         <div
-                            class="h-7 px-2 bg-[#f2f2f2] rounded-md flex items-center justify-center border border-[#ebebeb]">
+                            class="h-7 px-2 bg-[#f2f2f2] rounded-md flex items-center justify-center border border-[#F2F2F2]">
                             <span class="text-xs font-bold text-yellow-500">MTN</span>
                         </div>
                         <div
-                            class="h-7 px-2 bg-[#f2f2f2] rounded-md flex items-center justify-center border border-[#ebebeb]">
+                            class="h-7 px-2 bg-[#f2f2f2] rounded-md flex items-center justify-center border border-[#F2F2F2]">
                             <span class="text-xs font-bold text-blue-400">Wave</span>
                         </div>
                     </div>
@@ -369,7 +373,7 @@
                 x-transition:leave-end="opacity-0"
                 @click="window.scrollTo({top: 0, behavior: 'smooth'})"
                 aria-label="Retour en haut de page"
-                class="w-11 h-11 bg-[#ff385c] hover:bg-[#e00b41] text-white rounded-full shadow-lg hover:shadow-xl flex items-center justify-center transition-all active:scale-95">
+                class="w-11 h-11 bg-[#F16A00] hover:bg-[#CC5A00] text-white rounded-full shadow-lg hover:shadow-xl flex items-center justify-center transition-all active:scale-95">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"/>
             </svg>

@@ -6,7 +6,7 @@
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {{-- Retour --}}
         <a href="{{ route('owner.cohosts.index', $residence) }}"
-            class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#ff385c] transition mb-6">
+            class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#F16A00] transition mb-6">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
@@ -19,7 +19,7 @@
                 <div class="flex items-start justify-between">
                     <div class="flex items-center gap-4">
                         @php
-                            $gradients = ['from-[#ff4d6d] to-pink-500', 'from-blue-400 to-indigo-500', 'from-emerald-400 to-teal-500', 'from-purple-400 to-pink-500', 'from-amber-400 to-[#ff385c]'];
+                            $gradients = ['from-[#FF8A1F] to-pink-500', 'from-blue-400 to-indigo-500', 'from-emerald-400 to-teal-500', 'from-purple-400 to-pink-500', 'from-amber-400 to-[#F16A00]'];
                             $gradient = $gradients[($cohost->id ?? 0) % count($gradients)];
                         @endphp
                         <div class="w-12 h-12 rounded-xl bg-linear-to-br {{ $gradient }} flex items-center justify-center">
@@ -32,7 +32,7 @@
                     </div>
                     @switch($cohost->status)
                         @case('accepted')
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-[#ffd1da] text-[#e00b41] text-xs font-semibold rounded-full">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-[#FFE7D1] text-[#CC5A00] text-xs font-semibold rounded-full">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                 </svg>
@@ -77,7 +77,7 @@
                     @if ($cohost->commission_percent)
                         <div>
                             <span class="text-[11px] text-gray-400 font-semibold uppercase tracking-wider">Commission</span>
-                            <p class="font-bold text-sm text-[#e00b41] mt-1">{{ $cohost->commission_percent }}%</p>
+                            <p class="font-bold text-sm text-[#CC5A00] mt-1">{{ $cohost->commission_percent }}%</p>
                         </div>
                     @endif
                 </div>
@@ -88,7 +88,7 @@
                         <h2 class="text-[11px] text-gray-400 font-semibold uppercase tracking-wider">Permissions</h2>
                         @if ($cohost->status === 'accepted')
                             <a href="{{ route('owner.cohosts.edit', [$residence, $cohost]) }}"
-                                class="text-xs text-[#ff385c] hover:text-[#e00b41] font-semibold transition">Modifier</a>
+                                class="text-xs text-[#F16A00] hover:text-[#CC5A00] font-semibold transition">Modifier</a>
                         @endif
                     </div>
                     <div class="grid grid-cols-2 gap-3">
@@ -105,8 +105,8 @@
                         @foreach ($permissions as $key => $perm)
                             <div class="flex items-center gap-2.5 text-sm">
                                 @if ($cohost->$key)
-                                    <div class="w-5 h-5 rounded-full bg-[#ffd1da] flex items-center justify-center shrink-0">
-                                        <svg class="w-3 h-3 text-[#e00b41]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="w-5 h-5 rounded-full bg-[#FFE7D1] flex items-center justify-center shrink-0">
+                                        <svg class="w-3 h-3 text-[#CC5A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                         </svg>
                                     </div>
@@ -139,7 +139,7 @@
                         <div class="space-y-3">
                             @foreach ($cohost->activities as $activity)
                                 <div class="flex items-start gap-3 text-sm">
-                                    <div class="w-2 h-2 rounded-full bg-[#ff4d6d] mt-1.5 shrink-0"></div>
+                                    <div class="w-2 h-2 rounded-full bg-[#FF8A1F] mt-1.5 shrink-0"></div>
                                     <div>
                                         <p class="text-gray-700">{{ $activity->description }}</p>
                                         <p class="text-[11px] text-gray-400">{{ $activity->created_at->diffForHumans() }}</p>

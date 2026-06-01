@@ -1,54 +1,19 @@
 <x-filament-panels::page>
     <div class="space-y-6">
+        <x-filament.admin.hero
+            eyebrow="Modération"
+            title="Validation des annonces"
+            subtitle="Accélérez la revue éditoriale, les demandes de corrections et la mise en ligne des résidences avec une lecture plus nette du flux."
+            icon="heroicon-o-home-modern"
+            tone="orange"
+        />
+
         {{-- Stats Cards --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            <x-filament::section>
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-warning-100 dark:bg-warning-900 rounded-lg">
-                        <x-heroicon-o-clock class="w-6 h-6 text-warning-600 dark:text-warning-400"/>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">En attente</p>
-                        <p class="text-2xl font-bold text-warning-600">{{ $pendingCount }}</p>
-                    </div>
-                </div>
-            </x-filament::section>
-
-            <x-filament::section>
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-success-100 dark:bg-success-900 rounded-lg">
-                        <x-heroicon-o-check-circle class="w-6 h-6 text-success-600 dark:text-success-400"/>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Approuvées aujourd'hui</p>
-                        <p class="text-2xl font-bold text-success-600">{{ $todayApproved }}</p>
-                    </div>
-                </div>
-            </x-filament::section>
-
-            <x-filament::section>
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-danger-100 dark:bg-danger-900 rounded-lg">
-                        <x-heroicon-o-x-circle class="w-6 h-6 text-danger-600 dark:text-danger-400"/>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Refusées aujourd'hui</p>
-                        <p class="text-2xl font-bold text-danger-600">{{ $todayRejected }}</p>
-                    </div>
-                </div>
-            </x-filament::section>
-
-            <x-filament::section>
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-info-100 dark:bg-info-900 rounded-lg">
-                        <x-heroicon-o-pencil-square class="w-6 h-6 text-info-600 dark:text-info-400"/>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Modifications demandées</p>
-                        <p class="text-2xl font-bold text-info-600">{{ $changesRequested }}</p>
-                    </div>
-                </div>
-            </x-filament::section>
+            <x-filament.admin.metric-card label="En attente" :value="$pendingCount" icon="heroicon-o-clock" accent="amber" />
+            <x-filament.admin.metric-card label="Approuvées aujourd'hui" :value="$todayApproved" icon="heroicon-o-check-circle" accent="emerald" />
+            <x-filament.admin.metric-card label="Refusées aujourd'hui" :value="$todayRejected" icon="heroicon-o-x-circle" accent="rose" />
+            <x-filament.admin.metric-card label="Modifications demandées" :value="$changesRequested" icon="heroicon-o-pencil-square" accent="sky" />
         </div>
 
         {{-- Table --}}

@@ -55,8 +55,8 @@
             </div>
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
                 <div class="flex items-center">
-                    <div class="shrink-0 w-10 h-10 bg-[#ffd1da] rounded-lg flex items-center justify-center">
-                        <svg class="w-5 h-5 text-[#e00b41]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="shrink-0 w-10 h-10 bg-[#FFE7D1] rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-[#CC5A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
@@ -74,11 +74,11 @@
                 <div class="col-span-2 sm:col-span-1">
                     <label class="block text-xs font-medium text-gray-700 mb-1">Recherche</label>
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="N° facture, nom..." 
-                           class="w-full rounded-lg border-gray-300 text-sm focus:ring-[#ff385c] focus:border-[#ff385c]">
+                           class="w-full rounded-lg border-gray-300 text-sm focus:ring-[#F16A00] focus:border-[#F16A00]">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-700 mb-1">Statut</label>
-                    <select name="status" class="w-full rounded-lg border-gray-300 text-sm focus:ring-[#ff385c] focus:border-[#ff385c]">
+                    <select name="status" class="w-full rounded-lg border-gray-300 text-sm focus:ring-[#F16A00] focus:border-[#F16A00]">
                         <option value="">Tous</option>
                         <option value="paid" {{ request('status') === 'paid' ? 'selected' : '' }}>Payée</option>
                         <option value="sent" {{ request('status') === 'sent' ? 'selected' : '' }}>Envoyée</option>
@@ -89,14 +89,14 @@
                 <div>
                     <label class="block text-xs font-medium text-gray-700 mb-1">Du</label>
                     <input type="date" name="from" value="{{ request('from') }}" 
-                           class="w-full rounded-lg border-gray-300 text-sm focus:ring-[#ff385c] focus:border-[#ff385c]">
+                           class="w-full rounded-lg border-gray-300 text-sm focus:ring-[#F16A00] focus:border-[#F16A00]">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-700 mb-1">Au</label>
                     <input type="date" name="to" value="{{ request('to') }}" 
-                           class="w-full rounded-lg border-gray-300 text-sm focus:ring-[#ff385c] focus:border-[#ff385c]">
+                           class="w-full rounded-lg border-gray-300 text-sm focus:ring-[#F16A00] focus:border-[#F16A00]">
                 </div>
-                <button type="submit" class="col-span-2 sm:col-span-1 px-4 py-2 bg-[#e00b41] text-white rounded-lg text-sm font-medium hover:bg-[#b5083a]">
+                <button type="submit" class="col-span-2 sm:col-span-1 px-4 py-2 bg-[#CC5A00] text-white rounded-lg text-sm font-medium hover:bg-[#A34700]">
                     Filtrer
                 </button>
             </form>
@@ -157,7 +157,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
                                 <div class="flex items-center justify-end space-x-2">
                                     <a href="{{ route('invoices.view', $invoice) }}" 
-                                       class="text-[#e00b41] hover:text-primary-800" title="Voir">
+                                       class="text-[#CC5A00] hover:text-primary-800" title="Voir">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>

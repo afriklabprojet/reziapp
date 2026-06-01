@@ -21,7 +21,7 @@
         <form method="GET" class="flex items-end gap-3">
             <div class="flex-1">
                 <label class="block text-sm font-semibold text-gray-700 mb-1.5">Choisir une résidence</label>
-                <select name="residence_id" class="w-full rounded-xl border-gray-200 text-sm focus:ring-[#ff385c] focus:border-[#ff385c]">
+                <select name="residence_id" class="w-full rounded-xl border-gray-200 text-sm focus:ring-[#F16A00] focus:border-[#F16A00]">
                     <option value="">— Sélectionner une résidence —</option>
                     @foreach($residences as $r)
                     <option value="{{ $r->id }}" {{ request('residence_id') == $r->id ? 'selected' : '' }}>{{ $r->name }}</option>
@@ -56,7 +56,7 @@
         $planFeatures = [
             'basic'    => ['Incendie & explosion', 'Dégâts des eaux', 'Responsabilité civile locataire', 'Franchise ' . number_format(50000, 0, ',', ' ') . ' FCFA'],
             'standard' => ['Tout risque incendie', 'Dégâts des eaux & vandalisme', 'Vol & cambriolage', 'RC locataire + voisins recours', 'Franchise ' . number_format(25000, 0, ',', ' ') . ' FCFA'],
-            'premium'  => ['Couverture tous risques', 'Vol, bris de glace, vandalisme', 'Perte de loyers (3 mois)', 'RC étendue tous tiers', 'Expertise privée incluse', 'Franchise ' . number_format(10000, 0, ',', ' ') . ' FCFA'],
+            'premium'  => ['Couverture tous risques', 'Vol, bris de glace, vandalisme', 'Perte de revenus de location (3 mois)', 'RC étendue tous tiers', 'Expertise privée incluse', 'Franchise ' . number_format(10000, 0, ',', ' ') . ' FCFA'],
         ];
         $planDescriptions = [
             'basic'    => 'Protection essentielle contre les sinistres courants',

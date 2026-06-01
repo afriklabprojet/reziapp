@@ -26,7 +26,7 @@
                         </svg>
                         Quitter
                     </a>
-                    <button @click="saveDraft()" class="text-[#ff385c] hover:text-[#e00b41] font-medium">
+                    <button @click="saveDraft()" class="text-[#F16A00] hover:text-[#CC5A00] font-medium">
                         Sauvegarder le brouillon
                     </button>
                 </div>
@@ -37,9 +37,9 @@
                         <div class="flex items-center" :class="index < steps.length - 1 ? 'flex-1' : ''">
                             <div @click="goToStep(index)"
                                 :class="{
-                                    'bg-[#ff385c] text-white': currentStep >= index,
+                                    'bg-[#F16A00] text-white': currentStep >= index,
                                     'bg-gray-200 text-gray-500': currentStep < index,
-                                    'cursor-pointer hover:bg-[#e00b41]': currentStep > index
+                                    'cursor-pointer hover:bg-[#CC5A00]': currentStep > index
                                 }"
                                 class="w-10 h-10 rounded-full flex items-center justify-center font-semibold transition">
                                 <span x-show="currentStep <= index" x-text="index + 1"></span>
@@ -50,14 +50,14 @@
                                 </svg>
                             </div>
                             <div x-show="index < steps.length - 1"
-                                :class="currentStep > index ? 'bg-[#ff385c]' : 'bg-gray-200'"
+                                :class="currentStep > index ? 'bg-[#F16A00]' : 'bg-gray-200'"
                                 class="flex-1 h-1 mx-2 rounded transition"></div>
                         </div>
                     </template>
                 </div>
                 <div class="flex justify-between mt-2 text-xs text-gray-500">
                     <template x-for="(step, index) in steps" :key="index">
-                        <span :class="currentStep === index ? 'text-[#ff385c] font-medium' : ''"
+                        <span :class="currentStep === index ? 'text-[#F16A00] font-medium' : ''"
                             x-text="step.title"></span>
                     </template>
                 </div>
@@ -79,7 +79,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl mx-auto">
                     <template x-for="type in propertyTypes" :key="type.value">
                         <label
-                            :class="formData.type === type.value ? 'border-[#ff385c] bg-[#fff0f3] ring-2 ring-[#ff385c]' :
+                            :class="formData.type === type.value ? 'border-[#F16A00] bg-[#FFF4EB] ring-2 ring-[#F16A00]' :
                                 'border-gray-200 hover:border-gray-300'"
                             class="relative flex flex-col items-center p-6 border-2 rounded-2xl cursor-pointer transition">
                             <input type="radio" name="type" :value="type.value" x-model="formData.type"
@@ -125,7 +125,7 @@
                         </div>
                         <input type="text" x-model="formData.name" maxlength="100"
                             placeholder="Ex: Superbe appartement avec vue sur la lagune"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                         <p class="mt-1 text-xs text-gray-500"><span x-text="formData.name.length"></span>/100 caractères</p>
                     </div>
 
@@ -149,7 +149,7 @@
                         </div>
                         <textarea x-model="formData.description" rows="5" maxlength="2000"
                             placeholder="Décrivez votre logement, ses atouts, l'ambiance du quartier..."
-                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]"></textarea>
+                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]"></textarea>
                         <p class="mt-1 text-xs text-gray-500"><span x-text="formData.description.length"></span>/2000
                             caractères</p>
                     </div>
@@ -179,7 +179,7 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">Surface (m²)</label>
                             <input type="number" x-model="formData.surface_area" min="10" max="1000"
                                 placeholder="Ex: 75"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                         </div>
                     </div>
                 </div>
@@ -197,7 +197,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Commune *</label>
                         <select x-model="formData.commune"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                             <option value="">Sélectionnez une commune</option>
                             <option value="Cocody">Cocody</option>
                             <option value="Plateau">Plateau</option>
@@ -219,14 +219,14 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">Quartier *</label>
                         <input type="text" x-model="formData.quartier"
                             placeholder="Ex: Riviera Palmeraie, Zone 4, Angré..."
-                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Adresse complète *</label>
                         <input type="text" x-model="formData.address"
                             placeholder="Ex: Rue des Jardins, près du supermarché..."
-                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                     </div>
 
                     <!-- Carte pour sélectionner la position -->
@@ -236,7 +236,7 @@
                             <div id="map-wizard" class="absolute inset-0"></div>
                             <div x-show="!formData.latitude" class="text-center z-10 bg-white/90 p-4 rounded-xl">
                                 <button type="button" @click="detectLocation()"
-                                    class="px-4 py-2 bg-[#ff385c] text-white rounded-xl hover:bg-[#e00b41] flex items-center gap-2 mx-auto">
+                                    class="px-4 py-2 bg-[#F16A00] text-white rounded-xl hover:bg-[#CC5A00] flex items-center gap-2 mx-auto">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -266,7 +266,7 @@
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                         <template x-for="amenity in amenities" :key="amenity.id">
                             <label
-                                :class="formData.amenities.includes(amenity.id) ? 'border-[#ff385c] bg-[#fff0f3]' :
+                                :class="formData.amenities.includes(amenity.id) ? 'border-[#F16A00] bg-[#FFF4EB]' :
                                     'border-gray-200 hover:border-gray-300'"
                                 class="flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition">
                                 <input type="checkbox" :value="amenity.id" x-model="formData.amenities"
@@ -274,7 +274,7 @@
                                 <span class="text-2xl" x-text="amenity.icon"></span>
                                 <span class="text-sm font-medium text-gray-700" x-text="amenity.name"></span>
                                 <svg x-show="formData.amenities.includes(amenity.id)"
-                                    class="w-5 h-5 text-[#ff385c] ml-auto" fill="none" stroke="currentColor"
+                                    class="w-5 h-5 text-[#F16A00] ml-auto" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 13l4 4L19 7" />
@@ -297,7 +297,7 @@
                     <!-- Zone de drop -->
                     <div @dragover.prevent="isDragging = true" @dragleave.prevent="isDragging = false"
                         @drop.prevent="handleDrop($event)"
-                        :class="isDragging ? 'border-[#ff385c] bg-[#fff0f3]' : 'border-gray-300'"
+                        :class="isDragging ? 'border-[#F16A00] bg-[#FFF4EB]' : 'border-gray-300'"
                         class="border-2 border-dashed rounded-2xl p-8 text-center transition">
                         <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -307,7 +307,7 @@
                         </div>
                         <p class="text-gray-600 mb-2">Glissez vos photos ici ou</p>
                         <label
-                            class="inline-block px-6 py-3 bg-[#ff385c] text-white rounded-xl cursor-pointer hover:bg-[#e00b41] transition">
+                            class="inline-block px-6 py-3 bg-[#F16A00] text-white rounded-xl cursor-pointer hover:bg-[#CC5A00] transition">
                             <input type="file" @change="handleFiles($event)" multiple accept="image/*"
                                 class="hidden">
                             Parcourir
@@ -369,7 +369,7 @@
                         <div class="relative">
                             <input type="number" x-model="formData.price_per_day" min="5000" step="500"
                                 placeholder="25000"
-                                class="w-full px-4 py-3 pr-16 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c] text-2xl font-bold">
+                                class="w-full px-4 py-3 pr-16 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00] text-2xl font-bold">
                             <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">FCFA</span>
                         </div>
                     </div>
@@ -381,10 +381,10 @@
                             <div class="relative">
                                 <input type="number" x-model="formData.price_per_week" min="0" step="1000"
                                     :placeholder="formData.price_per_day ? (formData.price_per_day * 6) : '150000'"
-                                    class="w-full px-4 py-3 pr-16 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                    class="w-full px-4 py-3 pr-16 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm">FCFA</span>
                             </div>
-                            <p class="text-xs text-[#ff385c] mt-1"
+                            <p class="text-xs text-[#F16A00] mt-1"
                                 x-show="formData.price_per_week && formData.price_per_day">
                                 💡 Économie de <span
                                     x-text="Math.round((1 - formData.price_per_week / (formData.price_per_day * 7)) * 100)"></span>%
@@ -396,10 +396,10 @@
                             <div class="relative">
                                 <input type="number" x-model="formData.price_per_month" min="0" step="5000"
                                     :placeholder="formData.price_per_day ? (formData.price_per_day * 25) : '600000'"
-                                    class="w-full px-4 py-3 pr-16 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                    class="w-full px-4 py-3 pr-16 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm">FCFA</span>
                             </div>
-                            <p class="text-xs text-[#ff385c] mt-1"
+                            <p class="text-xs text-[#F16A00] mt-1"
                                 x-show="formData.price_per_month && formData.price_per_day">
                                 💡 Économie de <span
                                     x-text="Math.round((1 - formData.price_per_month / (formData.price_per_day * 30)) * 100)"></span>%
@@ -408,7 +408,7 @@
                     </div>
 
                     <!-- Estimation de revenus -->
-                    <div class="bg-[#fff0f3] rounded-xl p-4" x-show="formData.price_per_day">
+                    <div class="bg-[#FFF4EB] rounded-xl p-4" x-show="formData.price_per_day">
 
                     <!-- Frais de ménage -->
                     <div class="border-t border-gray-100 pt-4 mt-2">
@@ -419,30 +419,30 @@
                         <div class="relative">
                             <input type="number" x-model="formData.cleaning_fee" min="0" step="500"
                                 placeholder="0"
-                                class="w-full px-4 py-3 pr-16 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                                class="w-full px-4 py-3 pr-16 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                             <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm">FCFA</span>
                         </div>
-                        <p class="text-xs text-gray-500 mt-1">Facturés une seule fois par séjour, en sus du loyer.</p>
+                        <p class="text-xs text-gray-500 mt-1">Facturés une seule fois par séjour, en sus du montant de location.</p>
                     </div>
 
                     <!-- Estimation de revenus -->
-                    <div class="bg-[#fff0f3] rounded-xl p-4 mt-4" x-show="formData.price_per_day">
-                        <h4 class="font-medium text-[#b5083a] mb-2">💰 Estimation de revenus</h4>
+                    <div class="bg-[#FFF4EB] rounded-xl p-4 mt-4" x-show="formData.price_per_day">
+                        <h4 class="font-medium text-[#A34700] mb-2">💰 Estimation de revenus</h4>
                         <div class="grid grid-cols-3 gap-4 text-center">
                             <div>
-                                <p class="text-2xl font-bold text-[#ff385c]"
+                                <p class="text-2xl font-bold text-[#F16A00]"
                                     x-text="formatPrice(formData.price_per_day * 15)"></p>
-                                <p class="text-xs text-[#e00b41]">50% occupation</p>
+                                <p class="text-xs text-[#CC5A00]">50% occupation</p>
                             </div>
                             <div>
-                                <p class="text-2xl font-bold text-[#ff385c]"
+                                <p class="text-2xl font-bold text-[#F16A00]"
                                     x-text="formatPrice(formData.price_per_day * 22)"></p>
-                                <p class="text-xs text-[#e00b41]">75% occupation</p>
+                                <p class="text-xs text-[#CC5A00]">75% occupation</p>
                             </div>
                             <div>
-                                <p class="text-2xl font-bold text-[#ff385c]"
+                                <p class="text-2xl font-bold text-[#F16A00]"
                                     x-text="formatPrice(formData.price_per_day * 30)"></p>
-                                <p class="text-xs text-[#e00b41]">100% occupation</p>
+                                <p class="text-xs text-[#CC5A00]">100% occupation</p>
                             </div>
                         </div>
                     </div>
@@ -491,7 +491,7 @@
                             </div>
                             <div class="flex justify-between py-2">
                                 <span class="text-gray-500">Prix par jour</span>
-                                <span class="font-bold text-[#ff385c]"
+                                <span class="font-bold text-[#F16A00]"
                                     x-text="formatPrice(formData.price_per_day) + ' FCFA'"></span>
                             </div>
                         </div>
@@ -502,9 +502,9 @@
                         <h3 class="font-semibold text-gray-900 mb-4">Options de publication</h3>
 
                         <label
-                            class="flex items-start gap-4 p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 has-checked:border-[#ff385c] has-checked:bg-[#fff0f3] mb-3">
+                            class="flex items-start gap-4 p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB] mb-3">
                             <input type="checkbox" x-model="formData.is_available"
-                                class="mt-1 w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
+                                class="mt-1 w-5 h-5 text-[#F16A00] border-gray-300 rounded focus:ring-[#F16A00]">
                             <div>
                                 <span class="font-medium text-gray-900">Disponible immédiatement</span>
                                 <p class="text-sm text-gray-500">Votre annonce sera visible dès approbation</p>
@@ -512,16 +512,16 @@
                         </label>
 
                         <label
-                            class="flex items-start gap-4 p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 has-checked:border-[#ff385c] has-checked:bg-[#fff0f3]">
+                            class="flex items-start gap-4 p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB]">
                             <input type="checkbox" x-model="formData.accept_terms"
-                                class="mt-1 w-5 h-5 text-[#ff385c] border-gray-300 rounded focus:ring-[#ff385c]">
+                                class="mt-1 w-5 h-5 text-[#F16A00] border-gray-300 rounded focus:ring-[#F16A00]">
                             <div>
                                 <span class="font-medium text-gray-900">J'accepte les conditions *</span>
                                 <p class="text-sm text-gray-500">J'ai lu et j'accepte les <a
-                                        href="{{ route('pages.cgu') }}" class="text-[#ff385c] hover:underline"
+                                        href="{{ route('pages.cgu') }}" class="text-[#F16A00] hover:underline"
                                         target="_blank">conditions d'utilisation</a> et la <a
                                         href="{{ route('pages.confidentialite') }}"
-                                        class="text-[#ff385c] hover:underline" target="_blank">politique de
+                                        class="text-[#F16A00] hover:underline" target="_blank">politique de
                                         confidentialité</a></p>
                             </div>
                         </label>
@@ -542,7 +542,7 @@
 
                 <button type="button" @click="nextStep()" x-show="currentStep < steps.length - 1"
                     :disabled="!canProceed()"
-                    :class="canProceed() ? 'bg-[#ff385c] hover:bg-[#e00b41]' : 'bg-gray-300 cursor-not-allowed'"
+                    :class="canProceed() ? 'bg-[#F16A00] hover:bg-[#CC5A00]' : 'bg-gray-300 cursor-not-allowed'"
                     class="px-6 py-3 text-white rounded-xl transition flex items-center gap-2">
                     Continuer
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -552,7 +552,7 @@
 
                 <button type="submit" x-show="currentStep === steps.length - 1"
                     :disabled="!formData.accept_terms || isSubmitting"
-                    :class="formData.accept_terms && !isSubmitting ? 'bg-[#ff385c] hover:bg-[#e00b41]' :
+                    :class="formData.accept_terms && !isSubmitting ? 'bg-[#F16A00] hover:bg-[#CC5A00]' :
                         'bg-gray-300 cursor-not-allowed'"
                     class="px-8 py-3 text-white rounded-xl transition flex items-center gap-2">
                     <span x-show="!isSubmitting">🎉 Publier mon annonce</span>

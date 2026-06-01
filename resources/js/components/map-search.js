@@ -17,16 +17,17 @@ export default function mapSearch(config) {
         userLocation: null,
         config: config,
         useClustering: true,
+        resizeHandler: null,
 
         async initMap() {
             // Attendre que Mapbox GL JS soit chargé
-            if (!window.mapboxgl) {
+            if (!globalThis.mapboxgl) {
                 let attempts = 0;
-                while (!window.mapboxgl && attempts < 50) {
+                while (!globalThis.mapboxgl && attempts < 50) {
                     await new Promise(r => setTimeout(r, 100));
                     attempts++;
                 }
-                if (!window.mapboxgl) {
+                if (!globalThis.mapboxgl) {
                     console.error('Mapbox GL JS non chargé après attente');
                     this.loading = false;
                     return;
@@ -43,8 +44,19 @@ export default function mapSearch(config) {
                 attributionControl: false,
             });
 
+            this.resizeHandler = () => {
+                if (!this.map) return;
+                requestAnimationFrame(() => this.map.resize());
+            };
+
+            this.$nextTick(() => this.resizeHandler());
+            globalThis.addEventListener('resize', this.resizeHandler);
+            globalThis.addEventListener('orientationchange', this.resizeHandler);
+            globalThis.addEventListener('map:resize', this.resizeHandler);
+
             this.map.on('load', () => {
                 this.loading = false;
+                this.resizeHandler();
                 this.addClusterSource(config.residences);
                 this.addMarkers(config.residences);
 
@@ -62,7 +74,7 @@ export default function mapSearch(config) {
                 clearTimeout(this._boundsTimer);
                 this._boundsTimer = setTimeout(() => {
                     const b = this.map.getBounds();
-                    window.dispatchEvent(new CustomEvent('map:bounds-changed', {
+                    globalThis.dispatchEvent(new CustomEvent('map:bounds-changed', {
                         detail: {
                             sw_lat: b.getSouth(),
                             sw_lng: b.getWest(),
@@ -82,22 +94,26 @@ export default function mapSearch(config) {
             });
 
             // Écouter les événements globaux
-            window.addEventListener('map:update-residences', (e) => {
+            globalThis.addEventListener('map:update-residences', (e) => {
                 this.clearMarkers();
                 this.updateClusterSource(e.detail.residences);
                 this.addMarkers(e.detail.residences);
             });
 
-            window.addEventListener('map:highlight-residence', (e) => {
+            globalThis.addEventListener('map:highlight-residence', (e) => {
                 this.highlightMarker(e.detail.id);
             });
 
-            window.addEventListener('map:update-radius', (e) => {
+            globalThis.addEventListener('map:update-radius', (e) => {
                 this.updateRadius(e.detail.radius);
             });
 
-            window.addEventListener('map:center-on', (e) => {
+            globalThis.addEventListener('map:center-on', (e) => {
                 this.flyTo(e.detail.lat, e.detail.lng, e.detail.zoom || 14);
+            });
+
+            globalThis.addEventListener('map:fit-residences', (e) => {
+                this.fitResidences(e.detail.residences, e.detail.userLocation);
             });
         },
 
@@ -127,7 +143,7 @@ export default function mapSearch(config) {
                         thumbnail: r.thumbnail,
                         commune: r.location?.commune || r.commune || '',
                         quartier: r.location?.quartier || r.quartier || '',
-                        is_available: r.is_available !== undefined ? r.is_available : true,
+                        is_available: r.is_available === undefined ? true : r.is_available,
                     },
                 }));
 
@@ -233,13 +249,13 @@ export default function mapSearch(config) {
                 });
 
                 el.addEventListener('mouseenter', () => {
-                    window.dispatchEvent(new CustomEvent('map:residence-hover', {
+                    globalThis.dispatchEvent(new CustomEvent('map:residence-hover', {
                         detail: { id: residence.id }
                     }));
                 });
 
                 el.addEventListener('mouseleave', () => {
-                    window.dispatchEvent(new CustomEvent('map:residence-unhover', {
+                    globalThis.dispatchEvent(new CustomEvent('map:residence-unhover', {
                         detail: { id: residence.id }
                     }));
                 });
@@ -260,7 +276,7 @@ export default function mapSearch(config) {
         createMarkerHTML(residence) {
             const price = this.formatPriceShort(residence.price);
             const priceLabel = residence.price_label || '/jour';
-            const isAvailable = residence.is_available !== undefined ? residence.is_available : true;
+            const isAvailable = residence.is_available === undefined ? true : residence.is_available;
             const bgColor = isAvailable ? 'bg-emerald-600' : 'bg-gray-400';
             const borderColor = isAvailable ? 'border-t-emerald-600' : 'border-t-gray-400';
             const statusDot = isAvailable
@@ -429,7 +445,7 @@ export default function mapSearch(config) {
                     }
 
                     // Émettre l'événement avec précision
-                    window.dispatchEvent(new CustomEvent('map:user-location', {
+                    globalThis.dispatchEvent(new CustomEvent('map:user-location', {
                         detail: { ...this.userLocation, accuracy }
                     }));
                 },
@@ -457,6 +473,34 @@ export default function mapSearch(config) {
             });
         },
 
+        fitResidences(residences, userLocation = null) {
+            if (!this.map || !globalThis.mapboxgl) return;
+
+            const bounds = new globalThis.mapboxgl.LngLatBounds();
+            let hasBounds = false;
+
+            if (userLocation && Number.isFinite(userLocation.lat) && Number.isFinite(userLocation.lng)) {
+                bounds.extend([userLocation.lng, userLocation.lat]);
+                hasBounds = true;
+            }
+
+            (residences || []).forEach((residence) => {
+                const lat = Number(residence.location?.latitude || residence.latitude);
+                const lng = Number(residence.location?.longitude || residence.longitude);
+                if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+                bounds.extend([lng, lat]);
+                hasBounds = true;
+            });
+
+            if (!hasBounds) return;
+
+            this.map.fitBounds(bounds, {
+                padding: { top: 96, right: 64, bottom: 148, left: 64 },
+                maxZoom: 14,
+                duration: 700,
+            });
+        },
+
         zoomIn() {
             this.map.zoomIn();
         },
@@ -480,6 +524,12 @@ export default function mapSearch(config) {
 
         // Nettoyer au démontage
         destroy() {
+            if (this.resizeHandler) {
+                globalThis.removeEventListener('resize', this.resizeHandler);
+                globalThis.removeEventListener('orientationchange', this.resizeHandler);
+                globalThis.removeEventListener('map:resize', this.resizeHandler);
+            }
+
             if (this.map) {
                 this.map.remove();
             }

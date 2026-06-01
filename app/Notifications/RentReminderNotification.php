@@ -28,15 +28,15 @@ class RentReminderNotification extends Notification implements ShouldQueue
     {
         $isOverdue = $this->reminder->isOverdue();
         $subject   = $isOverdue
-            ? 'Rappel urgent : Loyer en retard'
-            : 'Rappel : Loyer à venir';
+            ? 'Rappel urgent : Paiement de location en retard'
+            : 'Rappel : Paiement de location à venir';
 
         return (new MailMessage())
             ->subject($subject.' — '.$this->reminder->residence?->name)
             ->greeting('Bonjour '.$notifiable->name.',')
             ->line($isOverdue
-                ? 'Votre loyer de '.number_format($this->reminder->amount, 0, ',', ' ').' FCFA est en retard.'
-                : 'Votre loyer de '.number_format($this->reminder->amount, 0, ',', ' ').' FCFA arrive à échéance le '.$this->reminder->due_date->translatedFormat('d F Y').'.')
+                ? 'Votre paiement de location de '.number_format($this->reminder->amount, 0, ',', ' ').' FCFA est en retard.'
+                : 'Votre paiement de location de '.number_format($this->reminder->amount, 0, ',', ' ').' FCFA arrive à échéance le '.$this->reminder->due_date->translatedFormat('d F Y').'.')
             ->line('Résidence : '.($this->reminder->residence?->name ?? 'N/A'))
             ->action('Voir mes paiements', url('/'))
             ->salutation('L\'équipe REZI');

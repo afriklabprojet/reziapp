@@ -158,7 +158,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">
                         <span x-show="leaseType === 'short_term'">Tarif par nuit (FCFA) *</span>
-                        <span x-show="leaseType !== 'short_term'">Loyer mensuel (FCFA) *</span>
+                        <span x-show="leaseType !== 'short_term'">Montant mensuel de location (FCFA) *</span>
                     </label>
                     <input type="number" name="monthly_rent" value="{{ old('monthly_rent') }}" required min="0" step="500"
                         class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm">
@@ -177,7 +177,7 @@
                         class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm">
                 </div>
                 <div x-show="leaseType !== 'short_term'">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Jour d'échéance du loyer</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Jour d'échéance du paiement</label>
                     <input type="number" name="payment_day" value="{{ old('payment_day', 5) }}" min="1" max="28"
                         class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                         placeholder="Ex: 5 (pour le 5 du mois)">
@@ -271,7 +271,7 @@
             {{-- Services inclus --}}
             <div>
                 <div class="flex items-center justify-between mb-1">
-                    <label class="block text-sm font-medium text-gray-700">Services inclus dans le loyer</label>
+                    <label class="block text-sm font-medium text-gray-700">Services inclus dans la location</label>
                     <button type="button" @click="suggestServices()" :disabled="aiServicesLoading"
                         class="inline-flex items-center gap-1 px-2.5 py-1 bg-violet-50 text-violet-700 rounded-lg text-xs font-medium hover:bg-violet-100 transition disabled:opacity-50">
                         <svg x-show="!aiServicesLoading" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -313,7 +313,7 @@
                 <textarea name="special_clauses" rows="6" x-model="clauses"
                     class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                     placeholder="Conditions spéciales, restrictions, règles particulières..."></textarea>
-                <p class="text-xs text-gray-400 mt-1">L'IA génère des clauses basées sur le type de bail, le loyer et les services — vous pouvez les modifier librement.</p>
+                <p class="text-xs text-gray-400 mt-1">L'IA génère des clauses basées sur le type de bail, le montant de location et les services — vous pouvez les modifier librement.</p>
             </div>
         </div>
 

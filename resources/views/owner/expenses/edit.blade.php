@@ -17,7 +17,7 @@
 
         <div>
             <label for="residence_id" class="block text-sm font-semibold text-gray-700 mb-1">Résidence *</label>
-            <select name="residence_id" id="residence_id" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]">
+            <select name="residence_id" id="residence_id" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#F16A00] focus:border-[#F16A00]">
                 @foreach($residences as $r)
                     <option value="{{ $r->id }}" {{ old('residence_id', $expense->residence_id) == $r->id ? 'selected' : '' }}>{{ $r->name }}</option>
                 @endforeach
@@ -27,7 +27,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
                 <label for="category" class="block text-sm font-semibold text-gray-700 mb-1">Catégorie *</label>
-                <select name="category" id="category" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                <select name="category" id="category" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#F16A00] focus:border-[#F16A00]">
                     @foreach($categories as $key => $label)
                         <option value="{{ $key }}" {{ old('category', $expense->category) === $key ? 'selected' : '' }}>{{ $label }}</option>
                     @endforeach
@@ -35,18 +35,18 @@
             </div>
             <div>
                 <label for="expense_date" class="block text-sm font-semibold text-gray-700 mb-1">Date *</label>
-                <input type="date" name="expense_date" id="expense_date" value="{{ old('expense_date', $expense->expense_date->format('Y-m-d')) }}" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                <input type="date" name="expense_date" id="expense_date" value="{{ old('expense_date', $expense->expense_date->format('Y-m-d')) }}" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#F16A00] focus:border-[#F16A00]">
             </div>
         </div>
 
         <div>
             <label for="description" class="block text-sm font-semibold text-gray-700 mb-1">Description *</label>
-            <input type="text" name="description" id="description" value="{{ old('description', $expense->description) }}" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]">
+            <input type="text" name="description" id="description" value="{{ old('description', $expense->description) }}" required class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#F16A00] focus:border-[#F16A00]">
         </div>
 
         <div>
             <label for="amount" class="block text-sm font-semibold text-gray-700 mb-1">Montant (FCFA) *</label>
-            <input type="number" name="amount" id="amount" value="{{ old('amount', $expense->amount) }}" required min="0" class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]">
+            <input type="number" name="amount" id="amount" value="{{ old('amount', $expense->amount) }}" required min="0" class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#F16A00] focus:border-[#F16A00]">
         </div>
 
         <div>
@@ -56,7 +56,7 @@
 
         <div>
             <label for="notes" class="block text-sm font-semibold text-gray-700 mb-1">Notes</label>
-            <textarea name="notes" id="notes" rows="2" class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#ff385c] focus:border-[#ff385c]">{{ old('notes', $expense->notes) }}</textarea>
+            <textarea name="notes" id="notes" rows="2" class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:ring-[#F16A00] focus:border-[#F16A00]">{{ old('notes', $expense->notes) }}</textarea>
         </div>
 
         <div class="flex justify-end gap-3 pt-3 border-t border-gray-100">

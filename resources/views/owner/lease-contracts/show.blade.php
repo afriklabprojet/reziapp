@@ -95,7 +95,7 @@
                 <h2 class="font-semibold text-gray-800 mb-4">Conditions financières</h2>
                 <div class="space-y-3">
                     <div class="flex justify-between">
-                        <span class="text-gray-600">{{ $contract->lease_type === 'short_term' ? 'Tarif par nuit' : 'Loyer mensuel' }}</span>
+                        <span class="text-gray-600">{{ $contract->lease_type === 'short_term' ? 'Tarif par nuit' : 'Montant mensuel de location' }}</span>
                         <span class="font-semibold text-gray-900">{{ number_format($contract->monthly_rent, 0, ',', ' ') }} FCFA</span>
                     </div>
                     @if($contract->charges_amount)

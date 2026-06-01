@@ -40,7 +40,7 @@ class CleaningTaskResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('residence_id')
                             ->label('Résidence')
-                            ->relationship('residence', 'title')
+                            ->relationship('residence', 'name')
                             ->searchable()
                             ->preload()
                             ->required(),

@@ -1,12 +1,12 @@
 @extends('layouts.owner')
 
-@section('title', 'Relances de loyer — REZI')
+@section('title', 'Relances de paiement — REZI')
 
 @section('owner-content')
 <div class="space-y-6">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Relances de loyer</h1>
+            <h1 class="text-2xl font-bold text-gray-900">Relances de paiement</h1>
             <p class="text-sm text-gray-500 mt-1">Gérez les rappels de paiement automatiques</p>
         </div>
         <a href="{{ route('owner.rent-reminders.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-all text-sm">
@@ -23,7 +23,7 @@
                 <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" /></svg>
             </div>
             <div>
-                <p class="font-semibold text-red-900">{{ $overdue['count'] }} loyer{{ $overdue['count'] > 1 ? 's' : '' }} en retard</p>
+                <p class="font-semibold text-red-900">{{ $overdue['count'] }} paiement{{ $overdue['count'] > 1 ? 's' : '' }} de location en retard</p>
                 <p class="text-sm text-red-700 mt-0.5">Total impayé : {{ number_format($overdue['total_amount'], 0, ',', ' ') }} FCFA</p>
             </div>
         </div>
@@ -85,7 +85,7 @@
                         <div class="flex gap-2">
                             <form method="POST" action="{{ route('owner.rent-reminders.send', $reminder) }}">
                                 @csrf
-                                <button class="px-3 py-1.5 text-xs font-semibold bg-[#fff0f3] text-[#e00b41] rounded-lg hover:bg-[#ffd1da] transition-colors">Relancer</button>
+                                <button class="px-3 py-1.5 text-xs font-semibold bg-[#FFF4EB] text-[#CC5A00] rounded-lg hover:bg-[#FFE7D1] transition-colors">Relancer</button>
                             </form>
                             <form method="POST" action="{{ route('owner.rent-reminders.mark-paid', $reminder) }}">
                                 @csrf

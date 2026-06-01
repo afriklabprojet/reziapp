@@ -42,8 +42,8 @@ class StoreLeaseContractRequest extends FormRequest
             'start_date.after_or_equal' => 'La date de début doit être aujourd\'hui ou ultérieure.',
             'end_date.after'       => 'La date de fin doit être après la date de début.',
             'lease_type.required'  => 'Le type de bail est obligatoire.',
-            'monthly_rent.required' => 'Le montant du loyer est obligatoire.',
-            'monthly_rent.min'     => 'Le loyer ne peut pas être négatif.',
+            'monthly_rent.required' => 'Le montant de location est obligatoire.',
+            'monthly_rent.min'     => 'Le montant de location ne peut pas être négatif.',
             'payment_day.min'      => 'Le jour de paiement doit être entre 1 et 28.',
             'payment_day.max'      => 'Le jour de paiement doit être entre 1 et 28.',
         ];

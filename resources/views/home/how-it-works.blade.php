@@ -4,7 +4,7 @@
                         {{-- Header --}}
                         <div class="text-center mb-14 sm:mb-20 reveal-hidden"
                             x-intersect.once="$el.classList.add('reveal-visible')">
-                            <div class="inline-flex items-center gap-2 bg-[#ffd1da] text-[#e00b41] px-4 py-2 rounded-full text-sm font-bold mb-5">
+                            <div class="inline-flex items-center gap-2 bg-[#FFE7D1] text-[#CC5A00] px-4 py-2 rounded-full text-sm font-bold mb-5">
                                 <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                                 </svg>
@@ -22,19 +22,19 @@
                         {{-- 3 Steps --}}
                         <div class="relative grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
                             {{-- Ligne connectrice (desktop) --}}
-                            <div class="hidden md:block absolute left-[calc(16.67%+3rem)] right-[calc(16.67%+3rem)] h-px bg-linear-to-r from-[#ffb3c1] via-[#ff385c] to-[#ffb3c1] z-0" style="top: 2.5rem;"></div>
+                            <div class="hidden md:block absolute left-[calc(16.67%+3rem)] right-[calc(16.67%+3rem)] h-px bg-linear-to-r from-[#FFD0A3] via-[#F16A00] to-[#FFD0A3] z-0" style="top: 2.5rem;"></div>
 
                             {{-- Étape 1 — Recherchez --}}
                             <div class="relative flex flex-col items-center text-center reveal-hidden reveal-delay-1"
                                 x-intersect.once="$el.classList.add('reveal-visible')">
                                 <div class="relative z-10 mb-6">
-                                    <div class="w-20 h-20 bg-linear-to-br from-[#ff4d6d] to-[#e00b41] rounded-2xl flex items-center justify-center shadow-xl shadow-none transition-transform duration-300 hover:scale-105">
+                                    <div class="w-20 h-20 bg-linear-to-br from-[#FF8A1F] to-[#CC5A00] rounded-2xl flex items-center justify-center shadow-xl shadow-none transition-transform duration-300 hover:scale-105">
                                         <svg aria-hidden="true" class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                         </svg>
                                     </div>
-                                    <div class="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md border border-[#ffd1da]">
-                                        <span class="text-sm font-black text-[#ff385c]">1</span>
+                                    <div class="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md border border-[#FFE7D1]">
+                                        <span class="text-sm font-black text-[#F16A00]">1</span>
                                     </div>
                                 </div>
                                 <h3 class="text-xl font-bold text-gray-900 mb-3">Recherchez</h3>
@@ -47,7 +47,7 @@
                             <div class="relative flex flex-col items-center text-center reveal-hidden reveal-delay-3"
                                 x-intersect.once="$el.classList.add('reveal-visible')">
                                 <div class="relative z-10 mb-6">
-                                    <div class="w-20 h-20 bg-linear-to-br from-[#ff385c] to-amber-500 rounded-2xl flex items-center justify-center shadow-xl shadow-amber-500/30 transition-transform duration-300 hover:scale-105">
+                                    <div class="w-20 h-20 bg-linear-to-br from-[#F16A00] to-amber-500 rounded-2xl flex items-center justify-center shadow-xl shadow-amber-500/30 transition-transform duration-300 hover:scale-105">
                                         <svg aria-hidden="true" class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                                         </svg>
@@ -66,13 +66,13 @@
                             <div class="relative flex flex-col items-center text-center reveal-hidden reveal-delay-5"
                                 x-intersect.once="$el.classList.add('reveal-visible')">
                                 <div class="relative z-10 mb-6">
-                                    <div class="w-20 h-20 bg-linear-to-br from-amber-400 to-[#ff385c] rounded-2xl flex items-center justify-center shadow-xl shadow-terracotta-500/25 transition-transform duration-300 hover:scale-105">
+                                    <div class="w-20 h-20 bg-linear-to-br from-amber-400 to-[#F16A00] rounded-2xl flex items-center justify-center shadow-xl shadow-terracotta-500/25 transition-transform duration-300 hover:scale-105">
                                         <svg aria-hidden="true" class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                                         </svg>
                                     </div>
-                                    <div class="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md border border-[#ffd1da]">
-                                        <span class="text-sm font-black text-[#e00b41]">3</span>
+                                    <div class="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md border border-[#FFE7D1]">
+                                        <span class="text-sm font-black text-[#CC5A00]">3</span>
                                     </div>
                                 </div>
                                 <h3 class="text-xl font-bold text-gray-900 mb-3">Emménagez</h3>

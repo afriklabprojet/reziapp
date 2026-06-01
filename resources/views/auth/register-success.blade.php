@@ -4,7 +4,7 @@
     <div class="min-h-[calc(100vh-56px)] md:min-h-[calc(100vh-64px)] flex">
         {{-- Left Side - Branding (Desktop only) --}}
         <div
-            class="hidden lg:flex lg:w-1/2 bg-linear-to-br from-[#ff385c] via-[#ff385c] to-green-700 relative overflow-hidden">
+            class="hidden lg:flex lg:w-1/2 bg-linear-to-br from-[#F16A00] via-[#F16A00] to-green-700 relative overflow-hidden">
             {{-- Background Pattern --}}
             <div class="absolute inset-0 opacity-10">
                 <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -37,11 +37,11 @@
             <div class="relative z-10 flex flex-col justify-center items-center w-full p-12 text-white">
                 <div class="mb-8">
                     <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-2xl">
-                        <span class="text-3xl font-bold bg-linear-to-r from-[#ff385c] to-[#ff385c] bg-clip-text text-transparent">R</span>
+                        <span class="text-3xl font-bold bg-linear-to-r from-[#F16A00] to-[#F16A00] bg-clip-text text-transparent">R</span>
                     </div>
                 </div>
                 <h1 class="text-4xl font-bold text-center mb-4">Bienvenue sur REZI !</h1>
-                <p class="text-xl text-[#ffd1da] text-center mb-12 max-w-md">
+                <p class="text-xl text-[#FFE7D1] text-center mb-12 max-w-md">
                     Votre compte a été créé avec succès. Découvrez des centaines de résidences meublées à Abidjan.
                 </p>
                 <div class="space-y-4 w-full max-w-sm">
@@ -53,7 +53,7 @@
                         </div>
                         <div>
                             <p class="font-semibold">+500 résidences disponibles</p>
-                            <p class="text-[#ffb3c1] text-sm">Résidences meublées à Abidjan et environs</p>
+                            <p class="text-[#FFD0A3] text-sm">Résidences meublées à Abidjan et environs</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-4">
@@ -64,7 +64,7 @@
                         </div>
                         <div>
                             <p class="font-semibold">Réservation instantanée</p>
-                            <p class="text-[#ffb3c1] text-sm">Réservez et payez en ligne en quelques clics</p>
+                            <p class="text-[#FFD0A3] text-sm">Réservez et payez en ligne en quelques clics</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-4">
@@ -75,7 +75,7 @@
                         </div>
                         <div>
                             <p class="font-semibold">Support 7j/7</p>
-                            <p class="text-[#ffb3c1] text-sm">Notre équipe est disponible pour vous aider</p>
+                            <p class="text-[#FFD0A3] text-sm">Notre équipe est disponible pour vous aider</p>
                         </div>
                     </div>
                 </div>
@@ -101,7 +101,7 @@
 
                         <h2 class="text-2xl font-bold text-gray-900 mb-2">Inscription réussie !</h2>
                         <p class="text-gray-500 mb-2">
-                            Bienvenue, <span class="font-semibold text-[#ff385c]">{{ auth()->user()->name ?? '' }}</span> 👋
+                            Bienvenue, <span class="font-semibold text-[#F16A00]">{{ auth()->user()->name ?? '' }}</span> 👋
                         </p>
                         <p class="text-gray-500 mb-8">
                             Votre compte a été créé avec succès. Vous êtes maintenant connecté et prêt à explorer les meilleures résidences d'Abidjan.
@@ -127,7 +127,7 @@
                         {{-- CTAs --}}
                         <div class="space-y-3">
                             <a href="{{ route('home') }}"
-                                class="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#ff385c] hover:bg-[#e00b41] text-white font-semibold rounded-xl transition-colors">
+                                class="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#F16A00] hover:bg-[#CC5A00] text-white font-semibold rounded-xl transition-colors">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -175,7 +175,7 @@
 
                         <div class="space-y-3">
                             <a href="{{ route('register') }}"
-                                class="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#ff385c] hover:bg-[#e00b41] text-white font-semibold rounded-xl transition-colors">
+                                class="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#F16A00] hover:bg-[#CC5A00] text-white font-semibold rounded-xl transition-colors">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -203,7 +203,7 @@
                         <h2 class="text-2xl font-bold text-gray-900 mb-2">Page inaccessible</h2>
                         <p class="text-gray-500 mb-6">Vous n'avez pas accès à cette page directement.</p>
                         <a href="{{ route('register') }}"
-                            class="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#ff385c] hover:bg-[#e00b41] text-white font-semibold rounded-xl transition-colors">
+                            class="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#F16A00] hover:bg-[#CC5A00] text-white font-semibold rounded-xl transition-colors">
                             Créer un compte
                         </a>
                     </div>

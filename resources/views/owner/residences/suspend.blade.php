@@ -8,7 +8,7 @@
             <!-- Header -->
             <div class="mb-8">
                 <nav class="flex items-center gap-2 text-sm text-gray-500 mb-4">
-                    <a href="{{ route('owner.residences.show', $residence) }}" class="hover:text-[#ff385c]">← Retour à
+                    <a href="{{ route('owner.residences.show', $residence) }}" class="hover:text-[#F16A00]">← Retour à
                         l'annonce</a>
                 </nav>
                 <h1 class="text-3xl font-bold text-gray-900">Suspendre l'annonce</h1>
@@ -52,7 +52,7 @@
                     <p class="text-gray-600 mb-6">Votre annonce sera à nouveau visible sur REZI.</p>
 
                     <button type="submit"
-                        class="w-full px-6 py-3 bg-[#ff385c] text-white rounded-xl hover:bg-[#e00b41] transition flex items-center justify-center gap-2">
+                        class="w-full px-6 py-3 bg-[#F16A00] text-white rounded-xl hover:bg-[#CC5A00] transition flex items-center justify-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
@@ -80,9 +80,9 @@
             'other' => '📝 Autre raison',
         ] as $value => $label)
                                 <label
-                                    class="flex items-center gap-3 p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 has-checked:border-[#ff385c] has-checked:bg-[#fff0f3]">
+                                    class="flex items-center gap-3 p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 has-checked:border-[#F16A00] has-checked:bg-[#FFF4EB]">
                                     <input type="radio" name="suspension_reason" value="{{ $value }}"
-                                        class="w-5 h-5 text-[#ff385c] border-gray-300 focus:ring-[#ff385c]"
+                                        class="w-5 h-5 text-[#F16A00] border-gray-300 focus:ring-[#F16A00]"
                                         {{ old('suspension_reason') === $value ? 'checked' : '' }}>
                                     <span class="font-medium text-gray-700">{{ $label }}</span>
                                 </label>
@@ -100,13 +100,13 @@
 
                         <input type="date" name="resume_at" value="{{ old('resume_at') }}"
                             min="{{ now()->addDay()->format('Y-m-d') }}"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">
+                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                     </div>
 
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                         <h2 class="text-lg font-semibold text-gray-900 mb-4">Note (optionnel)</h2>
                         <textarea name="suspension_note" rows="3" placeholder="Notes pour vous rappeler les détails..."
-                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#ff385c] focus:border-[#ff385c]">{{ old('suspension_note') }}</textarea>
+                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">{{ old('suspension_note') }}</textarea>
                     </div>
 
                     <!-- Avertissement -->

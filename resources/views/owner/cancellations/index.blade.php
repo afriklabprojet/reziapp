@@ -84,7 +84,7 @@
         @else
             <div class="space-y-3">
                 @foreach ($cancellations as $cancellation)
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:border-[#ffb3c1] transition">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:border-[#FFD0A3] transition">
                         <div class="flex items-start justify-between gap-4">
                             <div class="flex items-start gap-4 flex-1 min-w-0">
                                 {{-- Photo résidence --}}

@@ -420,8 +420,8 @@ class PageContent extends Model
                     'a' => 'Oui, à 100%. La publication de base est gratuite et le restera toujours. Vous payez uniquement si vous souhaitez activer des options de visibilité Boost pour accélérer vos mises en location.',
                 ],
                 [
-                    'q' => 'REZI prend-il une commission sur mes loyers ?',
-                    'a' => 'Non. REZI ne prend aucune commission sur vos revenus locatifs. Vous encaissez 100% de vos loyers directement avec vos locataires, sans intermédiaire.',
+                    'q' => 'REZI prend-il une commission sur mes locations ?',
+                    'a' => 'Oui. REZI prélève 10% sur le montant total de chaque réservation confirmée, côté propriétaire. Il n\'y a en revanche aucun abonnement mensuel ou annuel à payer.',
                 ],
                 [
                     'q' => 'Les locataires paient-ils quelque chose ?',
@@ -433,7 +433,7 @@ class PageContent extends Model
                 ],
                 [
                     'q' => "Comment REZI gagne-t-il de l'argent ?",
-                    'a' => "REZI se rémunère uniquement sur les options Boost optionnelles que les propriétaires peuvent activer pour gagner en visibilité. La plateforme et la mise en relation restent gratuites.",
+                    'a' => "REZI génère ses revenus principalement via une commission de 10% sur le montant total de chaque réservation côté propriétaire, complétée par des options Boost et services premium facultatifs.",
                 ],
             ],
         ];

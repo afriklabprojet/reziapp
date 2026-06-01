@@ -324,6 +324,21 @@ class GeoSearchTest extends TestCase
     }
 
     /**
+     * Test: L'endpoint nearby refuse les rayons hors configuration
+     */
+    public function test_nearby_rejects_radius_not_allowed_by_config(): void
+    {
+        $response = $this->getJson('/api/v1/geo/nearby?'.http_build_query([
+            'latitude' => self::COCODY_CENTER['latitude'],
+            'longitude' => self::COCODY_CENTER['longitude'],
+            'radius' => 750,
+        ]));
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['radius']);
+    }
+
+    /**
      * Test: L'endpoint autocomplete fonctionne
      */
     public function test_autocomplete_endpoint_works(): void
@@ -408,6 +423,8 @@ class GeoSearchTest extends TestCase
 
         // Vérifier que les comptages sont cohérents (plus de résidences avec rayon plus grand)
         $counts = collect($response->json('data'));
+        $this->assertSame(config('rezi.search.allowed_radii'), $counts->pluck('radius')->all());
+
         $count2000 = $counts->firstWhere('radius', 2000)['count'] ?? 0;
         $count5000 = $counts->firstWhere('radius', 5000)['count'] ?? 0;
 

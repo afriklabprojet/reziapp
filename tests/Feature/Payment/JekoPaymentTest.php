@@ -23,6 +23,9 @@ class JekoPaymentTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const TEST_PHONE = '0707070707';
+    private const WEBHOOK_URI = '/payments/webhook';
+
     protected User $user;
     protected User $owner;
     protected Residence $residence;
@@ -93,7 +96,7 @@ class JekoPaymentTest extends TestCase
         $service = new JekoService();
         $result = $service->initiateMobileMoneyPayment(
             $this->payment,
-            '0707070707',
+            self::TEST_PHONE,
             'orange_money',
         );
 
@@ -122,7 +125,7 @@ class JekoPaymentTest extends TestCase
         $service = new JekoService();
         $result = $service->initiateMobileMoneyPayment(
             $this->payment,
-            '0707070707',
+            self::TEST_PHONE,
             'orange_money',
         );
 
@@ -145,7 +148,7 @@ class JekoPaymentTest extends TestCase
         $service = new JekoService();
         $result = $service->initiateMobileMoneyPayment(
             $this->payment,
-            '0707070707',
+            self::TEST_PHONE,
             'orange_money',
         );
 
@@ -326,7 +329,7 @@ class JekoPaymentTest extends TestCase
 
         $signature = hash_hmac('sha256', json_encode($payload), 'test_api_secret');
 
-        $response = $this->postJson('/payments/webhook', $payload, [
+        $response = $this->postJson(self::WEBHOOK_URI, $payload, [
             'Jeko-Signature' => $signature,
         ]);
 
@@ -357,7 +360,7 @@ class JekoPaymentTest extends TestCase
 
         $signature = hash_hmac('sha256', json_encode($payload), 'test_api_secret');
 
-        $response = $this->postJson('/payments/webhook', $payload, [
+        $response = $this->postJson(self::WEBHOOK_URI, $payload, [
             'Jeko-Signature' => $signature,
         ]);
 
@@ -377,7 +380,7 @@ class JekoPaymentTest extends TestCase
             'status' => 'success',
         ];
 
-        $response = $this->postJson('/payments/webhook', $payload, [
+        $response = $this->postJson(self::WEBHOOK_URI, $payload, [
             'Jeko-Signature' => 'invalid_signature',
         ]);
 
@@ -397,7 +400,7 @@ class JekoPaymentTest extends TestCase
 
         $signature = hash_hmac('sha256', json_encode($payload), 'test_api_secret');
 
-        $response = $this->postJson('/payments/webhook', $payload, [
+        $response = $this->postJson(self::WEBHOOK_URI, $payload, [
             'Jeko-Signature' => $signature,
         ]);
 
@@ -478,7 +481,7 @@ class JekoPaymentTest extends TestCase
 
         $service = new JekoService();
         $result = $service->payout(
-            '0707070707',
+            self::TEST_PHONE,
             45000,
             'orange_money',
             ['description' => 'Paiement réservation #123'],
@@ -500,7 +503,7 @@ class JekoPaymentTest extends TestCase
         $service = new JekoService();
 
         // Orange Money (préfixes 07, 47, 57, 67, 77, 87, 97)
-        $this->assertEquals('orange_money', $service->detectOperator('0707070707'));
+        $this->assertEquals('orange_money', $service->detectOperator(self::TEST_PHONE));
         $this->assertEquals('orange_money', $service->detectOperator('2250707070707'));
 
         // MTN (préfixes 05, 04, 54, 55, 64, 65, 74, 75, 84, 85, 94, 95)
@@ -573,7 +576,7 @@ class JekoPaymentTest extends TestCase
         // Étape 1: Initiation
         $initResult = $service->initiateMobileMoneyPayment(
             $this->payment,
-            '0707070707',
+            self::TEST_PHONE,
             'orange_money',
         );
 
@@ -606,7 +609,7 @@ class JekoPaymentTest extends TestCase
         $service = new JekoService();
         $service->initiateMobileMoneyPayment(
             $this->payment,
-            '0707070707',
+            self::TEST_PHONE,
             'orange_money',
         );
 

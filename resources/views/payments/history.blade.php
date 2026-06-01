@@ -28,7 +28,7 @@
                     <div>
                         <label class="block text-xs font-medium text-gray-700 mb-1">Statut</label>
                         <select name="status"
-                            class="w-full rounded-lg border-gray-300 text-sm focus:ring-[#ff385c] focus:border-[#ff385c]">
+                            class="w-full rounded-lg border-gray-300 text-sm focus:ring-[#F16A00] focus:border-[#F16A00]">
                             <option value="">Tous les statuts</option>
                             <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Complétés
                             </option>
@@ -42,7 +42,7 @@
                     <div>
                         <label class="block text-xs font-medium text-gray-700 mb-1">Type</label>
                         <select name="type"
-                            class="w-full rounded-lg border-gray-300 text-sm focus:ring-[#ff385c] focus:border-[#ff385c]">
+                            class="w-full rounded-lg border-gray-300 text-sm focus:ring-[#F16A00] focus:border-[#F16A00]">
                             <option value="">Tous les types</option>
                             <option value="booking" {{ request('type') === 'booking' ? 'selected' : '' }}>Réservation
                             </option>
@@ -54,16 +54,16 @@
                     <div>
                         <label class="block text-xs font-medium text-gray-700 mb-1">Du</label>
                         <input type="date" name="from" value="{{ request('from') }}"
-                            class="w-full rounded-lg border-gray-300 text-sm focus:ring-[#ff385c] focus:border-[#ff385c]">
+                            class="w-full rounded-lg border-gray-300 text-sm focus:ring-[#F16A00] focus:border-[#F16A00]">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-700 mb-1">Au</label>
                         <input type="date" name="to" value="{{ request('to') }}"
-                            class="w-full rounded-lg border-gray-300 text-sm focus:ring-[#ff385c] focus:border-[#ff385c]">
+                            class="w-full rounded-lg border-gray-300 text-sm focus:ring-[#F16A00] focus:border-[#F16A00]">
                     </div>
                     <div class="col-span-2 sm:col-span-1 flex items-end">
                         <button type="submit"
-                            class="px-4 py-2 bg-[#e00b41] text-white rounded-lg text-sm font-medium hover:bg-[#b5083a]">
+                            class="px-4 py-2 bg-[#CC5A00] text-white rounded-lg text-sm font-medium hover:bg-[#A34700]">
                             Filtrer
                         </button>
                     </div>
@@ -146,7 +146,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
                                             <div class="flex items-center justify-end space-x-2">
                                                 <a href="{{ route('payments.show', $payment) }}"
-                                                    class="text-[#e00b41] hover:text-primary-800">
+                                                    class="text-[#CC5A00] hover:text-primary-800">
                                                     Détails
                                                 </a>
                                                 @if ($payment->invoice)
@@ -185,7 +185,7 @@
                     <h3 class="mt-4 text-lg font-medium text-gray-900">Aucun paiement</h3>
                     <p class="mt-2 text-sm text-gray-500">Vous n'avez pas encore effectué de paiement.</p>
                     <a href="{{ route('home') }}"
-                        class="mt-4 inline-flex items-center px-4 py-2 bg-[#e00b41] text-white rounded-lg text-sm font-medium hover:bg-[#b5083a]">
+                        class="mt-4 inline-flex items-center px-4 py-2 bg-[#CC5A00] text-white rounded-lg text-sm font-medium hover:bg-[#A34700]">
                         Rechercher une résidence
                     </a>
                 </div>

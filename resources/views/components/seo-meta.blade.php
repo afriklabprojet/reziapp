@@ -126,13 +126,13 @@
 @endif
 
 {{-- Structured Data / JSON-LD --}}
-<script type="application/ld+json">
+<script type="application/ld+json" nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
 {!! json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
 </script>
 
 {{-- Breadcrumb Schema --}}
 @if (isset($breadcrumbs) && count($breadcrumbs) > 0)
-    <script type="application/ld+json">
+    <script type="application/ld+json" nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
 {!! json_encode([
     '@context' => 'https://schema.org',
     '@type' => 'BreadcrumbList',
@@ -148,7 +148,7 @@
 
 {{-- Organization Schema (page d'accueil) --}}
 @if (request()->routeIs('home'))
-    <script type="application/ld+json">
+    <script type="application/ld+json" nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
 {!! json_encode([
     '@context' => 'https://schema.org',
     '@type' => 'Organization',
@@ -178,7 +178,7 @@
 
 {{-- FAQ Schema --}}
 @if (isset($faqs) && count($faqs) > 0)
-    <script type="application/ld+json">
+    <script type="application/ld+json" nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
 {!! json_encode([
     '@context' => 'https://schema.org',
     '@type' => 'FAQPage',

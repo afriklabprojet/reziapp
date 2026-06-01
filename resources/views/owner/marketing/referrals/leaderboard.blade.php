@@ -20,12 +20,12 @@
         {{-- User Rank Card --}}
         @if ($userRank)
             <div
-                class="bg-linear-to-br from-[#ff385c] via-[#e00b41] to-[#b5083a] rounded-2xl p-6 text-white relative overflow-hidden shadow-lg">
+                class="bg-linear-to-br from-[#F16A00] via-[#CC5A00] to-[#A34700] rounded-2xl p-6 text-white relative overflow-hidden shadow-lg">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2">
                 </div>
                 <div class="relative flex items-center justify-between">
                     <div>
-                        <p class="text-[#ffd1da] text-sm mb-1">Votre position</p>
+                        <p class="text-[#FFE7D1] text-sm mb-1">Votre position</p>
                         <p class="text-4xl font-bold">
                             {{ $userRank }}{{ $userRank == 1 ? 'er' : 'ème' }}
                             @if ($userRank <= 3)
@@ -34,7 +34,7 @@
                         </p>
                     </div>
                     <div class="text-right">
-                        <p class="text-[#ffd1da] text-sm mb-1">Parrainages récompensés</p>
+                        <p class="text-[#FFE7D1] text-sm mb-1">Parrainages récompensés</p>
                         <p class="text-3xl font-bold">{{ $userCompletedCount }}</p>
                     </div>
                 </div>
@@ -50,7 +50,7 @@
                 <p class="text-gray-700 font-medium mb-1">Vous n'êtes pas encore dans le classement</p>
                 <p class="text-sm text-gray-500 mb-4">Parrainez vos amis pour y apparaître !</p>
                 <a href="{{ route('owner.marketing.referrals.index') }}"
-                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-[#e00b41] text-white text-sm font-medium rounded-xl hover:bg-[#b5083a] transition shadow-sm">
+                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-[#CC5A00] text-white text-sm font-medium rounded-xl hover:bg-[#A34700] transition shadow-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
@@ -81,7 +81,7 @@
                 <ul class="divide-y divide-gray-100">
                     @foreach ($leaderboard as $index => $user)
                         <li
-                            class="px-6 py-4 {{ $user->id === auth()->id() ? 'bg-[#fff0f3]/50' : '' }} hover:bg-gray-50/50 transition-colors">
+                            class="px-6 py-4 {{ $user->id === auth()->id() ? 'bg-[#FFF4EB]/50' : '' }} hover:bg-gray-50/50 transition-colors">
                             <div class="flex items-center">
                                 {{-- Rank --}}
                                 <div class="w-10 text-center shrink-0">
@@ -99,16 +99,16 @@
                                 {{-- User --}}
                                 <div class="flex-1 flex items-center gap-3 ml-3">
                                     <div
-                                        class="w-10 h-10 {{ $user->id === auth()->id() ? 'bg-[#ffd1da]' : 'bg-gray-100' }} rounded-full flex items-center justify-center">
+                                        class="w-10 h-10 {{ $user->id === auth()->id() ? 'bg-[#FFE7D1]' : 'bg-gray-100' }} rounded-full flex items-center justify-center">
                                         <span
-                                            class="{{ $user->id === auth()->id() ? 'text-[#e00b41]' : 'text-gray-600' }} font-semibold text-sm">{{ substr($user->name, 0, 1) }}</span>
+                                            class="{{ $user->id === auth()->id() ? 'text-[#CC5A00]' : 'text-gray-600' }} font-semibold text-sm">{{ substr($user->name, 0, 1) }}</span>
                                     </div>
                                     <div>
                                         <p class="font-medium text-gray-900 text-sm">
                                             {{ $user->name }}
                                             @if ($user->id === auth()->id())
                                                 <span
-                                                    class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#ffd1da] text-[#b5083a] ml-1">Vous</span>
+                                                    class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#FFE7D1] text-[#A34700] ml-1">Vous</span>
                                             @endif
                                         </p>
                                     </div>
@@ -116,7 +116,7 @@
 
                                 {{-- Score --}}
                                 <div class="text-right shrink-0">
-                                    <p class="text-lg font-bold {{ $index < 3 ? 'text-[#e00b41]' : 'text-gray-700' }}">
+                                    <p class="text-lg font-bold {{ $index < 3 ? 'text-[#CC5A00]' : 'text-gray-700' }}">
                                         {{ $user->completed_referrals }}</p>
                                     <p class="text-[10px] text-gray-500 uppercase tracking-wide">
                                         parrainage{{ $user->completed_referrals > 1 ? 's' : '' }}</p>

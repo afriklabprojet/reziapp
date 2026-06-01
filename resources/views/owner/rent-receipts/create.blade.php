@@ -11,7 +11,7 @@
         <span class="text-gray-700">Nouvelle quittance</span>
     </nav>
 
-    <h1 class="text-2xl font-bold text-gray-900">🧾 Émettre une quittance de loyer</h1>
+    <h1 class="text-2xl font-bold text-gray-900">🧾 Émettre un reçu de location</h1>
 
     @if($errors->any())
     <div class="bg-red-50 border border-red-200 rounded-xl p-4">
@@ -98,7 +98,7 @@
             <h2 class="font-semibold text-gray-800 border-b pb-2">Montants</h2>
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Loyer (FCFA) *</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Montant de location (FCFA) *</label>
                     <input type="number" name="rent_amount" value="{{ old('rent_amount') }}" required min="0" step="500"
                         class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm">
                 </div>

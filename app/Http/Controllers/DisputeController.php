@@ -7,6 +7,9 @@ use App\Models\Cancellation;
 use App\Models\Dispute;
 use App\Services\DisputeService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DisputeController extends Controller
 {
@@ -22,7 +25,7 @@ class DisputeController extends Controller
      */
     public function index()
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $disputes = $this->disputeService->getUserDisputes($user->id);
 
         return view('disputes.index', compact('disputes'));
@@ -40,7 +43,7 @@ class DisputeController extends Controller
             $booking = Booking::with('residence')->findOrFail($request->booking_id);
 
             // Check authorization
-            $user = auth()->user();
+            $user = Auth::user();
             if ($booking->user_id !== $user->id && $booking->residence->owner_id !== $user->id) {
                 abort(403);
             }
@@ -50,7 +53,7 @@ class DisputeController extends Controller
             $cancellation = Cancellation::with('booking.residence')->findOrFail($request->cancellation_id);
 
             // Check authorization
-            $user = auth()->user();
+            $user = Auth::user();
             $cancelBooking = $cancellation->booking;
             if ($cancelBooking && $cancelBooking->user_id !== $user->id && $cancelBooking->residence->owner_id !== $user->id) {
                 abort(403);
@@ -73,16 +76,21 @@ class DisputeController extends Controller
             'reason' => 'required|string|max:255',
             'detailed_description' => 'required|string|max:5000',
             'evidence' => 'nullable|array',
-            'evidence.*' => 'file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx',
+            'evidence.*' => 'file|max:5120|mimes:jpg,jpeg,png,pdf,doc,docx',
         ]);
 
         try {
-            $user = auth()->user();
+            $user = Auth::user();
 
             // Determine who is initiating
             $initiatedBy = 'guest';
             if ($validated['booking_id']) {
-                $booking = Booking::findOrFail($validated['booking_id']);
+                $booking = Booking::with('residence')->findOrFail($validated['booking_id']);
+
+                if (!$this->canAccessBooking($booking, $user)) {
+                    abort(403);
+                }
+
                 if ($booking->residence && $booking->residence->owner_id === $user->id) {
                     $initiatedBy = 'host';
                 }
@@ -92,9 +100,10 @@ class DisputeController extends Controller
             $evidence = [];
             if ($request->hasFile('evidence')) {
                 foreach ($request->file('evidence') as $file) {
-                    $path = $file->store('disputes/evidence', 'public');
+                    $path = $file->store('disputes/evidence', 'private');
                     $evidence[] = [
                         'path' => $path,
+                        'disk' => 'private',
                         'name' => $file->getClientOriginalName(),
                         'type' => $file->getMimeType(),
                     ];
@@ -126,15 +135,11 @@ class DisputeController extends Controller
      */
     public function show(Dispute $dispute)
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
-        // Check authorization
-        if ($dispute->opened_by !== $user->id && !$user->isAdmin()) {
-            // Check if user is the other party in the booking
-            if (!$dispute->booking ||
-                ($dispute->booking->user_id !== $user->id && $dispute->booking->residence->owner_id !== $user->id)) {
-                abort(403);
-            }
+        if (!$this->canAccessDispute($dispute, $user)) {
+            abort(403);
         }
 
         $dispute->load(['booking.residence', 'opener', 'assignedAdmin', 'supportTickets']);
@@ -147,11 +152,9 @@ class DisputeController extends Controller
      */
     public function addEvidence(Request $request, Dispute $dispute)
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
-        // Check authorization
-        if ($dispute->opened_by !== $user->id &&
-            (!$dispute->booking || ($dispute->booking->user_id !== $user->id && $dispute->booking->residence->owner_id !== $user->id))) {
+        if (!$this->canAccessDispute($dispute, $user)) {
             abort(403);
         }
 
@@ -161,19 +164,46 @@ class DisputeController extends Controller
 
         $validated = $request->validate([
             'description' => 'required|string|max:1000',
-            'file' => 'required|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx',
+            'file' => 'required|file|max:5120|mimes:jpg,jpeg,png,pdf,doc,docx',
         ]);
 
-        $path = $request->file('file')->store('disputes/evidence', 'public');
+        $path = $request->file('file')->store('disputes/evidence', 'private');
 
         $this->disputeService->addEvidence($dispute, [
             'path' => $path,
+            'disk' => 'private',
             'name' => $request->file('file')->getClientOriginalName(),
             'type' => $request->file('file')->getMimeType(),
             'description' => $validated['description'],
         ], $user->id);
 
         return back()->with('success', 'Preuve ajoutée.');
+    }
+
+    public function downloadEvidence(Dispute $dispute, int $index): StreamedResponse
+    {
+        $user = Auth::user();
+
+        if (!$this->canAccessDispute($dispute, $user)) {
+            abort(403);
+        }
+
+        $evidence = $dispute->evidence_files ?? [];
+        if (!isset($evidence[$index])) {
+            abort(404);
+        }
+
+        $file = $evidence[$index];
+        $diskName = $file['disk'] ?? 'public';
+        /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
+        $disk = Storage::disk($diskName);
+        $path = $file['path'] ?? '';
+
+        if (!$path || !$disk->exists($path)) {
+            abort(404);
+        }
+
+        return $disk->download($path, $file['name'] ?? 'preuve');
     }
 
     // ===== OWNER SECTION =====
@@ -183,7 +213,7 @@ class DisputeController extends Controller
      */
     public function ownerIndex()
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $disputes = $this->disputeService->getOwnerDisputes($user->id);
 
         return view('owner.disputes.index', compact('disputes'));
@@ -207,10 +237,10 @@ class DisputeController extends Controller
      */
     public function apiStatus(Dispute $dispute)
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
-        // Authorization check
-        if ($dispute->opened_by !== $user->id && !$user->isAdmin()) {
+        if (!$this->canAccessDispute($dispute, $user)) {
             return response()->json(['error' => 'Non autorisé'], 403);
         }
 
@@ -229,5 +259,23 @@ class DisputeController extends Controller
                 'resolved_at' => $dispute->resolved_at?->toISOString(),
             ],
         ]);
+    }
+
+    private function canAccessBooking(Booking $booking, \App\Models\User $user): bool
+    {
+        return (int) $booking->user_id === (int) $user->id
+            || (int) ($booking->residence?->owner_id ?? 0) === (int) $user->id
+            || $user->isAdmin();
+    }
+
+    private function canAccessDispute(Dispute $dispute, \App\Models\User $user): bool
+    {
+        if ((int) $dispute->opened_by === (int) $user->id || $user->isAdmin()) {
+            return true;
+        }
+
+        $booking = $dispute->booking;
+
+        return $booking && $this->canAccessBooking($booking, $user);
     }
 }

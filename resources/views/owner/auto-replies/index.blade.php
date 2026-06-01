@@ -11,7 +11,7 @@
                 <p class="mt-1 text-sm text-gray-500">Gagnez du temps avec des messages prédéfinis</p>
             </div>
             <a href="{{ route('owner.auto-replies.create') }}"
-                class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#ff385c] text-white text-sm font-semibold rounded-xl hover:bg-[#e00b41] transition shadow-sm">
+                class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#F16A00] text-white text-sm font-semibold rounded-xl hover:bg-[#CC5A00] transition shadow-sm">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
@@ -22,7 +22,7 @@
         {{-- Message flash --}}
         @if (session('success'))
             <div
-                class="mb-6 flex items-center gap-3 bg-[#fff0f3] border border-[#ffb3c1] text-[#b5083a] px-4 py-3 rounded-xl text-sm">
+                class="mb-6 flex items-center gap-3 bg-[#FFF4EB] border border-[#FFD0A3] text-[#A34700] px-4 py-3 rounded-xl text-sm">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
@@ -52,7 +52,7 @@
                 @endphp
                 @foreach ($tabs as $key => $tab)
                     <button @click="activeTab = '{{ $key }}'"
-                        :class="activeTab === '{{ $key }}' ? 'bg-[#ff385c] text-white shadow-sm' :
+                        :class="activeTab === '{{ $key }}' ? 'bg-[#F16A00] text-white shadow-sm' :
                             'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'"
                         class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -119,7 +119,7 @@
                                     <h3 class="font-bold text-sm text-gray-900">{{ $reply->name }}</h3>
                                     @if ($reply->is_active)
                                         <span
-                                            class="px-2 py-0.5 bg-[#ffd1da] text-[#e00b41] text-[11px] font-semibold rounded-full">Actif</span>
+                                            class="px-2 py-0.5 bg-[#FFE7D1] text-[#CC5A00] text-[11px] font-semibold rounded-full">Actif</span>
                                     @else
                                         <span
                                             class="px-2 py-0.5 bg-gray-100 text-gray-500 text-[11px] font-semibold rounded-full">Inactif</span>
@@ -184,7 +184,7 @@
                                     <button type="submit" class="p-2 rounded-lg hover:bg-gray-100 transition"
                                         title="{{ $reply->is_active ? 'Désactiver' : 'Activer' }}">
                                         @if ($reply->is_active)
-                                            <svg class="w-5 h-5 text-[#ff385c]" fill="none" stroke="currentColor"
+                                            <svg class="w-5 h-5 text-[#F16A00]" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -239,7 +239,7 @@
                             Créez des réponses prédéfinies pour répondre plus vite aux questions fréquentes.
                         </p>
                         <a href="{{ route('owner.auto-replies.create') }}"
-                            class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#ff385c] text-white text-sm font-semibold rounded-xl hover:bg-[#e00b41] transition">
+                            class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#F16A00] text-white text-sm font-semibold rounded-xl hover:bg-[#CC5A00] transition">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4v16m8-8H4" />
@@ -301,7 +301,7 @@
                     @endphp
                     @foreach ($templates as $template)
                         <div
-                            class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 hover:border-[#ffb3c1] transition group">
+                            class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 hover:border-[#FFD0A3] transition group">
                             <div class="flex items-center gap-3 mb-2">
                                 <div class="w-9 h-9 rounded-lg {{ $template['bg'] }} flex items-center justify-center">
                                     <svg class="w-4 h-4 {{ $template['text'] }}" fill="none" stroke="currentColor"
@@ -314,7 +314,7 @@
                             </div>
                             <p class="text-xs text-gray-500 mb-3 line-clamp-2">{{ $template['message'] }}</p>
                             <a href="{{ route('owner.auto-replies.create', ['template' => $template['type']]) }}"
-                                class="text-xs text-[#ff385c] hover:text-[#e00b41] font-semibold group-hover:underline">
+                                class="text-xs text-[#F16A00] hover:text-[#CC5A00] font-semibold group-hover:underline">
                                 Utiliser ce template →
                             </a>
                         </div>

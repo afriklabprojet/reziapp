@@ -15,20 +15,20 @@
 {{-- ===== DESKTOP SIDEBAR ===== --}}
 <aside class="hidden lg:block w-70 shrink-0">
     <div class="sticky top-20">
-        <nav class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <nav aria-label="Menu principal" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
 
             {{-- ── Profil utilisateur ── --}}
             <div class="p-5 border-b border-gray-100">
                 <div class="flex items-center gap-3">
                     <div class="relative">
                         <div
-                            class="w-12 h-12 rounded-full overflow-hidden bg-linear-to-br from-[#fff0f3] to-[#ffd1da] flex items-center justify-center shrink-0 ring-2 ring-white shadow-sm">
+                            class="w-12 h-12 rounded-full overflow-hidden bg-linear-to-br from-[#FFF4EB] to-[#FFE7D1] flex items-center justify-center shrink-0 ring-2 ring-white shadow-sm">
                             @if (auth()->user()->profile_photo || auth()->user()->avatar)
                                 <img loading="lazy" src="{{ auth()->user()->getAvatarUrl() }}"
                                     alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
                             @else
                                 <span
-                                    class="text-lg font-semibold text-[#e00b41]">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                                    class="text-lg font-semibold text-[#CC5A00]">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
                             @endif
                         </div>
                         {{-- Online indicator --}}
@@ -38,7 +38,7 @@
                     <div class="min-w-0 flex-1">
                         <p class="font-semibold text-[15px] text-gray-900 truncate">{{ auth()->user()->name }}</p>
                         <p class="text-xs text-gray-500 flex items-center gap-1">
-                            <svg class="w-3 h-3 text-[#ff385c]" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-3 h-3 text-[#F16A00]" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                                 <path fill-rule="evenodd"
                                     d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
@@ -80,7 +80,7 @@
                         {{ $item['label'] }}
                         @if (isset($item['badge']) && $item['badge'] > 0)
                             <span
-                                class="ml-auto min-w-5 h-5 {{ $active === $item['key'] ? 'bg-white/20 text-white' : 'bg-rose-500 text-white' }} text-[10px] font-bold rounded-full flex items-center justify-center px-1">{{ min($item['badge'], 9) }}{{ $item['badge'] > 9 ? '+' : '' }}</span>
+                                class="ml-auto min-w-5 h-5 {{ $active === $item['key'] ? 'bg-white/20 text-white' : 'bg-rose-500 text-white' }} text-[11px] font-bold rounded-full flex items-center justify-center px-1">{{ min($item['badge'], 9) }}{{ $item['badge'] > 9 ? '+' : '' }}</span>
                         @endif
                     </a>
                 @endforeach
@@ -191,43 +191,43 @@
 <div x-data="{ moreOpen: false }" class="lg:hidden">
 
     {{-- Fixed bottom tab bar --}}
-    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200"
+    <nav aria-label="Navigation mobile" class="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200"
         style="padding-bottom: env(safe-area-inset-bottom)">
-        <div class="grid grid-cols-5 h-14 text-[10px] xs:text-xs">
+        <div class="grid grid-cols-5 h-14 text-xs">
             {{-- Accueil --}}
             <a href="{{ route('client.dashboard') }}"
-                class="flex flex-col items-center justify-center gap-0.5 {{ $active === 'dashboard' ? 'text-gray-900' : 'text-gray-400' }}">
+                class="flex flex-col items-center justify-center gap-0.5 min-h-11 {{ $active === 'dashboard' ? 'text-gray-900' : 'text-gray-400' }}">
                 <svg class="w-5 h-5" fill="{{ $active === 'dashboard' ? 'currentColor' : 'none' }}"
                     stroke="currentColor" stroke-width="{{ $active === 'dashboard' ? '0' : '1.8' }}"
                     viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
                 </svg>
-                <span class="text-[10px] font-semibold">Accueil</span>
+                <span class="text-[11px] font-semibold">Accueil</span>
             </a>
             {{-- Favoris --}}
             <a href="{{ route('favorites.index') }}"
-                class="flex flex-col items-center justify-center gap-0.5 {{ $active === 'favorites' ? 'text-gray-900' : 'text-gray-400' }}">
+                class="flex flex-col items-center justify-center gap-0.5 min-h-11 {{ $active === 'favorites' ? 'text-gray-900' : 'text-gray-400' }}">
                 <svg class="w-5 h-5" fill="{{ $active === 'favorites' ? 'currentColor' : 'none' }}"
                     stroke="currentColor" stroke-width="{{ $active === 'favorites' ? '0' : '1.8' }}"
                     viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                 </svg>
-                <span class="text-[10px] font-semibold">Favoris</span>
+                <span class="text-[11px] font-semibold">Favoris</span>
             </a>
             {{-- Réservations --}}
             <a href="{{ route('bookings.index') }}"
-                class="flex flex-col items-center justify-center gap-0.5 {{ $active === 'bookings' ? 'text-gray-900' : 'text-gray-400' }}">
+                class="flex flex-col items-center justify-center gap-0.5 min-h-11 {{ $active === 'bookings' ? 'text-gray-900' : 'text-gray-400' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                 </svg>
-                <span class="text-[10px] font-semibold">Réservations</span>
+                <span class="text-[11px] font-semibold">Réservations</span>
             </a>
             {{-- Messages --}}
             <a href="{{ route('chat.index') }}"
-                class="relative flex flex-col items-center justify-center gap-0.5 {{ $active === 'messages' ? 'text-gray-900' : 'text-gray-400' }}">
+                class="relative flex flex-col items-center justify-center gap-0.5 min-h-11 {{ $active === 'messages' ? 'text-gray-900' : 'text-gray-400' }}">
                 <div class="relative">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8"
                         viewBox="0 0 24 24">
@@ -236,19 +236,19 @@
                     </svg>
                     @if ($unreadMsgCount > 0)
                         <span
-                            class="absolute -top-1.5 -right-2 min-w-4 h-4 bg-rose-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-1">{{ min($unreadMsgCount, 9) }}</span>
+                            class="absolute -top-1.5 -right-2 min-w-4 h-4 bg-rose-500 text-white text-[11px] font-bold rounded-full flex items-center justify-center px-1">{{ min($unreadMsgCount, 9) }}</span>
                     @endif
                 </div>
-                <span class="text-[10px] font-semibold">Messages</span>
+                <span class="text-[11px] font-semibold">Messages</span>
             </a>
             {{-- Plus --}}
             <button @click="moreOpen = !moreOpen"
-                class="flex flex-col items-center justify-center gap-0.5 text-gray-400">
+                class="flex flex-col items-center justify-center gap-0.5 min-h-11 text-gray-400">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                 </svg>
-                <span class="text-[10px] font-semibold">Plus</span>
+                <span class="text-[11px] font-semibold">Plus</span>
             </button>
         </div>
     </nav>
@@ -278,13 +278,13 @@
         <div class="px-5 py-3 border-b border-gray-100">
             <div class="flex items-center gap-3">
                 <div
-                    class="w-10 h-10 rounded-full overflow-hidden bg-linear-to-br from-[#fff0f3] to-[#ffd1da] flex items-center justify-center shrink-0">
+                    class="w-10 h-10 rounded-full overflow-hidden bg-linear-to-br from-[#FFF4EB] to-[#FFE7D1] flex items-center justify-center shrink-0">
                     @if (auth()->user()->profile_photo || auth()->user()->avatar)
                         <img loading="lazy" src="{{ auth()->user()->getAvatarUrl() }}"
                             alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
                     @else
                         <span
-                            class="text-base font-semibold text-[#e00b41]">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                            class="text-base font-semibold text-[#CC5A00]">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
                     @endif
                 </div>
                 <div>
@@ -312,7 +312,7 @@
                     {{ $item['label'] }}
                     @if (isset($item['badge']) && $item['badge'] > 0)
                         <span
-                            class="ml-auto min-w-5 h-5 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">{{ min($item['badge'], 9) }}{{ $item['badge'] > 9 ? '+' : '' }}</span>
+                            class="ml-auto min-w-5 h-5 bg-rose-500 text-white text-[11px] font-bold rounded-full flex items-center justify-center px-1">{{ min($item['badge'], 9) }}{{ $item['badge'] > 9 ? '+' : '' }}</span>
                     @endif
                 </a>
             @endforeach

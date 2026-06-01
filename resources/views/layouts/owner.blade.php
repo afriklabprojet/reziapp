@@ -22,7 +22,7 @@
                             <div class="flex-1">
                                 <p class="text-sm font-semibold text-gray-900">{{ session('warning') }}</p>
                                 <a href="{{ route('verification.dashboard') }}"
-                                    class="inline-flex items-center gap-1 text-xs font-semibold text-[#e00b41] hover:text-[#b5083a] mt-1">
+                                    class="inline-flex items-center gap-1 text-xs font-semibold text-[#CC5A00] hover:text-[#A34700] mt-1">
                                     Vérifier maintenant
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2"
                                         viewBox="0 0 24 24">

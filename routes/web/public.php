@@ -64,11 +64,11 @@ Route::get('/guidebook/{token}', [\App\Http\Controllers\Owner\GuidebookControlle
 
 /*
 |--------------------------------------------------------------------------
-| Callbacks Paiement Jeko (authentifié, sans préfixe owner)
+| Callbacks Paiement Jeko (publics mais signés)
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth'])->prefix('payment/jeko')->name('payment.jeko.')->group(function () {
+Route::prefix('payment/jeko')->name('payment.jeko.')->group(function () {
     Route::get('/success', [\App\Http\Controllers\Payment\JekoCallbackController::class, 'success'])->name('success');
     Route::get('/error', [\App\Http\Controllers\Payment\JekoCallbackController::class, 'error'])->name('error');
     Route::get('/check/{sponsored}', [\App\Http\Controllers\Payment\JekoCallbackController::class, 'checkStatus'])->name('check');
