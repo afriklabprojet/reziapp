@@ -56,7 +56,6 @@ class BookingRaceConditionTest extends TestCase
             'status' => 'approved',
             'is_available' => true,
             'instant_book' => true,
-            'price_per_night' => 25000,
             'price_per_day' => 25000,
             'cleaning_fee' => 5000,
             'max_guests' => 6,

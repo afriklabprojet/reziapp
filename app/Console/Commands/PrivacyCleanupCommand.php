@@ -13,10 +13,9 @@ use Illuminate\Support\Facades\Log;
  * dont la durée de conservation légale est dépassée.
  *
  * TTL appliqués :
- *  - coordonnées GPS dans `contacts`         : 90 jours
- *  - search_histories                        : 365 jours
- *  - view_histories anonymes (user_id null)  : 365 jours
- *  - view_histories authentifiés (user_id)   : 365 jours
+ *  - coordonnées GPS dans `contacts`  : 90 jours
+ *  - search_histories                 : 365 jours
+ *  - view_history (last_viewed_at)    : 365 jours
  */
 class PrivacyCleanupCommand extends Command
 {
@@ -32,10 +31,9 @@ class PrivacyCleanupCommand extends Command
         $cutoff90  = now()->subDays(90);
         $cutoff365 = now()->subDays(365);
 
-        $contactsAnonymized              = $this->anonymizeContactGps($cutoff90, $dryRun);
-        $searchHistoriesDeleted          = $this->purgeSearchHistories($cutoff365, $dryRun);
-        $anonymousViewHistoriesDeleted   = $this->purgeAnonymousViewHistories($cutoff365, $dryRun);
-        $authenticatedViewHistoriesDeleted = $this->purgeAuthenticatedViewHistories($cutoff365, $dryRun);
+        $contactsAnonymized     = $this->anonymizeContactGps($cutoff90, $dryRun);
+        $searchHistoriesDeleted = $this->purgeSearchHistories($cutoff365, $dryRun);
+        $viewHistoriesDeleted   = $this->purgeViewHistory($cutoff365, $dryRun);
 
         if ($dryRun) {
             $this->warn('Mode dry-run : aucune modification appliquée.');
@@ -45,7 +43,7 @@ class PrivacyCleanupCommand extends Command
             'dry_run'                  => $dryRun,
             'contacts_anonymized'      => $contactsAnonymized,
             'search_histories_deleted' => $searchHistoriesDeleted,
-            'view_histories_deleted'   => $anonymousViewHistoriesDeleted + $authenticatedViewHistoriesDeleted,
+            'view_histories_deleted'   => $viewHistoriesDeleted,
         ]);
 
         return self::SUCCESS;
@@ -121,69 +119,32 @@ class PrivacyCleanupCommand extends Command
     }
 
     /**
-     * Supprime les view_histories anonymes créés il y a plus de 365 jours.
+     * Purge les enregistrements view_history dont last_viewed_at dépasse 365 jours (RGPD).
      * Traitement par chunks pour éviter les locks de table prolongés.
      */
-    private function purgeAnonymousViewHistories(\DateTimeInterface $cutoff, bool $dryRun): int
+    private function purgeViewHistory(\DateTimeInterface $cutoff, bool $dryRun): int
     {
-        $count = DB::table('view_histories')
-            ->whereNull('user_id')
-            ->where('created_at', '<', $cutoff)
+        $count = DB::table('view_history')
+            ->where('last_viewed_at', '<', $cutoff)
             ->count();
 
-        $this->info("View histories anonymes > 365 j : {$count}");
+        $this->info("View history > 365 j : {$count}");
 
         if (! $dryRun && $count > 0) {
             $processed = 0;
 
-            DB::table('view_histories')
-                ->whereNull('user_id')
-                ->where('created_at', '<', $cutoff)
+            DB::table('view_history')
+                ->where('last_viewed_at', '<', $cutoff)
                 ->orderBy('id')
                 ->chunkById(self::CHUNK_SIZE, function ($rows) use (&$processed) {
                     $ids = $rows->pluck('id')->all();
-                    DB::table('view_histories')
+                    DB::table('view_history')
                         ->whereIn('id', $ids)
                         ->delete();
                     $processed += count($ids);
                 });
 
-            $this->info("  => {$processed} view histories anonymes supprimées.");
-        }
-
-        return $count;
-    }
-
-    /**
-     * Supprime les view_histories d'utilisateurs authentifiés créés il y a plus de 365 jours.
-     * Requis par le RGPD : les données des utilisateurs identifiés doivent également être purgées.
-     * Traitement par chunks pour éviter les locks de table prolongés.
-     */
-    private function purgeAuthenticatedViewHistories(\DateTimeInterface $cutoff, bool $dryRun): int
-    {
-        $count = DB::table('view_histories')
-            ->whereNotNull('user_id')
-            ->where('created_at', '<', $cutoff)
-            ->count();
-
-        $this->info("View histories authentifiés > 365 j : {$count}");
-
-        if (! $dryRun && $count > 0) {
-            $processed = 0;
-
-            DB::table('view_histories')
-                ->whereNotNull('user_id')
-                ->where('created_at', '<', $cutoff)
-                ->orderBy('id')
-                ->chunkById(self::CHUNK_SIZE, function ($rows) use (&$processed) {
-                    $ids = $rows->pluck('id')->all();
-                    DB::table('view_histories')
-                        ->whereIn('id', $ids)
-                        ->delete();
-                    $processed += count($ids);
-                });
-
-            $this->info("  => {$processed} view histories authentifiés supprimées.");
+            $this->info("  => {$processed} view history supprimées.");
         }
 
         return $count;
