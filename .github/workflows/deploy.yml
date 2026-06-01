@@ -158,16 +158,16 @@ jobs:
             --exclude='.env' \
             --exclude='public/build' \
             --delete \
-            -e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no" \
+            -e "ssh -i ~/.ssh/id_ed25519" \
             ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ env.DEPLOY_PATH }}/
 
       - name: Sync build assets
         run: |
           rsync -azP \
-            -e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no" \
+            -e "ssh -i ~/.ssh/id_ed25519" \
             public/build/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ env.DEPLOY_PATH }}/public/build/
 
-      - name: Backup database
+      - name: Backup database before deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -175,13 +175,14 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             set -e
-            mkdir -p /var/backups/rezi
             cd ${{ env.DEPLOY_PATH }}
+            mkdir -p /var/backups/rezi
             DB_USER=$(grep '^DB_USERNAME=' .env | cut -d= -f2)
             DB_PASS=$(grep '^DB_PASSWORD=' .env | cut -d= -f2)
             DB_NAME=$(grep '^DB_DATABASE=' .env | cut -d= -f2)
-            mysqldump -u"${DB_USER}" -p"${DB_PASS}" "${DB_NAME}" > /var/backups/rezi/before-deploy-$(date +%Y%m%d-%H%M%S).sql
+            MYSQL_PWD="${DB_PASS}" mysqldump -u"${DB_USER}" "${DB_NAME}" > /var/backups/rezi/before-deploy-$(date +%Y%m%d-%H%M%S).sql
             ls -t /var/backups/rezi/*.sql | tail -n +11 | xargs rm -f || true
+            echo "Backup base de donnees cree"
 
       - name: Post-deploy commands
         uses: appleboy/ssh-action@v1.0.3
@@ -249,5 +250,13 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd ${{ env.DEPLOY_PATH }}
+            LATEST_BACKUP=$(ls -t /var/backups/rezi/*.sql 2>/dev/null | head -1)
+            if [ -n "$LATEST_BACKUP" ]; then
+              DB_USER=$(grep '^DB_USERNAME=' .env | cut -d= -f2)
+              DB_PASS=$(grep '^DB_PASSWORD=' .env | cut -d= -f2)
+              DB_NAME=$(grep '^DB_DATABASE=' .env | cut -d= -f2)
+              MYSQL_PWD="${DB_PASS}" mysql -u"${DB_USER}" "${DB_NAME}" < "$LATEST_BACKUP"
+              echo "⚠️ Base de données restaurée depuis $LATEST_BACKUP"
+            fi
             php artisan up || true
-            echo "⚠️ Deploy échoué — app remise en ligne, vérifier les logs"
+            echo "⚠️ Deploy échoué — app remise en ligne, DB restaurée"
