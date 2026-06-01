@@ -1,9 +1,12 @@
 name: 🚀 Deploy — Production
 
 on:
-  push:
-    branches: [main]
-  workflow_dispatch:        # déclenchement manuel possible
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Raison du deploiement'
+        required: true
+        type: string
 
 concurrency:
   group: deploy-production
@@ -94,14 +97,31 @@ jobs:
           retention-days: 1
 
   # ─────────────────────────────────────────────────────────────────────────────
-  # 3. Déploiement sur Hetzner via SSH
+  # 3. Approbation manuelle avant déploiement
+  # Pour activer la protection : GitHub Settings > Environments > production
+  # > Required reviewers (ajouter les membres autorisés)
   # ─────────────────────────────────────────────────────────────────────────────
-  deploy:
-    name: 🚀 Deploy → reziapp.ci
+  await-approval:
+    name: Approbation production
     runs-on: ubuntu-latest
     needs: [tests, build]
     environment:
       name: production
+    steps:
+      - name: Deploiement approuve
+        env:
+          DEPLOY_ACTOR: ${{ github.actor }}
+          DEPLOY_REASON: ${{ github.event.inputs.reason }}
+        run: echo "Deploiement approuve par ${DEPLOY_ACTOR} — ${DEPLOY_REASON}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # 4. Déploiement sur Hetzner via SSH
+  # ─────────────────────────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy reziapp.ci
+    runs-on: ubuntu-latest
+    needs: [await-approval]
+    environment:
       url: https://reziapp.ci
 
     steps:
@@ -146,6 +166,22 @@ jobs:
           rsync -azP \
             -e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no" \
             public/build/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ env.DEPLOY_PATH }}/public/build/
+
+      - name: Backup database
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            set -e
+            mkdir -p /var/backups/rezi
+            cd ${{ env.DEPLOY_PATH }}
+            DB_USER=$(grep '^DB_USERNAME=' .env | cut -d= -f2)
+            DB_PASS=$(grep '^DB_PASSWORD=' .env | cut -d= -f2)
+            DB_NAME=$(grep '^DB_DATABASE=' .env | cut -d= -f2)
+            mysqldump -u"${DB_USER}" -p"${DB_PASS}" "${DB_NAME}" > /var/backups/rezi/before-deploy-$(date +%Y%m%d-%H%M%S).sql
+            ls -t /var/backups/rezi/*.sql | tail -n +11 | xargs rm -f || true
 
       - name: Post-deploy commands
         uses: appleboy/ssh-action@v1.0.3

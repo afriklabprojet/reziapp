@@ -8,6 +8,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Prix saisonniers absolus d'une résidence.
+ *
+ * Responsabilité : stocker des tarifs nuitée/semaine/mois fixes pour une période
+ * calendaire (ex : "Haute saison Noël : 25 000 FCFA/nuit"). Utilisé par
+ * PricingController (CRUD propriétaire) et DynamicPricingService (calcul automatique).
+ *
+ * Table : seasonal_prices
+ *
+ * DISTINCT de SeasonalPricing : ce modèle porte des prix absolus en FCFA.
+ * SeasonalPricing porte des multiplicateurs et des templates CI (price_multiplier).
+ *
+ * Actif dans les calculs de réservation : NON — PricingService s'appuie sur
+ * SpecialPrice (tarifs journaliers) et les champs price_per_day/week/month de Residence.
+ * Ce modèle est utilisé pour l'affichage du calendrier propriétaire et la
+ * synchronisation DynamicPricingService.
+ */
 class SeasonalPrice extends Model
 {
     use HasFactory;
