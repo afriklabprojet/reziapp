@@ -640,26 +640,23 @@ class Residence extends Model
     }
 
     /**
-     * Scope to find residences within radius
+     * Scope to find residences within radius.
      *
-     * Optimized with bounding box pre-filter + Haversine formula
-     * This significantly reduces calculations by filtering out
-     * residences that are clearly outside the radius first.
+     * MySQL path (production): two-stage spatial query
+     *   1. MBRContains(<bbox POLYGON>, location)  — uses SPATIAL INDEX, eliminates ~90% of rows
+     *   2. ST_Distance_Sphere(location, <point>) <= $radius  — precise great-circle refinement
      *
-     * Compatible with both MySQL and SQLite (for testing)
+     * SQLite path (tests): Haversine via bounding-box + whereRaw (SQLite has no spatial functions).
      *
-     * @param $query
-     * @param float $lat Latitude
-     * @param float $lng Longitude
-     * @param int $radius Radius in meters (100, 300, 500, 1000, 2000, 5000)
-     * @param bool $sortByDistance Whether to sort by distance (default true)
-     * @return mixed
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param float $lat Latitude of search centre
+     * @param float $lng Longitude of search centre
+     * @param int $radius Radius in metres
+     * @param bool $sortByDistance Order results ascending by distance
      */
     public function scopeWithinRadius($query, float $lat, float $lng, int $radius, bool $sortByDistance = true)
     {
-        $earthRadius = 6371000; // Earth radius in meters
-
-        // Calculate bounding box for pre-filtering (degrees)
+        // Bounding-box deltas in degrees
         $latDelta = $radius / 111320;
         $lngDelta = $radius / (111320 * cos(deg2rad($lat)));
 
@@ -668,66 +665,23 @@ class Residence extends Model
         $minLng = $lng - $lngDelta;
         $maxLng = $lng + $lngDelta;
 
-        // Check if using SQLite (for testing) or MySQL
         $driver = $query->getConnection()->getDriverName();
 
-        // Haversine distance expression (radians constant: PI/180 = 0.017453293)
-        $radConst = 0.017453293;
-
         if ($driver === 'sqlite') {
-            // SQLite: use subquery to avoid HAVING issue
-            $distanceExpr = "(
-                {$earthRadius} * acos(
-                    CASE
-                        WHEN (
-                            cos({$lat} * {$radConst}) * cos(latitude * {$radConst}) *
-                            cos(longitude * {$radConst} - ({$lng}) * {$radConst}) +
-                            sin({$lat} * {$radConst}) * sin(latitude * {$radConst})
-                        ) > 1.0 THEN 1.0
-                        WHEN (
-                            cos({$lat} * {$radConst}) * cos(latitude * {$radConst}) *
-                            cos(longitude * {$radConst} - ({$lng}) * {$radConst}) +
-                            sin({$lat} * {$radConst}) * sin(latitude * {$radConst})
-                        ) < -1.0 THEN -1.0
-                        ELSE (
-                            cos({$lat} * {$radConst}) * cos(latitude * {$radConst}) *
-                            cos(longitude * {$radConst} - ({$lng}) * {$radConst}) +
-                            sin({$lat} * {$radConst}) * sin(latitude * {$radConst})
-                        )
-                    END
-                )
-            )";
-
-            $query = $query
-                ->whereBetween('latitude', [$minLat, $maxLat])
-                ->whereBetween('longitude', [$minLng, $maxLng])
-                ->whereRaw("{$distanceExpr} <= ?", [$radius])
-                ->selectRaw("*, {$distanceExpr} AS distance_meters");
-
-            if ($sortByDistance) {
-                $query->orderBy('distance_meters', 'asc');
-            }
-
-            return $query;
+            return $this->scopeWithinRadiusSqlite(
+                $query, $lat, $lng, $radius, $minLat, $maxLat, $minLng, $maxLng, $sortByDistance
+            );
         }
 
-        // MySQL version with LEAST/GREATEST
+        // MySQL: MBRContains drives the SPATIAL INDEX; ST_Distance_Sphere refines
+        $bboxWkt  = "POLYGON(({$minLng} {$minLat},{$maxLng} {$minLat},{$maxLng} {$maxLat},{$minLng} {$maxLat},{$minLng} {$minLat}))";
+        $bboxExpr = "ST_GeomFromText('{$bboxWkt}', 4326)";
+        $ptExpr   = "ST_GeomFromText('POINT({$lng} {$lat})', 4326)";
+
         $query = $query
-            ->whereBetween('latitude', [$minLat, $maxLat])
-            ->whereBetween('longitude', [$minLng, $maxLng])
-            ->selectRaw(
-                "*, (
-                    {$earthRadius} * acos(
-                        LEAST(1.0, GREATEST(-1.0,
-                            cos(radians(?)) * cos(radians(latitude)) *
-                            cos(radians(longitude) - radians(?)) +
-                            sin(radians(?)) * sin(radians(latitude))
-                        ))
-                    )
-                ) AS distance_meters",
-                [$lat, $lng, $lat],
-            )
-            ->having('distance_meters', '<=', $radius);
+            ->whereRaw("MBRContains({$bboxExpr}, location)")
+            ->whereRaw("ST_Distance_Sphere(location, {$ptExpr}) <= ?", [$radius])
+            ->selectRaw("*, ST_Distance_Sphere(location, {$ptExpr}) AS distance_meters");
 
         if ($sortByDistance) {
             $query->orderBy('distance_meters', 'asc');
@@ -737,62 +691,133 @@ class Residence extends Model
     }
 
     /**
-     * Scope to find residences sorted by distance only (without radius limit)
+     * SQLite fallback for scopeWithinRadius (test environment).
+     * Uses Haversine via bounding box + whereRaw — no spatial index available.
+     */
+    private function scopeWithinRadiusSqlite(
+        $query,
+        float $lat,
+        float $lng,
+        int $radius,
+        float $minLat,
+        float $maxLat,
+        float $minLng,
+        float $maxLng,
+        bool $sortByDistance,
+    ) {
+        $earthRadius = 6371000;
+        $radConst = 0.017453293;
+
+        $distanceExpr = "(
+            {$earthRadius} * acos(
+                CASE
+                    WHEN (
+                        cos({$lat} * {$radConst}) * cos(latitude * {$radConst}) *
+                        cos(longitude * {$radConst} - ({$lng}) * {$radConst}) +
+                        sin({$lat} * {$radConst}) * sin(latitude * {$radConst})
+                    ) > 1.0 THEN 1.0
+                    WHEN (
+                        cos({$lat} * {$radConst}) * cos(latitude * {$radConst}) *
+                        cos(longitude * {$radConst} - ({$lng}) * {$radConst}) +
+                        sin({$lat} * {$radConst}) * sin(latitude * {$radConst})
+                    ) < -1.0 THEN -1.0
+                    ELSE (
+                        cos({$lat} * {$radConst}) * cos(latitude * {$radConst}) *
+                        cos(longitude * {$radConst} - ({$lng}) * {$radConst}) +
+                        sin({$lat} * {$radConst}) * sin(latitude * {$radConst})
+                    )
+                END
+            )
+        )";
+
+        $query = $query
+            ->whereBetween('latitude', [$minLat, $maxLat])
+            ->whereBetween('longitude', [$minLng, $maxLng])
+            ->whereRaw("{$distanceExpr} <= ?", [$radius])
+            ->selectRaw("*, {$distanceExpr} AS distance_meters");
+
+        if ($sortByDistance) {
+            $query->orderBy('distance_meters', 'asc');
+        }
+
+        return $query;
+    }
+
+    /**
+     * Scope to find residences sorted by distance only (without radius limit).
      *
-     * @param $query
-     * @param float $lat Latitude
-     * @param float $lng Longitude
-     * @param int $limit Maximum results
-     * @return mixed
+     * MySQL path: MBRContains on a 50 km bounding box drives the SPATIAL INDEX,
+     * then ST_Distance_Sphere orders the candidate set.
+     *
+     * SQLite path: Haversine with no bounding-box pre-filter (full scan acceptable
+     * in test environments with small datasets).
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param float $lat Latitude of search centre
+     * @param float $lng Longitude of search centre
+     * @param int $limit Maximum number of results
      */
     public function scopeNearestTo($query, float $lat, float $lng, int $limit = 20)
     {
-        $earthRadius = 6371000;
         $driver = $query->getConnection()->getDriverName();
-        $radConst = 0.017453293;
 
         if ($driver === 'sqlite') {
-            $distanceExpr = "(
-                {$earthRadius} * acos(
-                    CASE
-                        WHEN (
-                            cos({$lat} * {$radConst}) * cos(latitude * {$radConst}) *
-                            cos(longitude * {$radConst} - ({$lng}) * {$radConst}) +
-                            sin({$lat} * {$radConst}) * sin(latitude * {$radConst})
-                        ) > 1.0 THEN 1.0
-                        WHEN (
-                            cos({$lat} * {$radConst}) * cos(latitude * {$radConst}) *
-                            cos(longitude * {$radConst} - ({$lng}) * {$radConst}) +
-                            sin({$lat} * {$radConst}) * sin(latitude * {$radConst})
-                        ) < -1.0 THEN -1.0
-                        ELSE (
-                            cos({$lat} * {$radConst}) * cos(latitude * {$radConst}) *
-                            cos(longitude * {$radConst} - ({$lng}) * {$radConst}) +
-                            sin({$lat} * {$radConst}) * sin(latitude * {$radConst})
-                        )
-                    END
-                )
-            )";
-
-            return $query
-                ->selectRaw("*, {$distanceExpr} AS distance_meters")
-                ->orderBy('distance_meters', 'asc')
-                ->limit($limit);
+            return $this->scopeNearestToSqlite($query, $lat, $lng, $limit);
         }
 
+        // Use a 50 km bounding box so the SPATIAL INDEX prunes distant rows
+        $nearbyRadiusMeters = 50000;
+        $latDelta = $nearbyRadiusMeters / 111320;
+        $lngDelta = $nearbyRadiusMeters / (111320 * cos(deg2rad($lat)));
+
+        $minLat = $lat - $latDelta;
+        $maxLat = $lat + $latDelta;
+        $minLng = $lng - $lngDelta;
+        $maxLng = $lng + $lngDelta;
+
+        $bboxWkt  = "POLYGON(({$minLng} {$minLat},{$maxLng} {$minLat},{$maxLng} {$maxLat},{$minLng} {$maxLat},{$minLng} {$minLat}))";
+        $bboxExpr = "ST_GeomFromText('{$bboxWkt}', 4326)";
+        $ptExpr   = "ST_GeomFromText('POINT({$lng} {$lat})', 4326)";
+
         return $query
-            ->selectRaw(
-                "*, (
-                    {$earthRadius} * acos(
-                        LEAST(1.0, GREATEST(-1.0,
-                            cos(radians(?)) * cos(radians(latitude)) *
-                            cos(radians(longitude) - radians(?)) +
-                            sin(radians(?)) * sin(radians(latitude))
-                        ))
+            ->whereRaw("MBRContains({$bboxExpr}, location)")
+            ->selectRaw("*, ST_Distance_Sphere(location, {$ptExpr}) AS distance_meters")
+            ->orderBy('distance_meters', 'asc')
+            ->limit($limit);
+    }
+
+    /**
+     * SQLite fallback for scopeNearestTo (test environment).
+     */
+    private function scopeNearestToSqlite($query, float $lat, float $lng, int $limit)
+    {
+        $earthRadius = 6371000;
+        $radConst = 0.017453293;
+
+        $distanceExpr = "(
+            {$earthRadius} * acos(
+                CASE
+                    WHEN (
+                        cos({$lat} * {$radConst}) * cos(latitude * {$radConst}) *
+                        cos(longitude * {$radConst} - ({$lng}) * {$radConst}) +
+                        sin({$lat} * {$radConst}) * sin(latitude * {$radConst})
+                    ) > 1.0 THEN 1.0
+                    WHEN (
+                        cos({$lat} * {$radConst}) * cos(latitude * {$radConst}) *
+                        cos(longitude * {$radConst} - ({$lng}) * {$radConst}) +
+                        sin({$lat} * {$radConst}) * sin(latitude * {$radConst})
+                    ) < -1.0 THEN -1.0
+                    ELSE (
+                        cos({$lat} * {$radConst}) * cos(latitude * {$radConst}) *
+                        cos(longitude * {$radConst} - ({$lng}) * {$radConst}) +
+                        sin({$lat} * {$radConst}) * sin(latitude * {$radConst})
                     )
-                ) AS distance_meters",
-                [$lat, $lng, $lat],
+                END
             )
+        )";
+
+        return $query
+            ->selectRaw("*, {$distanceExpr} AS distance_meters")
             ->orderBy('distance_meters', 'asc')
             ->limit($limit);
     }

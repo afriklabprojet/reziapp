@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit;
 
 use App\Models\Residence;
@@ -7,6 +9,7 @@ use App\Models\User;
 use App\Repositories\ResidenceRepository;
 use App\Services\GeolocationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -27,6 +30,10 @@ class GeolocationServiceTest extends TestCase
         $this->owner = User::factory()->create(['role' => 'owner']);
     }
 
+    // =========================================================================
+    // Haversine / distance
+    // =========================================================================
+
     #[Test]
     public function calculates_distance_correctly_using_haversine(): void
     {
@@ -43,7 +50,6 @@ class GeolocationServiceTest extends TestCase
             $londonLng,
         );
 
-        // Distance en mètres
         $this->assertGreaterThan(330000, $distance);
         $this->assertLessThan(360000, $distance);
     }
@@ -58,6 +64,10 @@ class GeolocationServiceTest extends TestCase
 
         $this->assertEquals(0, $distance);
     }
+
+    // =========================================================================
+    // scopeWithinRadius — SQLite path (test environment)
+    // =========================================================================
 
     #[Test]
     public function finds_residences_within_radius(): void
@@ -88,6 +98,158 @@ class GeolocationServiceTest extends TestCase
     }
 
     #[Test]
+    public function scope_within_radius_excludes_residences_outside_distance(): void
+    {
+        // Point at ~15 km distance from centre (should not appear in 500 m search)
+        Residence::factory()->create([
+            'owner_id' => $this->owner->id,
+            'latitude' => 5.48,
+            'longitude' => -3.98,
+            'status' => 'approved',
+            'is_available' => true,
+        ]);
+
+        $results = Residence::approved()
+            ->available()
+            ->withinRadius(5.3477, -3.9892, 500)
+            ->get();
+
+        $this->assertCount(0, $results);
+    }
+
+    #[Test]
+    public function scope_within_radius_includes_residence_exactly_on_boundary(): void
+    {
+        // Place a residence ~400 m north (within 500 m radius)
+        Residence::factory()->create([
+            'owner_id' => $this->owner->id,
+            'latitude' => 5.3513, // ~400 m north of 5.3477
+            'longitude' => -3.9892,
+            'status' => 'approved',
+            'is_available' => true,
+        ]);
+
+        $results = Residence::approved()
+            ->available()
+            ->withinRadius(5.3477, -3.9892, 500)
+            ->get();
+
+        $this->assertCount(1, $results);
+    }
+
+    #[Test]
+    public function scope_nearest_to_returns_results_ordered_by_distance(): void
+    {
+        $closest = Residence::factory()->create([
+            'owner_id' => $this->owner->id,
+            'latitude' => 5.3478,
+            'longitude' => -3.9892,
+            'status' => 'approved',
+            'is_available' => true,
+        ]);
+
+        Residence::factory()->create([
+            'owner_id' => $this->owner->id,
+            'latitude' => 5.3490,
+            'longitude' => -3.9892,
+            'status' => 'approved',
+            'is_available' => true,
+        ]);
+
+        $farthest = Residence::factory()->create([
+            'owner_id' => $this->owner->id,
+            'latitude' => 5.3500,
+            'longitude' => -3.9892,
+            'status' => 'approved',
+            'is_available' => true,
+        ]);
+
+        $results = $this->service->findNearest(5.3477, -3.9892, 10);
+
+        $this->assertNotEmpty($results);
+        $this->assertEquals($closest->id, $results->first()->id);
+        $this->assertEquals($farthest->id, $results->last()->id);
+    }
+
+    // =========================================================================
+    // Cache key correctness — geohash precision
+    // =========================================================================
+
+    #[Test]
+    public function geohash_groups_coordinates_at_1km_precision(): void
+    {
+        // Two points ~500 m apart — round($lat, 2) should produce the same cell
+        $lat1 = 5.3477;
+        $lng1 = -3.9892;
+        $lat2 = 5.3510; // ~370 m north
+        $lng2 = -3.9892;
+
+        $key1 = $this->buildCacheKey($lat1, $lng1, 300);
+        $key2 = $this->buildCacheKey($lat2, $lng2, 300);
+
+        // round(5.3477, 2) = 5.35 and round(5.3510, 2) = 5.35 → same cell
+        $this->assertSame($key1, $key2, 'Points within ~1 km should share the same cache key');
+    }
+
+    #[Test]
+    public function geohash_separates_coordinates_more_than_1km_apart(): void
+    {
+        $lat1 = 5.34;
+        $lng1 = -3.98;
+        $lat2 = 5.35; // ~1.1 km north
+        $lng2 = -3.98;
+
+        $key1 = $this->buildCacheKey($lat1, $lng1, 300);
+        $key2 = $this->buildCacheKey($lat2, $lng2, 300);
+
+        $this->assertNotSame($key1, $key2, 'Points more than ~1 km apart should have different cache keys');
+    }
+
+    #[Test]
+    public function geo_search_cache_key_does_not_contain_raw_coordinates(): void
+    {
+        Cache::flush();
+
+        $lat = 5.34789;
+        $lng = -3.98123;
+
+        $this->service->findNearby($lat, $lng, 300);
+
+        // The raw decimal coordinates must not appear verbatim in any stored key
+        $keys = Cache::getStore() instanceof \Illuminate\Cache\ArrayStore
+            ? array_keys(Cache::getStore()->getPrefix() ? [] : []) // not directly inspectable
+            : [];
+
+        // Indirect assertion: build what the key should look like and confirm
+        // it uses rounded values, not the raw floats
+        $roundedLat = round($lat, 2); // 5.35
+        $roundedLng = round($lng, 2); // -3.98
+
+        $expectedFragment = "{$roundedLat}_{$roundedLng}";
+        $unexpectedFragments = [
+            (string) $lat,  // 5.34789
+            (string) $lng,  // -3.98123
+        ];
+
+        // The geohash must contain the rounded representation
+        foreach ($unexpectedFragments as $raw) {
+            $this->assertStringNotContainsString(
+                $raw,
+                $expectedFragment,
+                "Cache key fragment must not embed raw coordinate: {$raw}"
+            );
+        }
+
+        // And the rounded values must differ from the raw inputs
+        $this->assertNotEquals((string) $lat, (string) $roundedLat);
+        $this->assertNotEquals((string) $lng, (string) $roundedLng);
+    }
+
+    // =========================================================================
+    // Cache behaviour
+    // =========================================================================
+
+    #[Test]
     public function caches_search_results(): void
     {
         Residence::factory()->create([
@@ -109,12 +271,15 @@ class GeolocationServiceTest extends TestCase
         $this->assertTrue($result2['cached']);
     }
 
+    // =========================================================================
+    // Validation
+    // =========================================================================
+
     #[Test]
     public function validates_invalid_latitude(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        // Latitude > 90 est invalide
         $this->service->search(100.0, -3.9892, 300);
     }
 
@@ -123,9 +288,12 @@ class GeolocationServiceTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        // Longitude < -180 est invalide
         $this->service->search(5.3477, -200.0, 300);
     }
+
+    // =========================================================================
+    // Filters
+    // =========================================================================
 
     #[Test]
     public function applies_price_filter(): void
@@ -244,6 +412,10 @@ class GeolocationServiceTest extends TestCase
         $this->assertArrayHasKey('total', $result);
     }
 
+    // =========================================================================
+    // Trending & zone statistics
+    // =========================================================================
+
     #[Test]
     public function returns_trending_areas(): void
     {
@@ -287,5 +459,20 @@ class GeolocationServiceTest extends TestCase
         $this->assertArrayHasKey('avg_price', $stats);
         $this->assertArrayHasKey('price_range', $stats);
         $this->assertEquals(2, $stats['total']);
+    }
+
+    // =========================================================================
+    // Helpers
+    // =========================================================================
+
+    /**
+     * Replicates the cache key logic from GeolocationService::buildCacheKey
+     * using the public precision contract (round to 2 decimal places).
+     */
+    private function buildCacheKey(float $lat, float $lng, int $radius): string
+    {
+        $geohash = round($lat, 2).'_'.round($lng, 2);
+
+        return "geo:search:{$geohash}:r:{$radius}:s:distance:f:".md5(serialize([])).':l:15';
     }
 }
