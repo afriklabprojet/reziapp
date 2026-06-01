@@ -111,9 +111,12 @@ class GeolocationService
         $this->validateCoordinates($latitude, $longitude);
         $radius = $this->normalizeRadius($radius);
 
+        $geohash = $this->getGeohash($latitude, $longitude);
         $cacheKey = $this->buildCacheKey($latitude, $longitude, $radius, $filters, $perPage, $sort);
         $page = request()->get('page', 1);
         $fullCacheKey = "{$cacheKey}:page:{$page}";
+
+        $this->registerCacheKey($geohash, $fullCacheKey);
 
         $cached = Cache::has($fullCacheKey);
 
@@ -172,7 +175,10 @@ class GeolocationService
         $this->validateCoordinates($latitude, $longitude);
         $radius = $this->normalizeRadius($radius);
 
-        $cacheKey = "geo:nearby:{$this->getGeohash($latitude, $longitude)}:r:{$radius}:l:{$limit}";
+        $geohash = $this->getGeohash($latitude, $longitude);
+        $cacheKey = "geo:nearby:{$geohash}:r:{$radius}:l:{$limit}";
+
+        $this->registerCacheKey($geohash, $cacheKey);
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($latitude, $longitude, $radius, $limit) {
             return Residence::approved()
@@ -191,7 +197,10 @@ class GeolocationService
     {
         $this->validateCoordinates($latitude, $longitude);
 
-        $cacheKey = "geo:nearest:{$this->getGeohash($latitude, $longitude)}:limit:{$limit}";
+        $geohash = $this->getGeohash($latitude, $longitude);
+        $cacheKey = "geo:nearest:{$geohash}:limit:{$limit}";
+
+        $this->registerCacheKey($geohash, $cacheKey);
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($latitude, $longitude, $limit) {
             return Residence::approved()
@@ -236,7 +245,10 @@ class GeolocationService
      */
     public function getZoneStatistics(float $latitude, float $longitude, int $radius): array
     {
-        $cacheKey = "geo:zone_stats:{$this->getGeohash($latitude, $longitude)}:r:{$radius}";
+        $geohash = $this->getGeohash($latitude, $longitude);
+        $cacheKey = "geo:zone_stats:{$geohash}:r:{$radius}";
+
+        $this->registerCacheKey($geohash, $cacheKey);
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($latitude, $longitude, $radius) {
             $residences = Residence::approved()
@@ -274,7 +286,10 @@ class GeolocationService
         $this->validateCoordinates($latitude, $longitude);
         $radius = $this->normalizeRadius($radius);
 
-        $cacheKey = "geo:count:{$this->getGeohash($latitude, $longitude)}:r:{$radius}";
+        $geohash = $this->getGeohash($latitude, $longitude);
+        $cacheKey = "geo:count:{$geohash}:r:{$radius}";
+
+        $this->registerCacheKey($geohash, $cacheKey);
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($latitude, $longitude, $radius) {
             return Residence::approved()
@@ -291,7 +306,10 @@ class GeolocationService
     {
         $this->validateCoordinates($latitude, $longitude);
 
-        $cacheKey = "geo:radius_counts:{$this->getGeohash($latitude, $longitude)}";
+        $geohash = $this->getGeohash($latitude, $longitude);
+        $cacheKey = "geo:radius_counts:{$geohash}";
+
+        $this->registerCacheKey($geohash, $cacheKey);
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($latitude, $longitude) {
             $counts = [];
@@ -341,20 +359,50 @@ class GeolocationService
     }
 
     /**
-     * Invalide le cache pour une zone géographique
+     * Invalide le cache pour une zone géographique.
+     *
+     * Utilise un registry de clés (geo:keys:{geohash}) pour éviter les wildcards
+     * qui ne fonctionnent pas avec le driver database ou file.
+     * Compatible avec tous les drivers (array, database, redis).
      */
     public function invalidateCache(float $latitude, float $longitude): void
     {
         $geohash = $this->getGeohash($latitude, $longitude);
+        $registryKey = "geo:keys:{$geohash}";
 
-        // Invalider les clés de cette zone
-        Cache::forget("geo:nearest:{$geohash}:*");
-        Cache::forget("geo:count:{$geohash}:*");
-        Cache::forget("geo:radius_counts:{$geohash}");
-        Cache::forget("geo:zone_stats:{$geohash}:*");
+        $keys = Cache::get($registryKey, []);
+
+        foreach ($keys as $key) {
+            Cache::forget($key);
+        }
+
+        Cache::forget($registryKey);
         Cache::forget('geo:trending_areas');
 
-        Log::info('Geolocation cache invalidated', ['geohash' => $geohash]);
+        Log::info('Geolocation cache invalidated', [
+            'geohash' => $geohash,
+            'keys_cleared' => count($keys),
+        ]);
+    }
+
+    /**
+     * Enregistre une clé de cache dans le registry du geohash.
+     *
+     * Permet l'invalidation groupée sans wildcard, compatible tous drivers.
+     * TTL du registry (7 jours) intentionnellement supérieur aux TTL de cache
+     * individuels (30 min) pour garantir que la liste survit aux entrées.
+     */
+    private function registerCacheKey(string $geohash, string $key): void
+    {
+        $registryKey = "geo:keys:{$geohash}";
+        $registryTtl = 3600 * 24 * 7; // 7 days
+
+        $keys = Cache::get($registryKey, []);
+
+        if (! in_array($key, $keys, true)) {
+            $keys[] = $key;
+            Cache::put($registryKey, $keys, $registryTtl);
+        }
     }
 
     /**
