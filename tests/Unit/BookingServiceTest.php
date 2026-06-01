@@ -56,7 +56,6 @@ class BookingServiceTest extends TestCase
             'status' => 'approved',
             'is_available' => true,
             'instant_book' => true,
-            'price_per_night' => 20000,
             'price_per_day' => 20000,
             'cleaning_fee' => 5000,
             'max_guests' => 6,
@@ -187,7 +186,7 @@ class BookingServiceTest extends TestCase
         $this->assertNotNull($booking->balance_due_at);
 
         $expectedDeposit = (int) round($booking->total_amount * 0.5);
-        $expectedBalance = $booking->total_amount - $expectedDeposit;
+        $expectedBalance = (int) ($booking->total_amount - $expectedDeposit);
 
         $this->assertSame($expectedDeposit, (int) $booking->deposit_amount);
         $this->assertSame($expectedBalance, (int) $booking->balance_amount);

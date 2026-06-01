@@ -6,7 +6,6 @@ namespace Tests\Unit;
 
 use App\Models\Residence;
 use App\Models\User;
-use App\Repositories\ResidenceRepository;
 use App\Services\GeolocationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
@@ -37,8 +36,7 @@ class GeolocationCacheInvalidationTest extends TestCase
     {
         parent::setUp();
 
-        $repository = app(ResidenceRepository::class);
-        $this->service = new GeolocationService($repository);
+        $this->service = new GeolocationService();
         $this->owner = User::factory()->create(['role' => 'owner']);
     }
 
@@ -265,7 +263,7 @@ class GeolocationCacheInvalidationTest extends TestCase
      */
     private function resolveGeohash(float $lat, float $lng): string
     {
-        return round($lat, 3).'_'.round($lng, 3);
+        return round($lat, 2).'_'.round($lng, 2);
     }
 
     /**
