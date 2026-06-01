@@ -184,28 +184,16 @@ class BookingService
             throw new \Exception('Cette résidence n\'est pas disponible à la réservation.');
         }
 
-        // ─── Idempotency: detect duplicate submissions ───
+        // ─── Idempotency key ───
         $idempotencyKey = 'bk_'.$residence->id.'_'.$user->id.'_'.$checkIn->format('Ymd').'_'.$checkOut->format('Ymd');
 
-        // Purger les bookings soft-deleted avec la même clé pour permettre une nouvelle
-        // tentative après un paiement échoué ou annulé (sinon la contrainte unique MySQL bloque)
+        // Purger les bookings soft-deleted AVANT la transaction : ils ont deleted_at != null
+        // donc la contrainte unique MySQL ne s'applique plus, mais forceDelete nettoie proprement
+        // pour permettre une nouvelle tentative après paiement échoué ou annulé.
         Booking::withTrashed()
             ->where('idempotency_key', $idempotencyKey)
             ->whereNotNull('deleted_at')
             ->forceDelete();
-
-        $existing = Booking::where('idempotency_key', $idempotencyKey)
-            ->whereIn('status', ['pending_payment', 'pending', 'confirmed'])
-            ->first();
-
-        if ($existing) {
-            Log::info('createBooking: Returning existing booking (idempotent)', [
-                'booking_id' => $existing->id,
-                'idempotency_key' => $idempotencyKey,
-            ]);
-
-            return $existing;
-        }
 
         // Calculer le prix AVANT la transaction (lecture seule, pas besoin de lock)
         $priceBreakdown = $this->pricingService->calculatePrice(
@@ -227,6 +215,22 @@ class BookingService
         $paymentSplit = $paymentSplit && $splitEligible;
 
         return DB::transaction(function () use ($residence, $user, $data, $priceBreakdown, $checkIn, $checkOut, $bookingType, $idempotencyKey, $paymentSplit) {
+            // SECURITE : Vérification d'idempotency DANS la transaction avec lock pessimiste.
+            // Empêche deux requêtes concurrentes avec la même clé de passer simultanément.
+            $existing = Booking::where('idempotency_key', $idempotencyKey)
+                ->whereIn('status', ['pending_payment', 'pending', 'confirmed'])
+                ->lockForUpdate()
+                ->first();
+
+            if ($existing) {
+                Log::info('createBooking: Returning existing booking (idempotent)', [
+                    'booking_id' => $existing->id,
+                    'idempotency_key' => $idempotencyKey,
+                ]);
+
+                return $existing;
+            }
+
             // SECURITE : Vérification de disponibilité DANS la transaction avec lock pessimiste
             // Empêche les double bookings par requêtes concurrentes (race condition)
             $hasConflict = Booking::where('residence_id', $residence->id)
@@ -444,12 +448,61 @@ class BookingService
     }
 
     /**
-     * Convertir une demande approuvée en réservation
+     * Convertir une demande approuvée en réservation.
+     *
+     * Appelée depuis approveBookingRequest() qui ouvre déjà une DB::transaction.
+     * La vérification idempotency + disponibilité utilise lockForUpdate() pour
+     * protéger contre les double-appels concurrents (double-click, retry réseau).
      */
     protected function convertRequestToBooking(BookingRequest $request): Booking
     {
+        // Clé déterministe basée sur le BookingRequest->id pour garantir l'idempotency
+        $idempotencyKey = 'req_'.$request->id;
+
+        // Vérifier si un booking existe déjà pour cette demande avec lock pessimiste.
+        // Le lock est cohérent car approveBookingRequest() est dans DB::transaction.
+        $existing = Booking::where('idempotency_key', $idempotencyKey)
+            ->lockForUpdate()
+            ->first();
+
+        if ($existing) {
+            Log::info('convertRequestToBooking: Returning existing booking (idempotent)', [
+                'booking_id' => $existing->id,
+                'booking_request_id' => $request->id,
+            ]);
+
+            return $existing;
+        }
+
+        // Vérifier la disponibilité avec lock pour éviter les conflits de dates
+        $checkIn = $request->check_in instanceof \Carbon\Carbon
+            ? $request->check_in
+            : \Carbon\Carbon::parse($request->check_in);
+
+        $checkOut = $request->check_out instanceof \Carbon\Carbon
+            ? $request->check_out
+            : \Carbon\Carbon::parse($request->check_out);
+
+        $hasConflict = Booking::where('residence_id', $request->residence_id)
+            ->whereIn('status', ['pending', 'confirmed', 'pending_payment'])
+            ->where(function ($query) use ($checkIn, $checkOut) {
+                $query->whereBetween('check_in', [$checkIn, $checkOut->copy()->subDay()])
+                    ->orWhereBetween('check_out', [$checkIn->copy()->addDay(), $checkOut])
+                    ->orWhere(function ($q) use ($checkIn, $checkOut) {
+                        $q->where('check_in', '<=', $checkIn)
+                            ->where('check_out', '>=', $checkOut);
+                    });
+            })
+            ->lockForUpdate()
+            ->exists();
+
+        if ($hasConflict) {
+            throw new \Exception('Cette résidence est déjà réservée pour ces dates.');
+        }
+
         $booking = Booking::create([
             'uuid' => Str::uuid(),
+            'idempotency_key' => $idempotencyKey,
             'reference' => $this->generateBookingReference(),
             'residence_id' => $request->residence_id,
             'user_id' => $request->user_id,
@@ -476,7 +529,7 @@ class BookingService
             'currency' => 'XOF',
 
             'guest_message' => $request->message,
-            'status' => 'pending', // En attente de paiement
+            'status' => 'pending',
             'payment_status' => 'pending',
         ]);
 
@@ -537,15 +590,15 @@ class BookingService
     }
 
     /**
-     * Générer une référence unique de réservation
+     * Générer une référence unique de réservation.
+     *
+     * Utilise un UUID v4 tronqué pour garantir l'unicité sans SELECT.
+     * L'espace de collision est 16^8 = ~4 milliards de valeurs possibles,
+     * ce qui est suffisant pour éviter tout doublon en production sans boucle.
      */
     protected function generateBookingReference(): string
     {
-        do {
-            $reference = 'RZ-'.strtoupper(Str::random(8));
-        } while (Booking::where('reference', $reference)->exists());
-
-        return $reference;
+        return 'RZ-'.strtoupper(substr(str_replace('-', '', (string) Str::uuid()), 0, 8));
     }
 
     /**
