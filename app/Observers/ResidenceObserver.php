@@ -10,6 +10,7 @@ use App\Jobs\SendNewsletterCampaign;
 use App\Models\Residence;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Observer pour invalider les caches homepage
@@ -48,6 +49,8 @@ class ResidenceObserver
      */
     public function created(Residence $residence): void
     {
+        $this->syncSpatialLocation($residence);
+
         $this->invalidateHomepageCache($residence);
         $this->invalidateSimilarCache($residence);
 
@@ -102,8 +105,9 @@ class ResidenceObserver
             ComputeListingScore::dispatch($residence)->onQueue('default')->delay(now()->addSeconds(10));
         }
 
-        // Si les coordonnées changent, rafraîchir les POIs
+        // Si les coordonnées changent, synchroniser la colonne POINT et rafraîchir les POIs
         if ($residence->isDirty(['latitude', 'longitude'])) {
+            $this->syncSpatialLocation($residence);
             FetchNearbyPlaces::dispatch($residence, force: true)->onQueue('default')->delay(now()->addSeconds(30));
         }
 
@@ -153,6 +157,34 @@ class ResidenceObserver
     public function restored(Residence $residence): void
     {
         $this->invalidateHomepageCache($residence);
+    }
+
+    /**
+     * Synchronise la colonne POINT (spatial) à partir de latitude/longitude.
+     *
+     * Ignoré silencieusement sur SQLite (tests) et quand les coordonnées sont nulles.
+     * Utilise un UPDATE direct pour contourner la limitation de Eloquent sur les
+     * types géométriques MySQL — évite tout casting non géré.
+     */
+    private function syncSpatialLocation(Residence $residence): void
+    {
+        if (! $residence->latitude || ! $residence->longitude) {
+            return;
+        }
+
+        // SQLite ne supporte pas les fonctions spatiales MySQL
+        $driver = DB::getDriverName();
+        if ($driver === 'sqlite') {
+            return;
+        }
+
+        DB::table('residences')
+            ->where('id', $residence->id)
+            ->update([
+                'location' => DB::raw(
+                    "ST_GeomFromText('POINT({$residence->longitude} {$residence->latitude})', 4326)"
+                ),
+            ]);
     }
 
     /**

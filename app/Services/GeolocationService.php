@@ -419,14 +419,15 @@ class GeolocationService
     }
 
     /**
-     * Génère un geohash simplifié pour le cache (~500m precision)
+     * Génère un geohash simplifié pour le cache (~1.1 km precision à l'équateur).
+     *
+     * round(..., 2) donne une cellule d'environ 1.1 km × 1.1 km, ce qui est
+     * suffisant pour la recherche de résidences et maximise le cache hit rate
+     * par rapport à la précision ~111 m de round(..., 3).
      */
     private function getGeohash(float $lat, float $lng): string
     {
-        $latHash = round($lat, 3);
-        $lngHash = round($lng, 3);
-
-        return "{$latHash}_{$lngHash}";
+        return round($lat, 2).'_'.round($lng, 2);
     }
 
     /**
