@@ -19,6 +19,12 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // SQLite (used in tests) does not support MySQL SPATIAL types or SRID.
+        // Skip silently so the test suite can run without a MySQL connection.
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
         Schema::table('residences', function (Blueprint $table) {
             // NOT NULL requires a geometry default; we backfill immediately
             // after adding the column. Using DB::statement for full MySQL SPATIAL syntax.
@@ -40,6 +46,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
         DB::statement('ALTER TABLE residences DROP INDEX idx_residences_location');
 
         Schema::table('residences', function (Blueprint $table) {
