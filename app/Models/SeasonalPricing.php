@@ -9,6 +9,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
+/**
+ * Tarification saisonnière avec multiplicateurs et templates Côte d'Ivoire.
+ *
+ * Responsabilité : modéliser des périodes tarifaires via un multiplicateur
+ * (price_multiplier, ex : 1.30 = +30%) ou un prix journalier absolu (price_per_day).
+ * Fournit des templates de saisons prédéfinis pour le marché CI (haute saison,
+ * Pâques, vacances d'été, basse saison).
+ *
+ * Table : seasonal_pricing
+ *
+ * DISTINCT de SeasonalPrice : ce modèle agit par multiplicateur sur le tarif de
+ * base de la résidence. SeasonalPrice stocke des montants fixes en FCFA.
+ *
+ * Actif dans les calculs de réservation : OUI — utilisé par AvailabilityCalendar
+ * (calcul du prix par nuit sur la vue calendrier) et AvailabilityController (API).
+ * Géré côté propriétaire via AvailabilityManager (Livewire).
+ */
 class SeasonalPricing extends Model
 {
     protected $table = 'seasonal_pricing';

@@ -342,7 +342,10 @@ class Residence extends Model
     }
 
     /**
-     * Prix saisonniers de la résidence
+     * Prix saisonniers absolus (montants fixes FCFA par nuit/semaine/mois).
+     *
+     * @see SeasonalPrice — tarifs absolus pour le calendrier propriétaire et DynamicPricingService.
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<SeasonalPrice>
      */
     public function seasonalPrices()
     {
@@ -350,7 +353,10 @@ class Residence extends Model
     }
 
     /**
-     * Prix saisonniers avancés
+     * Tarification saisonnière par multiplicateur (templates Côte d'Ivoire).
+     *
+     * @see SeasonalPricing — multiplicateurs utilisés par AvailabilityCalendar et l'API disponibilité.
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<SeasonalPricing>
      */
     public function seasonalPricing()
     {
