@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
@@ -111,3 +112,12 @@ Schedule::command('rezi:expire-lock-codes')->hourly()
 Schedule::command('rezi:update-scarcity-stats')->hourly()
     ->withoutOverlapping()
     ->runInBackground();
+
+// RGPD : anonymisation et purge des données personnelles dont le TTL est dépassé (chaque semaine)
+Schedule::command('privacy:cleanup')
+    ->weekly()
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->onFailure(function () {
+        Log::error('privacy:cleanup a échoué lors de son exécution planifiée');
+    });

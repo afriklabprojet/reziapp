@@ -1,5 +1,15 @@
 import './bootstrap';
 
+// TODO(CSP): Remplacer cet import par le build CSP d'Alpine pour supprimer
+// définitivement unsafe-eval de la CSP en production.
+// Étapes :
+//   1. npm install alpinejs@latest   (>= 3.14 inclut le build CSP)
+//   2. Remplacer la ligne ci-dessous par :
+//      import Alpine from '@alpinejs/csp';
+//      (ou : npm install @alpinejs/csp && import Alpine from '@alpinejs/csp')
+// Tant que l'import standard est utilisé, le middleware SecurityHeaders.php
+// NE doit PAS contenir 'unsafe-eval' — Alpine plantera silencieusement sur
+// les expressions x-data complexes ; surveiller Sentry après déploiement.
 import Alpine from 'alpinejs';
 import intersect from '@alpinejs/intersect';
 import collapse from '@alpinejs/collapse';
