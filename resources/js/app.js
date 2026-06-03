@@ -65,7 +65,7 @@ import languageSelector from './components/language-selector';
 import otpInputForm from './components/otp-input';
 
 // Register Alpine components before start
-window.Alpine = Alpine;
+globalThis.Alpine = Alpine;
 
 // Register Alpine plugins
 Alpine.plugin(intersect);
@@ -126,20 +126,20 @@ Alpine.data('languageSelector', (config) => languageSelector(config));
 Alpine.data('otpInputForm', () => otpInputForm());
 
 // Expose globals needed by some pages
-window.initBookingStore = initBookingStore;
-window.initResidenceMap = initResidenceMap;
-window.searchPage = searchPage;
-window.ownerStatisticsChart = (dailyStats) => ownerStatisticsChart({ dailyStats });
-window.clientStatisticsCharts = (config) => clientStatisticsCharts(config);
-window.initSponsoredPerformanceChart = (data) => initSponsoredPerformanceChart(data);
-window.initFiscalChart = (data) => initFiscalChart(data);
-window.toggleHelpful = toggleHelpful;
-window.openReportModal = openReportModal;
-window.toggleFavorite = compareToggleFavorite;
-window.requestNotificationPermission = requestNotificationPermission;
-window.markAsRead = markAsRead;
-window.copyToClipboard = copyToClipboard;
-window.copyShareLink = copyShareLink;
-window.confirmEmergency = confirmEmergency;
+globalThis.initBookingStore = initBookingStore;
+globalThis.initResidenceMap = initResidenceMap;
+globalThis.searchPage = searchPage;
+globalThis.ownerStatisticsChart = (dailyStats) => ownerStatisticsChart({ dailyStats });
+globalThis.clientStatisticsCharts = (config) => clientStatisticsCharts(config);
+globalThis.initSponsoredPerformanceChart = (data) => initSponsoredPerformanceChart(data);
+globalThis.initFiscalChart = (data) => initFiscalChart(data);
+globalThis.toggleHelpful = toggleHelpful;
+globalThis.openReportModal = openReportModal;
+globalThis.toggleFavorite = compareToggleFavorite;
+globalThis.requestNotificationPermission = requestNotificationPermission;
+globalThis.markAsRead = markAsRead;
+globalThis.copyToClipboard = copyToClipboard;
+globalThis.copyShareLink = copyShareLink;
+globalThis.confirmEmergency = confirmEmergency;
 
 Alpine.start();

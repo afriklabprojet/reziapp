@@ -41,10 +41,7 @@ class SecurityHeaders
      * Content Security Policy.
      *
      * NOTE : unsafe-inline est requis pour Livewire et Filament.
-     * Alpine.js doit utiliser le build CSP (@alpinejs/csp ou alpinejs >= 3.14
-     * compilé sans Function()) pour que unsafe-eval reste absent de la CSP.
-     * TODO: installer @alpinejs/csp et l'importer dans resources/js/app.js
-     *       pour remplacer l'import 'alpinejs' standard.
+     * Le frontend utilise le build @alpinejs/csp qui n'exige pas unsafe-eval.
      *
      * En développement, le serveur Vite HMR (port 4000 par défaut) est
      * autorisé sur toutes ses variantes d'adresse locale.
@@ -54,8 +51,6 @@ class SecurityHeaders
         // Polices externes utilisées par le projet
         $externalFontHosts = 'https://fonts.bunny.net';
 
-        // CDN Mapbox (carte interactive)
-        $mapboxCdn = 'https://api.mapbox.com';
         // Google Maps JS API + Places (autocomplétion adresses)
         $googleMaps = 'https://maps.googleapis.com https://maps.gstatic.com';
         // Google Fonts (DM Serif Display + Outfit)
@@ -66,17 +61,16 @@ class SecurityHeaders
         $directives = [
             "default-src 'self'",
             // Nonce par requête + unsafe-inline pour Livewire/Filament.
-            // unsafe-eval volontairement absent : le build @alpinejs/csp ne l'exige pas.
-            "script-src 'self' 'nonce-{$nonce}' 'unsafe-inline' {$mapboxCdn} {$googleMaps} {$clarity}",
+            "script-src 'self' 'nonce-{$nonce}' 'unsafe-inline' {$googleMaps} {$clarity}",
             // Tailwind v4 injecte des styles inline ; fonts.bunny.net pour Figtree
-            // Mapbox GL CSS + Google Fonts
-            "style-src 'self' 'unsafe-inline' {$externalFontHosts} {$mapboxCdn} {$googleFonts}",
+            // Google Fonts
+            "style-src 'self' 'unsafe-inline' {$externalFontHosts} {$googleFonts}",
             // Images locales + data URIs (avatars base64) + CDN externe (photos résidences)
             "img-src 'self' data: blob: https:",
             // Polices locales, data URIs et fonts.bunny.net + Google Fonts
             "font-src 'self' data: {$externalFontHosts} https://fonts.gstatic.com",
-            // WebSockets Pusher + API Jeko + Mapbox + Google APIs + Microsoft Clarity collect
-            "connect-src 'self' wss://*.pusher.com https://*.pusher.com https://*.pusherapp.com https://soketi.app https://api.jeko.africa https://api.mapbox.com https://events.mapbox.com https://maps.googleapis.com https://maps.gstatic.com https://*.clarity.ms",
+            // WebSockets Pusher + API Jeko + Google APIs + Microsoft Clarity collect
+            "connect-src 'self' wss://*.pusher.com https://*.pusher.com https://*.pusherapp.com https://soketi.app https://api.jeko.africa https://maps.googleapis.com https://maps.gstatic.com https://*.clarity.ms",
             // Aucun embed/iframe autorisé
             "frame-src 'none'",
             // Bloquer les plugins (Flash, etc.)
