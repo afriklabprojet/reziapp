@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Exceptions\OversizedIcalFileException;
 use App\Models\Booking;
 use App\Models\IcalBlockedDate;
 use App\Models\IcalFeed;
@@ -11,66 +12,154 @@ use App\Models\Residence;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Psr\Http\Message\ResponseInterface;
 
 class IcalService
 {
+    private const MAX_ICAL_BYTES = 5_000_000;
+
+    private const MAX_ICAL_EVENTS = 5_000;
+
+    private const TRUSTED_HOST_SUFFIXES = [
+        IcalFeed::PLATFORM_AIRBNB => ['airbnb.com'],
+        IcalFeed::PLATFORM_BOOKING => ['booking.com'],
+        IcalFeed::PLATFORM_EXPEDIA => ['expedia.com', 'expediapartnercentral.com'],
+    ];
+
+    public function __construct(
+        private readonly ?PublicUrlGuard $publicUrlGuard = null,
+    ) {}
+
     /**
      * Importer les événements depuis une URL iCal
      */
     public function importFeed(IcalFeed $feed): int
     {
-        if (!$feed->import_url) {
+        if (! $feed->import_url) {
+            return 0;
+        }
+
+        if (! $this->guard()->isSafe($feed->import_url, $this->allowedHostSuffixesFor($feed))) {
+            $this->markSyncError($feed, 'Unsafe or untrusted iCal URL.');
+
             return 0;
         }
 
         $feed->update(['sync_status' => 'syncing']);
 
+        $imported = 0;
+
         try {
-            $response = Http::timeout(30)->get($feed->import_url);
-
-            if (!$response->successful()) {
-                throw new \Exception("HTTP {$response->status()}: {$response->body()}");
-            }
-
-            $events = $this->parseIcal($response->body());
-
-            // Supprimer les anciennes dates importées pour ce feed
-            $feed->blockedDates()->delete();
-
-            $imported = 0;
-            foreach ($events as $event) {
-                if (!$event['start'] || !$event['end']) {
-                    continue;
-                }
-
-                IcalBlockedDate::create([
-                    'ical_feed_id' => $feed->id,
-                    'residence_id' => $feed->residence_id,
-                    'start_date'   => $event['start'],
-                    'end_date'     => $event['end'],
-                    'summary'      => $event['summary'] ?? null,
-                    'uid'          => $event['uid'] ?? null,
-                ]);
-                $imported++;
-            }
-
-            $feed->update([
-                'sync_status'           => 'synced',
-                'last_synced_at'        => now(),
-                'imported_events_count' => $imported,
-                'last_error'            => null,
-            ]);
-
-            return $imported;
+            $imported = $this->synchronizePublicFeed($feed);
         } catch (\Throwable $e) {
-            $feed->update([
-                'sync_status' => 'error',
-                'last_error'  => $e->getMessage(),
-            ]);
+            $this->markSyncError($feed, $e->getMessage());
             Log::error("iCal import failed for feed {$feed->id}: {$e->getMessage()}");
-
-            return 0;
         }
+
+        return $imported;
+    }
+
+    /**
+     * @return list<string>
+     */
+    protected function allowedHostSuffixesFor(IcalFeed $feed): array
+    {
+        return self::TRUSTED_HOST_SUFFIXES[$feed->platform] ?? [];
+    }
+
+    protected function guard(): PublicUrlGuard
+    {
+        return $this->publicUrlGuard ?? new PublicUrlGuard();
+    }
+
+    private function synchronizePublicFeed(IcalFeed $feed): int
+    {
+        $imported = 0;
+        $response = $this->fetchIcalResponse((string) $feed->import_url);
+
+        if (! $response->successful()) {
+            $this->markSyncError($feed, "HTTP {$response->status()}: {$response->body()}");
+        } else {
+            $body = $response->body();
+
+            if ($this->exceedsMaximumSize($body)) {
+                $this->markSyncError($feed, 'iCal file too large.');
+            } else {
+                $events = $this->parseIcal($body);
+
+                if (count($events) > self::MAX_ICAL_EVENTS) {
+                    $this->markSyncError($feed, 'Too many events in iCal feed.');
+                } else {
+                    $imported = $this->replaceBlockedDates($feed, $events);
+                }
+            }
+        }
+
+        return $imported;
+    }
+
+    private function fetchIcalResponse(string $url): \Illuminate\Http\Client\Response
+    {
+        return Http::timeout(30)
+            ->withOptions([
+                'allow_redirects' => false,
+                'on_headers' => function (ResponseInterface $response): void {
+                    $contentLength = (int) $response->getHeaderLine('Content-Length');
+
+                    if ($contentLength > self::MAX_ICAL_BYTES) {
+                        throw new OversizedIcalFileException('iCal file too large.');
+                    }
+                },
+            ])
+            ->get($url);
+    }
+
+    private function exceedsMaximumSize(string $body): bool
+    {
+        return strlen($body) > self::MAX_ICAL_BYTES;
+    }
+
+    /**
+     * @param  array<int, array{start: ?string, end: ?string, summary: ?string, uid: ?string}>  $events
+     */
+    private function replaceBlockedDates(IcalFeed $feed, array $events): int
+    {
+        $feed->blockedDates()->delete();
+
+        $imported = 0;
+
+        foreach ($events as $event) {
+            if (! $event['start'] || ! $event['end']) {
+                continue;
+            }
+
+            IcalBlockedDate::create([
+                'ical_feed_id' => $feed->id,
+                'residence_id' => $feed->residence_id,
+                'start_date'   => $event['start'],
+                'end_date'     => $event['end'],
+                'summary'      => $event['summary'] ?? null,
+                'uid'          => $event['uid'] ?? null,
+            ]);
+            $imported++;
+        }
+
+        $feed->update([
+            'sync_status'           => 'synced',
+            'last_synced_at'        => now(),
+            'imported_events_count' => $imported,
+            'last_error'            => null,
+        ]);
+
+        return $imported;
+    }
+
+    private function markSyncError(IcalFeed $feed, string $message): void
+    {
+        $feed->update([
+            'sync_status' => IcalFeed::SYNC_STATUS_ERROR,
+            'last_error'  => $message,
+        ]);
     }
 
     /**
@@ -86,7 +175,7 @@ class IcalService
         $lines = [
             'BEGIN:VCALENDAR',
             'VERSION:2.0',
-            'PRODID:-//REZI//Calendar//FR',
+            'PRODID:-//ReziApp//Calendar//FR',
             'CALSCALE:GREGORIAN',
             'METHOD:PUBLISH',
             'X-WR-CALNAME:'.$residence->name,
@@ -166,21 +255,20 @@ class IcalService
         $parts = explode(':', $line);
         $dateStr = end($parts);
         $dateStr = trim($dateStr);
+        $parsedDate = null;
 
         try {
             if (strlen($dateStr) === 8) {
-                return Carbon::createFromFormat('Ymd', $dateStr)->format('Y-m-d');
-            }
-            if (strlen($dateStr) === 15) {
-                return Carbon::createFromFormat('Ymd\THis', $dateStr)->format('Y-m-d');
-            }
-            if (strlen($dateStr) === 16 && str_ends_with($dateStr, 'Z')) {
-                return Carbon::createFromFormat('Ymd\THis\Z', $dateStr)->format('Y-m-d');
+                $parsedDate = Carbon::createFromFormat('Ymd', $dateStr)->format('Y-m-d');
+            } elseif (strlen($dateStr) === 15) {
+                $parsedDate = Carbon::createFromFormat('Ymd\THis', $dateStr)->format('Y-m-d');
+            } elseif (strlen($dateStr) === 16 && str_ends_with($dateStr, 'Z')) {
+                $parsedDate = Carbon::createFromFormat('Ymd\THis\Z', $dateStr)->format('Y-m-d');
             }
         } catch (\Exception $e) {
             // Ignorer les dates invalides
         }
 
-        return null;
+        return $parsedDate;
     }
 }

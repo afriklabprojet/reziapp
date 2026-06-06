@@ -1,5 +1,5 @@
 <x-app-layout>
-    @section('title', 'Nouveau mot de passe - REZI')
+    @section('title', 'Nouveau mot de passe - ReziApp')
 
     <div class="min-h-[calc(100vh-64px)] flex" x-data="{ showPassword: false, showConfirm: false }">
         {{-- Left Side - Branding (Desktop only) --}}
@@ -39,7 +39,7 @@
                 {{-- Headline --}}
                 <h1 class="text-4xl font-bold text-center mb-4">Nouveau départ</h1>
                 <p class="text-xl text-[#FFE7D1] text-center mb-12 max-w-md">
-                    Choisissez un mot de passe sécurisé pour protéger votre compte REZI.
+                    Choisissez un mot de passe sécurisé pour protéger votre compte ReziApp.
                 </p>
 
                 {{-- Illustration --}}

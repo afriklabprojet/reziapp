@@ -34,7 +34,7 @@ class DisputeResponseRequested extends Notification implements ShouldQueue
             ->line('Merci de fournir votre version des faits et toute preuve pertinente.')
             ->action('Répondre au litige', route('disputes.show', $this->dispute))
             ->line('Sans réponse dans le délai imparti, la décision sera prise sur la base des éléments disponibles.')
-            ->salutation('L\'équipe REZI');
+            ->salutation('L\'équipe ReziApp');
     }
 
     public function toArray(object $notifiable): array

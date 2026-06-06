@@ -3,9 +3,14 @@
 namespace Tests\Feature\Payment;
 
 use App\Models\Booking;
+use App\Models\BookingInsurance;
 use App\Models\CancellationPolicy;
+use App\Models\InsurancePlan;
 use App\Models\Residence;
 use App\Models\SponsoredListing;
+use App\Models\Subscription;
+use App\Models\SubscriptionPayment;
+use App\Models\SubscriptionPlan;
 use App\Models\User;
 use App\Models\WebhookEvent;
 use App\Services\JekoPaymentService;
@@ -33,6 +38,9 @@ class JekoPaymentServiceTest extends TestCase
     protected Residence $residence;
     protected Booking $booking;
     protected CancellationPolicy $policy;
+    protected SponsoredListing $sponsored;
+    protected SubscriptionPayment $subscriptionPayment;
+    protected BookingInsurance $bookingInsurance;
 
     protected function setUp(): void
     {
@@ -61,6 +69,97 @@ class JekoPaymentServiceTest extends TestCase
             'residence_id' => $this->residence->id,
             'total_amount' => 75000,
             'uuid' => \Illuminate\Support\Str::uuid()->toString(),
+        ]);
+        $this->sponsored = SponsoredListing::create([
+            'residence_id' => $this->residence->id,
+            'user_id' => $this->owner->id,
+            'type' => 'highlighted',
+            'starts_at' => null,
+            'ends_at' => null,
+            'duration_days' => 7,
+            'daily_budget' => null,
+            'total_budget' => 10000,
+            'amount_spent' => 0,
+            'billing_type' => 'flat_rate',
+            'cost_per_unit' => 0,
+            'impressions' => 0,
+            'clicks' => 0,
+            'contacts_generated' => 0,
+            'status' => 'pending',
+            'is_paid' => false,
+            'payment_status' => 'pending',
+        ]);
+
+        $subscriptionPlan = SubscriptionPlan::create([
+            'name' => 'Pro',
+            'slug' => 'pro-test',
+            'description' => 'Plan test',
+            'price_monthly' => 9900,
+            'price_yearly' => 95000,
+            'max_residences' => 5,
+            'max_photos_per_residence' => 15,
+            'max_sponsored_per_month' => 2,
+            'commission_rate' => 3,
+            'priority_support' => true,
+            'analytics_advanced' => true,
+            'auto_replies' => true,
+            'calendar_sync' => false,
+            'featured_badge' => false,
+            'features' => ['promotions'],
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
+
+        $subscription = Subscription::create([
+            'user_id' => $this->owner->id,
+            'subscription_plan_id' => $subscriptionPlan->id,
+            'status' => 'active',
+            'billing_cycle' => 'monthly',
+            'current_period_start' => now(),
+            'current_period_end' => now()->addMonth(),
+            'amount' => 9900,
+            'payment_method' => null,
+            'payment_reference' => null,
+            'auto_renew' => true,
+            'metadata' => [],
+        ]);
+
+        $this->subscriptionPayment = SubscriptionPayment::create([
+            'subscription_id' => $subscription->id,
+            'user_id' => $this->owner->id,
+            'amount' => 9900,
+            'currency' => 'XOF',
+            'status' => 'pending',
+            'payment_provider' => 'jeko',
+            'reference' => 'SUB-TEST-001',
+            'provider_response' => [],
+        ]);
+
+        $insurancePlan = InsurancePlan::create([
+            'name' => 'Basic',
+            'slug' => 'basic-test',
+            'description' => 'Plan assurance test',
+            'rate' => 3,
+            'min_amount' => 2000,
+            'max_coverage' => 100000,
+            'deductible' => 5000,
+            'coverage_types' => ['cancellation'],
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
+
+        $this->bookingInsurance = BookingInsurance::create([
+            'booking_id' => $this->booking->id,
+            'insurance_plan_id' => $insurancePlan->id,
+            'user_id' => $this->guest->id,
+            'premium_amount' => 2500,
+            'coverage_amount' => 50000,
+            'status' => 'active',
+            'policy_number' => 'POL-TEST-001',
+            'coverage_start' => now(),
+            'coverage_end' => now()->addWeek(),
+            'covered_items' => ['cancellation'],
+            'metadata' => [],
         ]);
     }
 
@@ -110,6 +209,145 @@ class JekoPaymentServiceTest extends TestCase
     {
         $service = $this->makeService(['services.jeko.store_id' => '']);
         $this->assertFalse($service->isEnabled());
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // createPaymentRequest()
+    // ─────────────────────────────────────────────────────────────────────────
+
+    #[Test]
+    public function create_sponsored_payment_request_converts_amount_to_cents(): void
+    {
+        Http::fake([
+            'api.jeko.africa/partner_api/payment_requests' => Http::response([
+                'id' => 'jeko-sponsored-123',
+                'redirectUrl' => 'https://pay.jeko.africa/pr/jeko-sponsored-123',
+                'status' => 'pending',
+            ], 200),
+        ]);
+
+        $service = $this->makeService();
+        $result = $service->createPaymentRequest($this->sponsored, 'wave');
+
+        $this->assertTrue($result['success']);
+
+        Http::assertSent(function ($request) {
+            $body = $request->data();
+
+            return $body['amountCents'] === 1000000;
+        });
+    }
+
+    #[Test]
+    public function create_sponsored_payment_request_stores_reference_and_provider_id(): void
+    {
+        Http::fake([
+            'api.jeko.africa/partner_api/payment_requests' => Http::response([
+                'id' => 'jeko-sponsored-123',
+                'redirectUrl' => 'https://pay.jeko.africa/pr/jeko-sponsored-123',
+                'status' => 'pending',
+            ], 200),
+        ]);
+
+        $service = $this->makeService();
+        $result = $service->createPaymentRequest($this->sponsored, 'wave');
+
+        $this->assertTrue($result['success']);
+
+        $this->sponsored->refresh();
+        $this->assertSame('jeko-sponsored-123', $this->sponsored->jeko_payment_id);
+        $this->assertSame('wave', $this->sponsored->payment_method);
+        $this->assertSame('pending', $this->sponsored->payment_status);
+        $this->assertStringStartsWith('REZI-SP-', $this->sponsored->jeko_reference);
+    }
+
+    #[Test]
+    public function create_subscription_payment_converts_amount_to_cents(): void
+    {
+        Http::fake([
+            'api.jeko.africa/partner_api/payment_requests' => Http::response([
+                'id' => 'jeko-subscription-123',
+                'redirectUrl' => 'https://pay.jeko.africa/pr/jeko-subscription-123',
+                'status' => 'pending',
+            ], 200),
+        ]);
+
+        $service = $this->makeService();
+        $result = $service->createSubscriptionPayment($this->subscriptionPayment, 'wave', 'Renouvellement abonnement');
+
+        $this->assertTrue($result['success']);
+
+        Http::assertSent(function ($request) {
+            $body = $request->data();
+
+            return $body['amountCents'] === 990000;
+        });
+    }
+
+    #[Test]
+    public function create_subscription_payment_stores_provider_payload_metadata(): void
+    {
+        Http::fake([
+            'api.jeko.africa/partner_api/payment_requests' => Http::response([
+                'id' => 'jeko-subscription-123',
+                'redirectUrl' => 'https://pay.jeko.africa/pr/jeko-subscription-123',
+                'status' => 'pending',
+            ], 200),
+        ]);
+
+        $service = $this->makeService();
+        $result = $service->createSubscriptionPayment($this->subscriptionPayment, 'wave', 'Renouvellement abonnement');
+
+        $this->assertTrue($result['success']);
+
+        $this->subscriptionPayment->refresh();
+        $this->assertSame('jeko-subscription-123', $this->subscriptionPayment->provider_response['jeko_payment_id']);
+        $this->assertSame('wave', $this->subscriptionPayment->provider_response['payment_method']);
+    }
+
+    #[Test]
+    public function create_insurance_payment_converts_amount_to_cents(): void
+    {
+        Http::fake([
+            'api.jeko.africa/partner_api/payment_requests' => Http::response([
+                'id' => 'jeko-insurance-123',
+                'redirectUrl' => 'https://pay.jeko.africa/pr/jeko-insurance-123',
+                'status' => 'pending',
+            ], 200),
+        ]);
+
+        $service = $this->makeService();
+        $result = $service->createInsurancePayment($this->bookingInsurance, 'orange');
+
+        $this->assertTrue($result['success']);
+
+        Http::assertSent(function ($request) {
+            $body = $request->data();
+
+            return $body['amountCents'] === 250000;
+        });
+    }
+
+    #[Test]
+    public function create_insurance_payment_stores_reference_and_metadata(): void
+    {
+        Http::fake([
+            'api.jeko.africa/partner_api/payment_requests' => Http::response([
+                'id' => 'jeko-insurance-123',
+                'redirectUrl' => 'https://pay.jeko.africa/pr/jeko-insurance-123',
+                'status' => 'pending',
+            ], 200),
+        ]);
+
+        $service = $this->makeService();
+        $result = $service->createInsurancePayment($this->bookingInsurance, 'orange');
+
+        $this->assertTrue($result['success']);
+
+        $this->bookingInsurance->refresh();
+        $this->assertStringStartsWith('REZI-INS-', $this->bookingInsurance->payment_reference);
+        $this->assertSame('jeko-insurance-123', $this->bookingInsurance->metadata['jeko_payment_id']);
+        $this->assertSame('orange', $this->bookingInsurance->metadata['payment_method']);
     }
 
     // ─────────────────────────────────────────────────────────────────────────

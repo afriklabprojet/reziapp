@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Ajouter une résidence - REZI')
+@section('title', 'Ajouter une résidence - ReziApp')
 
 @section('owner-content')
     <div class="min-h-screen bg-gray-50 py-8">
@@ -30,7 +30,7 @@
             @endif
 
             <form method="POST" action="{{ route('owner.residences.store') }}" enctype="multipart/form-data"
-                x-data="residenceCreateForm(@js([
+                x-data="residenceCreateForm({{ \Illuminate\Support\Js::encode([
                     'description'           => old('description', ''),
                     'houseRules'            => old('house_rules', ''),
                     'typeLocation'          => old('type_location', 'residence_meublee'),
@@ -38,7 +38,7 @@
                     'generateTitleUrl'      => route('owner.ai.generate-title'),
                     'improveDescriptionUrl' => route('owner.ai.improve-description'),
                     'csrfToken'             => csrf_token(),
-                ]))" class="space-y-6">
+                ]) }})" class="space-y-6">
                 @csrf
 
                 {{-- SECTION 1: INFORMATIONS GÉNÉRALES --}}
@@ -283,11 +283,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {{-- Prix principal (dynamique) --}}
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="price_per_day" class="block text-sm font-medium text-gray-700 mb-2">
                                 Prix par jour (FCFA) <span class="text-red-500">*</span>
                             </label>
                             <div>
-                                <input type="number" name="price_per_day" value="{{ old('price_per_day') }}"
+                                <input type="number" id="price_per_day" name="price_per_day" value="{{ old('price_per_day') }}"
                                     placeholder="15000" min="1000" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F16A00] focus:border-[#F16A00]">
                                 @error('price_per_day')
@@ -333,12 +333,12 @@
                         <h2 class="text-xl font-semibold text-gray-900">Localisation</h2>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" x-data="citySelector(@js([
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" x-data="citySelector({{ \Illuminate\Support\Js::encode([
                         'selectedCountry' => old('country_code', 'CI'),
                         'selectedCity'    => old('city', ''),
                         'countries'       => $countries->map(fn($c) => ['code' => $c->code, 'name' => $c->name]),
                         'allCities'       => $cities->map(fn($c) => ['id' => $c->id, 'name' => $c->name, 'country_id' => $c->country_id, 'country_code' => $c->country?->code, 'communes' => $c->communes->pluck('name')]),
-                    ]))">
+                    ]) }})">
                         {{-- Pays --}}
                         <div>
                             <label for="country_code" class="block text-sm font-medium text-gray-700 mb-2">
@@ -440,9 +440,9 @@
 
                             {{-- Carte interactive pour positionnement --}}
                             <div class="mt-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <p class="block text-sm font-medium text-gray-700 mb-2">
                                     Position sur la carte <span class="text-gray-500 font-normal">(Cliquez ou glissez le marqueur pour ajuster)</span>
-                                </label>
+                                </p>
                                 <div x-ref="createMap"
                                     class="h-80 bg-gray-200 rounded-lg border-2 border-dashed border-gray-300"></div>
                                 <div class="mt-2 flex items-center text-sm text-gray-600">
@@ -766,7 +766,7 @@
                         <div x-show="previews.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <template x-for="(preview, index) in previews" :key="index">
                                 <div class="relative aspect-square rounded-lg overflow-hidden border">
-                                    <img loading="lazy" :src="preview" alt="Image" class="w-full h-full object-cover">
+                                    <img loading="lazy" :src="preview" :alt="'Aperçu ' + (index + 1)" class="w-full h-full object-cover">
                                     <button type="button" @click="removePhoto(index)"
                                         class="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -846,17 +846,6 @@
 @endsection
 
 @push('owner-scripts')
-    <script>
-        // Callback déclenché par le chargement asynchrone de l'API Google Maps
-        function __addressAutocompleteCallback() {
-            if (typeof window.__addressAutocompleteInit === 'function') {
-                window.__addressAutocompleteInit();
-            }
-        }
-    </script>
-    <script
-        src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&libraries=places&callback=__addressAutocompleteCallback"
-        async
-        defer
-    ></script>
 @endpush
+
+<x-google-maps-loader stack="owner-scripts" />

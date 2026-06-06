@@ -49,7 +49,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {{-- Calendrier principal --}}
-            <div class="lg:col-span-3 space-y-4" x-data="bookingCalendar(@js(['calendar' => $calendar]))">
+            <div class="lg:col-span-3 space-y-4" x-data="bookingCalendar({{ \Illuminate\Support\Js::encode(['calendar' => $calendar]) }})">
                 {{-- Navigation du mois --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                     <div class="flex items-center justify-between mb-6">

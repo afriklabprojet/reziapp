@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Calendrier unifié — REZI')
+@section('title', 'Calendrier unifié — ReziApp')
 
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">

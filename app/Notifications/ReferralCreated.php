@@ -29,7 +29,7 @@ class ReferralCreated extends Notification implements ShouldQueue
         return (new MailMessage())
             ->subject('🎉 Nouveau filleul inscrit !')
             ->greeting("Bonjour {$notifiable->name} !")
-            ->line("**{$referredName}** s'est inscrit(e) sur REZI grâce à votre code de parrainage.")
+            ->line("**{$referredName}** s'est inscrit(e) sur ReziApp grâce à votre code de parrainage.")
             ->line('Votre parrainage est en attente. Il sera qualifié dès que votre filleul effectuera sa première réservation confirmée.')
             ->action('Voir mes parrainages', route('owner.marketing.referrals.index'))
             ->line('Continuez à partager votre code pour gagner encore plus de récompenses !');

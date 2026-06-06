@@ -1,5 +1,5 @@
 /* =============================================
-   REZI — Template email — Design Système
+   ReziApp — Template email — Design Système
    Couleurs: Orange #f97316 · Noir #111827
    ============================================= */
 
@@ -284,7 +284,7 @@ img {
     letter-spacing: 0.01em;
 }
 
-/* Orange — couleur principale REZI */
+/* Orange — couleur principale ReziApp */
 .button-blue,
 .button-primary {
     background-color: #f97316;

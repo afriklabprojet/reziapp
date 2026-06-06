@@ -1,5 +1,5 @@
 <x-app-layout>
-    @section('title', 'Inscription - REZI')
+    @section('title', 'Inscription - ReziApp')
 
     <div class="min-h-[calc(100vh-56px)] md:min-h-[calc(100vh-64px)] flex" x-data="{
         showPassword: false,
@@ -65,7 +65,7 @@
                 </div>
 
                 {{-- Headline --}}
-                <h1 class="text-4xl font-bold text-center mb-4">Rejoignez REZI</h1>
+                <h1 class="text-4xl font-bold text-center mb-4">Rejoignez ReziApp</h1>
                 <p class="text-xl text-[#FFE7D1] text-center mb-12 max-w-md">
                     Créez votre compte et accédez à des centaines de résidences meublées
                 </p>
@@ -139,7 +139,7 @@
                             </svg>
                         @endfor
                     </div>
-                    <p class="text-sm italic text-[#FFF4EB]">"J'ai trouvé mon appartement en 2 jours grâce à REZI. La
+                    <p class="text-sm italic text-[#FFF4EB]">"J'ai trouvé mon appartement en 2 jours grâce à ReziApp. La
                         géolocalisation m'a fait gagner un temps fou !"</p>
                     <div class="mt-3 flex items-center gap-3">
                         <div
@@ -160,7 +160,7 @@
                 {{-- Header --}}
                 <div class="text-center mb-6">
                     <h2 class="text-3xl font-bold text-gray-900">Créer un compte</h2>
-                    <p class="mt-2 text-gray-600">Rejoignez la communauté REZI</p>
+                    <p class="mt-2 text-gray-600">Rejoignez la communauté ReziApp</p>
                 </div>
 
                 {{-- Progress Steps --}}

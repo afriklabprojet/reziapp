@@ -136,7 +136,7 @@ class RefundService
 
         // Appeler Jeko Pay pour le remboursement
         $jeko = new JekoService();
-        $result = $jeko->refund($payment, $refund->amount, $refund->reason ?? 'Remboursement REZI');
+        $result = $jeko->refund($payment, $refund->amount, $refund->reason ?? 'Remboursement ReziApp');
 
         if ($result['success']) {
             $refund->update([
@@ -163,7 +163,7 @@ class RefundService
     }
 
     /**
-     * Process refund as REZI credit
+     * Process refund as ReziApp credit
      */
     protected function processCreditRefund(Refund $refund): array
     {
@@ -226,7 +226,7 @@ class RefundService
         $operator = $jeko->detectOperator($phoneNumber) ?? 'orange_money';
 
         $result = $jeko->payout($phoneNumber, $refund->amount, $operator, [
-            'description' => "Remboursement REZI — Réservation #{$refund->booking->id}",
+            'description' => "Remboursement ReziApp — Réservation #{$refund->booking->id}",
             'refund_id' => $refund->id,
             'booking_id' => $refund->booking_id,
         ]);

@@ -1,5 +1,5 @@
-<nav x-data="{ open: false, scrolled: false }"
-    x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 8 })"
+<nav x-data="navigationState()"
+    x-init="init()"
     :class="scrolled ? 'border-transparent' : 'border-[#F2F2F2]'"
     :style="scrolled ? 'box-shadow: rgba(0,0,0,0.02) 0 0 0 1px, rgba(0,0,0,0.04) 0 2px 6px, rgba(0,0,0,0.08) 0 4px 8px;' : ''"
     class="bg-white border-b sticky top-0 z-30 transition-all duration-200">
@@ -66,7 +66,7 @@
                                         </span>
                                     @endif
                                 </div>
-                                <span class="hidden lg:block text-[#0F0F0F] max-w-[120px] truncate">{{ Auth::user()->name }}</span>
+                                <span class="hidden max-w-30 truncate text-[#0F0F0F] lg:block">{{ Auth::user()->name }}</span>
                                 <svg aria-hidden="true" class="fill-current h-3.5 w-3.5 text-gray-400 group-hover:text-gray-600 transition-colors"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd"

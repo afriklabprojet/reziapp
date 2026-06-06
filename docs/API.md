@@ -1,8 +1,8 @@
-# REZI API Documentation
+# ReziApp API Documentation
 
 ## Overview
 
-L'API REZI permet d'intégrer les fonctionnalités de recherche et réservation de résidences meublées à Abidjan.
+L'API ReziApp permet d'intégrer les fonctionnalités de recherche et réservation de résidences meublées à Abidjan.
 
 **Base URL**: `https://rezi.ci/api`
 

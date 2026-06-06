@@ -134,7 +134,7 @@ class MessageSequenceService
             array_map(fn ($k) => '{'.$k.'}', array_keys($data)),
             array_values($data),
             $step->subject,
-        ) : 'Message de '.($booking->residence->name ?? 'REZI');
+        ) : 'Message de '.($booking->residence->name ?? 'ReziApp');
 
         // Envoyer selon le canal
         match ($step->channel) {

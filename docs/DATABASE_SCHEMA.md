@@ -1,10 +1,10 @@
-# REZI - Architecture Base de Données
+# ReziApp - Architecture Base de Données
 
 ## 📊 Diagramme Logique (ERD)
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────┐
-│                            REZI DATABASE SCHEMA                                          │
+│                            ReziApp DATABASE SCHEMA                                          │
 │                     Optimisé pour recherche géolocalisée ≤ 2km                         │
 └─────────────────────────────────────────────────────────────────────────────────────────┘
 

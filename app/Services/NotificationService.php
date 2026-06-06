@@ -7,6 +7,7 @@ use App\Models\NotificationLog;
 use App\Models\NotificationPreference;
 use App\Models\PushSubscription;
 use App\Models\User;
+use App\Support\SensitiveData;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Minishlink\WebPush\Subscription;
@@ -14,6 +15,18 @@ use Minishlink\WebPush\WebPush;
 
 class NotificationService
 {
+    private const ALLOWED_PUSH_HOST_SUFFIXES = [
+        'fcm.googleapis.com',
+        'push.services.mozilla.com',
+        'updates.push.services.mozilla.com',
+        'push.apple.com',
+        'notify.windows.com',
+    ];
+
+    public function __construct(
+        private readonly ?PublicUrlGuard $publicUrlGuard = null,
+    ) {}
+
     /**
      * Envoyer une notification de nouveau message
      */
@@ -207,6 +220,28 @@ class NotificationService
             return;
         }
 
+        $validSubscriptions = $subscriptions->filter(
+            fn (PushSubscription $subscription): bool => $this->isAllowedPushEndpoint($subscription->endpoint)
+        );
+
+        $invalidSubscriptionIds = $subscriptions
+            ->reject(fn (PushSubscription $subscription): bool => $this->isAllowedPushEndpoint($subscription->endpoint))
+            ->pluck('id')
+            ->all();
+
+        if ($invalidSubscriptionIds !== []) {
+            PushSubscription::whereIn('id', $invalidSubscriptionIds)->delete();
+
+            Log::warning('Invalid push subscriptions removed', [
+                'user_id' => $recipient->id,
+                'count' => count($invalidSubscriptionIds),
+            ]);
+        }
+
+        if ($validSubscriptions->isEmpty()) {
+            return;
+        }
+
         // Configuration Web Push (VAPID)
         $auth = [
             'VAPID' => [
@@ -230,7 +265,7 @@ class NotificationService
             ],
         ]);
 
-        foreach ($subscriptions as $sub) {
+        foreach ($validSubscriptions as $sub) {
             $subscription = Subscription::create([
                 'endpoint' => $sub->endpoint,
                 'publicKey' => $sub->public_key,
@@ -241,11 +276,8 @@ class NotificationService
         }
 
         foreach ($webPush->flush() as $report) {
-            if (!$report->isSuccess()) {
-                // Supprimer les subscriptions invalides
-                if ($report->isSubscriptionExpired()) {
-                    PushSubscription::where('endpoint', $report->getEndpoint())->delete();
-                }
+            if (! $report->isSuccess() && $report->isSubscriptionExpired()) {
+                PushSubscription::where('endpoint', $report->getEndpoint())->delete();
             }
         }
     }
@@ -272,7 +304,20 @@ class NotificationService
         //     'body' => $body
         // ]);
 
-        Log::info("SMS would be sent to {$recipient->phone}: {$body}");
+        Log::info('SMS simulation only', [
+            'to' => SensitiveData::maskPhone($recipient->phone),
+            'message_length' => mb_strlen($body),
+        ]);
+    }
+
+    public function isAllowedPushEndpoint(string $endpoint): bool
+    {
+        return $this->guard()->isSafe($endpoint, self::ALLOWED_PUSH_HOST_SUFFIXES);
+    }
+
+    protected function guard(): PublicUrlGuard
+    {
+        return $this->publicUrlGuard ?? app(PublicUrlGuard::class);
     }
 
     /**

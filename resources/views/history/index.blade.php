@@ -1,5 +1,5 @@
 <x-app-layout>
-    @section('title', 'Historique des vues - REZI')
+    @section('title', 'Historique des vues - ReziApp')
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

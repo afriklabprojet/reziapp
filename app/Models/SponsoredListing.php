@@ -115,7 +115,7 @@ class SponsoredListing extends Model
     }
 
     /**
-     * Alias for isActive() — used by MarketingService
+     * Alias for isActive() — used by sponsored listing services
      */
     public function canRun(): bool
     {

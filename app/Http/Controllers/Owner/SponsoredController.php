@@ -5,17 +5,23 @@ namespace App\Http\Controllers\Owner;
 use App\Http\Controllers\Controller;
 use App\Models\Residence;
 use App\Models\SponsoredListing;
+use App\Models\User;
 use App\Services\JekoPaymentService;
+use App\Services\SponsoredListingService;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class SponsoredController extends Controller
 {
+    public function __construct(private readonly SponsoredListingService $sponsoredListingService) {}
+
     public function index(Request $request)
     {
         Gate::authorize('viewAny', SponsoredListing::class);
-        $residences = Auth::user()->residences()->select('id', 'name')->get();
+        $owner = $this->authenticatedOwner();
+        $residences = $owner->residences()->select('id', 'name')->get();
 
         $query = SponsoredListing::with('residence:id,name')
             ->where('user_id', Auth::id());
@@ -30,27 +36,15 @@ class SponsoredController extends Controller
 
         $sponsoredListings = $query->orderByDesc('created_at')->paginate(15);
 
-        // Statistiques
-        $stats = [
-            'total' => SponsoredListing::where('user_id', Auth::id())->count(),
-            'active' => SponsoredListing::where('user_id', Auth::id())->active()->count(),
-            'total_spent' => SponsoredListing::where('user_id', Auth::id())->sum('amount_spent'),
-            'total_impressions' => SponsoredListing::where('user_id', Auth::id())->sum('impressions'),
-            'total_clicks' => SponsoredListing::where('user_id', Auth::id())->sum('clicks'),
-            'total_contacts' => SponsoredListing::where('user_id', Auth::id())->sum('contacts_generated'),
-        ];
-
-        // Calcul du CTR global
-        $stats['ctr'] = $stats['total_impressions'] > 0
-            ? round(($stats['total_clicks'] / $stats['total_impressions']) * 100, 2)
-            : 0;
+        $stats = $this->sponsoredListingService->getOwnerStats((int) Auth::id());
 
         return view('owner.marketing.sponsored.index', compact('sponsoredListings', 'residences', 'stats'));
     }
 
     public function create()
     {
-        $residences = Auth::user()->residences()->approved()->get();
+        $owner = $this->authenticatedOwner();
+        $residences = $owner->residences()->approved()->get();
 
         // Packages disponibles
         $packages = $this->getPackages();
@@ -70,7 +64,7 @@ class SponsoredController extends Controller
         ]);
 
         // Vérifier que la résidence appartient au propriétaire
-        $residence = Residence::where('id', $validated['residence_id'])
+        Residence::where('id', $validated['residence_id'])
             ->where('owner_id', Auth::id())
             ->firstOrFail();
 
@@ -79,7 +73,7 @@ class SponsoredController extends Controller
         $package = $packages[$validated['type']] ?? $packages['highlighted'];
 
         // Ne PAS définir starts_at/ends_at maintenant — sera défini après paiement
-        $sponsoredListing = SponsoredListing::create([
+        $sponsoredListing = $this->sponsoredListingService->createSponsoredListing([
             'residence_id' => $validated['residence_id'],
             'user_id' => Auth::id(),
             'type' => $validated['type'],
@@ -88,12 +82,8 @@ class SponsoredController extends Controller
             'duration_days' => (int) $validated['duration'],
             'daily_budget' => $validated['daily_budget'] ?? null,
             'total_budget' => $validated['total_budget'] ?? $package['price'] * ($validated['duration'] / 7),
-            'amount_spent' => 0,
             'billing_type' => $package['billing_type'],
             'cost_per_unit' => $package['cost_per_unit'],
-            'impressions' => 0,
-            'clicks' => 0,
-            'contacts_generated' => 0,
             'target_communes' => $validated['target_communes'] ?? null,
             'status' => 'pending',
             'is_paid' => false,
@@ -131,7 +121,7 @@ class SponsoredController extends Controller
         return view('owner.marketing.sponsored.payment', compact('sponsored', 'paymentMethods', 'jekoEnabled'));
     }
 
-    public function confirmPayment(Request $request, SponsoredListing $sponsored)
+    public function confirmPayment(Request $request, SponsoredListing $sponsored): RedirectResponse
     {
         Gate::authorize('update', $sponsored);
 
@@ -144,14 +134,7 @@ class SponsoredController extends Controller
             'payment_method' => 'required|in:wave,orange,mtn,moov,djamo',
         ]);
 
-        $jekoService = app(JekoPaymentService::class);
-
-        if (! $jekoService->isEnabled()) {
-            return back()->with('error', 'Le service de paiement est temporairement indisponible.');
-        }
-
-        // Create Jeko payment request
-        $result = $jekoService->createPaymentRequest($sponsored, $validated['payment_method']);
+        $result = $this->createJekoPaymentRequest($sponsored, $validated['payment_method']);
 
         if (! $result['success']) {
             return back()->with('error', $result['error']);
@@ -165,12 +148,9 @@ class SponsoredController extends Controller
             'payment_status' => 'processing',
         ]);
 
-        // Redirect user to Jeko payment page
-        if (! empty($result['redirect_url'])) {
-            return redirect()->away($result['redirect_url']);
-        }
-
-        return back()->with('error', 'Impossible d\'obtenir le lien de paiement. Veuillez réessayer.');
+        return ! empty($result['redirect_url'])
+            ? redirect()->away($result['redirect_url'])
+            : back()->with('error', 'Impossible d\'obtenir le lien de paiement. Veuillez réessayer.');
     }
 
     public function pause(SponsoredListing $sponsored)
@@ -219,7 +199,6 @@ class SponsoredController extends Controller
     private function getPackages(): array
     {
         $costPerClick = config('rezi.sponsored.cost_per_click', 50);
-        $costPerView = config('rezi.sponsored.cost_per_view', 5);
 
         return [
             'featured_home' => [
@@ -272,6 +251,29 @@ class SponsoredController extends Controller
                 ],
             ],
         ];
+    }
+
+    private function authenticatedOwner(): User
+    {
+        $user = Auth::user();
+
+        assert($user instanceof User);
+
+        return $user;
+    }
+
+    private function createJekoPaymentRequest(SponsoredListing $sponsored, string $paymentMethod): array
+    {
+        $jekoService = app(JekoPaymentService::class);
+
+        if (! $jekoService->isEnabled()) {
+            return [
+                'success' => false,
+                'error' => 'Le service de paiement est temporairement indisponible.',
+            ];
+        }
+
+        return $jekoService->createPaymentRequest($sponsored, $paymentMethod);
     }
 
     private function getPerformanceData(SponsoredListing $sponsored): array

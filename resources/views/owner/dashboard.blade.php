@@ -1,9 +1,9 @@
 @extends('layouts.owner')
 
-@section('title', 'Dashboard - Espace Propriétaire | REZI')
+@section('title', 'Dashboard - Espace Propriétaire | ReziApp')
 
 @section('owner-content')
-    <div x-data="ownerDashboard(@js(['csrfToken' => csrf_token(), 'chartData' => $chartData, 'hostScore' => $hostScore['score']]))" x-init="init()" class="min-h-screen bg-gray-50/50">
+    <div x-data="ownerDashboard({{ \Illuminate\Support\Js::encode(['csrfToken' => csrf_token(), 'chartData' => $chartData, 'hostScore' => $hostScore['score']]) }})" x-init="init()" class="min-h-screen bg-gray-50/50">
 
         {{-- ============================== SKELETON LOADER (Airbnb-style shimmer) ============================== --}}
         <div x-ref="skeleton" x-show="!loaded" x-transition:leave="transition ease-in duration-200"
@@ -369,7 +369,7 @@
                         <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0 text-xl">🚀</div>
                         <div class="flex-1 min-w-0">
                             <p class="font-bold text-white text-base">Publiez votre première résidence en 5 minutes</p>
-                            <p class="text-[#FFE7D1] text-sm mt-0.5">Rejoignez {{ number_format($totalOwners) }}+ propriétaires actifs sur REZI. Gratuit, sans commission.</p>
+                            <p class="text-[#FFE7D1] text-sm mt-0.5">Rejoignez {{ number_format($totalOwners) }}+ propriétaires actifs sur ReziApp. Gratuit, sans commission.</p>
                         </div>
                         <div class="flex items-center gap-3 shrink-0">
                             <a href="{{ route('owner.residences.create') }}"
@@ -511,7 +511,7 @@
                         <div class="flex items-center justify-between mb-4">
                             <div>
                                 <h2 class="text-base font-bold text-gray-900">Score Hôte</h2>
-                                <p class="text-xs text-gray-500 mt-0.5">Votre performance globale sur REZI</p>
+                                <p class="text-xs text-gray-500 mt-0.5">Votre performance globale sur ReziApp</p>
                             </div>
                             <span @class([
                                 'text-xs font-bold px-2.5 py-1 rounded-full',
@@ -820,7 +820,7 @@
                                         </svg>
                                     </div>
                                     <h3 class="text-lg font-bold text-gray-900 mb-1">Aucune annonce</h3>
-                                    <p class="text-sm text-gray-500 mb-5">Publiez votre première résidence sur REZI</p>
+                                    <p class="text-sm text-gray-500 mb-5">Publiez votre première résidence sur ReziApp</p>
                                     <a href="{{ route('owner.residences.create') }}"
                                         class="inline-flex items-center px-5 py-2.5 bg-gray-900 text-white rounded-xl font-semibold text-sm hover:bg-gray-800 transition-colors gap-2">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"

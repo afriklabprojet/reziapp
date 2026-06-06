@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\WhatsappMessage;
+use App\Support\SensitiveData;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -27,7 +28,10 @@ class WhatsAppService
     public function sendTemplate(string $to, string $templateName, array $parameters = [], ?int $userId = null): ?WhatsappMessage
     {
         if (!$this->enabled) {
-            Log::info("WhatsApp désactivé - Message template '{$templateName}' non envoyé à {$to}");
+            Log::info('WhatsApp disabled: template message skipped', [
+                'template' => $templateName,
+                'to' => SensitiveData::maskPhone($to),
+            ]);
 
             return null;
         }
@@ -69,14 +73,21 @@ class WhatsAppService
                     'status' => 'failed',
                     'metadata' => array_merge($message->metadata ?? [], ['error' => $response->json()]),
                 ]);
-                Log::error('WhatsApp API error', ['response' => $response->json()]);
+                Log::error('WhatsApp API error', [
+                    'status' => $response->status(),
+                    'to' => SensitiveData::maskPhone($phone),
+                    'error' => $response->json('error.message') ?? $response->json('message') ?? 'Unknown API error',
+                ]);
             }
         } catch (\Exception $e) {
             $message->update([
                 'status' => 'failed',
                 'metadata' => array_merge($message->metadata ?? [], ['error' => $e->getMessage()]),
             ]);
-            Log::error('WhatsApp exception', ['error' => $e->getMessage()]);
+            Log::error('WhatsApp exception', [
+                'to' => SensitiveData::maskPhone($phone),
+                'error' => $e->getMessage(),
+            ]);
         }
 
         return $message;
@@ -88,7 +99,10 @@ class WhatsAppService
     public function sendText(string $to, string $text, ?int $userId = null): ?WhatsappMessage
     {
         if (!$this->enabled) {
-            Log::info("WhatsApp désactivé - Message non envoyé à {$to}");
+            Log::info('WhatsApp disabled: text message skipped', [
+                'to' => SensitiveData::maskPhone($to),
+                'message_length' => mb_strlen($text),
+            ]);
 
             return null;
         }
@@ -125,7 +139,10 @@ class WhatsAppService
             }
         } catch (\Exception $e) {
             $message->update(['status' => 'failed']);
-            Log::error('WhatsApp exception', ['error' => $e->getMessage()]);
+            Log::error('WhatsApp exception', [
+                'to' => SensitiveData::maskPhone($phone),
+                'error' => $e->getMessage(),
+            ]);
         }
 
         return $message;

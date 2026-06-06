@@ -1,6 +1,6 @@
 @extends('layouts.client', ['sidebarActive' => 'dashboard'])
 
-@section('title', 'Mon Espace - REZI')
+@section('title', 'Mon Espace - ReziApp')
 
 @section('client-content')
     <div x-data="{ loaded: false }" x-init="$nextTick(() => { setTimeout(() => loaded = true, 80) })">
@@ -391,7 +391,7 @@
                         <p class="text-sm font-semibold text-amber-800">
                             {{ $reviewsAwaitingFeedback === 1 ? 'Vous avez 1 séjour à noter' : "Vous avez {$reviewsAwaitingFeedback} séjours à noter" }}
                         </p>
-                        <p class="text-xs text-amber-700 mt-0.5">Partagez votre expérience — votre avis aide la communauté REZI</p>
+                        <p class="text-xs text-amber-700 mt-0.5">Partagez votre expérience — votre avis aide la communauté ReziApp</p>
                     </div>
                     <a href="{{ route('bookings.index', ['status' => 'completed']) }}"
                         class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-lg transition">
@@ -417,7 +417,7 @@
                                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                         </svg>
                     </div>
-                    <h2 class="text-xl font-bold text-gray-900 mb-2">Bienvenue sur REZI ! 🎉</h2>
+                    <h2 class="text-xl font-bold text-gray-900 mb-2">Bienvenue sur ReziApp ! 🎉</h2>
                     <p class="text-gray-600 mb-6 max-w-md mx-auto">
                         Trouvez votre résidence meublée idéale. Commencez par explorer les résidences disponibles dans votre
                         ville.
@@ -861,7 +861,7 @@
                         </div>
                     @endif
 
-                {{-- Récapitulatif activité REZI --}}
+                {{-- Récapitulatif activité ReziApp --}}
                     @if ($activityStats['stays'] > 0)
                         <div class="bg-gradient-to-br from-[#FFF4EB] to-amber-50 rounded-xl border border-[#FFE7D1] p-5">
                             <div class="flex items-center gap-3 mb-4">
@@ -870,7 +870,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                                     </svg>
                                 </div>
-                                <h3 class="font-semibold text-gray-900">Votre parcours REZI</h3>
+                                <h3 class="font-semibold text-gray-900">Votre parcours ReziApp</h3>
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 <div class="text-center">
@@ -939,7 +939,7 @@
                                     <span class="text-[#FFD0A3] text-sm font-medium uppercase tracking-wider">Pour les propriétaires</span>
                                 </div>
                                 <h3 class="text-2xl font-bold mb-1">Vous avez un bien à louer à Abidjan ?</h3>
-                                <p class="text-white/80">Rejoignez les propriétaires REZI et commencez à générer des revenus dès maintenant.</p>
+                                <p class="text-white/80">Rejoignez les propriétaires ReziApp et commencez à générer des revenus dès maintenant.</p>
                             </div>
                             <a href="{{ route('owner.onboarding.index') }}"
                                 class="shrink-0 inline-flex items-center gap-2 px-6 py-3 bg-white text-[#CC5A00] hover:bg-[#FFF4EB] font-bold rounded-xl transition shadow-md whitespace-nowrap">

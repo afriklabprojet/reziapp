@@ -3,14 +3,14 @@
     'position' => 'header', // header, sidebar, footer
 ])
 
-<div 
-    x-data="favoritesManager(@js(['isAuthenticated' => auth()->check()]))"
+<div
+    x-data="favoritesManager({{ \Illuminate\Support\Js::encode(['isAuthenticated' => auth()->check()]) }})"
     x-init="init()"
     class="relative"
     {{ $attributes }}
 >
     {{-- Bouton Trigger --}}
-    <button 
+    <button
         @click="toggleDropdown()"
         class="relative flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-300
                hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -20,10 +20,10 @@
     >
         {{-- Icône Cœur --}}
         <div class="relative">
-            <svg 
+            <svg
                 class="w-6 h-6 transition-colors duration-300"
                 :class="favorites.length > 0 ? 'text-red-500' : 'text-gray-500'"
-                fill="none" 
+                fill="none"
                 :fill="favorites.length > 0 ? 'currentColor' : 'none'"
                 stroke="currentColor"
                 stroke-width="2"
@@ -33,11 +33,11 @@
             </svg>
 
             {{-- Badge compteur --}}
-            <span 
+            <span
                 x-show="favorites.length > 0"
                 x-transition
                 data-favorites-count
-                class="absolute -top-1.5 -right-1.5 min-w-4.5 h-4.5 flex items-center justify-center 
+                class="absolute -top-1.5 -right-1.5 min-w-4.5 h-4.5 flex items-center justify-center
                        bg-red-500 text-white text-xs font-bold rounded-full px-1"
                 x-text="favorites.length > 99 ? '99+' : favorites.length"
             ></span>
@@ -48,11 +48,11 @@
         </span>
 
         {{-- Chevron --}}
-        <svg 
+        <svg
             class="w-4 h-4 text-gray-400 transition-transform duration-200"
             :class="{ 'rotate-180': isOpen }"
-            fill="none" 
-            stroke="currentColor" 
+            fill="none"
+            stroke="currentColor"
             viewBox="0 0 24 24"
         >
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -60,7 +60,7 @@
     </button>
 
     {{-- Dropdown Panel --}}
-    <div 
+    <div
         x-show="isOpen"
         x-transition:enter="transition ease-out duration-200"
         x-transition:enter-start="opacity-0 scale-95 translate-y-2"
@@ -70,7 +70,7 @@
         x-transition:leave-end="opacity-0 scale-95"
         @click.away="isOpen = false"
         @keydown.escape.window="isOpen = false"
-        class="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl 
+        class="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl
                border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
     >
         {{-- Header --}}
@@ -93,9 +93,9 @@
                     <p class="text-sm text-gray-400 dark:text-gray-500">
                         Cliquez sur le cœur pour sauvegarder vos résidences préférées
                     </p>
-                    <a 
+                    <a
                         href="{{ route('residences.index') }}"
-                        class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-primary-500 text-white rounded-lg 
+                        class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-primary-500 text-white rounded-lg
                                hover:bg-primary-600 transition text-sm font-medium"
                     >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,7 +111,7 @@
                 <div class="divide-y divide-gray-100 dark:divide-gray-800">
                     <template x-for="residence in favorites" :key="residence.id">
                         <div class="p-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition group">
-                            <a 
+                            <a
                                 :href="`/residences/${residence.slug || residence.id}`"
                                 class="flex gap-3"
                             >
@@ -126,7 +126,7 @@
 
                                 {{-- Infos --}}
                                 <div class="flex-1 min-w-0">
-                                    <h4 
+                                    <h4
                                         class="font-medium text-gray-900 dark:text-white truncate group-hover:text-primary-600 transition"
                                         x-text="residence.title"
                                     ></h4>
@@ -138,9 +138,9 @@
                                 </div>
 
                                 {{-- Bouton supprimer --}}
-                                <button 
+                                <button
                                     @click.prevent.stop="removeFavorite(residence.id)"
-                                    class="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 
+                                    class="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50
                                            dark:hover:bg-red-900/20 transition opacity-0 group-hover:opacity-100"
                                     title="Retirer des favoris"
                                 >
@@ -169,16 +169,16 @@
         <template x-if="favorites.length > 0">
             <div class="p-3 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700">
                 <div class="flex gap-2">
-                    <a 
+                    <a
                         href="{{ route('favorites.index') }}"
-                        class="flex-1 text-center px-4 py-2 bg-primary-500 text-white rounded-lg 
+                        class="flex-1 text-center px-4 py-2 bg-primary-500 text-white rounded-lg
                                hover:bg-primary-600 transition text-sm font-medium"
                     >
                         Voir tous les favoris
                     </a>
-                    <button 
+                    <button
                         @click="clearAllFavorites()"
-                        class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-red-500 
+                        class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-red-500
                                hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition text-sm"
                     >
                         Tout supprimer
@@ -186,10 +186,10 @@
                 </div>
 
                 {{-- Partage favoris --}}
-                <button 
+                <button
                     @click="shareFavorites()"
-                    class="w-full mt-2 px-4 py-2 text-gray-600 dark:text-gray-400 
-                           hover:text-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20 
+                    class="w-full mt-2 px-4 py-2 text-gray-600 dark:text-gray-400
+                           hover:text-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20
                            rounded-lg transition text-sm flex items-center justify-center gap-2"
                 >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -208,7 +208,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
                 <span>
-                    <a href="{{ route('login') }}" class="underline font-medium">Connectez-vous</a> 
+                    <a href="{{ route('login') }}" class="underline font-medium">Connectez-vous</a>
                     pour synchroniser vos favoris sur tous vos appareils
                 </span>
             </p>

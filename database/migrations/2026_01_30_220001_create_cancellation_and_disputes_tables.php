@@ -56,7 +56,7 @@ return new class () extends Migration {
             $table->decimal('price_per_night', 10, 2);
             $table->decimal('subtotal', 10, 2); // prix x nuits
             $table->decimal('cleaning_fee', 10, 2)->default(0);
-            $table->decimal('service_fee', 10, 2)->default(0); // Commission REZI
+            $table->decimal('service_fee', 10, 2)->default(0); // Commission ReziApp
             $table->decimal('taxes', 10, 2)->default(0);
             $table->decimal('discount_amount', 10, 2)->default(0);
             $table->string('coupon_code')->nullable();

@@ -1,6 +1,6 @@
 @props(['filters' => []])
 
-<div x-data="searchForm(@js(['latitude' => $filters['latitude'] ?? null, 'longitude' => $filters['longitude'] ?? null, 'radius' => $filters['radius'] ?? 5]))" class="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+<div x-data="searchForm({{ \Illuminate\Support\Js::encode(['latitude' => $filters['latitude'] ?? null, 'longitude' => $filters['longitude'] ?? null, 'radius' => $filters['radius'] ?? 5]) }})" class="bg-white rounded-lg shadow-lg p-4 sm:p-6">
     <form method="GET" action="{{ route('residences.search') }}" class="space-y-4">
         <!-- Recherche par adresse (avec autocomplete Google Maps) -->
         <div>
@@ -60,9 +60,9 @@
 
             <!-- Type de logement -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <p class="block text-sm font-medium text-gray-700 mb-2">
                     Type de logement
-                </label>
+                </p>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     @foreach (['studio', 'apartment', 'house', 'villa'] as $type)
                         <label class="flex items-center space-x-2 cursor-pointer min-h-11 py-2">
@@ -127,3 +127,5 @@
 
 @push('scripts')
 @endpush
+
+<x-google-maps-loader />

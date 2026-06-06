@@ -197,8 +197,8 @@ class NewsletterController extends Controller
             $html = $this->buildWelcomeEmailHtml($name, $unsubscribeUrl, $isReturn);
 
             $subject = $isReturn
-                ? 'Bon retour dans la newsletter REZI ! 🎉'
-                : 'Bienvenue — vous êtes maintenant insider REZI 🏠';
+                ? 'Bon retour dans la newsletter ReziApp ! 🎉'
+                : 'Bienvenue — vous êtes maintenant insider ReziApp 🏠';
 
             Mail::queue([], [], function ($message) use ($email, $subject, $html) {
                 $message->to($email)
@@ -232,7 +232,7 @@ class NewsletterController extends Controller
 
         $intro = $isReturn
             ? 'Vous avez réactivé votre abonnement. Vous recevrez à nouveau nos sélections de résidences et offres exclusives à Abidjan.'
-            : 'Merci de rejoindre la communauté REZI. Vous serez parmi les premiers à recevoir nos nouvelles annonces et promotions exclusives.';
+            : 'Merci de rejoindre la communauté ReziApp. Vous serez parmi les premiers à recevoir nos nouvelles annonces et promotions exclusives.';
 
         $unsubscribeBlock = $unsubscribeUrl
             ? '<a href="' . $unsubscribeUrl . '?utm_source=newsletter&utm_medium=email&utm_campaign=welcome" style="color:#9ca3af;text-decoration:underline;">Se désabonner</a>'
@@ -245,7 +245,7 @@ class NewsletterController extends Controller
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>Bienvenue sur REZI</title>
+  <title>Bienvenue sur ReziApp</title>
 </head>
 <body style="margin:0;padding:0;background:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
 
@@ -263,7 +263,7 @@ class NewsletterController extends Controller
             <tr>
               <td>
                 <span style="display:inline-block;background:rgba(255,255,255,0.2);border-radius:10px;padding:6px 16px;">
-                  <span style="color:#fff;font-size:20px;font-weight:800;letter-spacing:-0.5px;">REZI</span>
+                  <span style="color:#fff;font-size:20px;font-weight:800;letter-spacing:-0.5px;">ReziApp</span>
                 </span>
               </td>
               <td align="right" style="font-size:28px;">{$headerEmoji}</td>

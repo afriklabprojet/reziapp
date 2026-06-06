@@ -57,7 +57,7 @@ class GuestBookingConfirmation extends Notification implements ShouldQueue
             ->line('Pour suivre votre réservation et accéder à toutes les fonctionnalités, créez votre mot de passe :')
             ->action('Créer mon mot de passe', $setPasswordUrl)
             ->line('Ce lien est valable 7 jours.')
-            ->salutation('L\'équipe REZI');
+            ->salutation('L\'équipe ReziApp');
     }
 
     public function toArray(object $notifiable): array

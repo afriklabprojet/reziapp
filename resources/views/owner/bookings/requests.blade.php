@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Demandes de réservation | REZI')
+@section('title', 'Demandes de réservation | ReziApp')
 
 @section('owner-content')
     <div class="min-h-screen bg-gray-50/50">

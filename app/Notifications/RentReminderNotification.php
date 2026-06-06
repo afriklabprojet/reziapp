@@ -39,7 +39,7 @@ class RentReminderNotification extends Notification implements ShouldQueue
                 : 'Votre paiement de location de '.number_format($this->reminder->amount, 0, ',', ' ').' FCFA arrive à échéance le '.$this->reminder->due_date->translatedFormat('d F Y').'.')
             ->line('Résidence : '.($this->reminder->residence?->name ?? 'N/A'))
             ->action('Voir mes paiements', url('/'))
-            ->salutation('L\'équipe REZI');
+            ->salutation('L\'équipe ReziApp');
     }
 
     public function toArray(object $notifiable): array

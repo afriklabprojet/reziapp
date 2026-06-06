@@ -3,7 +3,7 @@
 @section('title', 'Templates de messages')
 
 @section('content')
-<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="templatesManager(@js(['csrfToken' => csrf_token()]))">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="templatesManager({{ \Illuminate\Support\Js::encode(['csrfToken' => csrf_token()]) }})">
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
         <div>
@@ -54,7 +54,7 @@
     <!-- User Templates -->
     <div>
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Mes templates</h2>
-        
+
         @if($userTemplates->isEmpty())
             <div class="bg-white rounded-xl shadow-sm p-12 text-center">
                 <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -122,7 +122,7 @@
                     <div class="p-6 border-b border-gray-200">
                         <h3 class="text-lg font-semibold text-gray-900" x-text="showEditModal ? 'Modifier le template' : 'Nouveau template'"></h3>
                     </div>
-                    
+
                     <div class="p-6 space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Nom</label>

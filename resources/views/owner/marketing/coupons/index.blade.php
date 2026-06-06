@@ -217,7 +217,7 @@
 
                             <div class="relative">
                                 <div class="flex items-center justify-between mb-2">
-                                    <span class="text-[10px] font-medium opacity-70 uppercase tracking-wider">REZI
+                                    <span class="text-[10px] font-medium opacity-70 uppercase tracking-wider">ReziApp
                                         Promo</span>
                                     @if (!$coupon->residence)
                                         <span

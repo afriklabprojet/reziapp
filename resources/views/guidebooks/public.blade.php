@@ -127,7 +127,7 @@
 
     {{-- Footer --}}
     <div class="border-t border-gray-200 py-6 text-center text-sm text-gray-400">
-        Guide créé avec <a href="{{ url('/') }}" class="text-gray-600 hover:underline">REZI</a>
+        Guide créé avec <a href="{{ url('/') }}" class="text-gray-600 hover:underline">ReziApp</a>
     </div>
 </div>
 @endsection

@@ -1,6 +1,6 @@
 @extends('layouts.client')
 
-@section('title', 'Messages — REZI')
+@section('title', 'Messages — ReziApp')
 
 @section('client-content')
     <div x-data="{ search: '', showNewChat: false, residenceSearch: '', selectedResidence: null, newChatMessage: '' }">

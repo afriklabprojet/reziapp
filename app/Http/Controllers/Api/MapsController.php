@@ -154,7 +154,7 @@ class MapsController extends Controller
     // ──────────────────────────────────────────────
 
     /**
-     * Zones accessibles en X minutes depuis une résidence (Mapbox Isochrone).
+     * Zones accessibles estimées en X minutes depuis une résidence.
      */
     public function isochrone(Request $request, Residence $residence): JsonResponse
     {

@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Ajouter un document — REZI')
+@section('title', 'Ajouter un document — ReziApp')
 
 @section('owner-content')
 <div class="max-w-2xl mx-auto space-y-6">

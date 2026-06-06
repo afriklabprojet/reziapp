@@ -8,12 +8,26 @@ use Illuminate\Support\Facades\Log;
 
 class GoogleMapsService
 {
+    private const EARTH_RADIUS_METERS = 6378137;
+
+    private const PROFILE_SPEED_METERS_PER_MINUTE = [
+        'walking' => 80,
+        'cycling' => 250,
+        'driving' => 500,
+    ];
+
     protected string $apiKey;
     protected string $baseUrl = 'https://maps.googleapis.com/maps/api';
+    /** @var object */
+    protected $urlService;
 
-    public function __construct()
+    public function __construct($urlService = null)
     {
         $this->apiKey = config('services.google_maps.key') ?? '';
+        $this->urlService = $urlService ?? app()->makeWith('App\\Services\\GoogleMaps\\GoogleMapsUrlService', [
+            'apiKey' => $this->apiKey,
+            'baseUrl' => $this->baseUrl,
+        ]);
     }
 
     // ─────────────────────────────────────────────
@@ -41,6 +55,8 @@ class GoogleMapsService
         $cacheKey = "directions:{$origin}:{$destination}:{$mode}";
 
         return Cache::remember($cacheKey, 3600, function () use ($origin, $destination, $mode, $language) {
+            $result = null;
+
             try {
                 $response = Http::get("{$this->baseUrl}/directions/json", [
                     'origin' => $origin,
@@ -58,36 +74,33 @@ class GoogleMapsService
                         'origin' => $origin,
                         'destination' => $destination,
                     ]);
+                } else {
+                    $route = $data['routes'][0] ?? null;
 
-                    return null;
+                    if ($route) {
+                        $leg = $route['legs'][0];
+
+                        $result = [
+                            'distance' => $leg['distance'], // ['text' => '5.2 km', 'value' => 5200]
+                            'duration' => $leg['duration'], // ['text' => '12 min', 'value' => 720]
+                            'start_address' => $leg['start_address'],
+                            'end_address' => $leg['end_address'],
+                            'steps' => collect($leg['steps'])->map(fn ($step) => [
+                                'instruction' => strip_tags($step['html_instructions']),
+                                'distance' => $step['distance']['text'],
+                                'duration' => $step['duration']['text'],
+                                'travel_mode' => $step['travel_mode'],
+                            ])->toArray(),
+                            'polyline' => $route['overview_polyline']['points'] ?? null,
+                            'bounds' => $route['bounds'] ?? null,
+                        ];
+                    }
                 }
-
-                $route = $data['routes'][0] ?? null;
-                if (! $route) {
-                    return null;
-                }
-
-                $leg = $route['legs'][0];
-
-                return [
-                    'distance' => $leg['distance'], // ['text' => '5.2 km', 'value' => 5200]
-                    'duration' => $leg['duration'], // ['text' => '12 min', 'value' => 720]
-                    'start_address' => $leg['start_address'],
-                    'end_address' => $leg['end_address'],
-                    'steps' => collect($leg['steps'])->map(fn ($step) => [
-                        'instruction' => strip_tags($step['html_instructions']),
-                        'distance' => $step['distance']['text'],
-                        'duration' => $step['duration']['text'],
-                        'travel_mode' => $step['travel_mode'],
-                    ])->toArray(),
-                    'polyline' => $route['overview_polyline']['points'] ?? null,
-                    'bounds' => $route['bounds'] ?? null,
-                ];
             } catch (\Exception $e) {
                 Log::error('Google Directions API exception', ['error' => $e->getMessage()]);
-
-                return null;
             }
+
+            return $result;
         });
     }
 
@@ -199,37 +212,7 @@ class GoogleMapsService
         array $markers = [],
         string $maptype = 'roadmap',
     ): string {
-        $params = [
-            'center' => "{$lat},{$lng}",
-            'zoom' => $zoom,
-            'size' => $size,
-            'maptype' => $maptype,
-            'language' => 'fr',
-            'key' => $this->apiKey,
-        ];
-
-        // Marqueur principal (résidence)
-        $markerStr = "color:red|label:R|{$lat},{$lng}";
-
-        // Marqueurs additionnels
-        foreach ($markers as $marker) {
-            $color = $marker['color'] ?? 'blue';
-            $label = $marker['label'] ?? '';
-            $markerStr .= "&markers=color:{$color}|label:{$label}|{$marker['lat']},{$marker['lng']}";
-        }
-
-        $params['markers'] = "color:red|label:R|{$lat},{$lng}";
-
-        $url = "{$this->baseUrl}/staticmap?".http_build_query($params);
-
-        // Ajouter les marqueurs additionnels
-        foreach ($markers as $marker) {
-            $color = $marker['color'] ?? 'blue';
-            $label = $marker['label'] ?? '';
-            $url .= "&markers=color:{$color}|label:{$label}|{$marker['lat']},{$marker['lng']}";
-        }
-
-        return $url;
+        return $this->urlService->getStaticMapUrl($lat, $lng, $zoom, $size, $markers, $maptype);
     }
 
     /**
@@ -237,7 +220,7 @@ class GoogleMapsService
      */
     public function getResidenceStaticMapUrl(float $lat, float $lng): string
     {
-        return $this->getStaticMapUrl($lat, $lng, 15, '600x250');
+        return $this->urlService->getResidenceStaticMapUrl($lat, $lng);
     }
 
     // ─────────────────────────────────────────────
@@ -573,18 +556,7 @@ class GoogleMapsService
         ?int $heading = null,
         int $pitch = 0,
     ): string {
-        $params = [
-            'location' => "{$lat},{$lng}",
-            'size'     => $size,
-            'pitch'    => $pitch,
-            'key'      => $this->apiKey,
-        ];
-
-        if ($heading !== null) {
-            $params['heading'] = $heading;
-        }
-
-        return "{$this->baseUrl}/streetview?".http_build_query($params);
+        return $this->urlService->getStreetViewUrl($lat, $lng, $size, $heading, $pitch);
     }
 
     // ─────────────────────────────────────────────
@@ -664,11 +636,11 @@ class GoogleMapsService
     }
 
     // ─────────────────────────────────────────────
-    // MAPBOX ISOCHRONE
+    // ISOCHRONE APPROXIMATION
     // ─────────────────────────────────────────────
 
     /**
-     * Obtenir les zones accessibles en X minutes (Mapbox Isochrone API).
+     * Estimer les zones accessibles en X minutes sans dépendance externe.
      *
      * @param  float   $lat
      * @param  float   $lng
@@ -682,39 +654,77 @@ class GoogleMapsService
         array $minutes = [5, 10, 15],
         string $profile = 'walking',
     ): ?array {
-        $mapboxToken = config('services.mapbox.access_token');
-        if (!$mapboxToken) {
+        $normalizedMinutes = array_values(array_unique(array_filter(
+            array_map('intval', $minutes),
+            fn (int $minute): bool => $minute > 0 && $minute <= 60,
+        )));
+
+        if ($normalizedMinutes === []) {
             return null;
         }
 
-        $contours = implode(',', $minutes);
-        $cacheKey = 'isochrone:'.md5("{$lat},{$lng}:{$contours}:{$profile}");
+        sort($normalizedMinutes);
 
-        return Cache::remember($cacheKey, 86400, function () use ($lat, $lng, $contours, $profile, $mapboxToken) {
-            try {
-                $response = Http::get("https://api.mapbox.com/isochrone/v1/mapbox/{$profile}/{$lng},{$lat}", [
-                    'contours_minutes' => $contours,
-                    'polygons'         => 'true',
-                    'generalize'       => 50,
-                    'access_token'     => $mapboxToken,
-                ]);
+        $normalizedProfile = array_key_exists($profile, self::PROFILE_SPEED_METERS_PER_MINUTE)
+            ? $profile
+            : 'walking';
 
-                if (!$response->successful()) {
-                    Log::warning('Mapbox Isochrone API error', [
-                        'status' => $response->status(),
-                        'body'   => $response->body(),
-                    ]);
+        $cacheKey = 'isochrone:'.md5("{$lat},{$lng}:".implode(',', $normalizedMinutes).":{$normalizedProfile}");
 
-                    return null;
-                }
-
-                return $response->json();
-            } catch (\Exception $e) {
-                Log::error('Mapbox Isochrone exception', ['error' => $e->getMessage()]);
-
-                return null;
-            }
+        return Cache::remember($cacheKey, 86400, function () use ($lat, $lng, $normalizedMinutes, $normalizedProfile) {
+            return [
+                'type' => 'FeatureCollection',
+                'features' => array_map(
+                    fn (int $minute): array => $this->buildIsochroneFeature($lat, $lng, $minute, $normalizedProfile),
+                    $normalizedMinutes,
+                ),
+            ];
         });
+    }
+
+    private function buildIsochroneFeature(float $lat, float $lng, int $minute, string $profile): array
+    {
+        $radiusMeters = self::PROFILE_SPEED_METERS_PER_MINUTE[$profile] * $minute;
+
+        return [
+            'type' => 'Feature',
+            'properties' => [
+                'contour' => $minute,
+                'profile' => $profile,
+                'source' => 'local-approximation',
+                'radius_meters' => $radiusMeters,
+            ],
+            'geometry' => [
+                'type' => 'Polygon',
+                'coordinates' => [
+                    $this->buildCirclePolygon($lat, $lng, $radiusMeters),
+                ],
+            ],
+        ];
+    }
+
+    private function buildCirclePolygon(float $lat, float $lng, float $radiusMeters, int $steps = 48): array
+    {
+        $coordinates = [];
+        $angularDistance = $radiusMeters / self::EARTH_RADIUS_METERS;
+        $latRad = deg2rad($lat);
+        $lngRad = deg2rad($lng);
+
+        for ($step = 0; $step <= $steps; $step++) {
+            $bearing = 2 * M_PI * ($step / $steps);
+            $pointLat = asin(
+                sin($latRad) * cos($angularDistance)
+                + cos($latRad) * sin($angularDistance) * cos($bearing),
+            );
+            $pointLng = $lngRad + atan2(
+                sin($bearing) * sin($angularDistance) * cos($latRad),
+                cos($angularDistance) - sin($latRad) * sin($pointLat),
+            );
+
+            $coordinates[] = [rad2deg($pointLng), rad2deg($pointLat)];
+        }
+
+        return $coordinates;
     }
 
     // ─────────────────────────────────────────────

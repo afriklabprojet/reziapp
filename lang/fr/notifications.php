@@ -3,7 +3,7 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Traductions des notifications mail — REZI
+    | Traductions des notifications mail — ReziApp
     |--------------------------------------------------------------------------
     */
 

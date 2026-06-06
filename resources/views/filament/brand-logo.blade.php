@@ -2,7 +2,7 @@
     {{-- Logo avec filtre pour s'adapter au mode sombre --}}
     <img 
         src="{{ asset('images/logo-rezi.png') }}" 
-        alt="REZI Admin" 
+        alt="ReziApp Admin" 
         class="h-10 w-auto dark:brightness-0 dark:invert"
     >
 </div>

@@ -15,7 +15,7 @@
                                 <span class="text-gradient-primary">3 étapes simples</span>
                             </h2>
                             <p class="mt-4 text-gray-500 max-w-xl mx-auto text-base leading-relaxed">
-                                De la recherche à l'emménagement, REZI vous accompagne à chaque étape
+                                De la recherche à l'emménagement, ReziApp vous accompagne à chaque étape
                             </p>
                         </div>
 

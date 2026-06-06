@@ -3,7 +3,7 @@
 @section('title', 'Suggestions de Prix IA - ' . $residence->name)
 
 @section('owner-content')
-    <div class="space-y-6" x-data="priceSuggestions(@js(['applyUrl' => route('owner.pricing.apply', $residence), 'csrfToken' => csrf_token()]))">
+    <div class="space-y-6" x-data="priceSuggestions({{ \Illuminate\Support\Js::encode(['applyUrl' => route('owner.pricing.apply', $residence), 'csrfToken' => csrf_token()]) }})">
         <!-- En-tête -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>

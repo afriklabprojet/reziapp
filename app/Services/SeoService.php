@@ -55,11 +55,11 @@ class SeoService
             $title .= " - {$price} FCFA/jour";
         }
 
-        $title .= ' | REZI';
+        $title .= ' | ReziApp';
 
         // Limiter à 60 caractères
         if (strlen($title) > 60) {
-            $title = "{$type} meublé à {$location} | REZI";
+            $title = "{$type} meublé à {$location} | ReziApp";
         }
 
         return $title;
@@ -94,11 +94,11 @@ class SeoService
             ? number_format((float) $residence->price_per_night, 0, ',', ' ').' FCFA/jour'
             : '';
 
-        $description = "Louez ce {$type} meublé à {$location}{$featuresText}. {$price}. Réservation en ligne sécurisée sur REZI.";
+        $description = "Louez ce {$type} meublé à {$location}{$featuresText}. {$price}. Réservation en ligne sécurisée sur ReziApp.";
 
         // Limiter à 155 caractères
         if (strlen($description) > 155) {
-            $description = "Louez ce {$type} meublé à {$location}. {$price}. Réservation sécurisée sur REZI.";
+            $description = "Louez ce {$type} meublé à {$location}. {$price}. Réservation sécurisée sur ReziApp.";
         }
 
         return $description;
@@ -194,7 +194,7 @@ class SeoService
             'og:description' => $this->generateDescription($residence),
             'og:url' => route('residences.show', $residence),
             'og:image' => $photo ? asset('storage/'.$photo->path) : asset('images/og-default.jpg'),
-            'og:site_name' => 'REZI',
+            'og:site_name' => 'ReziApp',
             'og:locale' => 'fr_CI',
             'twitter:card' => 'summary_large_image',
             'twitter:site' => '@reziapp',

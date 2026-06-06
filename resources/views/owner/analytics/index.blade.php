@@ -3,11 +3,11 @@
 @section('title', 'Analytics - Tableau de bord')
 
 @section('owner-content')
-    <div class="space-y-6" x-data="analyticsPage(@js([
+    <div class="space-y-6" x-data="analyticsPage({{ \Illuminate\Support\Js::encode([
     'revenueData' => $stats['revenue']['daily'],
     'viewsData' => $stats['views']['daily'],
     'contactsData' => $stats['contacts']['daily'],
-]))">
+]) }})">
         <!-- En-tête avec sélecteur de période -->
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>

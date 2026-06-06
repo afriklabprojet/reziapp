@@ -87,7 +87,7 @@ class PageContent extends Model
             'hero' => [
                 'title' => 'Trouver un logement meublé en Afrique de l\'Ouest,',
                 'highlight' => 'simplement.',
-                'description' => "REZI est la plateforme de référence pour la recherche géolocalisée de résidences meublées en Côte d'Ivoire. Notre mission : rendre la recherche de logement simple, transparente et accessible à tous.",
+                'description' => "ReziApp est la plateforme de référence pour la recherche géolocalisée de résidences meublées en Côte d'Ivoire. Notre mission : rendre la recherche de logement simple, transparente et accessible à tous.",
                 'cta_primary' => 'Explorer les résidences',
                 'cta_secondary' => 'Nous contacter',
             ],
@@ -96,8 +96,8 @@ class PageContent extends Model
                 'title' => 'Simplifier la recherche de logement meublé en Afrique de l\'Ouest',
                 'paragraphs' => [
                     "En Afrique de l'Ouest, trouver un logement meublé de qualité peut être un véritable parcours du combattant. Entre les arnaques, les informations incomplètes et le manque de transparence, les locataires perdent un temps précieux.",
-                    "REZI est né de cette frustration. Nous avons créé une plateforme qui met la technologie au service de la recherche immobilière, avec des outils de géolocalisation avancés, des photos vérifiées et un système d'avis transparent.",
-                    'Que vous soyez un expatrié, un professionnel en déplacement ou un étudiant, REZI vous accompagne pour trouver le logement qui correspond à vos besoins — rapidement et en toute confiance.',
+                    "ReziApp est né de cette frustration. Nous avons créé une plateforme qui met la technologie au service de la recherche immobilière, avec des outils de géolocalisation avancés, des photos vérifiées et un système d'avis transparent.",
+                    'Que vous soyez un expatrié, un professionnel en déplacement ou un étudiant, ReziApp vous accompagne pour trouver le logement qui correspond à vos besoins — rapidement et en toute confiance.',
                 ],
                 'features' => [
                     ['title' => 'Géolocalisation', 'description' => 'Recherche sur carte interactive avec filtres par zone', 'color' => 'orange'],
@@ -108,7 +108,7 @@ class PageContent extends Model
             ],
             'steps' => [
                 'title' => 'En 3 étapes simples',
-                'subtitle' => "De la recherche à l'emménagement, REZI vous accompagne à chaque étape.",
+                'subtitle' => "De la recherche à l'emménagement, ReziApp vous accompagne à chaque étape.",
                 'items' => [
                     ['title' => 'Recherchez', 'description' => 'Explorez les résidences meublées par commune, budget ou sur la carte interactive.'],
                     ['title' => 'Contactez', 'description' => 'Échangez directement avec le propriétaire via notre messagerie sécurisée et planifiez une visite.'],
@@ -134,7 +134,7 @@ class PageContent extends Model
             ],
             'cta' => [
                 'title' => 'Prêt à trouver votre logement ?',
-                'description' => "Rejoignez des centaines d'utilisateurs qui ont déjà trouvé leur résidence idéale sur REZI.",
+                'description' => "Rejoignez des centaines d'utilisateurs qui ont déjà trouvé leur résidence idéale sur ReziApp.",
                 'cta_primary' => 'Chercher une résidence',
                 'cta_secondary' => 'Créer un compte gratuit',
             ],
@@ -170,11 +170,11 @@ class PageContent extends Model
                 'subtitle' => "Retrouvez les réponses aux questions les plus courantes. Si vous ne trouvez pas votre réponse, n'hésitez pas à nous contacter directement.",
                 'items' => [
                     [
-                        'question' => 'REZI est-il gratuit pour les locataires ?',
+                        'question' => 'ReziApp est-il gratuit pour les locataires ?',
                         'answer' => 'Oui ! La recherche et la consultation des annonces sont entièrement gratuites. Vous ne payez que lorsque vous effectuez une réservation.',
                     ],
                     [
-                        'question' => 'Comment publier mon logement sur REZI ?',
+                        'question' => 'Comment publier mon logement sur ReziApp ?',
                         'answer' => 'Créez un compte propriétaire, ajoutez les détails de votre résidence (photos, description, prix) et soumettez votre annonce. Notre équipe la vérifie sous 24h avant publication.',
                     ],
                     [
@@ -219,7 +219,7 @@ class PageContent extends Model
             'sections' => [
                 [
                     'title' => '1. Objet',
-                    'content' => "Les présentes Conditions Générales d'Utilisation (ci-après « CGU ») ont pour objet de définir les modalités et conditions d'utilisation de la plateforme REZI (ci-après « la Plateforme »), accessible à l'adresse rezi.ci, ainsi que les droits et obligations des parties dans le cadre de l'utilisation de ses services.\n\nREZI est une plateforme de mise en relation entre propriétaires de résidences meublées et locataires potentiels, opérant principalement à Abidjan, Côte d'Ivoire.",
+                    'content' => "Les présentes Conditions Générales d'Utilisation (ci-après « CGU ») ont pour objet de définir les modalités et conditions d'utilisation de la plateforme ReziApp (ci-après « la Plateforme »), accessible à l'adresse rezi.ci, ainsi que les droits et obligations des parties dans le cadre de l'utilisation de ses services.\n\nReziApp est une plateforme de mise en relation entre propriétaires de résidences meublées et locataires potentiels, opérant principalement à Abidjan, Côte d'Ivoire.",
                 ],
                 [
                     'title' => '2. Acceptation des CGU',
@@ -231,7 +231,7 @@ class PageContent extends Model
                 ],
                 [
                     'title' => '4. Services Proposés',
-                    'content' => "REZI propose les services suivants :\n• Pour les locataires : Recherche géolocalisée de résidences meublées, consultation des annonces, contact avec les propriétaires, système d'avis.\n• Pour les propriétaires : Publication d'annonces, gestion de résidences, tableau de bord statistique, outils marketing.",
+                    'content' => "ReziApp propose les services suivants :\n• Pour les locataires : Recherche géolocalisée de résidences meublées, consultation des annonces, contact avec les propriétaires, système d'avis.\n• Pour les propriétaires : Publication d'annonces, gestion de résidences, tableau de bord statistique, outils marketing.",
                 ],
                 [
                     'title' => '5. Obligations des Utilisateurs',
@@ -239,15 +239,15 @@ class PageContent extends Model
                 ],
                 [
                     'title' => '6. Responsabilité',
-                    'content' => "REZI agit en tant qu'intermédiaire technique et n'est pas partie aux transactions entre propriétaires et locataires. REZI ne peut être tenu responsable de la qualité des résidences, de la véracité des annonces ou du comportement des utilisateurs.",
+                    'content' => "ReziApp agit en tant qu'intermédiaire technique et n'est pas partie aux transactions entre propriétaires et locataires. ReziApp ne peut être tenu responsable de la qualité des résidences, de la véracité des annonces ou du comportement des utilisateurs.",
                 ],
                 [
                     'title' => '7. Propriété Intellectuelle',
-                    'content' => "L'ensemble du contenu de la Plateforme (textes, images, logos, code source) est protégé par le droit de la propriété intellectuelle. Toute reproduction, même partielle, est interdite sans autorisation écrite préalable de REZI.",
+                    'content' => "L'ensemble du contenu de la Plateforme (textes, images, logos, code source) est protégé par le droit de la propriété intellectuelle. Toute reproduction, même partielle, est interdite sans autorisation écrite préalable de ReziApp.",
                 ],
                 [
                     'title' => '8. Modification des CGU',
-                    'content' => "REZI se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs seront informés des modifications par notification sur la Plateforme. La poursuite de l'utilisation vaut acceptation des nouvelles conditions.",
+                    'content' => "ReziApp se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs seront informés des modifications par notification sur la Plateforme. La poursuite de l'utilisation vaut acceptation des nouvelles conditions.",
                 ],
                 [
                     'title' => '9. Droit Applicable',
@@ -267,7 +267,7 @@ class PageContent extends Model
             'sections' => [
                 [
                     'title' => '1. Collecte des données',
-                    'content' => 'REZI collecte les données personnelles que vous fournissez lors de votre inscription et utilisation de la plateforme : nom, email, téléphone, adresse, photos de résidences, données de localisation.',
+                    'content' => 'ReziApp collecte les données personnelles que vous fournissez lors de votre inscription et utilisation de la plateforme : nom, email, téléphone, adresse, photos de résidences, données de localisation.',
                 ],
                 [
                     'title' => '2. Utilisation des données',
@@ -287,7 +287,7 @@ class PageContent extends Model
                 ],
                 [
                     'title' => '6. Cookies',
-                    'content' => "REZI utilise des cookies pour améliorer votre expérience de navigation et analyser l'utilisation du site. Vous pouvez configurer votre navigateur pour refuser les cookies.",
+                    'content' => "ReziApp utilise des cookies pour améliorer votre expérience de navigation et analyser l'utilisation du site. Vous pouvez configurer votre navigateur pour refuser les cookies.",
                 ],
             ],
         ];
@@ -303,11 +303,11 @@ class PageContent extends Model
             'sections' => [
                 [
                     'title' => 'Éditeur du site',
-                    'content' => "REZI SAS\nSiège social : Cocody, Riviera Palmeraie, Abidjan, Côte d'Ivoire\nEmail : contact@rezi.ci\nTéléphone : +225 07 07 07 07 07",
+                    'content' => "ReziApp SAS\nSiège social : Cocody, Riviera Palmeraie, Abidjan, Côte d'Ivoire\nEmail : contact@rezi.ci\nTéléphone : +225 07 07 07 07 07",
                 ],
                 [
                     'title' => 'Directeur de la publication',
-                    'content' => 'Le directeur de la publication est le représentant légal de REZI SAS.',
+                    'content' => 'Le directeur de la publication est le représentant légal de ReziApp SAS.',
                 ],
                 [
                     'title' => 'Hébergement',
@@ -328,17 +328,17 @@ class PageContent extends Model
     {
         return [
             'title' => 'Questions Fréquentes',
-            'subtitle' => 'Trouvez rapidement les réponses à vos questions sur REZI',
+            'subtitle' => 'Trouvez rapidement les réponses à vos questions sur ReziApp',
             'categories' => [
                 [
                     'name' => 'Pour les Locataires',
                     'icon' => '🏠',
                     'color' => 'orange',
                     'questions' => [
-                        ['question' => 'Comment rechercher une résidence sur REZI ?', 'answer' => "Utilisez la barre de recherche sur la page d'accueil ou la carte interactive pour trouver des résidences par commune, type de logement ou budget."],
-                        ['question' => 'Est-ce que REZI est gratuit pour les locataires ?', 'answer' => 'Oui, la recherche et la consultation des annonces sur REZI sont entièrement gratuites.'],
+                        ['question' => 'Comment rechercher une résidence sur ReziApp ?', 'answer' => "Utilisez la barre de recherche sur la page d'accueil ou la carte interactive pour trouver des résidences par commune, type de logement ou budget."],
+                        ['question' => 'Est-ce que ReziApp est gratuit pour les locataires ?', 'answer' => 'Oui, la recherche et la consultation des annonces sur ReziApp sont entièrement gratuites.'],
                         ['question' => 'Comment contacter un propriétaire ?', 'answer' => 'Sur la page de chaque résidence, cliquez sur le bouton « Contacter le propriétaire ». Un compte est nécessaire pour cette fonctionnalité.'],
-                        ['question' => 'Les résidences sont-elles vérifiées ?', 'answer' => 'Toutes les annonces publiées sur REZI passent par un processus de modération avant d\'être visibles.'],
+                        ['question' => 'Les résidences sont-elles vérifiées ?', 'answer' => 'Toutes les annonces publiées sur ReziApp passent par un processus de modération avant d\'être visibles.'],
                     ],
                 ],
                 [
@@ -346,7 +346,7 @@ class PageContent extends Model
                     'icon' => '🔑',
                     'color' => 'blue',
                     'questions' => [
-                        ['question' => 'Comment publier une annonce sur REZI ?', 'answer' => "Créez un compte propriétaire, puis accédez à votre tableau de bord. Cliquez sur « Ajouter une résidence » et suivez l'assistant de publication."],
+                        ['question' => 'Comment publier une annonce sur ReziApp ?', 'answer' => "Créez un compte propriétaire, puis accédez à votre tableau de bord. Cliquez sur « Ajouter une résidence » et suivez l'assistant de publication."],
                         ['question' => 'La publication est-elle gratuite ?', 'answer' => 'Oui, la publication d\'annonces est gratuite. Des options payantes de mise en avant sont disponibles.'],
                         ['question' => 'Comment augmenter la visibilité de mon annonce ?', 'answer' => 'Ajoutez des photos de qualité, une description détaillée et répondez rapidement aux contacts.'],
                     ],
@@ -420,8 +420,8 @@ class PageContent extends Model
                     'a' => 'Oui, à 100%. La publication de base est gratuite et le restera toujours. Vous payez uniquement si vous souhaitez activer des options de visibilité Boost pour accélérer vos mises en location.',
                 ],
                 [
-                    'q' => 'REZI prend-il une commission sur mes locations ?',
-                    'a' => 'Oui. REZI prélève 10% sur le montant total de chaque réservation confirmée, côté propriétaire. Il n\'y a en revanche aucun abonnement mensuel ou annuel à payer.',
+                    'q' => 'ReziApp prend-il une commission sur mes locations ?',
+                    'a' => 'Oui. ReziApp prélève 10% sur le montant total de chaque réservation confirmée, côté propriétaire. Il n\'y a en revanche aucun abonnement mensuel ou annuel à payer.',
                 ],
                 [
                     'q' => 'Les locataires paient-ils quelque chose ?',
@@ -432,8 +432,8 @@ class PageContent extends Model
                     'a' => "Les Boosts sont activés instantanément. En cas de problème technique de notre part, nous procédons à un remboursement intégral ou à un crédit équivalent.",
                 ],
                 [
-                    'q' => "Comment REZI gagne-t-il de l'argent ?",
-                    'a' => "REZI génère ses revenus principalement via une commission de 10% sur le montant total de chaque réservation côté propriétaire, complétée par des options Boost et services premium facultatifs.",
+                    'q' => "Comment ReziApp gagne-t-il de l'argent ?",
+                    'a' => "ReziApp génère ses revenus principalement via une commission de 10% sur le montant total de chaque réservation côté propriétaire, complétée par des options Boost et services premium facultatifs.",
                 ],
             ],
         ];
@@ -443,13 +443,13 @@ class PageContent extends Model
     {
         return [
             'title'        => 'Guide Propriétaire',
-            'subtitle'     => 'Tout ce que vous devez savoir pour publier et gérer vos résidences sur REZI',
-            'introduction' => 'REZI est la plateforme de référence pour la location meublée à Abidjan. Que vous ayez un studio ou plusieurs appartements, ce guide vous accompagne pas à pas pour publier, optimiser et rentabiliser vos biens.',
+            'subtitle'     => 'Tout ce que vous devez savoir pour publier et gérer vos résidences sur ReziApp',
+            'introduction' => 'ReziApp est la plateforme de référence pour la location meublée à Abidjan. Que vous ayez un studio ou plusieurs appartements, ce guide vous accompagne pas à pas pour publier, optimiser et rentabiliser vos biens.',
             'steps' => [
                 [
                     'number'      => 1,
                     'title'       => 'Créer votre compte propriétaire',
-                    'description' => 'Inscrivez-vous sur REZI et sélectionnez le rôle « Propriétaire ». Complétez votre profil avec vos informations de contact et une photo.',
+                    'description' => 'Inscrivez-vous sur ReziApp et sélectionnez le rôle « Propriétaire ». Complétez votre profil avec vos informations de contact et une photo.',
                     'substeps'    => [
                         'Cliquez sur « S\'inscrire » et choisissez « Je suis propriétaire ».',
                         'Renseignez votre nom, numéro de téléphone et email.',
@@ -492,7 +492,7 @@ class PageContent extends Model
                 [
                     'number'      => 4,
                     'title'       => 'Utiliser les outils marketing',
-                    'description' => 'REZI propose des outils puissants pour maximiser votre visibilité et remplir vos résidences toute l\'année.',
+                    'description' => 'ReziApp propose des outils puissants pour maximiser votre visibilité et remplir vos résidences toute l\'année.',
                     'tools' => [
                         [
                             'icon'        => '🚀',
@@ -520,7 +520,7 @@ class PageContent extends Model
             'faq' => [
                 [
                     'question' => 'La publication est-elle gratuite ?',
-                    'answer'   => 'Oui, la publication d\'une résidence sur REZI est entièrement gratuite. Nous proposons des options payantes pour booster votre visibilité (sponsoring, mise en avant).',
+                    'answer'   => 'Oui, la publication d\'une résidence sur ReziApp est entièrement gratuite. Nous proposons des options payantes pour booster votre visibilité (sponsoring, mise en avant).',
                 ],
                 [
                     'question' => 'Combien de temps prend la modération ?',
@@ -532,7 +532,7 @@ class PageContent extends Model
                 ],
                 [
                     'question' => 'Comment sont gérés les paiements ?',
-                    'answer'   => 'REZI est une plateforme de mise en relation. Les modalités de paiement sont convenues directement entre vous et le locataire. Nous n\'intervenons pas dans les transactions financières.',
+                    'answer'   => 'ReziApp est une plateforme de mise en relation. Les modalités de paiement sont convenues directement entre vous et le locataire. Nous n\'intervenons pas dans les transactions financières.',
                 ],
                 [
                     'question' => 'Que faire si j\'ai un problème avec une annonce ?',

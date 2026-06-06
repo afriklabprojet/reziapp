@@ -16,7 +16,7 @@
 ])
 
 <section
-    x-data="recommendationStrip(@js($userId), @js($residences?->map(fn($r) => [
+    x-data="recommendationStrip({{ \Illuminate\Support\Js::encode($userId) }}, {{ \Illuminate\Support\Js::encode($residences?->map(fn($r) => [
         'id'             => $r->id,
         'title'          => $r->title ?? $r->name ?? '',
         'commune'        => $r->commune ?? '',
@@ -32,7 +32,7 @@
         'url'            => route('residences.show', $r->id),
         'match_score'    => $r->match_score ?? null,
         'match_reasons'  => $r->match_reasons ?? [],
-    ])->values()->all()), {{ $limit }})"
+    ])->values()->all()) }}, {{ $limit }})"
     x-init="init()"
     class="py-8"
     aria-label="Recommandations personnalisées"

@@ -6,10 +6,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Contact;
 use App\Models\Residence;
+use App\Models\User;
 use App\Notifications\NewContactReceived;
+use App\Services\ResidenceService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 /**
@@ -17,6 +20,8 @@ use Illuminate\View\View;
  */
 class ContactController extends Controller
 {
+    public function __construct(private readonly ResidenceService $residenceService) {}
+
     /**
      * Envoyer une demande de contact
      */
@@ -25,24 +30,10 @@ class ContactController extends Controller
         /** @var \App\Models\User $user */
         $user = $request->user();
 
-        // Vérifier que la résidence est disponible
-        if ($residence->status !== 'active' || !$residence->is_available) {
-            return back()->with('error', 'Cette résidence n\'est pas disponible.');
-        }
-
-        // Vérifier que l'utilisateur ne contacte pas sa propre résidence
-        if ($residence->owner_id === $user->id) {
-            return back()->with('error', 'Vous ne pouvez pas contacter votre propre résidence.');
-        }
-
-        // Un locataire doit avoir effectué une réservation pour contacter le propriétaire
-        $hasBooking = \App\Models\Booking::where('user_id', $user->id)
-            ->where('residence_id', $residence->id)
-            ->whereNotIn('status', ['cancelled', 'expired'])
-            ->exists();
-
-        if (!$hasBooking) {
-            return back()->with('error', 'Vous devez effectuer une réservation avant de contacter le propriétaire.');
+        try {
+            $this->ensureCanContactResidence($user, $residence);
+        } catch (ValidationException $exception) {
+            return back()->with('error', $exception->getMessage());
         }
 
         $validated = $request->validate([
@@ -59,15 +50,7 @@ class ContactController extends Controller
             'status' => 'pending',
         ]);
 
-        $residence->incrementContacts();
-
-        // Enregistrer le contact sponsorisé si applicable
-        if ($residence->isSponsored()) {
-            $activeSponsoredListing = $residence->activeSponsoredListing();
-            if ($activeSponsoredListing) {
-                $activeSponsoredListing->recordContact(request()->ip(), $user->id);
-            }
-        }
+        $this->residenceService->recordContact($residence, $user->id);
 
         // Notifier le propriétaire
         $residence->owner->notify(new NewContactReceived($contact, $residence));
@@ -83,6 +66,32 @@ class ContactController extends Controller
         );
 
         return back()->with('success', 'Votre demande de contact a été envoyée au propriétaire.');
+    }
+
+    private function ensureCanContactResidence(User $user, Residence $residence): void
+    {
+        if ($residence->status !== 'active' || !$residence->is_available) {
+            throw ValidationException::withMessages([
+                'residence' => 'Cette résidence n\'est pas disponible.',
+            ]);
+        }
+
+        if ($residence->owner_id === $user->id) {
+            throw ValidationException::withMessages([
+                'residence' => 'Vous ne pouvez pas contacter votre propre résidence.',
+            ]);
+        }
+
+        $hasBooking = \App\Models\Booking::where('user_id', $user->id)
+            ->where('residence_id', $residence->id)
+            ->whereNotIn('status', ['cancelled', 'expired'])
+            ->exists();
+
+        if (!$hasBooking) {
+            throw ValidationException::withMessages([
+                'residence' => 'Vous devez effectuer une réservation avant de contacter le propriétaire.',
+            ]);
+        }
     }
 
     /**

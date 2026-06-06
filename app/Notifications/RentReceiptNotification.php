@@ -50,7 +50,7 @@ class RentReceiptNotification extends Notification implements ShouldQueue
             ->line('Mode de paiement : '.($this->receipt->payment_method ?? 'Non renseigné'))
             ->action('Télécharger le reçu PDF', $downloadUrl)
             ->line('Conservez ce document pour vos démarches administratives.')
-            ->salutation('L\'équipe REZI');
+            ->salutation('L\'équipe ReziApp');
     }
 
     public function toArray(object $notifiable): array

@@ -1,12 +1,12 @@
 <x-app-layout>
-    @section('title', 'Carte des résidences - REZI')
+    @section('title', 'Carte des résidences - ReziApp')
 
     <div class="h-[calc(100vh-64px)] flex flex-col"
-        x-data="residenceMap(@js([
+        x-data="residenceMap({{ \Illuminate\Support\Js::encode([
             'residences' => $residences->map(fn($r) => [
                 'id'             => $r->id,
-                'title'          => $r->name,
-                'price'          => $r->price,
+                'title'          => $r->title ?? $r->name,
+                'price'          => $r->price_per_day ?? $r->price ?? 0,
                 'price_label'    => '/jour',
                 'price_per_day'  => $r->price_per_day,
                 'price_per_month'=> $r->price_per_month,
@@ -32,7 +32,12 @@
             ])->toArray(),
             'priceMin' => $priceMin,
             'priceMax' => $priceMax,
-        ]))">
+            'defaultCenter' => [
+                'lat' => (float) config('rezi.default_latitude', 5.36),
+                'lng' => (float) config('rezi.default_longitude', -4.0083),
+            ],
+            'defaultRadiusKm' => (int) config('rezi.default_search_radius_km', 5),
+        ]) }})">
 
         {{-- ═══════════════════════════════════════════════════════════════════ --}}
         {{-- TOP BAR — Stats + Contrôles --}}
@@ -345,7 +350,7 @@
                                         </span>
                                         <span x-show="residence.is_verified"
                                             class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-blue-500 text-white shadow-sm"
-                                            title="Vérifié REZI">
+                                            title="Vérifié ReziApp">
                                             <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
                                         </span>
                                     </div>
@@ -406,13 +411,13 @@
                 </div>
             </div>
 
-            {{-- ─── CARTE MAPBOX ─── --}}
+            {{-- ─── CARTE INTERACTIVE ─── --}}
             <div class="relative h-full min-h-0 flex-1">
                 <x-map-search
                     :residences="$residences->map(fn($r) => [
                         'id' => $r->id,
-                        'title' => $r->name,
-                        'price' => $r->price,
+                        'title' => $r->title ?? $r->name,
+                        'price' => $r->price_per_day ?? $r->price ?? 0,
                         'price_label' => '/jour',
                         'thumbnail' => $r->primaryPhoto?->url,
                         'commune' => $r->commune,

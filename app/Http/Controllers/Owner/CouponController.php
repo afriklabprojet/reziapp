@@ -203,7 +203,7 @@ class CouponController extends Controller
     private function generateUniqueCode(): string
     {
         do {
-            $code = 'REZI'.Str::upper(Str::random(6));
+            $code = 'ReziApp'.Str::upper(Str::random(6));
         } while (Coupon::where('code', $code)->exists());
 
         return $code;

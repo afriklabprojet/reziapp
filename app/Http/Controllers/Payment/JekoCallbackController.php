@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Payment;
 use App\Http\Controllers\Controller;
 use App\Models\SponsoredListing;
 use App\Services\JekoPaymentService;
+use App\Services\SponsoredListingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
@@ -13,6 +14,7 @@ class JekoCallbackController extends Controller
 {
     public function __construct(
         protected JekoPaymentService $jekoService,
+        protected SponsoredListingService $sponsoredListingService,
     ) {
     }
 
@@ -27,30 +29,9 @@ class JekoCallbackController extends Controller
     {
         $sponsored = $this->resolveSignedSponsoredListing($request);
 
-        // If the webhook already confirmed it, redirect directly
-        if ($sponsored->is_paid && $sponsored->payment_status === 'success') {
+        if ($this->resolvePaymentStatusOutcome($sponsored) === 'success') {
             return redirect()->route('owner.marketing.sponsored.show', $sponsored)
                 ->with('success', 'Paiement confirmé ! Votre résidence est maintenant mise en avant.');
-        }
-
-        // Try to verify status via API if webhook hasn't arrived yet
-        if ($sponsored->jeko_payment_id) {
-            $statusResult = $this->jekoService->getPaymentStatus($sponsored->jeko_payment_id);
-
-            if ($statusResult['success'] && ($statusResult['status'] === 'success' || $statusResult['status'] === 'completed')) {
-                $duration = $sponsored->duration_days ?? 7;
-                $sponsored->update([
-                    'is_paid' => true,
-                    'status' => 'active',
-                    'payment_status' => 'success',
-                    'paid_at' => now(),
-                    'starts_at' => now(),
-                    'ends_at' => now()->addDays($duration),
-                ]);
-
-                return redirect()->route('owner.marketing.sponsored.show', $sponsored)
-                    ->with('success', 'Paiement confirmé ! Votre résidence est maintenant mise en avant.');
-            }
         }
 
         // Payment likely pending — show the waiting page
@@ -76,9 +57,7 @@ class JekoCallbackController extends Controller
     {
         $sponsored = $this->resolveSignedSponsoredListing($request);
 
-        $sponsored->update([
-            'payment_status' => 'error',
-        ]);
+        $this->sponsoredListingService->markPaymentAsFailed($sponsored);
 
         Log::info('Jeko callback: User redirected to error URL', [
             'sponsored_id' => $sponsored->id,
@@ -97,46 +76,51 @@ class JekoCallbackController extends Controller
             return response()->json(['error' => 'Lien de vérification invalide'], 403);
         }
 
-        // Check DB first (webhook may have updated it)
-        if ($sponsored->is_paid && $sponsored->payment_status === 'success') {
-            return response()->json([
-                'status' => 'success',
-                'redirect' => route('owner.marketing.sponsored.show', $sponsored),
-            ]);
-        }
+        return response()->json($this->buildCheckStatusPayload(
+            $this->resolvePaymentStatusOutcome($sponsored),
+            $sponsored,
+        ));
+    }
 
-        // Try Jeko API if we have a payment ID
-        if ($sponsored->jeko_payment_id) {
+    protected function resolvePaymentStatusOutcome(SponsoredListing $sponsored): string
+    {
+        $status = 'pending';
+
+        if ($sponsored->is_paid && $sponsored->payment_status === 'success') {
+            $status = 'success';
+        } elseif ($sponsored->jeko_payment_id) {
             $result = $this->jekoService->getPaymentStatus($sponsored->jeko_payment_id);
 
-            if ($result['success'] && in_array($result['status'], ['success', 'completed'])) {
-                $duration = $sponsored->duration_days ?? 7;
-                $sponsored->update([
-                    'is_paid' => true,
-                    'status' => 'active',
-                    'payment_status' => 'success',
-                    'paid_at' => now(),
-                    'starts_at' => $sponsored->starts_at ?? now(),
-                    'ends_at' => $sponsored->ends_at ?? now()->addDays($duration),
-                ]);
+            if ($result['success'] ?? false) {
+                $paymentStatus = $result['status'] ?? null;
 
-                return response()->json([
-                    'status' => 'success',
-                    'redirect' => route('owner.marketing.sponsored.show', $sponsored),
-                ]);
-            }
-
-            if ($result['success'] && $result['status'] === 'error') {
-                return response()->json([
-                    'status' => 'error',
-                    'redirect' => route('owner.marketing.sponsored.payment', $sponsored),
-                ]);
+                if (in_array($paymentStatus, ['success', 'completed'], true)) {
+                    $this->sponsoredListingService->markPaymentAsSuccessful($sponsored);
+                    $status = 'success';
+                } elseif ($paymentStatus === 'error') {
+                    $status = 'error';
+                }
             }
         }
 
-        return response()->json([
-            'status' => 'pending',
-        ]);
+        return $status;
+    }
+
+    protected function buildCheckStatusPayload(string $status, SponsoredListing $sponsored): array
+    {
+        return match ($status) {
+            'success' => [
+                'status' => 'success',
+                'redirect' => route('owner.marketing.sponsored.show', $sponsored),
+            ],
+            'error' => [
+                'status' => 'error',
+                'redirect' => route('owner.marketing.sponsored.payment', $sponsored),
+            ],
+            default => [
+                'status' => 'pending',
+            ],
+        };
     }
 
     protected function resolveSignedSponsoredListing(Request $request): SponsoredListing

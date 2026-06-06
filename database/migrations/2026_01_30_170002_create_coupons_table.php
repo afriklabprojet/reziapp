@@ -15,7 +15,7 @@ return new class () extends Migration {
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null'); // créateur (admin ou proprio)
             $table->foreignId('residence_id')->nullable()->constrained()->onDelete('cascade'); // si spécifique à une résidence
 
-            $table->string('code', 50)->unique(); // REZI2026, WELCOME20, etc.
+            $table->string('code', 50)->unique(); // ReziApp2026, WELCOME20, etc.
             $table->string('name'); // Nom descriptif
             $table->text('description')->nullable();
 

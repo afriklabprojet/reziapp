@@ -4,16 +4,20 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Throwable;
 
 class LinkPreviewService
 {
+    public function __construct(
+        private readonly ?PublicUrlGuard $publicUrlGuard = null,
+    ) {}
+
     /**
      * Extraire l'aperçu Open Graph d'une URL
      */
     public function extract(string $url): ?array
     {
-        // Vérifier que c'est une URL valide
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+        if (! $this->isSafePublicUrl($url)) {
             return null;
         }
 
@@ -21,26 +25,40 @@ class LinkPreviewService
         $cacheKey = 'link_preview:'.md5($url);
 
         return Cache::remember($cacheKey, 86400, function () use ($url) {
+            $preview = null;
+
             try {
                 $response = Http::timeout(5)
-                    ->withHeaders(['User-Agent' => 'REZI Bot/1.0'])
+                    ->withOptions(['allow_redirects' => false])
+                    ->withHeaders(['User-Agent' => 'ReziApp Bot/1.0'])
                     ->get($url);
 
-                if (!$response->successful()) {
-                    return null;
-                }
+                if ($response->successful()) {
+                    $html = $response->body();
 
-                $html = $response->body();
-                if (strlen($html) > 500000) {
-                    // Trop gros, on évite le parsing
-                    return null;
+                    if (strlen($html) <= 500000) {
+                        $preview = $this->parseOpenGraph($html, $url);
+                    }
                 }
-
-                return $this->parseOpenGraph($html, $url);
-            } catch (\Exception $e) {
-                return null;
+            } catch (Throwable $e) {
+                // Les aperçus de lien sont optionnels: on échoue silencieusement.
             }
+
+            return $preview;
         });
+    }
+
+    /**
+     * Vérifie qu'une URL pointe vers une cible HTTP publique.
+     */
+    protected function isSafePublicUrl(string $url): bool
+    {
+        return $this->guard()->isSafe($url);
+    }
+
+    protected function guard(): PublicUrlGuard
+    {
+        return $this->publicUrlGuard ?? new PublicUrlGuard();
     }
 
     /**
@@ -91,10 +109,8 @@ class LinkPreviewService
         }
 
         // Fallback: meta description
-        if (empty($data['description'])) {
-            if (preg_match('/<meta\s+name=["\']description["\']\s+content=["\']([^"\']*?)["\']/si', $html, $matches)) {
-                $data['description'] = html_entity_decode(trim($matches[1]), ENT_QUOTES, 'UTF-8');
-            }
+        if (empty($data['description']) && preg_match('/<meta\s+name=["\']description["\']\s+content=["\']([^"\']*?)["\']/si', $html, $matches)) {
+            $data['description'] = html_entity_decode(trim($matches[1]), ENT_QUOTES, 'UTF-8');
         }
 
         // Si pas de titre, pas d'aperçu

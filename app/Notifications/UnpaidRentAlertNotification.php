@@ -55,7 +55,7 @@ class UnpaidRentAlertNotification extends Notification implements ShouldQueue
             ->when($this->daysOverdue >= 7, fn (MailMessage $m) => $m->line('Nous vous recommandons de contacter votre locataire rapidement.'))
             ->action('Voir la réservation', $detailUrl)
             ->line('Si le paiement a déjà été effectué en dehors de la plateforme, vous pouvez marquer la réservation comme réglée.')
-            ->salutation('L\'équipe REZI');
+            ->salutation('L\'équipe ReziApp');
     }
 
     public function toArray(object $notifiable): array

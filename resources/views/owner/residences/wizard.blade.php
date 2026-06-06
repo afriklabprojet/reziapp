@@ -1,9 +1,9 @@
 @extends('layouts.owner')
 
-@section('title', 'Créer une annonce - REZI')
+@section('title', 'Créer une annonce - ReziApp')
 
 @section('owner-content')
-    <div x-data="residenceWizard(@js([
+    <div x-data="residenceWizard({{ \Illuminate\Support\Js::encode([
     'amenities' => $amenities,
     'storeUrl' => route('owner.residences.store'),
     'indexUrl' => route('owner.residences.index'),
@@ -13,7 +13,7 @@
         'generateTitle' => route('owner.ai.generate-title'),
         'improveDescription' => route('owner.ai.improve-description'),
     ],
-]))" x-init="init()" class="min-h-screen bg-gray-50">
+]) }})" x-init="init()" class="min-h-screen bg-gray-50">
         <!-- Header avec progression -->
         <div class="bg-white border-b border-gray-200 sticky top-0 z-40">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

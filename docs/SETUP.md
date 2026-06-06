@@ -1,4 +1,4 @@
-# 📋 REZI - Résumé de l'Installation & Configuration
+# 📋 ReziApp - Résumé de l'Installation & Configuration
 
 ## ✅ Ce qui a été créé
 
@@ -65,18 +65,13 @@ php artisan migrate
 
 ### 3. Obtenir une clé API Maps
 
-**Option A: Google Maps**
+#### Google Maps
+
 1. Aller sur https://console.cloud.google.com
 2. Créer un projet
-3. Activer "Maps JavaScript API"
+3. Activer "Maps JavaScript API", "Places API", "Geocoding API", "Directions API" et "Street View Static API"
 4. Créer une clé API
 5. Ajouter dans `.env`: `GOOGLE_MAPS_API_KEY=votre_cle`
-
-**Option B: Mapbox**
-1. Aller sur https://account.mapbox.com
-2. Créer un compte
-3. Copier le token d'accès
-4. Ajouter dans `.env`: `MAPBOX_API_KEY=votre_token`
 
 ### 4. Installer Laravel Breeze (Authentification)
 
@@ -135,7 +130,7 @@ php artisan tinker
 
 ```php
 $user = new App\Models\User();
-$user->name = 'Admin REZI';
+$user->name = 'Admin ReziApp';
 $user->email = 'admin@rezi.ci';
 $user->password = bcrypt('password');
 $user->role = 'admin';

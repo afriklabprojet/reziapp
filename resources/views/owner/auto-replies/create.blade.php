@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Nouvelle réponse automatique - REZI')
+@section('title', 'Nouvelle réponse automatique - ReziApp')
 
 @section('owner-content')
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -16,7 +16,7 @@
         <h1 class="text-2xl font-extrabold text-gray-900 mb-8">Nouvelle réponse automatique</h1>
 
         <form action="{{ route('owner.auto-replies.store') }}" method="POST" class="space-y-6"
-            x-data="autoReplyForm(@js(['triggerType' => old('trigger_type', request('template', 'manual')), 'keywords' => old('trigger_conditions.keywords', [])]))">
+            x-data="autoReplyForm({{ \Illuminate\Support\Js::encode(['triggerType' => old('trigger_type', request('template', 'manual')), 'keywords' => old('trigger_conditions.keywords', [])]) }})">
             @csrf
 
             {{-- Nom & Résidence --}}

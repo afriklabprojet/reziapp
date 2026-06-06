@@ -49,7 +49,7 @@ class EmergencyAlertTriggered extends Notification implements ShouldQueue
         return $mail
             ->line('**Téléphone :** '.($user->phone ?? 'Non renseigné'))
             ->line('Action immédiate requise. Les contacts d\'urgence de l\'utilisateur ont été notifiés.')
-            ->salutation('Système REZI — Alerte automatique');
+            ->salutation('Système ReziApp — Alerte automatique');
     }
 
     public function toArray(object $notifiable): array

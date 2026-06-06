@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Services\MarketingService;
+use App\Services\ReferralService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -60,7 +60,7 @@ class RegisteredUserController extends Controller
 
         // Créer le parrainage si code valide
         if ($referralCode) {
-            app(MarketingService::class)->processReferral($user, $referralCode);
+            app(ReferralService::class)->processReferral($user, $referralCode);
         }
 
         event(new Registered($user));

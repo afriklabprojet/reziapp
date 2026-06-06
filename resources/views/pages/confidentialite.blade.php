@@ -1,6 +1,6 @@
 <x-app-layout>
     @section('title', $metaTitle ?? $content['title'] ?? "Politique de Confidentialité")
-    @section('description', $metaDescription ?? "Politique de confidentialité de la plateforme REZI.")
+    @section('description', $metaDescription ?? "Politique de confidentialité de la plateforme ReziApp.")
 
     <div class="min-h-screen bg-gray-50">
         {{-- Header --}}

@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', $sequence->name . ' — REZI')
+@section('title', $sequence->name . ' — ReziApp')
 
 @section('owner-content')
 <div class="space-y-6">

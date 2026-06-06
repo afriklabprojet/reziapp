@@ -11,6 +11,8 @@ use App\Models\Subscription;
 use App\Models\SubscriptionPayment;
 use App\Models\WebhookEvent;
 use App\Services\JekoPaymentService;
+use App\Services\JekoWebhook\PaymentHandlerRegistry;
+use App\Services\JekoWebhook\TransactionCompletedData;
 use App\Services\PaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -22,6 +24,7 @@ class JekoWebhookController extends Controller
     public function __construct(
         protected JekoPaymentService $jekoService,
         protected PaymentService $paymentService,
+        protected PaymentHandlerRegistry $paymentHandlerRegistry,
     ) {
     }
 
@@ -37,6 +40,7 @@ class JekoWebhookController extends Controller
     {
         $rawBody = $request->getContent();
         $signature = $request->header('Jeko-Signature', '');
+        $earlyResponse = null;
 
         // 1. Verify webhook signature
         if (! $this->jekoService->verifyWebhookSignature($rawBody, $signature)) {
@@ -45,7 +49,7 @@ class JekoWebhookController extends Controller
                 'signature' => substr($signature, 0, 20).'...',
             ]);
 
-            return response('Invalid signature', 401);
+            $earlyResponse = response('Invalid signature', 401);
         }
 
         // 2. Parse the payload
@@ -54,8 +58,22 @@ class JekoWebhookController extends Controller
         $data = $payload['data'] ?? [];
         $eventId = $data['id'] ?? $data['transactionDetails']['reference'] ?? null;
 
+        if (! $earlyResponse && ! $eventId) {
+            Log::channel('security')->error('Jeko webhook: Missing event ID', [
+                'ip' => $request->ip(),
+                'event' => $event,
+                'reference' => $data['transactionDetails']['reference'] ?? null,
+            ]);
+
+            $earlyResponse = response('Bad Request: Missing event ID', 400);
+        }
+
+        if ($earlyResponse instanceof Response) {
+            return $earlyResponse;
+        }
+
         // 3. Idempotency check — prevent double processing
-        if ($eventId && ! WebhookEvent::acquireLock('jeko', (string) $eventId, $event, $payload)) {
+        if (! WebhookEvent::acquireLock('jeko', (string) $eventId, $event, $payload)) {
             Log::channel('payments')->info('Jeko webhook: Duplicate event ignored', [
                 'event_id' => $eventId,
                 'event' => $event,
@@ -81,9 +99,7 @@ class JekoWebhookController extends Controller
             }
         } catch (\Throwable $e) {
             // Mark as failed for potential re-processing
-            if ($eventId) {
-                WebhookEvent::markFailed('jeko', (string) $eventId);
-            }
+            WebhookEvent::markFailed('jeko', (string) $eventId);
 
             Log::channel('critical')->error('Jeko webhook: Processing error', [
                 'event' => $event,
@@ -103,264 +119,20 @@ class JekoWebhookController extends Controller
     protected function handleTransactionCompleted(array $data): void
     {
         $reference = $data['transactionDetails']['reference'] ?? null;
-        $transactionId = $data['id'] ?? null;
-        $status = $data['status'] ?? null; // "success" or "error"
-        $paymentMethod = $data['paymentMethod'] ?? null;
-        $executedAt = $data['executedAt'] ?? null;
 
         if (! $reference) {
             Log::warning('Jeko webhook: Missing reference in transaction.completed', [
-                'transaction_id' => $transactionId,
+                'transaction_id' => $data['id'] ?? null,
             ]);
 
             return;
         }
 
-        // Detect payment type from reference prefix
-        if (str_starts_with($reference, 'REZI-SP-')) {
-            $this->handleSponsoredListingPayment($reference, $transactionId, $status, $paymentMethod, $executedAt, $data);
-        } elseif (str_starts_with($reference, 'REZI-BK-')) {
-            $this->handleBookingPayment($reference, $transactionId, $status, $paymentMethod, $executedAt, $data);
-        } elseif (str_starts_with($reference, 'REZI-SUB-')) {
-            $this->handleSubscriptionPayment($reference, $transactionId, $status, $paymentMethod, $executedAt, $data);
-        } elseif (str_starts_with($reference, 'REZI-INS-')) {
-            $this->handleInsurancePayment($reference, $transactionId, $status, $paymentMethod, $executedAt, $data);
-        } else {
-            // Try to find by reference in Payment table
-            $this->handleGenericPayment($reference, $transactionId, $status, $paymentMethod, $executedAt, $data);
-        }
-    }
+        $transaction = TransactionCompletedData::fromWebhook($data);
 
-    /**
-     * Handle sponsored listing payment
-     */
-    protected function handleSponsoredListingPayment(string $reference, ?string $transactionId, ?string $status, ?string $paymentMethod, ?string $executedAt, array $data): void
-    {
-        $sponsored = SponsoredListing::where('jeko_reference', $reference)->first();
-
-        if (! $sponsored) {
-            Log::warning('Jeko webhook: No sponsored listing found for reference', [
-                'reference' => $reference,
-                'transaction_id' => $transactionId,
-            ]);
-
-            return;
-        }
-
-        // Prevent double processing
-        if ($sponsored->is_paid && $sponsored->payment_status === 'success') {
-            Log::info('Jeko webhook: Payment already processed', [
-                'sponsored_id' => $sponsored->id,
-                'reference' => $reference,
-            ]);
-
-            return;
-        }
-
-        if ($status === 'success') {
-            $duration = $sponsored->duration_days ?? 7;
-            $sponsored->update([
-                'is_paid' => true,
-                'status' => 'active',
-                'payment_status' => 'success',
-                'payment_reference' => $transactionId,
-                'payment_method' => $paymentMethod,
-                'paid_at' => $executedAt ? \Carbon\Carbon::parse($executedAt) : now(),
-                'starts_at' => $sponsored->starts_at ?? now(),
-                'ends_at' => $sponsored->ends_at ?? now()->addDays($duration),
-            ]);
-
-            Log::info('Jeko webhook: Sponsored listing payment confirmed', [
-                'sponsored_id' => $sponsored->id,
-                'reference' => $reference,
-                'transaction_id' => $transactionId,
-                'amount' => $data['amount']['amount'] ?? null,
-            ]);
-        } else {
-            $sponsored->update([
-                'payment_status' => 'error',
-            ]);
-
-            Log::warning('Jeko webhook: Sponsored payment failed', [
-                'sponsored_id' => $sponsored->id,
-                'reference' => $reference,
-                'status' => $status,
-            ]);
-        }
-    }
-
-    /**
-     * Handle booking payment
-     */
-    protected function handleBookingPayment(string $reference, ?string $transactionId, ?string $status, ?string $paymentMethod, ?string $executedAt, array $data): void
-    {
-        $payment = Payment::where('reference', $reference)
-            ->where('type', Payment::TYPE_BOOKING)
-            ->first();
-
-        if (! $payment) {
-            Log::warning('Jeko webhook: No booking payment found for reference', [
-                'reference' => $reference,
-            ]);
-
-            return;
-        }
-
-        if ($payment->isCompleted()) {
-            Log::info('Jeko webhook: Booking payment already completed', [
-                'payment_id' => $payment->id,
-            ]);
-
-            return;
-        }
-
-        if ($status === 'success') {
-            DB::transaction(function () use ($payment, $transactionId, $paymentMethod, $executedAt) {
-                $payment->markAsCompleted([
-                    'jeko_transaction_id' => $transactionId,
-                    'payment_method' => $paymentMethod,
-                    'executed_at' => $executedAt,
-                ]);
-
-                // onPaymentSuccess confirme la réservation et crédite le propriétaire.
-                // Les deux opérations doivent être atomiques : si l'une échoue,
-                // le paiement NE doit PAS être marqué complet sans confirmation booking.
-                $this->paymentService->onPaymentSuccess($payment);
-            });
-
-            Log::info('Jeko webhook: Booking payment confirmed', [
-                'payment_id' => $payment->id,
-                'booking_id' => $payment->booking_id,
-            ]);
-        } else {
-            $payment->markAsFailed('Paiement échoué via Jeko');
-        }
-    }
-
-    /**
-     * Handle subscription payment
-     */
-    protected function handleSubscriptionPayment(string $reference, ?string $transactionId, ?string $status, ?string $paymentMethod, ?string $executedAt, array $data): void
-    {
-        $subscriptionPayment = SubscriptionPayment::where('reference', $reference)->first();
-
-        if (! $subscriptionPayment) {
-            Log::warning('Jeko webhook: No subscription payment found for reference', [
-                'reference' => $reference,
-            ]);
-
-            return;
-        }
-
-        if ($subscriptionPayment->status === 'paid') {
-            Log::info('Jeko webhook: Subscription payment already processed', [
-                'subscription_payment_id' => $subscriptionPayment->id,
-            ]);
-
-            return;
-        }
-
-        if ($status === 'success') {
-            $subscriptionPayment->markAsPaid($transactionId, [
-                'payment_method' => $paymentMethod,
-                'executed_at' => $executedAt,
-                'jeko_data' => $data,
-            ]);
-
-            // Activate subscription if first payment
-            $subscription = $subscriptionPayment->subscription;
-            if ($subscription && $subscription->status === 'pending') {
-                $subscription->update([
-                    'status' => 'active',
-                    'started_at' => now(),
-                ]);
-            }
-
-            Log::info('Jeko webhook: Subscription payment confirmed', [
-                'subscription_payment_id' => $subscriptionPayment->id,
-                'subscription_id' => $subscriptionPayment->subscription_id,
-            ]);
-        } else {
-            $subscriptionPayment->markAsFailed('Paiement échoué via Jeko');
-        }
-    }
-
-    /**
-     * Handle insurance payment
-     */
-    protected function handleInsurancePayment(string $reference, ?string $transactionId, ?string $status, ?string $paymentMethod, ?string $executedAt, array $data): void
-    {
-        $insurance = BookingInsurance::where('payment_reference', $reference)->first();
-
-        if (! $insurance) {
-            Log::warning('Jeko webhook: No insurance found for reference', [
-                'reference' => $reference,
-            ]);
-
-            return;
-        }
-
-        if ($insurance->status === 'active') {
-            Log::info('Jeko webhook: Insurance already active', [
-                'insurance_id' => $insurance->id,
-            ]);
-
-            return;
-        }
-
-        if ($status === 'success') {
-            $insurance->update([
-                'status' => 'active',
-                'paid_at' => $executedAt ? \Carbon\Carbon::parse($executedAt) : now(),
-                'metadata' => array_merge($insurance->metadata ?? [], [
-                    'jeko_transaction_id' => $transactionId,
-                    'payment_method' => $paymentMethod,
-                ]),
-            ]);
-
-            Log::info('Jeko webhook: Insurance payment confirmed', [
-                'insurance_id' => $insurance->id,
-                'booking_id' => $insurance->booking_id,
-            ]);
-        } else {
-            $insurance->update(['status' => 'cancelled']);
-        }
-    }
-
-    /**
-     * Handle generic payment (fallback)
-     */
-    protected function handleGenericPayment(string $reference, ?string $transactionId, ?string $status, ?string $paymentMethod, ?string $executedAt, array $data): void
-    {
-        $payment = Payment::where('reference', $reference)
-            ->orWhere('provider_reference', $reference)
-            ->first();
-
-        if (! $payment) {
-            Log::warning('Jeko webhook: No payment found for reference', [
-                'reference' => $reference,
-            ]);
-
-            return;
-        }
-
-        if ($payment->isCompleted()) {
-            return;
-        }
-
-        if ($status === 'success') {
-            $payment->markAsCompleted([
-                'jeko_transaction_id' => $transactionId,
-                'payment_method' => $paymentMethod,
-                'executed_at' => $executedAt,
-            ]);
-
-            if ($payment->booking_id) {
-                $this->paymentService->onPaymentSuccess($payment);
-            }
-        } else {
-            $payment->markAsFailed('Paiement échoué via Jeko');
-        }
+        $this->paymentHandlerRegistry
+            ->forReference($reference)
+            ->handle($transaction);
     }
 
     // =========================================================================

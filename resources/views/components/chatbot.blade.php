@@ -1,5 +1,5 @@
 {{--
-    Chatbot IA REZI — widget flottant 24/7
+    Chatbot IA ReziApp — widget flottant 24/7
     Usage : <x-chatbot />
     Params optionnels : commune, budget, residence
 --}}
@@ -17,12 +17,11 @@ $config = json_encode([
 ]);
 @endphp
 
-<div
+<aside
     x-data="chatbot({{ $config }})"
     x-init="init()"
     class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3"
-    role="complementary"
-    aria-label="Assistant REZI"
+    aria-label="Assistant ReziApp"
 >
     {{-- ==================== FENÊTRE DE CHAT ==================== --}}
     <div
@@ -45,7 +44,7 @@ $config = json_encode([
                 </svg>
             </div>
             <div class="flex-1 min-w-0">
-                <p class="font-semibold text-sm leading-tight">Assistant REZI</p>
+                <p class="font-semibold text-sm leading-tight">Assistant ReziApp</p>
                 <p class="text-xs text-[#FFE7D1]">Disponible 24h/24</p>
             </div>
             <button
@@ -82,7 +81,8 @@ $config = json_encode([
                             : msg.error
                                 ? 'bg-red-50 text-red-700 border border-red-200 rounded-2xl rounded-bl-sm px-3 py-2 max-w-[80%] text-sm'
                                 : 'bg-white text-gray-800 shadow-sm border border-gray-100 rounded-2xl rounded-bl-sm px-3 py-2 max-w-[80%] text-sm'"
-                        x-html="formatMessage(msg.content)"
+                        class="whitespace-pre-line"
+                        x-text="msg.content"
                     ></div>
                 </div>
             </template>
@@ -143,9 +143,8 @@ $config = json_encode([
     {{-- ==================== BOUTON FLOTTANT ==================== --}}
     <button
         @click="toggle()"
-        class="w-14 h-14 rounded-full bg-[#F16A00] hover:bg-[#CC5A00] text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center relative group"
+        class="group relative flex h-14 items-center justify-center gap-2 rounded-full bg-[#F16A00] px-4 text-white shadow-lg transition-all duration-200 hover:bg-[#CC5A00] hover:shadow-xl"
         :class="open ? 'rotate-0' : ''"
-        aria-label="Ouvrir l'assistant REZI"
     >
         {{-- Icône chat / fermer --}}
         <svg x-show="!open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -163,9 +162,11 @@ $config = json_encode([
             aria-hidden="true"
         ></span>
 
+        <span class="text-sm font-semibold" x-show="!open">Assistant ReziApp</span>
+
         {{-- Tooltip --}}
         <span class="absolute right-16 whitespace-nowrap bg-gray-900 text-white text-xs px-2.5 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" x-show="!open">
             Besoin d'aide ?
         </span>
     </button>
-</div>
+</aside>

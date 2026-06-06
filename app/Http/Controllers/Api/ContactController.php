@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Contact;
 use App\Models\Residence;
 use App\Notifications\NewContactReceived;
+use App\Services\ResidenceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -17,36 +18,53 @@ use Illuminate\Support\Facades\Log;
  */
 class ContactController extends Controller
 {
+    public function __construct(private readonly ResidenceService $residenceService) {}
+
     /**
      * Envoyer une demande de contact
      */
     public function store(Request $request, Residence $residence): JsonResponse
     {
-        // Vérifier que la résidence est disponible
-        if ($residence->status !== 'active' || !$residence->is_available) {
-            return response()->json([
+        $userId = $request->user()->id;
+
+        $submissionError = match (true) {
+            $residence->status !== 'active' || ! $residence->is_available => response()->json([
                 'success' => false,
                 'message' => 'Cette résidence n\'est pas disponible.',
-            ], 400);
-        }
-
-        // Vérifier que l'utilisateur ne contacte pas sa propre résidence
-        if ($residence->owner_id === $request->user()->id) {
-            return response()->json([
+            ], 400),
+            $residence->owner_id === $userId => response()->json([
                 'success' => false,
                 'message' => 'Vous ne pouvez pas contacter votre propre résidence.',
-            ], 400);
+            ], 400),
+            default => null,
+        };
+
+        if ($submissionError instanceof JsonResponse) {
+            return $submissionError;
         }
 
         $validated = $request->validate([
             'message' => ['nullable', 'string', 'max:1000'],
-            'phone' => ['nullable', 'string', 'max:20'],
+            'phone' => ['nullable', 'string', 'regex:/^[+]?[0-9]{8,20}$/'],
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
         ]);
 
+        $alreadyContactedRecently = Contact::query()
+            ->where('user_id', $userId)
+            ->where('residence_id', $residence->id)
+            ->where('created_at', '>', now()->subDay())
+            ->exists();
+
+        if ($alreadyContactedRecently) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Vous avez deja contacte cette residence recemment.',
+            ], 429);
+        }
+
         $contact = Contact::create([
-            'user_id' => $request->user()->id,
+            'user_id' => $userId,
             'residence_id' => $residence->id,
             'owner_id' => $residence->owner_id,
             'phone' => $validated['phone'] ?? $request->user()->phone,
@@ -56,8 +74,7 @@ class ContactController extends Controller
             'status' => 'pending',
         ]);
 
-        // Incrémenter le compteur de contacts
-        $residence->incrementContacts();
+        $this->residenceService->recordContact($residence, $userId);
 
         // Notifier le propriétaire
         $residence->owner->notify(new NewContactReceived($contact, $residence));
@@ -74,7 +91,7 @@ class ContactController extends Controller
 
         Log::info('Nouvelle demande de contact', [
             'contact_id' => $contact->id,
-            'user_id' => $request->user()->id,
+            'user_id' => $userId,
             'residence_id' => $residence->id,
             'owner_id' => $residence->owner_id,
         ]);

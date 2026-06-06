@@ -55,7 +55,7 @@ class ResidenceBadge extends Model
             'name' => 'Nouvelle annonce',
             'icon' => '🆕',
             'color' => 'teal',
-            'description' => 'Récemment ajoutée sur REZI',
+            'description' => 'Récemment ajoutée sur ReziApp',
         ],
         'responsive_host' => [
             'name' => 'Hôte réactif',

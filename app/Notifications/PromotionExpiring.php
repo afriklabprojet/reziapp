@@ -34,7 +34,7 @@ class PromotionExpiring extends Notification implements ShouldQueue
             ->line("**Résultats :** {$this->promotion->uses_count} utilisation(s) jusqu'à présent.")
             ->action('Gérer mes promotions', route('owner.marketing.promotions.index'))
             ->line('Vous pouvez la prolonger ou en créer une nouvelle.')
-            ->salutation('L\'équipe REZI');
+            ->salutation('L\'équipe ReziApp');
     }
 
     public function toArray(object $notifiable): array

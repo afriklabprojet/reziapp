@@ -313,7 +313,12 @@ class JekoService
             ->first();
 
         if (!$payment) {
-            Log::warning('Jeko webhook: Payment not found', $payload);
+            Log::warning('Jeko webhook: Payment not found', [
+                'jeko_reference' => $jekoReference,
+                'transaction_id' => $transactionId,
+                'status' => $payload['status'] ?? null,
+                'payload_size' => count($payload),
+            ]);
 
             return ['success' => false, 'message' => 'Payment not found'];
         }
@@ -411,7 +416,7 @@ class JekoService
             'amount' => (int) $amount,
             'currency' => $this->currency,
             'payout_reference' => 'PAYOUT-'.Str::uuid(),
-            'description' => $metadata['description'] ?? 'Virement REZI',
+            'description' => $metadata['description'] ?? 'Virement ReziApp',
             'metadata' => $metadata,
         ];
 
@@ -557,10 +562,10 @@ class JekoService
     protected function generateDescription(Payment $payment): string
     {
         if ($payment->booking) {
-            return "Réservation REZI #{$payment->booking->reference}";
+            return "Réservation ReziApp #{$payment->booking->reference}";
         }
 
-        return "Paiement REZI #{$payment->reference}";
+        return "Paiement ReziApp #{$payment->reference}";
     }
 
     /**

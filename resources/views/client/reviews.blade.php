@@ -1,6 +1,6 @@
 @extends('layouts.client', ['sidebarActive' => 'reviews'])
 
-@section('title', 'Mes avis - REZI')
+@section('title', 'Mes avis - ReziApp')
 
 @section('client-content')
     {{-- En-tête --}}

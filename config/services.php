@@ -37,7 +37,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | REZI - Services tiers
+    | ReziApp - Services tiers
     |--------------------------------------------------------------------------
     */
 
@@ -69,11 +69,6 @@ return [
 
     'google_cloud_vision' => [
         'api_key' => env('GOOGLE_CLOUD_VISION_API_KEY', ''),
-    ],
-
-    'mapbox' => [
-        'access_token' => env('MAPBOX_ACCESS_TOKEN', ''),
-        'style' => env('MAPBOX_STYLE', 'mapbox://styles/mapbox/streets-v12'),
     ],
 
     'tenor' => [
@@ -124,7 +119,7 @@ return [
         'client_id' => env('ORANGE_SMS_CLIENT_ID'),
         'client_secret' => env('ORANGE_SMS_CLIENT_SECRET'),
         'sender_address' => env('ORANGE_SMS_SENDER_ADDRESS', 'tel:+2250000'),
-        'sender_name' => env('ORANGE_SMS_SENDER_NAME', 'REZI'),
+        'sender_name' => env('ORANGE_SMS_SENDER_NAME', 'ReziApp'),
     ],
 
     /*

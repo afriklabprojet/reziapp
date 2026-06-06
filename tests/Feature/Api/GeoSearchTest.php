@@ -11,7 +11,7 @@ use Tests\TestCase;
 /**
  * Tests pour l'API de recherche géolocalisée
  *
- * Cœur de REZI : recherche géolocalisée avec formule Haversine
+ * Cœur de ReziApp : recherche géolocalisée avec formule Haversine
  * Zones couvertes : CI + Burkina Faso
  */
 class GeoSearchTest extends TestCase

@@ -16,11 +16,11 @@ class CreateSuperAdmin extends Command
                             {--email= : Adresse email}
                             {--password= : Mot de passe (min 12 caractères)}';
 
-    protected $description = 'Créer un compte super administrateur REZI';
+    protected $description = 'Créer un compte super administrateur ReziApp';
 
     public function handle(): int
     {
-        $this->info('=== Création Super Admin REZI ===');
+        $this->info('=== Création Super Admin ReziApp ===');
 
         $name     = $this->option('name')     ?? $this->ask('Nom complet');
         $email    = $this->option('email')    ?? $this->ask('Adresse email');

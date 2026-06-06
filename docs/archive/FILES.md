@@ -1,6 +1,6 @@
-# 📦 REZI - Fichiers Créés & Modifiés
+# 📦 ReziApp - Fichiers Créés & Modifiés
 
-Ce document liste tous les fichiers créés ou modifiés lors de l'installation du workspace REZI.
+Ce document liste tous les fichiers créés ou modifiés lors de l'installation du workspace ReziApp.
 
 ---
 

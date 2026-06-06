@@ -1,7 +1,7 @@
-# 🚀 REZI — Guide de Déploiement Production
+# 🚀 ReziApp — Guide de Déploiement Production
 
 > **Domaine** : https://reziapp.ci  
-> **Serveur** : Hetzner Ubuntu 22.04 — `178.104.190.169`  
+> **Serveur** : Hetzner Ubuntu 22.04 — définir `SERVER_HOST` dans les secrets GitHub Actions ou l'environnement local  
 > **CI/CD** : GitHub Actions (auto-deploy sur push `main`)
 
 ---
@@ -51,7 +51,7 @@ chmod 600 /root/.ssh/authorized_keys
 
 Obtenir le known_host du serveur :
 ```bash
-ssh-keyscan -H 178.104.190.169
+ssh-keyscan -H "$SERVER_HOST"
 # ← copier la ligne qui commence par |1|...
 ```
 
@@ -65,10 +65,35 @@ Ajouter ces 4 secrets :
 
 | Secret | Valeur |
 |--------|--------|
-| `SERVER_HOST` | `178.104.190.169` |
+| `SERVER_HOST` | Hôte ou IP publique du serveur de production |
 | `SERVER_USER` | `root` |
 | `SERVER_SSH_KEY` | Contenu de `~/.ssh/rezi_deploy` (clé **privée**) |
 | `SERVER_SSH_KNOWN_HOST` | Ligne obtenue avec `ssh-keyscan` ci-dessus |
+
+---
+
+## Étape 4 bis — Migration Redis obligatoire
+
+Les drivers par défaut de cache, queue et session pointent maintenant vers Redis.
+
+Sur un serveur existant, prévoir la migration avant le prochain déploiement :
+
+```bash
+sudo apt install -y redis-server
+sudo systemctl enable --now redis-server
+
+# Vérifier la config Laravel sans exposer les secrets
+cd /var/www/reziapp
+php artisan tinker --execute="dump([
+   'cache' => config('cache.default'),
+   'queue' => config('queue.default'),
+   'session' => config('session.driver'),
+   'redis_password_configured' => filled(config('database.redis.default.password')),
+   'redis_scheme' => config('database.redis.default.scheme'),
+]);"
+```
+
+Si Redis n'est pas encore disponible sur un environnement legacy, forcez explicitement les anciens drivers dans `.env` le temps de la transition.
 
 ---
 
@@ -78,6 +103,15 @@ Ajouter ces 4 secrets :
 # Sur le serveur Hetzner
 cp /var/www/reziapp/.env.example /var/www/reziapp/.env
 nano /var/www/reziapp/.env
+
+# Vérifier sans exposer les secrets que Redis est bien actif en prod
+php artisan tinker --execute="dump([
+   'cache' => config('cache.default'),
+   'queue' => config('queue.default'),
+   'session' => config('session.driver'),
+   'redis_password_configured' => filled(config('database.redis.default.password')),
+   'redis_scheme' => config('database.redis.default.scheme'),
+]);"
 ```
 
 Valeurs à mettre à jour :

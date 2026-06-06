@@ -1,5 +1,83 @@
 <x-app-layout>
-    <div x-data="searchPage()" x-init="init()" class="h-[calc(100vh-64px)] flex flex-col">
+    @php
+        $searchRadiusKm = isset($validated['radius'])
+            ? (int) round(((int) $validated['radius']) / 1000)
+            : (int) config('rezi.default_search_radius_km');
+
+        $searchPageResidences = $residences
+            ->getCollection()
+            ->map(function ($residence) use ($sponsoredIds) {
+                $primaryPhoto = $residence->photos->where('is_primary', true)->first() ?? $residence->photos->first();
+
+                return [
+                    'id' => $residence->id,
+                    'title' => $residence->name,
+                    'url' => route('residences.show', $residence),
+                    'price' => (int) ($residence->price_per_day ?? $residence->price ?? 0),
+                    'price_label' => '/jour',
+                    'thumbnail' => $primaryPhoto ? storage_url($primaryPhoto->path) : null,
+                    'commune' => $residence->commune,
+                    'quartier' => $residence->quartier,
+                    'type' => $residence->type,
+                    'distance_label' => isset($residence->distance)
+                        ? number_format((float) $residence->distance, 1, ',', ' ') . ' km'
+                        : null,
+                    'instant_book' => (bool) $residence->instant_book,
+                    'is_sponsored' => in_array($residence->id, $sponsoredIds ?? [], true) || $residence->isSponsored(),
+                    'location' => [
+                        'latitude' => $residence->latitude,
+                        'longitude' => $residence->longitude,
+                        'commune' => $residence->commune,
+                        'quartier' => $residence->quartier,
+                        'address' => $residence->address,
+                        'distance_meters' => isset($residence->distance)
+                            ? (float) $residence->distance * 1000
+                            : null,
+                    ],
+                ];
+            })
+            ->values()
+            ->all();
+
+        $searchPageConfig = [
+            'searchQuery' => $validated['commune'] ?? $validated['quartier'] ?? $validated['city'] ?? '',
+            'commune' => $validated['commune'] ?? '',
+            'latitude' => $validated['latitude'] ?? null,
+            'longitude' => $validated['longitude'] ?? null,
+            'radius' => $searchRadiusKm,
+            'defaultRadius' => (int) config('rezi.default_search_radius_km'),
+            'showFilters' => !empty($validated),
+            'sortBy' => $validated['sort'] ?? 'newest',
+            'searchUrl' => route('residences.search'),
+            'residences' => $searchPageResidences,
+            'filters' => [
+                'city' => $validated['city'] ?? '',
+                'commune' => $validated['commune'] ?? '',
+                'quartier' => $validated['quartier'] ?? '',
+                'min_price' => $validated['min_price'] ?? '',
+                'max_price' => $validated['max_price'] ?? '',
+                'type' => $validated['type'] ?? '',
+                'bedrooms' => $validated['bedrooms'] ?? '',
+                'bathrooms' => $validated['bathrooms'] ?? '',
+                'max_guests' => $validated['max_guests'] ?? '',
+                'min_rating' => $validated['min_rating'] ?? '',
+                'cancellation_policy' => $validated['cancellation_policy'] ?? '',
+                'amenities' => collect($validated['amenities'] ?? [])->map(fn ($id) => (int) $id)->values()->all(),
+                'instant_book' => (bool) ($validated['instant_book'] ?? false),
+                'has_promotion' => (bool) ($validated['has_promotion'] ?? false),
+                'available_now' => (bool) ($validated['available_now'] ?? false),
+                'is_accessible' => (bool) ($validated['is_accessible'] ?? false),
+                'check_in' => $validated['check_in'] ?? '',
+                'check_out' => $validated['check_out'] ?? '',
+                'flex_window' => $validated['flex_window'] ?? 0,
+                'flex_dates' => (bool) ($validated['flex_dates'] ?? false),
+                'flex_type' => $validated['flex_type'] ?? '',
+                'category' => $validated['category'] ?? '',
+            ],
+        ];
+    @endphp
+
+    <div x-data="searchPage({{ \Illuminate\Support\Js::encode($searchPageConfig) }})" x-init="init()" class="h-[calc(100vh-64px)] flex flex-col">
         <!-- Header avec filtres -->
         <div class="bg-white border-b px-4 py-3">
             <div class="max-w-full mx-auto">
@@ -15,10 +93,10 @@
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
 
-                        <!-- Suggestions (POI-aware : zones, quartiers, résidences, Mapbox fallback) -->
+                        <!-- Suggestions (POI-aware : zones, quartiers, résidences) -->
                         <div x-show="suggestions.length > 0" x-transition @click.away="suggestions = []"
                             class="absolute z-50 w-full mt-1 bg-white rounded-xl shadow-2xl border border-gray-200 max-h-80 overflow-auto">
-                            <template x-for="(suggestion, idx) in suggestions" :key="(suggestion.id || idx) + '-' + idx">
+                            <template x-for="(suggestion, idx) in suggestions" :key="suggestion.id !== undefined && suggestion.id !== null ? 'suggestion-' + suggestion.id : 'suggestion-index-' + idx">
                                 <button @click="selectLocation(suggestion)"
                                     class="w-full px-4 py-2.5 text-left hover:bg-gray-50 flex items-center gap-3 border-b border-gray-50 last:border-0 transition">
                                     <span class="text-xl shrink-0" x-text="suggestion.icon || '📍'"></span>
@@ -36,9 +114,9 @@
 
                     <!-- Rayon -->
                     <div class="flex items-center gap-2">
-                        <label class="text-sm font-medium text-gray-700 whitespace-nowrap">Rayon:</label>
+                        <label for="search-radius" class="text-sm font-medium text-gray-700 whitespace-nowrap">Rayon:</label>
                         <div class="flex items-center gap-2">
-                            <input type="range" x-model="radius" @change="updateSearch()" min="1"
+                            <input id="search-radius" type="range" x-model="radius" @change="updateSearch()" min="1"
                                 max="20" step="1"
                                 class="w-24 h-2 bg-gray-200 rounded-lg cursor-pointer accent-blue-600">
                             <span class="text-sm font-medium text-blue-600 w-12" x-text="radius + ' km'"></span>
@@ -116,7 +194,7 @@
                 <!-- Filtres avancés -->
                 <div x-show="showFilters" x-collapse class="mt-4 pt-4 border-t">
                     {{-- Sprint 2 — Dates (Airbnb-style : tabs Exactes / ± / Weekend / Mois) --}}
-                    <div class="mb-4 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl ring-1 ring-blue-100">
+                    <div class="mb-4 p-3 bg-linear-to-r from-blue-50 to-indigo-50 rounded-xl ring-1 ring-blue-100">
                         <div class="flex items-center justify-between mb-3">
                             <span class="text-sm font-semibold text-gray-800 flex items-center gap-1.5">
                                 <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -146,20 +224,20 @@
                         <div x-show="dateMode === 'exact'" x-cloak class="space-y-3">
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="block text-xs text-gray-600 mb-1">Arrivée</label>
-                                    <input type="date" x-model="filters.check_in" :min="todayIso"
+                                    <label for="search-check-in" class="block text-xs text-gray-600 mb-1">Arrivée</label>
+                                    <input id="search-check-in" type="date" x-model="filters.check_in" :min="todayIso"
                                         @change="updateSearch()"
                                         class="w-full rounded-lg border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500">
                                 </div>
                                 <div>
-                                    <label class="block text-xs text-gray-600 mb-1">Départ</label>
-                                    <input type="date" x-model="filters.check_out" :min="filters.check_in || todayIso"
+                                    <label for="search-check-out" class="block text-xs text-gray-600 mb-1">Départ</label>
+                                    <input id="search-check-out" type="date" x-model="filters.check_out" :min="filters.check_in || todayIso"
                                         @change="updateSearch()"
                                         class="w-full rounded-lg border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500">
                                 </div>
                             </div>
                             <div x-show="filters.check_in && filters.check_out">
-                                <label class="block text-xs text-gray-600 mb-1.5">Tolérance</label>
+                                <p class="block text-xs text-gray-600 mb-1.5">Tolérance</p>
                                 <div class="flex flex-wrap gap-1.5">
                                     <template x-for="w in [0, 1, 3, 7]" :key="w">
                                         <button type="button" @click="filters.flex_window = w; updateSearch()"
@@ -203,8 +281,8 @@
                         <!-- Ville -->
                         @if (isset($cities) && $cities->count() > 1)
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Ville</label>
-                                <select x-model="filters.city" @change="updateSearch()"
+                                <label for="search-city" class="block text-sm font-medium text-gray-700 mb-1">Ville</label>
+                                <select id="search-city" x-model="filters.city" @change="updateSearch()"
                                     class="w-full rounded-lg border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500">
                                     <option value="">Toutes</option>
                                     @foreach ($cities as $city)
@@ -216,8 +294,8 @@
 
                         <!-- Commune -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Commune</label>
-                            <select x-model="filters.commune" @change="loadQuartiers(); updateSearch()"
+                            <label for="search-commune" class="block text-sm font-medium text-gray-700 mb-1">Commune</label>
+                            <select id="search-commune" x-model="filters.commune" @change="loadQuartiers(); updateSearch()"
                                 class="w-full rounded-lg border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500">
                                 <option value="">Toutes</option>
                                 @foreach ($communes as $commune)
@@ -228,8 +306,8 @@
 
                         <!-- Quartier -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Quartier</label>
-                            <select x-model="filters.quartier" @change="updateSearch()"
+                            <label for="search-quartier" class="block text-sm font-medium text-gray-700 mb-1">Quartier</label>
+                            <select id="search-quartier" x-model="filters.quartier" @change="updateSearch()"
                                 class="w-full rounded-lg border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500"
                                 :disabled="!filters.commune">
                                 <option value="">Tous</option>
@@ -243,8 +321,8 @@
 
                         <!-- Type -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                            <select x-model="filters.type" @change="updateSearch()"
+                            <label for="search-type" class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                            <select id="search-type" x-model="filters.type" @change="updateSearch()"
                                 class="w-full rounded-lg border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500">
                                 <option value="">Tous</option>
                                 <option value="studio">Studio</option>
@@ -257,8 +335,8 @@
 
                         <!-- Chambres -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Chambres</label>
-                            <select x-model="filters.bedrooms" @change="updateSearch()"
+                            <label for="search-bedrooms" class="block text-sm font-medium text-gray-700 mb-1">Chambres</label>
+                            <select id="search-bedrooms" x-model="filters.bedrooms" @change="updateSearch()"
                                 class="w-full rounded-lg border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500">
                                 <option value="">Toutes</option>
                                 <option value="1">1+</option>
@@ -271,8 +349,8 @@
 
                         <!-- Salles de bain -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Salles de bain</label>
-                            <select x-model="filters.bathrooms" @change="updateSearch()"
+                            <label for="search-bathrooms" class="block text-sm font-medium text-gray-700 mb-1">Salles de bain</label>
+                            <select id="search-bathrooms" x-model="filters.bathrooms" @change="updateSearch()"
                                 class="w-full rounded-lg border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500">
                                 <option value="">Toutes</option>
                                 <option value="1">1+</option>
@@ -283,8 +361,8 @@
 
                         <!-- Capacité -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Voyageurs</label>
-                            <select x-model="filters.max_guests" @change="updateSearch()"
+                            <label for="search-max-guests" class="block text-sm font-medium text-gray-700 mb-1">Voyageurs</label>
+                            <select id="search-max-guests" x-model="filters.max_guests" @change="updateSearch()"
                                 class="w-full rounded-lg border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500">
                                 <option value="">Tous</option>
                                 <option value="1">1+</option>
@@ -298,16 +376,16 @@
 
                     {{-- Prix avec slider --}}
                     <div class="mb-4 p-4 bg-gray-50 rounded-lg">
-                        <label class="block text-sm font-medium text-gray-700 mb-3">
+                        <p class="block text-sm font-medium text-gray-700 mb-3">
                             Prix mensuel:
                             <span class="text-blue-600 font-semibold"
                                 x-text="formatPrice(filters.min_price || {{ $priceRange->min_price ?? 0 }})"></span>
                             -
                             <span class="text-blue-600 font-semibold"
                                 x-text="filters.max_price ? formatPrice(filters.max_price) : 'Illimité'"></span>
-                        </label>
+                        </p>
                         <div class="flex items-center gap-4">
-                            <input type="number" x-model="filters.min_price" @change="updateSearch()"
+                            <input id="search-min-price" type="number" x-model="filters.min_price" @change="updateSearch()"
                                 placeholder="Min"
                                 class="w-32 rounded-lg border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500">
                             <div class="flex-1 h-2 bg-gray-200 rounded-full relative">
@@ -315,7 +393,7 @@
                                     :style="`left: ${((filters.min_price || 0) / {{ $priceRange->max_price ?? 1000000 }}) * 100}%; right: ${100 - ((filters.max_price || {{ $priceRange->max_price ?? 1000000 }}) / {{ $priceRange->max_price ?? 1000000 }}) * 100}%`">
                                 </div>
                             </div>
-                            <input type="number" x-model="filters.max_price" @change="updateSearch()"
+                            <input id="search-max-price" type="number" x-model="filters.max_price" @change="updateSearch()"
                                 placeholder="Max"
                                 class="w-32 rounded-lg border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500">
                         </div>
@@ -323,7 +401,7 @@
 
                     {{-- Note minimale --}}
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Note minimale</label>
+                        <p class="block text-sm font-medium text-gray-700 mb-2">Note minimale</p>
                         <div class="flex items-center gap-2">
                             <template x-for="star in [1, 2, 3, 4, 5]">
                                 <button type="button"
@@ -342,7 +420,7 @@
                     {{-- Équipements --}}
                     @if (isset($amenities) && $amenities->isNotEmpty())
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Équipements</label>
+                            <p class="block text-sm font-medium text-gray-700 mb-2">Équipements</p>
                             <div class="flex flex-wrap gap-2">
                                 @foreach ($amenities as $amenity)
                                     <button type="button" @click="toggleAmenity({{ $amenity->id }})"
@@ -361,7 +439,7 @@
                     {{-- Politique d'annulation --}}
                     @if (isset($cancellationPolicies) && $cancellationPolicies->isNotEmpty())
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Politique d'annulation</label>
+                            <p class="block text-sm font-medium text-gray-700 mb-2">Politique d'annulation</p>
                             <div class="flex flex-wrap gap-2">
                                 @foreach ($cancellationPolicies as $policy)
                                     <button type="button"
@@ -379,7 +457,7 @@
 
                     {{-- Options spéciales --}}
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Options</label>
+                        <p class="block text-sm font-medium text-gray-700 mb-2">Options</p>
                         <div class="flex flex-wrap gap-3">
                             <!-- Réservation instantanée -->
                             <label
@@ -491,13 +569,18 @@
                         fn($r) => [
                             'id' => $r->id,
                             'title' => $r->name,
-                            'price' => $r->price,
+                            'price' => $r->price_per_day ?? $r->price,
                             'price_label' => '/jour',
                             'thumbnail' => $r->photos->isNotEmpty()
                                 ? storage_url(
                                     $r->photos->where('is_primary', true)->first()?->path ?? $r->photos->first()?->path,
                                 )
                                 : null,
+                            'url' => route('residences.show', $r),
+                            'commune' => $r->commune,
+                            'quartier' => $r->quartier,
+                            'type' => $r->type,
+                            'instant_book' => (bool) ($r->instant_book ?? false),
                             'location' => [
                                 'latitude' => $r->latitude,
                                 'longitude' => $r->longitude,
@@ -511,7 +594,7 @@
                     ->toArray()" :center="[
                     'lat' => $validated['latitude'] ?? config('rezi.default_latitude'),
                     'lng' => $validated['longitude'] ?? config('rezi.default_longitude'),
-                ]" :radius="$validated['radius'] ?? config('rezi.default_search_radius_km')" height="h-full" class="h-full" />
+                ]" :radius="$searchRadiusKm" height="h-full" class="h-full" />
             </div>
 
             <!-- Liste (droite sur desktop) -->
@@ -522,7 +605,7 @@
                     <div class="flex items-center justify-between">
                         <p class="text-sm text-gray-600">
                             <span class="font-semibold text-blue-600"
-                                x-text="residences.length">{{ $residences->count() }}</span> résidence(s)
+                                x-text="residencesCount">{{ $residences->count() }}</span> résidence(s)
                             @if (isset($userLocation))
                                 <span
                                     class="inline-flex items-center gap-1 ml-1 px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded-full text-xs">
@@ -536,77 +619,14 @@
                             <option value="distance">Plus proche</option>
                             <option value="price_asc">Prix croissant</option>
                             <option value="price_desc">Prix décroissant</option>
-                            <option value="recent">Plus récent</option>
+                            <option value="newest">Plus récent</option>
                         </select>
                     </div>
                 </div>
 
                 <!-- Liste des résidences -->
                 <div class="p-4 space-y-4">
-                    <!-- Résidences depuis le serveur (initial) -->
-                    @forelse($residences as $residence)
-                        <div class="residence-list-item bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
-                            data-id="{{ $residence->id }}" @mouseenter="highlightMarker({{ $residence->id }})"
-                            @mouseleave="unhighlightMarker()">
-                            <a href="{{ route('residences.show', $residence) }}" class="flex relative">
-                                {{-- Badge Sponsorisé --}}
-                                @if (in_array($residence->id, $sponsoredIds ?? []) || $residence->isSponsored())
-                                    <span
-                                        class="absolute top-2 left-2 z-10 inline-flex items-center gap-1 px-2 py-0.5 bg-amber-500 text-white text-[10px] font-semibold rounded-full shadow-sm">
-                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                            <path
-                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                        Sponsorisé
-                                    </span>
-                                @endif
-                                <!-- Image -->
-                                <div class="w-32 h-28 shrink-0 bg-gray-200">
-                                    @if ($residence->photos->isNotEmpty())
-                                        <img loading="lazy"
-                                            src="{{ storage_url($residence->photos->where('is_primary', true)->first()?->path ?? $residence->photos->first()?->path) }}"
-                                            alt="{{ $residence->name }}" class="w-full h-full object-cover">
-                                    @else
-                                        <div class="w-full h-full flex items-center justify-center text-gray-400">
-                                            <svg class="w-8 h-8" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                                            </svg>
-                                        </div>
-                                    @endif
-                                </div>
-
-                                <!-- Contenu -->
-                                <div class="flex-1 p-3 flex flex-col justify-between">
-                                    <div>
-                                        <h3 class="font-semibold text-gray-900 text-sm line-clamp-1">
-                                            {{ $residence->name }}</h3>
-                                        <p class="text-xs text-gray-500 flex items-center mt-1">
-                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                            </svg>
-                                            {{ $residence->commune }}
-                                            @if (isset($residence->distance))
-                                                <span class="ml-1 text-blue-600">•
-                                                    {{ number_format($residence->distance, 1) }} km</span>
-                                            @endif
-                                        </p>
-                                    </div>
-                                    <div class="flex items-center justify-between mt-2">
-                                        <span class="text-blue-600 font-bold text-sm">
-                                            {{ number_format($residence->price, 0, ',', ' ') }} FCFA
-                                        </span>
-                                        <span class="text-xs text-gray-400">
-                                            {{ ucfirst($residence->type) }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    @empty
+                    <template x-if="residences.length === 0">
                         <div class="text-center py-12">
                             <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -617,7 +637,62 @@
                             <p class="text-gray-500 text-sm">Essayez de modifier vos critères ou d'agrandir le rayon de
                                 recherche.</p>
                         </div>
-                    @endforelse
+                    </template>
+
+                    <template x-if="residences.length > 0">
+                        <template x-for="residence in residences" :key="residence.id">
+                            <div class="residence-list-item bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+                                :data-id="residence.id" @mouseenter="highlightMarker(residence.id)"
+                                @mouseleave="unhighlightMarker()">
+                                <a :href="residence.url" class="flex relative">
+                                    <span x-show="residence.is_sponsored"
+                                        class="absolute top-2 left-2 z-10 inline-flex items-center gap-1 px-2 py-0.5 bg-amber-500 text-white text-[10px] font-semibold rounded-full shadow-sm"
+                                        x-cloak>
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path
+                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                        </svg>
+                                        Sponsorisé
+                                    </span>
+
+                                    <div class="w-32 h-28 shrink-0 bg-gray-200">
+                                        <template x-if="residence.thumbnail">
+                                            <img loading="lazy" :src="residence.thumbnail" :alt="residence.title"
+                                                class="w-full h-full object-cover">
+                                        </template>
+                                        <template x-if="!residence.thumbnail">
+                                            <div class="w-full h-full flex items-center justify-center text-gray-400">
+                                                <svg class="w-8 h-8" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                                </svg>
+                                            </div>
+                                        </template>
+                                    </div>
+
+                                    <div class="flex-1 p-3 flex flex-col justify-between">
+                                        <div>
+                                            <h3 class="font-semibold text-gray-900 text-sm line-clamp-1" x-text="residence.title">Résidence</h3>
+                                            <p class="text-xs text-gray-500 flex items-center mt-1">
+                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                </svg>
+                                                <span x-text="residence.commune"></span>
+                                                <span x-show="residence.distance_label" class="ml-1 text-blue-600" x-text="'• ' + residence.distance_label"></span>
+                                            </p>
+                                        </div>
+                                        <div class="flex items-center justify-between mt-2">
+                                            <span class="text-blue-600 font-bold text-sm" x-text="formatPrice(residence.price)"></span>
+                                            <span class="text-xs text-gray-400" x-text="formatResidenceType(residence.type)"></span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </template>
+                    </template>
                 </div>
 
                 <!-- Pagination -->
@@ -630,47 +705,4 @@
         </div>
     </div>
 
-    @push('scripts')
-        <script>
-            document.addEventListener('alpine:init', () => {
-                Alpine.data('searchPage', () => window.searchPage(@js([
-    'commune' => $validated['commune'] ?? '',
-    'latitude' => $validated['latitude'] ?? null,
-    'longitude' => $validated['longitude'] ?? null,
-    'radius' => $validated['radius'] ?? config('rezi.default_search_radius_km', 5),
-    'showFilters' => !empty(array_filter($validated ?? [])),
-    'sortBy' => $validated['sort'] ?? 'distance',
-    'residences' => $residences->items(),
-    'mapboxToken' => config('services.mapbox.access_token'),
-    'searchUrl' => route('residences.search'),
-    'defaultRadius' => config('rezi.default_search_radius_km', 5),
-    'filters' => [
-        'city' => $validated['city'] ?? '',
-        'commune' => $validated['commune'] ?? '',
-        'quartier' => $validated['quartier'] ?? '',
-        'min_price' => $validated['min_price'] ?? '',
-        'max_price' => $validated['max_price'] ?? '',
-        'type' => $validated['type'] ?? '',
-        'bedrooms' => $validated['bedrooms'] ?? '',
-        'bathrooms' => $validated['bathrooms'] ?? '',
-        'max_guests' => $validated['max_guests'] ?? '',
-        'min_rating' => $validated['min_rating'] ?? '',
-        'cancellation_policy' => $validated['cancellation_policy'] ?? '',
-        'amenities' => $validated['amenities'] ?? [],
-        'instant_book' => !empty($validated['instant_book']),
-        'has_promotion' => !empty($validated['has_promotion']),
-        'available_now' => !empty($validated['available_now']),
-        'is_accessible' => !empty($validated['is_accessible']),
-        // Sprint 2 — dates
-        'check_in' => $validated['check_in'] ?? '',
-        'check_out' => $validated['check_out'] ?? '',
-        'flex_window' => (int) ($validated['flex_window'] ?? 0),
-        'flex_dates' => !empty($validated['flex_dates']),
-        'flex_type' => $validated['flex_type'] ?? '',
-        'category' => $validated['category'] ?? '',
-    ],
-])));
-            });
-        </script>
-    @endpush
 </x-app-layout>

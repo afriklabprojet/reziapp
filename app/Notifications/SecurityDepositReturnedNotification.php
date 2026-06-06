@@ -60,9 +60,9 @@ class SecurityDepositReturnedNotification extends Notification implements Should
         }
 
         return $mail
-            ->line('Pour toute contestation, contactez le support REZI.')
+            ->line('Pour toute contestation, contactez le support ReziApp.')
             ->action('Voir les détails', route('home'))
-            ->salutation('L\'équipe REZI');
+            ->salutation('L\'équipe ReziApp');
     }
 
     public function toArray(object $notifiable): array

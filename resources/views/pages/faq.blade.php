@@ -1,6 +1,6 @@
 <x-app-layout>
     @section('title', $metaTitle ?? $content['title'] ?? "FAQ - Questions Fréquentes")
-    @section('description', $metaDescription ?? "Trouvez les réponses à toutes vos questions sur REZI.")
+    @section('description', $metaDescription ?? "Trouvez les réponses à toutes vos questions sur ReziApp.")
 
     <div class="min-h-screen bg-gray-50">
         {{-- Header --}}

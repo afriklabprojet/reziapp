@@ -7,7 +7,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\Cache;
 
 /**
- * Centralized cache management for REZI.
+ * Centralized cache management for ReziApp.
  * Single source of truth for cache keys and invalidation logic.
  *
  * Prevents stale data after mutations (booking, payment, approval, etc.)

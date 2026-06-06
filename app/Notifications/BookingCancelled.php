@@ -54,7 +54,7 @@ class BookingCancelled extends Notification implements ShouldQueue
         return $mail
             ->action('Voir les détails', route('owner.bookings.show', $this->booking))
             ->line('Les dates sont à nouveau disponibles sur votre calendrier.')
-            ->salutation('L\'équipe REZI');
+            ->salutation('L\'équipe ReziApp');
     }
 
     public function toArray(object $notifiable): array

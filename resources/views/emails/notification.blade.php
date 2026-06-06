@@ -25,7 +25,7 @@
 <div class="wrapper">
   <div class="header">
     <a href="{{ config('app.url') }}" style="text-decoration:none;">
-      <img src="{{ asset('images/logo-rezi.png') }}" alt="Rezi App">
+      <img src="{{ asset('images/logo-rezi.png') }}" alt="ReziApp">
       <span class="brand">Rezi <span>App</span></span>
     </a>
   </div>
@@ -38,11 +38,11 @@
     </div>
     @endif
     <div class="signature">
-      <p style="margin:0;">Cordialement,<br><strong style="color:#111827;">L'équipe Rezi App</strong></p>
+      <p style="margin:0;">Cordialement,<br><strong style="color:#111827;">L'équipe ReziApp</strong></p>
     </div>
   </div>
   <div class="footer">
-    <p style="margin:0;"><strong style="color:#111827;">Rezi App</strong> &mdash; Résidences meublées en Côte d'Ivoire</p>
+    <p style="margin:0;"><strong style="color:#111827;">ReziApp</strong> &mdash; Résidences meublées en Côte d'Ivoire</p>
     <p style="margin:8px 0;">
       <a href="{{ config('app.url') }}">reziapp.ci</a> &middot;
       <a href="mailto:contact@reziapp.ci">contact@reziapp.ci</a>
@@ -50,7 +50,7 @@
     <p style="margin:8px 0 0;">
       Pour ne plus recevoir ce type de notifications, <a href="{{ route('notifications.preferences') }}">modifiez vos préférences</a>.
     </p>
-    <p style="margin:12px 0 0; color:#9ca3af; font-size:11px;">&copy; {{ date('Y') }} Rezi App. Tous droits réservés &middot; Abidjan, Côte d'Ivoire</p>
+    <p style="margin:12px 0 0; color:#9ca3af; font-size:11px;">&copy; {{ date('Y') }} ReziApp. Tous droits réservés &middot; Abidjan, Côte d'Ivoire</p>
   </div>
 </div>
 </body>

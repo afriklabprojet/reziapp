@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use App\Models\SponsoredListing;
+use App\Services\SponsoredListingService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -33,16 +33,16 @@ class RecordSponsoredImpressions implements ShouldQueue
     ) {
     }
 
-    public function handle(): void
+    public function handle(SponsoredListingService $sponsoredListingService): void
     {
         if (empty($this->residenceIds)) {
             return;
         }
 
-        SponsoredListing::featuredHome()
-            ->whereIn('residence_id', $this->residenceIds)
-            ->each(function (SponsoredListing $sl): void {
-                $sl->recordImpression($this->ip, $this->userId);
-            });
+        $sponsoredListingService->recordFeaturedHomeImpressions(
+            $this->residenceIds,
+            $this->ip,
+            $this->userId,
+        );
     }
 }

@@ -34,7 +34,7 @@ class SequenceMessageNotification extends Notification implements ShouldQueue
             ->subject($this->subject)
             ->greeting('Bonjour '.($notifiable->name ?? '').',')
             ->line($this->messageContent)
-            ->salutation('L\'équipe REZI');
+            ->salutation('L\'équipe ReziApp');
     }
 
     public function toArray(object $notifiable): array

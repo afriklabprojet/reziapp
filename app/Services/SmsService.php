@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\SensitiveData;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -63,7 +64,7 @@ class SmsService
 
             if ($response->successful()) {
                 Log::info('SMS envoyé', [
-                    'to' => $phone,
+                    'to' => SensitiveData::maskPhone($phone),
                     'sid' => $response->json('sid'),
                 ]);
 
@@ -71,7 +72,7 @@ class SmsService
             }
 
             Log::error('SMS Twilio échoué', [
-                'to' => $phone,
+                'to' => SensitiveData::maskPhone($phone),
                 'status' => $response->status(),
                 'error' => $response->json('message') ?? $response->body(),
             ]);
@@ -79,7 +80,7 @@ class SmsService
             return false;
         } catch (\Exception $e) {
             Log::error('SMS Twilio exception', [
-                'to' => $phone,
+                'to' => SensitiveData::maskPhone($phone),
                 'error' => $e->getMessage(),
             ]);
 
@@ -97,7 +98,7 @@ class SmsService
         $clientId = config('services.orange_sms.client_id');
         $clientSecret = config('services.orange_sms.client_secret');
         $senderAddress = config('services.orange_sms.sender_address', 'tel:+2250000');
-        $senderName = config('services.orange_sms.sender_name', 'REZI');
+        $senderName = config('services.orange_sms.sender_name', 'ReziApp');
 
         if (! $clientId || ! $clientSecret) {
             Log::error('SMS Orange: Configuration incomplète (CLIENT_ID ou CLIENT_SECRET manquant)');
@@ -140,13 +141,13 @@ class SmsService
                 ]);
 
             if ($smsResponse->successful()) {
-                Log::info('SMS Orange envoyé', ['to' => $phone]);
+                Log::info('SMS Orange envoyé', ['to' => SensitiveData::maskPhone($phone)]);
 
                 return true;
             }
 
             Log::error('SMS Orange échoué', [
-                'to' => $phone,
+                'to' => SensitiveData::maskPhone($phone),
                 'status' => $smsResponse->status(),
                 'error' => $smsResponse->json(),
             ]);
@@ -154,7 +155,7 @@ class SmsService
             return false;
         } catch (\Exception $e) {
             Log::error('SMS Orange exception', [
-                'to' => $phone,
+                'to' => SensitiveData::maskPhone($phone),
                 'error' => $e->getMessage(),
             ]);
 
@@ -168,8 +169,8 @@ class SmsService
     protected static function logOnly(string $phone, string $message): bool
     {
         Log::info('[SMS DEV] Message non envoyé (provider=log)', [
-            'to' => $phone,
-            'message' => $message,
+            'to' => SensitiveData::maskPhone($phone),
+            'message_length' => mb_strlen($message),
         ]);
 
         return true; // Retourne true en dev pour ne pas bloquer le flux

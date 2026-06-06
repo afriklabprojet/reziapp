@@ -19,14 +19,14 @@
     };
 @endphp
 
-<div 
-    x-data="favoriteButton(@js(['residenceId' => $residenceId, 'isAuthenticated' => auth()->check()]))"
+<div
+    x-data="favoriteButton({{ \Illuminate\Support\Js::encode(['residenceId' => $residenceId, 'isAuthenticated' => auth()->check()]) }})"
     {{ $attributes->merge(['class' => $class]) }}
 >
-    <button 
+    <button
         @click="toggle()"
         :disabled="loading"
-        class="{{ $sizeClasses }} rounded-full flex items-center justify-center transition-all duration-300 
+        class="{{ $sizeClasses }} rounded-full flex items-center justify-center transition-all duration-300
                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500
                {{ $showText ? 'px-4 w-auto! gap-2' : '' }}"
         :class="{
@@ -37,32 +37,32 @@
         :title="isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'"
     >
         {{-- Icône Cœur avec animation --}}
-        <svg 
+        <svg
             class="{{ $iconSizes }} transition-transform duration-300"
             :class="{ 'scale-110': isFavorite, 'animate-heartbeat': justToggled }"
-            fill="currentColor" 
+            fill="currentColor"
             :fill="isFavorite ? 'currentColor' : 'none'"
             stroke="currentColor"
             stroke-width="2"
             viewBox="0 0 24 24"
         >
-            <path 
-                stroke-linecap="round" 
-                stroke-linejoin="round" 
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
                 d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
             />
         </svg>
 
         @if($showText)
-            <span 
-                x-text="isFavorite ? 'Favori' : 'Ajouter'" 
+            <span
+                x-text="isFavorite ? 'Favori' : 'Ajouter'"
                 class="text-sm font-medium"
             ></span>
         @endif
     </button>
 
     {{-- Toast notification --}}
-    <div 
+    <div
         x-show="showToast"
         x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 translate-y-2"
@@ -72,7 +72,7 @@
         x-transition:leave-end="opacity-0"
         class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 md:bottom-8"
     >
-        <div 
+        <div
             class="px-4 py-3 rounded-xl shadow-lg flex items-center gap-2"
             :class="isFavorite ? 'bg-red-500 text-white' : 'bg-gray-800 text-white'"
         >

@@ -44,12 +44,12 @@ class LoyaltyTierUpgraded extends Notification implements ShouldQueue
             ->line('Bonne nouvelle ! Votre fidélité a été récompensée.')
             ->line("Vous passez du niveau **{$oldLabel}** au niveau **{$icon} {$label}** !")
             ->line("En tant que membre **{$label}**, vous bénéficiez maintenant de :")
-            ->line("• **{$discount} % de réduction** sur toutes vos réservations REZI")
+            ->line("• **{$discount} % de réduction** sur toutes vos réservations ReziApp")
             ->line('• Accès prioritaire aux nouvelles résidences')
             ->line('• Support client dédié')
             ->action('Découvrir mes avantages', route('client.dashboard'))
-            ->line('Merci de faire confiance à REZI pour vos séjours en Côte d\'Ivoire.')
-            ->salutation('L\'équipe REZI');
+            ->line('Merci de faire confiance à ReziApp pour vos séjours en Côte d\'Ivoire.')
+            ->salutation('L\'équipe ReziApp');
     }
 
     public function toArray(object $notifiable): array

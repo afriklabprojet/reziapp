@@ -1,18 +1,9 @@
 <x-app-layout>
-    @section('title', 'Rezi App – Location de résidences meublés à ' . ($userLocation['city'] ??
+    @section('title', 'ReziApp – Location de résidences meublés à ' . ($userLocation['city'] ??
         (\App\Services\UserLocationService::current()['city'] ?? 'Abidjan')))
 
-        @push('styles')
-            {{-- Preload Mapbox pour la carte héro + mini-map + page carte --}}
-            <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" integrity="sha384-SDYx9Nwa5fE1fRuBplOPejrcbPOK/ql0Uym6hsGsTvnlC784P5LZhBJIbo8O/O+0" crossorigin="anonymous">
-            <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js" defer nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}" integrity="sha384-GCe89tb5amHPhp10tMEUmIOUpgyTbhqwThspGxJoQMvr5I6Zfq7lYU6ydn7dVKA6" crossorigin="anonymous"></script>
-            <style>
-                .mapboxgl-ctrl-logo, .mapboxgl-ctrl-attrib { display: none !important; }
-            </style>
-        @endpush
-
         {{-- APP STATE MANAGEMENT --}}
-        <div x-data="homeHero(@js([
+        <div x-data="homeHero({{ \Illuminate\Support\Js::encode([
             'communes'          => $popularZones->pluck('name')->values(),
             'featuredResidences'=> $featuredResidences->take(8)->map(fn($r) => [
                 'lat'   => $r->latitude,
@@ -20,11 +11,11 @@
                 'price' => ($r->price_per_day ?? 0) > 0 ? number_format($r->price_per_day / 1000) . 'k' : '—',
                 'name'  => \Illuminate\Support\Str::limit($r->name, 20),
             ]),
-            'mapboxToken'       => config('services.mapbox.access_token'),
             'residencesIndexUrl'=> route('residences.index'),
             'residencesMapUrl'  => route('residences.map'),
             'radiusCountsUrl'   => '/api/v1/geo/radius-counts',
-        ]))" class="relative bg-white flex flex-col">
+            'nearbyUrl'         => '/api/v1/geo/nearby',
+        ]) }})" class="relative bg-white flex flex-col">
 
             {{-- 1. HERO IMMERSIF - MAP INTERFACE --}}
             <div class="relative min-h-[85vh] lg:min-h-[90vh] w-full overflow-hidden bg-gray-900 flex flex-col"
@@ -32,9 +23,8 @@
 
                 {{-- Background Map avec animation subtile --}}
                 <div class="absolute inset-0 z-0">
-                    {{-- Vraie carte Mapbox - toujours visible, centrée sur Abidjan par défaut --}}
+                    {{-- Carte héro Google Maps - toujours visible, centrée sur Abidjan par défaut --}}
                     <div x-ref="heroMapContainer"
-                        x-init="waitAndInitMap(); $watch('gpsState', (state) => { if (state === 'success') flyToUser(); })"
                         class="absolute inset-0 w-full h-full transition-all duration-700"
                         :class="heroExpanded && gpsState === 'success' ? 'opacity-60' : (!heroExpanded && gpsState === 'success' ? 'opacity-95' : 'opacity-50')"
                         :style="heroExpanded && gpsState === 'success' ? 'filter: saturate(0.8) brightness(0.85)' : (!heroExpanded && gpsState === 'success' ? 'filter: saturate(1) brightness(1)' : 'filter: saturate(0.5) brightness(0.7)')">
@@ -44,7 +34,7 @@
                     <div class="absolute inset-0 transition-all duration-700"
                         :class="!heroExpanded && gpsState === 'success' ? 'bg-linear-to-b from-gray-900/30 via-transparent to-gray-900/40' : 'bg-linear-to-b from-gray-900/50 via-gray-900/20 to-gray-900/60'"></div>
 
-                    {{-- Grille décorative (style tech) - masquée quand carte Mapbox active --}}
+                    {{-- Grille décorative (style tech) - masquée quand la carte active prend le relais --}}
                     <div class="absolute inset-0 opacity-10" x-show="gpsState !== 'success'"
                         style="background-image: linear-gradient(rgba(247, 147, 30, 0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(247, 147, 30, 0.25) 1px, transparent 1px); background-size: 50px 50px;">
                     </div>
@@ -661,4 +651,5 @@
 
         </div> {{-- Fin du x-data pour reveal animations --}}
 
+            <x-google-maps-loader />
         </x-app-layout>

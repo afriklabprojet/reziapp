@@ -7,13 +7,16 @@ export default function searchForm(config = {}) {
         autocomplete: null,
 
         init() {
-            // Initialiser Google Maps Autocomplete
-            if (typeof google !== 'undefined') {
+            const initAutocomplete = () => {
+                if (this.autocomplete || typeof google === 'undefined' || !google.maps?.places) {
+                    return;
+                }
+
                 this.autocomplete = new google.maps.places.Autocomplete(
                     this.$refs.locationInput,
                     {
                         componentRestrictions: { country: ['ci', 'bf'] },
-                        types: ['geocode']
+                        types: ['geocode'],
                     }
                 );
 
@@ -24,6 +27,13 @@ export default function searchForm(config = {}) {
                         this.longitude = place.geometry.location.lng();
                     }
                 });
+            };
+
+            if (typeof google !== 'undefined' && google.maps?.places) {
+                initAutocomplete();
+            } else {
+                globalThis.__googleMapsCallbacks = globalThis.__googleMapsCallbacks || [];
+                globalThis.__googleMapsCallbacks.push(initAutocomplete);
             }
 
             // Géolocalisation automatique — haute précision

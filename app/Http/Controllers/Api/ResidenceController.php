@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateResidenceRequest;
 use App\Http\Resources\ResidenceCollection;
 use App\Http\Resources\ResidenceResource;
 use App\Models\Residence;
+use App\Services\CacheInvalidationService;
 use App\Services\GeolocationService;
 use App\Services\ResidenceService;
 use Illuminate\Http\JsonResponse;
@@ -18,6 +19,10 @@ use Illuminate\Support\Facades\Log;
 
 class ResidenceController extends Controller
 {
+    private const ADMIN_STATS_CACHE_KEY = 'api:admin:stats';
+
+    private const LIST_CACHE_VERSION_KEY = 'api:residences:list:version';
+
     public function __construct(
         private ResidenceService $residenceService,
         private GeolocationService $geolocationService,
@@ -31,7 +36,8 @@ class ResidenceController extends Controller
     {
         $perPage = min(50, max(1, (int) $request->get('per_page', 20)));
         $page = max(1, (int) $request->get('page', 1));
-        $cacheKey = "api:residences:list:page_{$page}:per_{$perPage}";
+        $cacheVersion = (int) Cache::rememberForever(self::LIST_CACHE_VERSION_KEY, fn () => 1);
+        $cacheKey = sprintf('api:residences:list:v%d:page_%d:per_%d', $cacheVersion, $page, $perPage);
 
         $residences = Cache::remember($cacheKey, 300, function () use ($perPage) {
             return Residence::approved()
@@ -86,8 +92,8 @@ class ResidenceController extends Controller
                 'owner_id' => $request->user()->id,
             ]);
 
-            // Invalider le cache des listes
-            Cache::forget('api:residences:list:page_1:per_20');
+            CacheInvalidationService::invalidateResidence($residence->id);
+            Cache::forever(self::LIST_CACHE_VERSION_KEY, ((int) Cache::get(self::LIST_CACHE_VERSION_KEY, 1)) + 1);
 
             return response()->json([
                 'success' => true,
@@ -130,6 +136,9 @@ class ResidenceController extends Controller
                 'owner_id' => $request->user()->id,
             ]);
 
+            CacheInvalidationService::invalidateResidence($residence->id);
+            Cache::forever(self::LIST_CACHE_VERSION_KEY, ((int) Cache::get(self::LIST_CACHE_VERSION_KEY, 1)) + 1);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Résidence mise à jour avec succès.',
@@ -159,6 +168,9 @@ class ResidenceController extends Controller
 
             Log::info('Résidence supprimée via API', ['residence_id' => $residenceId]);
 
+            CacheInvalidationService::invalidateResidence($residenceId);
+            Cache::forever(self::LIST_CACHE_VERSION_KEY, ((int) Cache::get(self::LIST_CACHE_VERSION_KEY, 1)) + 1);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Résidence supprimée avec succès.',
@@ -174,30 +186,6 @@ class ResidenceController extends Controller
                 'message' => 'Erreur lors de la suppression de la résidence.',
             ], 500);
         }
-    }
-
-    /**
-     * Enregistrer une vue de résidence.
-     */
-    public function recordView(Residence $residence): JsonResponse
-    {
-        $this->residenceService->recordView($residence);
-
-        return response()->json([
-            'message' => 'Vue enregistrée.',
-        ]);
-    }
-
-    /**
-     * Enregistrer un contact pour une résidence.
-     */
-    public function recordContact(Request $request, Residence $residence): JsonResponse
-    {
-        $this->residenceService->recordContact($residence, $request->user());
-
-        return response()->json([
-            'message' => 'Contact enregistré.',
-        ]);
     }
 
     /**
@@ -344,7 +332,7 @@ class ResidenceController extends Controller
      */
     public function adminStatistics(): JsonResponse
     {
-        $stats = Cache::remember('api:admin:stats', 300, function () {
+        $stats = Cache::remember(self::ADMIN_STATS_CACHE_KEY, 300, function () {
             $residenceStats = Residence::selectRaw("
                 COUNT(*) as total_residences,
                 SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_residences,
@@ -396,9 +384,8 @@ class ResidenceController extends Controller
             'residence_id' => $residence->id,
         ]);
 
-        // Invalider les caches
-        Cache::forget('api:admin:stats');
-        Cache::forget('api:residences:list:page_1:per_20');
+        CacheInvalidationService::invalidateResidence($residence->id);
+        Cache::forever(self::LIST_CACHE_VERSION_KEY, ((int) Cache::get(self::LIST_CACHE_VERSION_KEY, 1)) + 1);
 
         return response()->json([
             'success' => true,
@@ -427,7 +414,8 @@ class ResidenceController extends Controller
             'reason' => $request->input('reason'),
         ]);
 
-        Cache::forget('api:admin:stats');
+        CacheInvalidationService::invalidateResidence($residence->id);
+        Cache::forever(self::LIST_CACHE_VERSION_KEY, ((int) Cache::get(self::LIST_CACHE_VERSION_KEY, 1)) + 1);
 
         return response()->json([
             'success' => true,
@@ -435,4 +423,5 @@ class ResidenceController extends Controller
             'data' => new ResidenceResource($residence),
         ]);
     }
+
 }

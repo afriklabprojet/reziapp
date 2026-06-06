@@ -37,7 +37,7 @@ return new class () extends Migration {
             ['key' => 'advance_booking_days', 'value' => '180', 'type' => 'integer', 'group' => 'booking', 'label' => 'Réservation à l\'avance (jours)', 'description' => 'Nombre de jours maximum à l\'avance'],
 
             // Général
-            ['key' => 'platform_name', 'value' => 'REZI', 'type' => 'string', 'group' => 'general', 'label' => 'Nom de la plateforme', 'is_public' => true],
+            ['key' => 'platform_name', 'value' => 'ReziApp', 'type' => 'string', 'group' => 'general', 'label' => 'Nom de la plateforme', 'is_public' => true],
             ['key' => 'platform_email', 'value' => 'contact@rezi.ci', 'type' => 'string', 'group' => 'general', 'label' => 'Email de contact', 'is_public' => true],
             ['key' => 'platform_phone', 'value' => '+225 07 00 00 00 00', 'type' => 'string', 'group' => 'general', 'label' => 'Téléphone', 'is_public' => true],
             ['key' => 'maintenance_mode', 'value' => '0', 'type' => 'boolean', 'group' => 'general', 'label' => 'Mode maintenance'],

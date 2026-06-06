@@ -3,7 +3,7 @@
 @section('title', 'Modifier la promotion')
 
 @section('owner-content')
-    <div x-data="promotionForm(@js([
+    <div x-data="promotionForm({{ \Illuminate\Support\Js::encode([
         'discountType' => old('discount_type', $promotion->discount_type),
         'discountValue'=> old('discount_value', $promotion->discount_value),
         'title'        => old('title', $promotion->title),
@@ -13,7 +13,7 @@
         'isActive'     => (bool) old('is_active', $promotion->is_active),
         'minNights'    => old('min_nights', $promotion->min_nights ?? ''),
         'maxUses'      => old('max_uses', $promotion->max_uses ?? ''),
-    ]))">
+    ]) }})">
 
         {{-- ====== Header ====== --}}
         <div class="mb-8">
@@ -28,7 +28,7 @@
             <div class="flex items-start justify-between gap-4">
                 <div class="flex items-center gap-4">
                     <div
-                        class="w-12 h-12 rounded-2xl bg-linear-to-br from-[#F16A00] to-red-500 text-white flex items-center justify-center shadow-lg shadow-none">
+                        class="w-12 h-12 rounded-2xl bg-linear-to-br from-[#F16A00] to-red-500 text-white flex items-center justify-center shadow-lg">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Z" />
@@ -263,16 +263,16 @@
 
                             {{-- Type de réduction — Cartes visuelles --}}
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                <p class="block text-sm font-semibold text-gray-700 mb-3">
                                     Type de réduction <span class="text-red-500">*</span>
-                                </label>
+                                </p>
                                 <input type="hidden" name="discount_type" :value="discountType">
                                 <div class="grid grid-cols-3 gap-3">
                                     {{-- Pourcentage --}}
                                     <button type="button" @click="discountType = 'percentage'"
                                         class="relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all text-center"
                                         :class="discountType === 'percentage' ?
-                                            'border-[#F16A00] bg-[#FFF4EB] shadow-sm shadow-none/10' :
+                                            'border-[#F16A00] bg-[#FFF4EB] shadow-sm shadow-black/10' :
                                             'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'">
                                         <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold transition-colors"
                                             :class="discountType === 'percentage' ? 'bg-[#F16A00] text-white' :
@@ -299,7 +299,7 @@
                                     <button type="button" @click="discountType = 'fixed'"
                                         class="relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all text-center"
                                         :class="discountType === 'fixed' ?
-                                            'border-[#F16A00] bg-[#FFF4EB] shadow-sm shadow-none/10' :
+                                            'border-[#F16A00] bg-[#FFF4EB] shadow-sm shadow-black/10' :
                                             'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'">
                                         <div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold transition-colors"
                                             :class="discountType === 'fixed' ? 'bg-[#F16A00] text-white' :
@@ -326,7 +326,7 @@
                                     <button type="button" @click="discountType = 'free_nights'"
                                         class="relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all text-center"
                                         :class="discountType === 'free_nights' ?
-                                            'border-[#F16A00] bg-[#FFF4EB] shadow-sm shadow-none/10' :
+                                            'border-[#F16A00] bg-[#FFF4EB] shadow-sm shadow-black/10' :
                                             'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'">
                                         <div class="w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
                                             :class="discountType === 'free_nights' ? 'bg-[#F16A00] text-white' :
@@ -424,8 +424,8 @@
                         <div class="p-6 space-y-6">
                             {{-- Période --}}
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-3">Période de validité <span
-                                        class="text-red-500">*</span></label>
+                                <p class="block text-sm font-semibold text-gray-700 mb-3">Période de validité <span
+                                    class="text-red-500">*</span></p>
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label for="starts_at" class="block text-xs font-medium text-gray-500 mb-1.5">Date
@@ -461,9 +461,9 @@
                             </div>
 
                             <div class="border-t border-gray-100 pt-6">
-                                <label class="block text-sm font-semibold text-gray-700 mb-3">Restrictions
+                                <p class="block text-sm font-semibold text-gray-700 mb-3">Restrictions
                                     <span class="text-gray-400 text-xs font-normal ml-1">(optionnel)</span>
-                                </label>
+                                </p>
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label for="min_nights"
@@ -591,7 +591,7 @@
                                 Annuler
                             </a>
                             <button type="submit"
-                                class="flex-1 px-5 py-3 bg-linear-to-r from-[#F16A00] to-[#CC5A00] text-white rounded-xl font-bold text-sm shadow-lg shadow-none hover:shadow-xl hover:shadow-none active:scale-[0.98] transition-all">
+                                class="flex-1 px-5 py-3 bg-linear-to-r from-[#F16A00] to-[#CC5A00] text-white rounded-xl font-bold text-sm shadow-lg hover:shadow-xl active:scale-[0.98] transition-all">
                                 Enregistrer
                             </button>
                         </div>
@@ -736,7 +736,7 @@
                         {{-- Submit (desktop) --}}
                         <div class="space-y-3">
                             <button type="submit"
-                                class="w-full px-5 py-3.5 bg-linear-to-r from-[#F16A00] to-[#CC5A00] text-white rounded-xl font-bold text-sm shadow-lg shadow-none hover:shadow-xl hover:shadow-none hover:from-[#CC5A00] hover:to-[#A34700] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                class="w-full px-5 py-3.5 bg-linear-to-r from-[#F16A00] to-[#CC5A00] text-white rounded-xl font-bold text-sm shadow-lg hover:shadow-xl hover:from-[#CC5A00] hover:to-[#A34700] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />

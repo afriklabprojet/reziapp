@@ -95,7 +95,7 @@
                         </div>
 
                         <!-- Calendrier interactif -->
-                        <div x-data="pricingCalendar(@js(['residenceId' => $residence->id, 'basePrice' => $residence->price_per_day]))" x-init="init()" class="space-y-6">
+                        <div x-data="pricingCalendar({{ \Illuminate\Support\Js::encode(['residenceId' => $residence->id, 'basePrice' => $residence->price_per_day]) }})" x-init="init()" class="space-y-6">
                             <!-- Navigation mois -->
                             <div class="flex items-center justify-between">
                                 <button @click="previousMonth()" class="p-2 hover:bg-gray-100 rounded-lg">

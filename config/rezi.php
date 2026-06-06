@@ -4,10 +4,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | REZI Configuration
+    | ReziApp Configuration
     |--------------------------------------------------------------------------
     |
-    | Configuration spécifique à l'application REZI pour la recherche
+    | Configuration spécifique à l'application ReziApp pour la recherche
     | de résidences meublées à Abidjan.
     |
     */
@@ -19,7 +19,7 @@ return [
     */
 
     'company' => [
-        'name' => env('REZI_COMPANY_NAME', 'REZI SAS'),
+        'name' => env('REZI_COMPANY_NAME', 'ReziApp SAS'),
         'email' => env('REZI_COMPANY_EMAIL', 'contact@reziapp.ci'),
         'phone' => env('REZI_COMPANY_PHONE', '+225 07 00 00 00 00'),
         'phone_raw' => env('REZI_COMPANY_PHONE_RAW', '+2250700000000'),

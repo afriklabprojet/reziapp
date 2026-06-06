@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Support\SensitiveData;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -37,8 +38,10 @@ class BusinessEventService
     public static function userLoginFailed(string $email, string $ip, array $meta = []): void
     {
         static::record('user.login_failed', null, array_merge([
-            'email' => $email,
-            'ip' => $ip,
+            'email_masked' => SensitiveData::maskEmail($email),
+            'email_hash' => SensitiveData::hash($email),
+            'ip_masked' => SensitiveData::maskIp($ip),
+            'ip_hash' => SensitiveData::hash($ip),
         ], $meta));
     }
 

@@ -1,6 +1,6 @@
-# REZI - Nouvelles Fonctionnalités (v2.0)
+# ReziApp - Nouvelles Fonctionnalités (v2.0)
 
-Ce document décrit les nouvelles fonctionnalités implémentées dans REZI.
+Ce document décrit les nouvelles fonctionnalités implémentées dans ReziApp.
 
 ## 🔐 Authentification Sociale
 
@@ -118,7 +118,7 @@ Sauvegarde des résidences préférées avec notes personnelles.
 
 ## 📱 Progressive Web App (PWA)
 
-REZI est maintenant installable sur mobile comme une application native.
+ReziApp est maintenant installable sur mobile comme une application native.
 
 ### Fichiers
 - `/manifest.json` - Manifest PWA

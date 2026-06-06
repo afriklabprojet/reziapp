@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Synchronisation iCal — REZI')
+@section('title', 'Synchronisation iCal — ReziApp')
 
 @section('owner-content')
 <div class="space-y-6">

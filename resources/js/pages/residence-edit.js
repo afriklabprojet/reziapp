@@ -10,12 +10,10 @@ export default function residenceEditForm(config = {}) {
                 if (typeof google !== 'undefined' && google.maps) {
                     this.initMap();
                 } else {
-                    // Google Maps pas encore chargé — enregistrer le callback
-                    const prev = window.__addressAutocompleteInit;
-                    window.__addressAutocompleteInit = () => {
-                        if (typeof prev === 'function') prev();
+                    globalThis.__googleMapsCallbacks = globalThis.__googleMapsCallbacks || [];
+                    globalThis.__googleMapsCallbacks.push(() => {
                         this.initMap();
-                    };
+                    });
                 }
             });
         },
@@ -70,7 +68,7 @@ export default function residenceEditForm(config = {}) {
          */
         async _reverseGeocode(lat, lng) {
             try {
-                const res = await fetch('/api/v1/maps/reverse-geocode', {
+                const response = await fetch('/api/v1/maps/reverse-geocode', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -78,36 +76,42 @@ export default function residenceEditForm(config = {}) {
                     },
                     body: JSON.stringify({ lat, lng }),
                 });
-                const json = await res.json();
+                const json = await response.json();
+                if (!json.success || !json.data) return;
 
-                if (json.success && json.data) {
-                    // Auto-remplir commune
-                    if (json.data.commune) {
-                        const communeSelect = document.getElementById('commune');
-                        if (communeSelect) {
-                            const options = Array.from(communeSelect.options);
-                            const match = options.find(o =>
-                                o.text.toLowerCase().includes(json.data.commune.toLowerCase()) ||
-                                json.data.commune.toLowerCase().includes(o.text.toLowerCase())
-                            );
-                            if (match) {
-                                communeSelect.value = match.value;
-                                communeSelect.dispatchEvent(new Event('change'));
-                            }
-                        }
-                    }
-                    // Auto-remplir quartier
-                    if (json.data.quartier) {
-                        const quartierInput = document.getElementById('quartier');
-                        if (quartierInput) {
-                            quartierInput.value = json.data.quartier;
-                            quartierInput.dispatchEvent(new Event('input'));
-                        }
-                    }
-                }
+                this.applyReverseGeocodeData(json.data);
             } catch (e) {
                 console.warn('Reverse geocode failed:', e);
             }
+        },
+
+        applyReverseGeocodeData(data) {
+            if (data.commune) {
+                this.syncCommuneSelect(data.commune);
+            }
+
+            if (data.quartier) {
+                const quartierInput = document.getElementById('quartier');
+                if (quartierInput) {
+                    quartierInput.value = data.quartier;
+                    quartierInput.dispatchEvent(new Event('input'));
+                }
+            }
+        },
+
+        syncCommuneSelect(commune) {
+            const communeSelect = document.getElementById('commune');
+            if (!communeSelect) return;
+
+            const match = Array.from(communeSelect.options).find((option) =>
+                option.text.toLowerCase().includes(commune.toLowerCase()) ||
+                commune.toLowerCase().includes(option.text.toLowerCase())
+            );
+
+            if (!match) return;
+
+            communeSelect.value = match.value;
+            communeSelect.dispatchEvent(new Event('change'));
         }
     };
 }

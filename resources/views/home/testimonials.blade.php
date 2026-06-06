@@ -2,21 +2,21 @@
                 @php
                 $testimonials = [
                     ['initials' => 'SA', 'name' => 'Sarah Adjoua', 'city' => 'Cocody', 'color' => 'from-[#FF8A1F] to-[#CC5A00]', 'stars' => 5,
-                     'text' => '"J\'arrivais de France pour un contrat de 2 ans. En 3 jours j\'ai visité 5 appartements à Riviera via REZI. Le propriétaire m\'a aidée pour l\'électricité et internet. Parfait !"'],
+                     'text' => '"J\'arrivais de France pour un contrat de 2 ans. En 3 jours j\'ai visité 5 appartements à Riviera via ReziApp. Le propriétaire m\'a aidée pour l\'électricité et internet. Parfait !"'],
                     ['initials' => 'KD', 'name' => 'Konan Désirée', 'city' => 'Marcory', 'color' => 'from-blue-400 to-blue-600', 'stars' => 5,
-                     'text' => '"Budget serré, étudiante en master. REZI m\'a montré des studios meublés dans mon budget à Marcory. J\'ai pu négocier 2 mois d\'avance au lieu de 6. Super !"'],
+                     'text' => '"Budget serré, étudiante en master. ReziApp m\'a montré des studios meublés dans mon budget à Marcory. J\'ai pu négocier 2 mois d\'avance au lieu de 6. Super !"'],
                     ['initials' => 'YK', 'name' => 'Yves Kouassi', 'city' => 'Plateau', 'color' => 'from-emerald-400 to-emerald-600', 'stars' => 5,
                      'text' => '"Mutation d\'urgence à Abidjan. La géolocalisation m\'a aidé à trouver près du bureau. Emménagement en 1 semaine, tout équipé. Fini les hôtels chers !"'],
                     ['initials' => 'ML', 'name' => 'Marie-Louise Brou', 'city' => 'Yopougon', 'color' => 'from-purple-400 to-purple-600', 'stars' => 4,
-                     'text' => '"Divorcée avec 2 enfants, je cherchais près des écoles. REZI m\'a trouvé un 3 pièces meublé à Yopougon avec jardin. Les enfants adorent. Nouvelle vie !"'],
+                     'text' => '"Divorcée avec 2 enfants, je cherchais près des écoles. ReziApp m\'a trouvé un 3 pièces meublé à Yopougon avec jardin. Les enfants adorent. Nouvelle vie !"'],
                     ['initials' => 'AB', 'name' => 'Amadou Bakayoko', 'city' => 'Riviera', 'color' => 'from-rose-400 to-rose-600', 'stars' => 5,
-                     'text' => '"Entrepreneur, je voyage souvent. L\'appart REZI à Riviera est ma base parfaite. Wifi, clim, sécurité 24h. Le proprio comprend mes besoins business."'],
+                     'text' => '"Entrepreneur, je voyage souvent. L\'appart ReziApp à Riviera est ma base parfaite. Wifi, clim, sécurité 24h. Le proprio comprend mes besoins business."'],
                     ['initials' => 'FC', 'name' => 'Fatima Cissé', 'city' => 'Deux Plateaux', 'color' => 'from-teal-400 to-teal-600', 'stars' => 5,
-                     'text' => '"Stage ONG 6 mois. REZI m\'a évité les galères : photos vraies, prix fixe, contrat clair. La propriétaire m\'a même prêtée des draps en attendant mes affaires."'],
+                     'text' => '"Stage ONG 6 mois. ReziApp m\'a évité les galères : photos vraies, prix fixe, contrat clair. La propriétaire m\'a même prêtée des draps en attendant mes affaires."'],
                     ['initials' => 'JA', 'name' => 'Jean-Baptiste Akpa', 'city' => 'Angré', 'color' => 'from-indigo-400 to-indigo-600', 'stars' => 5,
-                     'text' => '"Cadre expatrié, j\'ai comparé 15 résidences en 2 jours sur la carte REZI. Trouvé villa 4 chambres à Angré pour la famille. Les enfants vont à l\'école française."'],
+                     'text' => '"Cadre expatrié, j\'ai comparé 15 résidences en 2 jours sur la carte ReziApp. Trouvé villa 4 chambres à Angré pour la famille. Les enfants vont à l\'école française."'],
                     ['initials' => 'NK', 'name' => 'Nawa Kané', 'city' => 'Cocody', 'color' => 'from-amber-400 to-amber-600', 'stars' => 4,
-                     'text' => '"Première location à Abidjan, j\'avais peur des arnaques. REZI m\'a rassuré : profils vérifiés, visites virtuelles, pas d\'argent avant signature. Merci !"'],
+                     'text' => '"Première location à Abidjan, j\'avais peur des arnaques. ReziApp m\'a rassuré : profils vérifiés, visites virtuelles, pas d\'argent avant signature. Merci !"'],
                 ];
                 @endphp
 
@@ -47,7 +47,7 @@
                                 <p class="text-xs font-semibold text-[#F16A00] uppercase tracking-widest mb-1">Avis vérifiés</p>
                                 <h2 class="font-sans text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight">
                                     Ils ont trouvé leur logement
-                                    <span class="text-gradient-primary">avec REZI</span>
+                                    <span class="text-gradient-primary">avec ReziApp</span>
                                 </h2>
                             </div>
                             <div class="flex items-center gap-3 bg-white border border-amber-100 shadow-sm rounded-2xl px-5 py-3 shrink-0">

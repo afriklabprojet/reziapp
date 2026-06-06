@@ -35,7 +35,7 @@ class NewContactReceived extends Notification implements ShouldQueue
             ->line("Message : \"{$this->contact->message}\"")
             ->action('Voir le contact', route('owner.contacts.show', $this->contact))
             ->line('Répondez rapidement pour augmenter votre taux de conversion !')
-            ->salutation('L\'équipe REZI');
+            ->salutation('L\'équipe ReziApp');
     }
 
     public function toArray(object $notifiable): array

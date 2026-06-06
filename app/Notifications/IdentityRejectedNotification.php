@@ -23,7 +23,7 @@ class IdentityRejectedNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage())
-            ->subject('❌ Vérification d\'identité non approuvée - REZI')
+            ->subject('❌ Vérification d\'identité non approuvée - ReziApp')
             ->greeting("Bonjour {$notifiable->name},")
             ->line('Nous n\'avons malheureusement pas pu valider votre vérification d\'identité.')
             ->line('**Raison :** '.$this->reason)

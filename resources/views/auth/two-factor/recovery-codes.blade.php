@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Codes de récupération - REZI')
+@section('title', 'Codes de récupération - ReziApp')
 
 @section('owner-content')
     <div class="max-w-lg mx-auto space-y-6" x-data="{ confirmed: false }">
@@ -96,7 +96,7 @@
                         Imprimer
                     </button>
 
-                    <a href="data:text/plain;charset=utf-8,{{ urlencode("REZI - Codes de récupération 2FA\n" . str_repeat('=', 35) . "\n\n" . implode("\n", array_map(fn($c, $i) => ($i+1) . '. ' . $c, $codes, array_keys($codes))) . "\n\nChaque code ne peut être utilisé qu'une seule fois.\nGardez-les dans un endroit sûr.") }}"
+                    <a href="data:text/plain;charset=utf-8,{{ urlencode("ReziApp - Codes de récupération 2FA\n" . str_repeat('=', 35) . "\n\n" . implode("\n", array_map(fn($c, $i) => ($i+1) . '. ' . $c, $codes, array_keys($codes))) . "\n\nChaque code ne peut être utilisé qu'une seule fois.\nGardez-les dans un endroit sûr.") }}"
                         download="rezi-2fa-recovery-codes.txt"
                         class="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50 transition-all">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -164,7 +164,7 @@
             const codes = @json($codes);
             const printWindow = window.open('', '_blank', 'width=400,height=500');
             printWindow.document.write(`
-                <html><head><title>REZI - Codes de récupération 2FA</title>
+                <html><head><title>ReziApp - Codes de récupération 2FA</title>
                 <style>
                     body { font-family: -apple-system, system-ui, sans-serif; padding: 40px; color: #111; }
                     h1 { font-size: 18px; margin-bottom: 4px; }
@@ -172,7 +172,7 @@
                     .code { font-family: monospace; font-size: 16px; font-weight: bold; padding: 8px 12px; margin: 4px 0; background: #f5f5f5; border-radius: 8px; letter-spacing: 2px; }
                     .warning { font-size: 11px; color: #92400e; margin-top: 20px; padding: 10px; background: #fffbeb; border-radius: 8px; }
                 </style></head><body>
-                <h1>🔐 REZI - Codes de récupération</h1>
+                <h1>🔐 ReziApp - Codes de récupération</h1>
                 <p>Double authentification · ${new Date().toLocaleDateString('fr-FR')}</p>
                 ${codes.map((c, i) => '<div class="code">' + (i+1) + '. ' + c + '</div>').join('')}
                 <div class="warning">⚠️ Chaque code ne peut être utilisé qu'une seule fois. Gardez cette page dans un endroit sûr.</div>

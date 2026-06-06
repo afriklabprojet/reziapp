@@ -326,7 +326,7 @@ class AdminDashboardSeeder extends Seeder
                 'reference'   => 'TK-'.strtoupper(Str::random(6)),
                 'category'    => $categories[array_rand($categories)],
                 'subject'     => $subjects[array_rand($subjects)],
-                'description' => 'Description détaillée du problème rencontré avec la plateforme REZI.',
+                'description' => 'Description détaillée du problème rencontré avec la plateforme ReziApp.',
                 'priority'    => $priorities[array_rand($priorities)],
                 'status'      => 'in_progress',
                 'first_response_at' => now()->subHours(rand(2, 24)),

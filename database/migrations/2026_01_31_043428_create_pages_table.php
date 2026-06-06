@@ -30,8 +30,8 @@ return new class () extends Migration {
             [
                 'title' => 'Conditions Générales d\'Utilisation',
                 'slug' => 'cgu',
-                'content' => '<h2>1. Objet</h2><p>Les présentes conditions générales d\'utilisation régissent l\'accès et l\'utilisation de la plateforme REZI.</p><h2>2. Inscription</h2><p>Pour utiliser nos services, vous devez créer un compte...</p>',
-                'excerpt' => 'Conditions générales d\'utilisation de la plateforme REZI',
+                'content' => '<h2>1. Objet</h2><p>Les présentes conditions générales d\'utilisation régissent l\'accès et l\'utilisation de la plateforme ReziApp.</p><h2>2. Inscription</h2><p>Pour utiliser nos services, vous devez créer un compte...</p>',
+                'excerpt' => 'Conditions générales d\'utilisation de la plateforme ReziApp',
                 'type' => 'legal',
                 'is_published' => true,
                 'sort_order' => 1,
@@ -39,7 +39,7 @@ return new class () extends Migration {
             [
                 'title' => 'Politique de Confidentialité',
                 'slug' => 'confidentialite',
-                'content' => '<h2>Protection de vos données</h2><p>REZI s\'engage à protéger vos données personnelles...</p>',
+                'content' => '<h2>Protection de vos données</h2><p>ReziApp s\'engage à protéger vos données personnelles...</p>',
                 'excerpt' => 'Comment nous protégeons vos données personnelles',
                 'type' => 'legal',
                 'is_published' => true,
@@ -64,10 +64,10 @@ return new class () extends Migration {
                 'sort_order' => 1,
             ],
             [
-                'title' => 'À propos de REZI',
+                'title' => 'À propos de ReziApp',
                 'slug' => 'a-propos',
-                'content' => '<h2>Notre mission</h2><p>REZI est la première plateforme de location de résidences meublées en Côte d\'Ivoire...</p>',
-                'excerpt' => 'Découvrez l\'histoire et la mission de REZI',
+                'content' => '<h2>Notre mission</h2><p>ReziApp est la première plateforme de location de résidences meublées en Côte d\'Ivoire...</p>',
+                'excerpt' => 'Découvrez l\'histoire et la mission de ReziApp',
                 'type' => 'page',
                 'is_published' => true,
                 'sort_order' => 1,

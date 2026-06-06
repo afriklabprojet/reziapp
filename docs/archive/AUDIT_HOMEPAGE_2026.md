@@ -1,4 +1,4 @@
-# 🔍 AUDIT COMPLET — PAGE D'ACCUEIL REZI
+# 🔍 AUDIT COMPLET — PAGE D'ACCUEIL ReziApp
 > Date : 21 février 2026  
 > Scope : Route `/` → `HomeController@index` → `home.blade.php` + layout + composants  
 > Fichier : 1 271 lignes Blade · 189 lignes Controller · ~40 composants Alpine.js
@@ -167,9 +167,9 @@ Aucune balise `<img>` du template n'utilise `srcset` ou `sizes`. Les cartes de r
 ### SEO
 
 #### M6. Titre de page trop générique
-`REZI - Trouvez une résidence autour de vous` ne contient pas le mot-clé géo principal "Abidjan".
+`ReziApp - Trouvez une résidence autour de vous` ne contient pas le mot-clé géo principal "Abidjan".
 
-**Fix** : `REZI — Résidences meublées à Abidjan | Recherche géolocalisée`
+**Fix** : `ReziApp — Résidences meublées à Abidjan | Recherche géolocalisée`
 
 ---
 

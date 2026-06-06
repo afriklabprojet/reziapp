@@ -297,7 +297,7 @@ class PricingService
         // Le propriétaire reçoit: sous-total - réductions + ménage
         $ownerSubtotal = $priceBreakdown['subtotal'] - $priceBreakdown['total_discount'] + $priceBreakdown['cleaning_fee'];
 
-        // Commission REZI sur le sous-total (depuis les paramètres admin)
+        // Commission ReziApp sur le sous-total (depuis les paramètres admin)
         $commissionRate = PlatformSetting::getCommissionRate() / 100;
         $reziCommission = round($ownerSubtotal * $commissionRate, 0);
 

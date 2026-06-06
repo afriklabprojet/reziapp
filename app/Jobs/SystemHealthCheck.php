@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -35,16 +36,19 @@ class SystemHealthCheck implements ShouldQueue
         // 1. Database
         $checks['database'] = $this->checkDatabase();
 
-        // 2. Cache
+        // 2. Redis (cache + queue + sessions)
+        $checks['redis'] = $this->checkRedis();
+
+        // 3. Cache
         $checks['cache'] = $this->checkCache();
 
-        // 3. Storage
+        // 4. Storage
         $checks['storage'] = $this->checkStorage();
 
-        // 4. Queue (self-check — if this job runs, queue works)
+        // 5. Queue (self-check — if this job runs, queue works)
         $checks['queue'] = ['status' => 'ok', 'response_ms' => 0, 'details' => 'Job executed successfully'];
 
-        // 5. Jeko API
+        // 6. Jeko API
         $checks['jeko'] = $this->checkJekoApi();
 
         // Store in cache for quick access
@@ -69,6 +73,25 @@ class SystemHealthCheck implements ShouldQueue
         $degraded = array_filter($checks, fn ($c) => $c['status'] !== 'ok');
         if (! empty($degraded)) {
             Log::channel('critical')->warning('SystemHealthCheck: Degraded components', $degraded);
+        }
+    }
+
+    private function checkRedis(): array
+    {
+        if (! in_array(config('cache.default'), ['redis', 'predis'], true)
+            && config('queue.default') !== 'redis') {
+            return ['status' => 'ok', 'response_ms' => 0, 'details' => 'Not configured'];
+        }
+
+        $start = microtime(true);
+
+        try {
+            Redis::ping();
+            $ms = round((microtime(true) - $start) * 1000);
+
+            return ['status' => $ms > 200 ? 'degraded' : 'ok', 'response_ms' => $ms];
+        } catch (\Throwable $e) {
+            return ['status' => 'down', 'response_ms' => 0, 'details' => $e->getMessage()];
         }
     }
 

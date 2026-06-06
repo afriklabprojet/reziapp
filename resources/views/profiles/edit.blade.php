@@ -1,6 +1,6 @@
 @extends('layouts.client', ['sidebarActive' => 'profile'])
 
-@section('title', 'Mon profil - REZI')
+@section('title', 'Mon profil - ReziApp')
 
 @section('client-content')
     {{-- En-tête --}}
@@ -146,7 +146,7 @@
                     Langues parlées
                 </h2>
             </div>
-            <div class="p-6" x-data="languageSelector(@js(['languages' => old('languages', $profile->languages ?? ['Français'])]))">
+            <div class="p-6" x-data="languageSelector({{ \Illuminate\Support\Js::encode(['languages' => old('languages', $profile->languages ?? ['Français'])]) }})">
                 {{-- Langues sélectionnées --}}
                 <div class="flex flex-wrap gap-2 mb-4">
                     <template x-for="(lang, index) in languages" :key="index">

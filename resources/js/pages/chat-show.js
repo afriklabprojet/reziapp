@@ -1,5 +1,5 @@
 /**
- * REZI Chat — Real Messenger Experience (v2)
+ * ReziApp Chat — Real Messenger Experience (v2)
  * Features: optimistic UI, real-time via Echo, typing indicator, mark-as-read,
  * sound notifications, online status, infinite scroll, message editing/deleting,
  * confirmation dialogs, delivered indicator, push notification request
@@ -296,7 +296,7 @@ export default function chatShow(config = {}) {
         // ========================
         showBrowserNotification(data) {
             if (document.hidden && 'Notification' in window && Notification.permission === 'granted') {
-                const notif = new Notification('Nouveau message — REZI', {
+                const notif = new Notification('Nouveau message — ReziApp', {
                     body: data.content ? data.content.substring(0, 100) : 'Pièce jointe',
                     icon: '/images/logo-icon.png',
                     tag: `msg-${data.id}`,

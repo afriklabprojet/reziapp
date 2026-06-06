@@ -12,7 +12,7 @@ return new class () extends Migration {
     {
         Schema::table('users', function (Blueprint $table) {
             $table->decimal('wallet_credit', 12, 0)->default(0)->after('referral_balance')
-                ->comment('Crédit portefeuille REZI (en XOF) pour remboursements');
+                ->comment('Crédit portefeuille ReziApp (en XOF) pour remboursements');
         });
     }
 

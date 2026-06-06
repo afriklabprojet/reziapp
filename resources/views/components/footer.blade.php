@@ -15,44 +15,8 @@
     {{-- ─── Newsletter CTA ─── --}}
     <div class="bg-[#F16A00]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-6" x-data="{
-                email: '',
-                loading: false,
-                success: false,
-                error: '',
-                message: '',
-                async subscribe() {
-                    if (!this.email || this.loading) return;
-                    this.loading = true;
-                    this.error = '';
-                    this.success = false;
-                    try {
-                        const res = await fetch('{{ route('newsletter.subscribe') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-                                'Accept': 'application/json',
-                            },
-                            body: JSON.stringify({ email: this.email, source: 'footer' }),
-                        });
-                        const data = await res.json();
-                        if (res.ok && data.success) {
-                            this.success = true;
-                            this.message = data.message;
-                            this.email = '';
-                        } else if (res.status === 422 && data.errors?.email) {
-                            this.error = data.errors.email[0];
-                        } else {
-                            this.error = data.message || 'Une erreur est survenue.';
-                        }
-                    } catch (e) {
-                        this.error = 'Erreur de connexion. Veuillez réessayer.';
-                    } finally {
-                        this.loading = false;
-                    }
-                }
-            }">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6"
+                x-data="newsletterForm('{{ route('newsletter.subscribe') }}', '{{ csrf_token() }}')">
                 <div class="text-center md:text-left">
                     <h3
                         class="font-sans text-xl sm:text-2xl font-semibold text-white flex items-center justify-center md:justify-start gap-2">
@@ -117,7 +81,7 @@
             {{-- Brand + Description + Social --}}
             <div class="col-span-2 md:col-span-3 lg:col-span-4">
                 <a href="{{ route('home') }}" class="inline-flex items-center gap-2 mb-4">
-                    <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="REZI" class="h-10 w-auto">
+                    <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="ReziApp" class="h-10 w-auto">
                 </a>
                 <p class="text-sm leading-relaxed max-w-sm mb-6">
                     {{ $fc['footer_brand_description'] ?? "La plateforme de référence pour trouver votre résidence meublée en Afrique de l'Ouest. Des centaines de logements vérifiés à portée de clic." }}
@@ -321,7 +285,7 @@
             <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
                 {{-- Copyright --}}
                 <p class="text-xs text-[#555555] text-center lg:text-left">
-                    © {{ date('Y') }} REZI. Tous droits réservés.
+                    © {{ date('Y') }} ReziApp. Tous droits réservés.
                 </p>
 
                 {{-- Legal Links --}}
@@ -360,18 +324,18 @@
         </div>
     </div>
     {{-- ─── Retour en haut ─── --}}
-    <div x-data="{ show: false }"
-         x-init="window.addEventListener('scroll', () => { show = window.scrollY > 400 })"
+        <div x-data="scrollReveal(400)"
+         x-init="init()"
          x-cloak
          class="fixed bottom-6 right-6 z-50">
-        <button x-show="show"
+        <button x-show="visible"
                 x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 translate-y-3"
                 x-transition:enter-end="opacity-100 translate-y-0"
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100"
                 x-transition:leave-end="opacity-0"
-                @click="window.scrollTo({top: 0, behavior: 'smooth'})"
+            @click="scrollToTop()"
                 aria-label="Retour en haut de page"
                 class="w-11 h-11 bg-[#F16A00] hover:bg-[#CC5A00] text-white rounded-full shadow-lg hover:shadow-xl flex items-center justify-center transition-all active:scale-95">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">

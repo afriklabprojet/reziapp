@@ -6,7 +6,7 @@ use App\Models\Campaign;
 use App\Models\Coupon;
 use App\Models\Promotion;
 use App\Models\Referral;
-use App\Models\SponsoredListing;
+use App\Services\MarketingAnalyticsService;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\DB;
 
@@ -52,33 +52,7 @@ class MarketingDashboard extends Page
 
     protected function getGeneralStats(): array
     {
-        try {
-            return [
-                'total_campaigns' => Campaign::count(),
-                'active_campaigns' => Campaign::whereIn('status', ['sending', 'scheduled'])->count(),
-                'total_coupons' => Coupon::count(),
-                'active_coupons' => Coupon::where('is_active', true)
-                    ->where(function ($q) {
-                        $q->whereNull('expires_at')->orWhere('expires_at', '>=', now());
-                    })->count(),
-                'total_referrals' => Referral::count(),
-                'pending_referrals' => Referral::where('status', 'qualified')->count(),
-                'active_promotions' => Promotion::where('starts_at', '<=', now())
-                    ->where('ends_at', '>=', now())->count(),
-                'active_sponsored' => SponsoredListing::where('status', 'active')->count(),
-            ];
-        } catch (\Exception $e) {
-            return [
-                'total_campaigns' => 0,
-                'active_campaigns' => 0,
-                'total_coupons' => 0,
-                'active_coupons' => 0,
-                'total_referrals' => 0,
-                'pending_referrals' => 0,
-                'active_promotions' => 0,
-                'active_sponsored' => 0,
-            ];
-        }
+        return app(MarketingAnalyticsService::class)->getGeneralDashboardStats();
     }
 
     protected function getCampaignStats(): array
@@ -203,37 +177,6 @@ class MarketingDashboard extends Page
 
     protected function getSponsoredStats(): array
     {
-        try {
-            $stats = SponsoredListing::selectRaw('
-                COUNT(*) as total,
-                SUM(CASE WHEN status = "active" THEN 1 ELSE 0 END) as active,
-                SUM(CASE WHEN status = "pending" THEN 1 ELSE 0 END) as pending,
-                SUM(CASE WHEN is_paid = 1 THEN total_budget ELSE 0 END) as total_revenue,
-                SUM(COALESCE(impressions, 0)) as total_impressions,
-                SUM(COALESCE(clicks, 0)) as total_clicks
-            ')->first();
-
-            return [
-                'total' => $stats->total ?? 0,
-                'active' => $stats->active ?? 0,
-                'pending' => $stats->pending ?? 0,
-                'total_revenue' => $stats->total_revenue ?? 0,
-                'total_impressions' => $stats->total_impressions ?? 0,
-                'total_clicks' => $stats->total_clicks ?? 0,
-                'ctr' => ($stats->total_impressions ?? 0) > 0
-                    ? round(($stats->total_clicks / $stats->total_impressions) * 100, 2)
-                    : 0,
-            ];
-        } catch (\Exception $e) {
-            return [
-                'total' => 0,
-                'active' => 0,
-                'pending' => 0,
-                'total_revenue' => 0,
-                'total_impressions' => 0,
-                'total_clicks' => 0,
-                'ctr' => 0,
-            ];
-        }
+        return app(MarketingAnalyticsService::class)->getSponsoredDashboardStats();
     }
 }

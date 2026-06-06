@@ -1,5 +1,5 @@
 <x-app-layout>
-    @section('title', 'Mot de passe oublié - REZI')
+    @section('title', 'Mot de passe oublié - ReziApp')
 
     <div class="min-h-[calc(100vh-64px)] flex">
         {{-- Left Side - Branding (Desktop only) --}}

@@ -1,7 +1,7 @@
 {{-- Composant SEO avec Schema.org Structured Data --}}
 
 @props([
-    'title' => config('app.name', 'REZI'),
+    'title' => config('app.name', 'ReziApp'),
     'description' => 'Trouvez votre résidence meublée idéale',
     'keywords' => 'résidence, meublé, location, appartement, Côte d\'Ivoire, Burkina Faso',
     'image' => null,
@@ -119,7 +119,7 @@
 
 {{-- Geo Tags --}}
 <meta name="geo.region" content="CI-AB">
-<meta name="geo.placename" content="{{ $residence?->commune ?? ($residence?->city ?? 'REZI') }}">
+<meta name="geo.placename" content="{{ $residence?->commune ?? ($residence?->city ?? 'ReziApp') }}">
 @if ($residence && $residence->latitude && $residence->longitude)
     <meta name="geo.position" content="{{ $residence->latitude }};{{ $residence->longitude }}">
     <meta name="ICBM" content="{{ $residence->latitude }}, {{ $residence->longitude }}">
@@ -194,8 +194,3 @@
 </script>
 @endif
 
-{{-- Preconnect pour performance --}}
-<link rel="preconnect" href="https://api.mapbox.com">
-
-{{-- DNS Prefetch --}}
-<link rel="dns-prefetch" href="//api.mapbox.com">

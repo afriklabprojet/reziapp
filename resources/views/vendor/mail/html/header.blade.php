@@ -4,12 +4,12 @@
 <a href="{{ $url }}" style="display: inline-block; text-decoration: none;">
     {{-- Logo image --}}
     <img src="{{ asset('images/logo-rezi.png') }}"
-         alt="REZI"
+         alt="ReziApp"
          height="52"
          width="auto"
          style="display: inline-block; vertical-align: middle; height: 52px; width: auto; border: 0; outline: none; text-decoration: none; max-height: 52px;" />
     {{-- Fallback texte si image non chargée --}}
-    <span style="display: inline-block; vertical-align: middle; margin-left: 10px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 26px; font-weight: 900; color: #f97316; letter-spacing: -1px; line-height: 1;">REZI</span>
+    <span style="display: inline-block; vertical-align: middle; margin-left: 10px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 26px; font-weight: 900; color: #f97316; letter-spacing: -1px; line-height: 1;">ReziApp</span>
 </a>
 </td>
 </tr>

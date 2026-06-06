@@ -1,11 +1,11 @@
-# REZI
+# ReziApp
 
-REZI est une plateforme SaaS de recherche de residences meublees axee sur la localisation. L'experience principale permet a un utilisateur de se geolocaliser, de voir les logements autour de lui sur une carte, puis d'elargir automatiquement le rayon si aucune residence n'est trouvee dans la zone immediate.
+ReziApp est une plateforme SaaS de recherche de residences meublees axee sur la localisation. L'experience principale permet a un utilisateur de se geolocaliser, de voir les logements autour de lui sur une carte, puis d'elargir automatiquement le rayon si aucune residence n'est trouvee dans la zone immediate.
 
 ## Fonctionnalites
 
 - Recherche geolocalisee par rayons configures : 2 km, 5 km, 10 km, 25 km et 50 km.
-- Carte interactive Mapbox avec marqueurs de residences, position utilisateur et rayon actif.
+- Carte interactive Google Maps avec marqueurs de residences, position utilisateur et rayon actif.
 - Liste de residences a proximite synchronisee avec les resultats reels du rayon selectionne.
 - Parcours proprietaire : gestion des annonces, photos, disponibilites et documents.
 - Parcours admin Filament : moderation, utilisateurs, statistiques et parametres plateforme.
@@ -16,7 +16,7 @@ REZI est une plateforme SaaS de recherche de residences meublees axee sur la loc
 - Backend : Laravel 12, PHP 8.2+
 - Frontend : Blade, Tailwind CSS, Alpine.js, Vite
 - Base de donnees : MySQL
-- Cartographie : Mapbox GL JS
+- Cartographie : Google Maps JavaScript API, Leaflet/OpenStreetMap pour certaines vues publiques
 - Admin : Filament
 - Tests : PHPUnit/Laravel testing, Playwright pour les parcours E2E
 
@@ -46,7 +46,7 @@ Application locale : `http://127.0.0.1:8000`
 Variables importantes dans `.env` :
 
 ```env
-APP_NAME=REZI
+APP_NAME=ReziApp
 APP_ENV=local
 APP_DEBUG=true
 APP_URL=http://127.0.0.1:8000
@@ -58,8 +58,10 @@ DB_DATABASE=rezi
 DB_USERNAME=root
 DB_PASSWORD=
 
-MAPBOX_ACCESS_TOKEN=your_mapbox_token
+GOOGLE_MAPS_API_KEY=your_google_maps_key
 ```
+
+Activer au minimum les APIs Google suivantes sur le projet GCP associe : Maps JavaScript API, Places API, Geocoding API, Directions API et Street View Static API.
 
 Les rayons de recherche sont centralises dans `config/rezi.php` :
 
@@ -131,7 +133,7 @@ app/
 resources/
 ├── views/                  # Blade templates
 ├── css/                    # Tailwind CSS
-└── js/                     # Alpine/Mapbox modules
+└── js/                     # Modules Alpine/cartographie
 
 database/
 ├── migrations/

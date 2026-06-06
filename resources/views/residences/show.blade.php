@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $residence->title . ' - REZI')
+@section('title', $residence->title . ' - ReziApp')
 @section('description', Str::limit(strip_tags($residence->description ?? ''), 160))
 
 {{-- SEO: utilise uniquement @section title/description consommés par le layout --}}
@@ -217,7 +217,7 @@
         }
     @endphp
 
-    <div class="bg-white min-h-screen" x-data="residencePage(@js(['totalPhotos' => $totalPhotos, 'title' => $residence->title, 'photoUrls' => $photos->map(fn($p) => storage_url($p->path))->values()->all()]))">
+    <div class="bg-white min-h-screen" x-data="residencePage({{ \Illuminate\Support\Js::encode(['totalPhotos' => $totalPhotos, 'title' => $residence->title, 'photoUrls' => $photos->map(fn($p) => storage_url($p->path))->values()->all()]) }})">
 
         {{-- ═══════════════════════════════════
          Sticky Section Navigation (Airbnb)
@@ -426,8 +426,8 @@
         {{-- ═══════════════════════════════════
          Gallery Lightbox Modal
     ═══════════════════════════════════ --}}
-        <div x-show="galleryOpen" x-transition.opacity class="gallery-modal" @keydown.escape.window="galleryOpen = false"
-            x-cloak role="dialog" aria-modal="true" aria-label="Galerie photos">
+        <dialog x-show="galleryOpen" x-transition.opacity class="gallery-modal" @keydown.escape.window="galleryOpen = false"
+            x-bind:open="galleryOpen" x-cloak aria-label="Galerie photos">
             <button @click="galleryOpen = false"
                 class="absolute top-5 left-5 text-white bg-black/40 hover:bg-black/60 rounded-full p-2.5 transition z-10"
                 aria-label="Fermer">
@@ -456,14 +456,15 @@
                 </svg>
             </button>
             {{-- Single dynamic image (loads only current photo) --}}
-            <img x-bind:src="(photoUrls ?? [])[currentPhoto] ?? ''"
-                 x-bind:alt="'Photo ' + (currentPhoto + 1)"
+              <img alt=""
+                  x-bind:src="(photoUrls ?? [])[currentPhoto] ?? ''"
+                  x-bind:alt="'Visuel ' + (currentPhoto + 1)"
                  x-transition:enter="transition-opacity duration-200"
                  x-transition:enter-start="opacity-0"
                  x-transition:enter-end="opacity-100"
                  class="select-none max-h-full max-w-full object-contain"
                  loading="lazy">
-        </div>
+           </dialog>
 
         {{-- ═══════════════════════════════════
          SECTION 3 — Two-Column Layout
@@ -684,7 +685,7 @@
                     </div>
 
                     {{-- Calendar --}}
-                    <div id="calendrier" class="py-8 border-b border-gray-200" x-data="residenceCalendar(@js(['unavailable' => $unavailableDates ?? []]))">
+                    <div id="calendrier" class="py-8 border-b border-gray-200" x-data="residenceCalendar({{ \Illuminate\Support\Js::encode(['unavailable' => $unavailableDates ?? []]) }})">
                         <h2 class="text-[22px] font-semibold text-gray-900 mb-2">
                             {{ $residence->min_nights ?? 2 }} nuit{{ ($residence->min_nights ?? 2) > 1 ? 's' : '' }}
                             minimum
@@ -788,7 +789,7 @@
                                 </div>
                                 <p class="text-lg font-semibold text-gray-900">Coup de cœur voyageurs</p>
                                 <p class="text-sm text-gray-500 text-center mt-1 max-w-sm">Ce logement fait partie des
-                                    mieux notés sur REZI, d'après les commentaires et évaluations des voyageurs.</p>
+                                    mieux notés sur ReziApp, d'après les commentaires et évaluations des voyageurs.</p>
                             </div>
 
                             @php
@@ -1210,7 +1211,7 @@
                                         <svg class="w-8 h-8 shrink-0 text-rose-400 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
                                         </svg>
-                                        <p class="text-sm text-gray-500 leading-relaxed">Pour protéger votre paiement, ne transférez jamais d'argent et ne communiquez pas en dehors de REZI.</p>
+                                        <p class="text-sm text-gray-500 leading-relaxed">Pour protéger votre paiement, ne transférez jamais d'argent et ne communiquez pas en dehors de ReziApp.</p>
                                     </div>
                                 </div>
 
@@ -1265,7 +1266,7 @@
 
                 {{-- ─── RIGHT COLUMN (Sticky Booking) ─── --}}
                 <div class="hidden lg:block lg:w-92.5 shrink-0">
-                    <div class="booking-card" x-data="bookingForm(@js([
+                    <div class="booking-card" x-data="bookingForm({{ \Illuminate\Support\Js::encode([
     'pricePerNight' => $pricePerNight,
     'pricePerWeek' => $residence->price_per_week ?? 0,
     'pricePerMonth' => $residence->price_per_month ?? 0,
@@ -1278,7 +1279,7 @@
     'cleaningFee' => $residence->cleaning_fee ?? 0,
     'stateTax' => (int) config('rezi.pricing.state_tax', 1000),
     'isAuthenticated' => auth()->check(),
-]))">
+]) }})">
 
                         {{-- Prix principal --}}
                         <div class="flex items-baseline gap-1.5 mb-1">
@@ -1354,11 +1355,12 @@
 
                                 {{-- Voyageurs --}}
                                 <div class="border-t border-gray-300 relative">
-                                    <div class="p-3 cursor-pointer hover:bg-gray-50 transition-colors"
-                                        @click="showGuestPicker = !showGuestPicker" x-ref="guestTrigger"
-                                        role="button" aria-expanded="showGuestPicker" aria-labelledby="label-voyageurs">
-                                        <label id="label-voyageurs"
-                                            class="block text-xs font-bold uppercase tracking-wider text-gray-700 pointer-events-none">Voyageurs</label>
+                                    <button type="button" class="w-full p-3 text-left cursor-pointer hover:bg-gray-50 transition-colors"
+                                        @click="showGuestPicker = !showGuestPicker" @keydown.enter.prevent="showGuestPicker = !showGuestPicker"
+                                        @keydown.space.prevent="showGuestPicker = !showGuestPicker" x-ref="guestTrigger"
+                                        :aria-expanded="showGuestPicker" aria-labelledby="label-voyageurs">
+                                        <span id="label-voyageurs"
+                                            class="block text-xs font-bold uppercase tracking-wider text-gray-700">Voyageurs</span>
                                         <div class="flex items-center justify-between mt-0.5">
                                             <span class="text-sm text-gray-900 font-medium" x-text="guestLabel"></span>
                                             <svg aria-hidden="true" class="w-4 h-4 text-gray-500 transition-transform"
@@ -1368,7 +1370,7 @@
                                                     d="M19 9l-7 7-7-7" />
                                             </svg>
                                         </div>
-                                    </div>
+                                    </button>
                                     <input type="hidden" name="guests" :value="totalGuests">
 
                                     {{-- Guest Picker Dropdown --}}
@@ -1646,7 +1648,7 @@
                                 <template x-if="!reportSent">
                                     <div>
                                         <h3 class="text-lg font-bold text-gray-900 mb-1">Signaler cette annonce</h3>
-                                        <p class="text-sm text-gray-500 mb-4">Aidez-nous à garder REZI sûr. Décrivez le problème rencontré.</p>
+                                        <p class="text-sm text-gray-500 mb-4">Aidez-nous à garder ReziApp sûr. Décrivez le problème rencontré.</p>
 
                                         <form method="POST" action="{{ route('residences.report', $residence) }}"
                                             @submit.prevent="
@@ -1754,7 +1756,7 @@
         {{-- ═══════════════════════════════════
          Mobile Bottom Bar
     ═══════════════════════════════════ --}}
-        <div x-data="stickyBookingBar(@js(['bookingBaseUrl' => route('bookings.create', $residence)]))"
+        <div x-data="stickyBookingBar({{ \Illuminate\Support\Js::encode(['bookingBaseUrl' => route('bookings.create', $residence)]) }})"
             x-show="showBar"
             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-y-full opacity-0"
             x-transition:enter-end="translate-y-0 opacity-100" x-transition:leave="transition ease-in duration-200"
@@ -1799,10 +1801,6 @@
 @push('scripts')
     @php($cspNonce = \Illuminate\Support\Facades\Vite::cspNonce())
     @if ($residence->latitude && $residence->longitude)
-        {{-- Mapbox GL for isochrone/maps widgets --}}
-        <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet" />
-        <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
-
         @vite('resources/js/leaflet.js')
         <script nonce="{{ $cspNonce }}">
             document.addEventListener('DOMContentLoaded', function() {
@@ -1948,76 +1946,76 @@
                     },
                     renderMap(geojson) {
                         const container = this.$refs.isochroneMap;
-                        if (!container || !window.mapboxgl) return;
+                        if (!container || !globalThis.google?.maps) return;
 
-                        const token = '{{ config('services.mapbox.access_token') }}';
-                        if (!token) return;
+                        if (this.map) {
+                            this.polygons?.forEach((polygon) => polygon.setMap(null));
+                        }
 
-                        mapboxgl.accessToken = token;
-
-                        if (this.map) { this.map.remove(); }
-
-                        this.map = new mapboxgl.Map({
+                        this.map = new google.maps.Map(container, {
                             container: container,
-                            style: 'mapbox://styles/mapbox/light-v11',
-                            center: [{{ $residence->longitude }}, {{ $residence->latitude }}],
+                            center: { lat: {{ $residence->latitude }}, lng: {{ $residence->longitude }} },
                             zoom: 13,
-                            attributionControl: false,
+                            disableDefaultUI: true,
+                            streetViewControl: false,
+                            fullscreenControl: false,
+                            mapTypeControl: false,
                         });
 
                         const colors = ['#ef4444', '#eab308', '#22c55e']; // 15min, 10min, 5min (reverse order for layering)
+                        this.polygons = [];
+                        const bounds = new google.maps.LatLngBounds();
 
-                        this.map.on('load', () => {
-                            // Add marker for residence
-                            new mapboxgl.Marker({ color: '#F16A00' })
-                                .setLngLat([{{ $residence->longitude }}, {{ $residence->latitude }}])
-                                .addTo(this.map);
-
-                            if (geojson && geojson.features) {
-                                // Reverse so largest (15min) is drawn first
-                                const features = [...geojson.features].reverse();
-                                features.forEach((feature, idx) => {
-                                    const id = `iso-${idx}`;
-                                    this.map.addSource(id, { type: 'geojson', data: feature });
-                                    this.map.addLayer({
-                                        id: id,
-                                        type: 'fill',
-                                        source: id,
-                                        paint: {
-                                            'fill-color': colors[idx] || '#888',
-                                            'fill-opacity': 0.2,
-                                        }
-                                    });
-                                    this.map.addLayer({
-                                        id: id + '-line',
-                                        type: 'line',
-                                        source: id,
-                                        paint: {
-                                            'line-color': colors[idx] || '#888',
-                                            'line-width': 1.5,
-                                            'line-opacity': 0.6,
-                                        }
-                                    });
-                                });
-
-                                // Fit bounds
-                                const bounds = new mapboxgl.LngLatBounds();
-                                features.forEach(f => {
-                                    if (f.geometry && f.geometry.coordinates) {
-                                        f.geometry.coordinates.flat(2).forEach(c => {
-                                            if (Array.isArray(c) && c.length === 2) bounds.extend(c);
-                                        });
-                                    }
-                                });
-                                if (!bounds.isEmpty()) {
-                                    this.map.fitBounds(bounds, { padding: 30 });
-                                }
-                            }
+                        new google.maps.Marker({
+                            position: { lat: {{ $residence->latitude }}, lng: {{ $residence->longitude }} },
+                            map: this.map,
+                            title: @js($residence->name),
                         });
+
+                        if (!geojson?.features) return;
+
+                        const features = [...geojson.features].reverse();
+                        features.forEach((feature, idx) => {
+                            const geometry = feature.geometry || {};
+                            const polygonSets = geometry.type === 'MultiPolygon'
+                                ? geometry.coordinates
+                                : [geometry.coordinates];
+
+                            polygonSets.forEach((polygonSet) => {
+                                const outerRing = polygonSet?.[0] || [];
+                                const path = outerRing.map(([lng, lat]) => {
+                                    const point = { lat, lng };
+                                    bounds.extend(point);
+                                    return point;
+                                });
+
+                                if (!path.length) return;
+
+                                const polygon = new google.maps.Polygon({
+                                    paths: path,
+                                    strokeColor: colors[idx] || '#888',
+                                    strokeOpacity: 0.6,
+                                    strokeWeight: 1.5,
+                                    fillColor: colors[idx] || '#888',
+                                    fillOpacity: 0.2,
+                                    map: this.map,
+                                });
+
+                                this.polygons.push(polygon);
+                            });
+                        });
+
+                        if (!bounds.isEmpty()) {
+                            this.map.fitBounds(bounds, 30);
+                        }
                     }
                 };
             }
         </script>
+    @endif
+
+    @if ($residence->latitude && $residence->longitude)
+        <x-google-maps-loader />
     @endif
 
     {{-- Sticky Section Navigation Alpine component --}}

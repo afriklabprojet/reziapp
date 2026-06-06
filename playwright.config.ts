@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Configuration Playwright pour REZI
+ * Configuration Playwright pour ReziApp
  * App URL : http://localhost:8000 (php artisan serve)
  *
  * Pour lancer :

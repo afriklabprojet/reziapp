@@ -10,6 +10,7 @@ use App\Services\NotificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class NotificationController extends Controller
@@ -172,6 +173,12 @@ class NotificationController extends Controller
             'keys.auth' => 'required|string',
         ]);
 
+        if (! $this->getNotificationService()->isAllowedPushEndpoint($validated['endpoint'])) {
+            throw ValidationException::withMessages([
+                'endpoint' => 'Endpoint push non autorisé.',
+            ]);
+        }
+
         $subscription = $this->getNotificationService()->subscribePush(
             Auth::user(),
             $validated,
@@ -261,7 +268,7 @@ class NotificationController extends Controller
         $this->getNotificationService()->sendSystemNotification(
             Auth::user(),
             'Test de notification',
-            'Ceci est un test de notification REZI.',
+            'Ceci est un test de notification ReziApp.',
             ['test' => true],
         );
 
@@ -275,7 +282,7 @@ class NotificationController extends Controller
     {
         $this->getNotificationService()->sendSystemNotification(
             Auth::user(),
-            'Test Push REZI 🔔',
+            'Test Push ReziApp 🔔',
             'Les notifications push fonctionnent correctement !',
             ['url' => route('notifications.index'), 'test' => true],
         );

@@ -1,4 +1,4 @@
-# Audit Pré-Production REZI — Rapport & Checklist
+# Audit Pré-Production ReziApp — Rapport & Checklist
 
 > Généré lors de l'audit sévère avant déploiement en production.
 > **Date** : Juin 2025 | **Auditeur** : GitHub Copilot (Claude Sonnet 4.6)
@@ -95,7 +95,7 @@ SESSION_DRIVER=redis
 | CVE-2026-40194 | Low | Variable-time HMAC comparison dans SSH2 |
 | CVE-2026-32935 | High | AES-CBC padding oracle timing attack |
 
-**Vecteur** : Ces vulnérabilités sont dans SSH/crypto de phpseclib, utilisé comme dépendance transitive. REZI n'expose pas de service SSH public. **Risque réel : faible** — surveiller la sortie d'un patch.
+**Vecteur** : Ces vulnérabilités sont dans SSH/crypto de phpseclib, utilisé comme dépendance transitive. ReziApp n'expose pas de service SSH public. **Risque réel : faible** — surveiller la sortie d'un patch.
 
 ---
 
@@ -183,7 +183,7 @@ chmod -R 755 storage bootstrap/cache
 ## Variables .env minimales pour prod
 
 ```env
-APP_NAME="REZI"
+APP_NAME="ReziApp"
 APP_ENV=production
 APP_DEBUG=false
 APP_URL=https://reziapp.ci

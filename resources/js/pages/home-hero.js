@@ -3,11 +3,11 @@
  * Extracted from resources/views/home.blade.php for @alpinejs/csp compatibility.
  *
  * Usage in Blade:
- *   x-data="homeHero(@js(['communes' => ..., 'mapboxToken' => ..., ...]))"
+ *   x-data="homeHero({...})"
  */
 export default function homeHero(config = {}) {
     return {
-        radius: 500,
+        radius: Number(config.defaultRadius || 2000),
         gpsState: 'prompt',
         showResidences: false,
         activeSlide: 0,
@@ -19,21 +19,63 @@ export default function homeHero(config = {}) {
         radiusCounts: { 500: 0, 2000: 0, 5000: 0 },
         gpsAccuracy: null,
         heroMap: null,
+        heroMarkers: [],
+        userMarker: null,
         heroExpanded: true,
+        googleMapsRetryCount: 0,
+        googleMapsLoaderCallback: null,
+        googleMapsLoaderCallbackRegistered: false,
+        autoExpandedRadius: null,
+        nearbyLoading: false,
+        nearbyError: '',
+        nearbyResidences: [],
 
         communes: config.communes || [],
         featuredResidences: config.featuredResidences || [],
-        mapboxToken: config.mapboxToken || '',
         residencesIndexUrl: config.residencesIndexUrl || '/residences',
         residencesMapUrl: config.residencesMapUrl || '/residences/map',
         radiusCountsUrl: config.radiusCountsUrl || '/api/v1/geo/radius-counts',
+        nearbyUrl: config.nearbyUrl || '/api/v1/geo/nearby',
+
+        init() {
+            this.waitAndInitMap();
+
+            this.$watch('gpsState', (state) => {
+                if (state === 'success') {
+                    this.flyToUser();
+                }
+            });
+        },
 
         waitAndInitMap() {
-            if (window.mapboxgl) {
+            if (globalThis.google?.maps) {
+                this.googleMapsRetryCount = 0;
                 this.initHeroMap();
-            } else {
+                return;
+            }
+
+            this.registerGoogleMapsLoaderCallback();
+
+            if (this.googleMapsRetryCount < 100) {
+                this.googleMapsRetryCount += 1;
                 setTimeout(() => this.waitAndInitMap(), 100);
             }
+        },
+
+        registerGoogleMapsLoaderCallback() {
+            if (this.googleMapsLoaderCallbackRegistered || !Array.isArray(globalThis.__googleMapsCallbacks)) {
+                return;
+            }
+
+            if (!this.googleMapsLoaderCallback) {
+                this.googleMapsLoaderCallback = () => {
+                    this.googleMapsRetryCount = 0;
+                    this.waitAndInitMap();
+                };
+            }
+
+            globalThis.__googleMapsCallbacks.push(this.googleMapsLoaderCallback);
+            this.googleMapsLoaderCallbackRegistered = true;
         },
 
         startGeoloc() {
@@ -88,9 +130,130 @@ export default function homeHero(config = {}) {
             return this.residencesMapUrl;
         },
 
+        effectiveRadius() {
+            const activeCount = this.radiusCounts[this.radius] ?? 0;
+
+            if (activeCount > 0 || !this.autoExpandedRadius) {
+                return this.radius;
+            }
+
+            return this.autoExpandedRadius;
+        },
+
+        radiusLabel(radius = this.effectiveRadius()) {
+            const normalizedRadius = Number(radius);
+
+            if (normalizedRadius < 1000) {
+                return `${normalizedRadius} m`;
+            }
+
+            const kilometers = normalizedRadius / 1000;
+
+            if (Number.isInteger(kilometers)) {
+                return `${kilometers} km`;
+            }
+
+            return `${kilometers.toFixed(1)} km`;
+        },
+
+        radiusNotice() {
+            if (!this.autoExpandedRadius || this.autoExpandedRadius === this.radius) {
+                return '';
+            }
+
+            return `Aucun logement disponible dans ${this.radiusLabel(this.radius)}. Recherche élargie automatiquement à ${this.radiusLabel(this.autoExpandedRadius)}.`;
+        },
+
+        updateRadiusState() {
+            const activeCount = this.radiusCounts[this.radius] ?? 0;
+            const orderedRadii = Object.keys(this.radiusCounts)
+                .map(Number)
+                .sort((left, right) => left - right);
+
+            this.autoExpandedRadius = null;
+
+            if (activeCount === 0) {
+                this.autoExpandedRadius = orderedRadii.find((candidate) => {
+                    if (candidate <= this.radius) {
+                        return false;
+                    }
+
+                    return (this.radiusCounts[candidate] ?? 0) > 0;
+                }) || null;
+            }
+
+            this.resultsCount = this.radiusCounts[this.effectiveRadius()] ?? 0;
+        },
+
         setRadius(r) {
-            this.radius = r;
-            this.resultsCount = this.radiusCounts[r] ?? 0;
+            this.radius = Number(r);
+            this.updateRadiusState();
+
+            if (this.userLocation) {
+                this.fetchNearbyResidences();
+            }
+        },
+
+        async fetchNearbyResidences() {
+            if (!this.userLocation) {
+                return;
+            }
+
+            const effectiveRadius = this.effectiveRadius();
+
+            if ((this.radiusCounts[effectiveRadius] ?? 0) === 0) {
+                this.nearbyResidences = [];
+                this.nearbyLoading = false;
+                this.nearbyError = '';
+                return;
+            }
+
+            this.nearbyLoading = true;
+            this.nearbyError = '';
+
+            try {
+                const params = new URLSearchParams({
+                    latitude: String(this.userLocation.lat),
+                    longitude: String(this.userLocation.lng),
+                    radius: String(effectiveRadius),
+                    limit: '8',
+                });
+                const response = await fetch(`${this.nearbyUrl}?${params.toString()}`);
+                const payload = await response.json();
+
+                if (!response.ok || !payload.success) {
+                    this.nearbyResidences = [];
+                    this.nearbyError = payload.message || 'Impossible de charger les résidences proches.';
+                    return;
+                }
+
+                this.nearbyResidences = payload.data || [];
+
+                if (this.nearbyResidences.length === 0) {
+                    this.nearbyError = `Aucune résidence disponible dans ${this.radiusLabel(effectiveRadius)}.`;
+                }
+            } catch {
+                this.nearbyResidences = [];
+                this.nearbyError = 'Impossible de charger les résidences proches pour le moment.';
+            } finally {
+                this.nearbyLoading = false;
+            }
+        },
+
+        nearbyResidenceUrl(residence) {
+            return residence?.urls?.show || this.residencesIndexUrl;
+        },
+
+        nearbyResidencePrice(residence) {
+            return residence?.price_formatted || 'Prix sur demande';
+        },
+
+        nearbyResidenceLocation(residence) {
+            const commune = residence?.location?.commune;
+            const quartier = residence?.location?.quartier;
+            const city = residence?.location?.city;
+
+            return [quartier, commune, city].filter(Boolean).join(', ');
         },
 
         async fetchRadiusCounts() {
@@ -106,9 +269,11 @@ export default function homeHero(config = {}) {
                     json.data.forEach(item => {
                         this.radiusCounts[item.radius] = item.count;
                     });
-                    this.resultsCount = this.radiusCounts[this.radius] ?? 0;
+
+                    this.updateRadiusState();
                     this.gpsState = 'success';
                     this.showResidences = true;
+                    await this.fetchNearbyResidences();
                     setTimeout(() => { this.heroExpanded = false; }, 2000);
                 } else {
                     this.gpsState = 'search';
@@ -122,7 +287,7 @@ export default function homeHero(config = {}) {
 
         searchByCommune() {
             if (this.selectedCommune) {
-                window.location.href = this.residencesIndexUrl + '?commune=' + encodeURIComponent(this.selectedCommune);
+                globalThis.location.href = this.residencesIndexUrl + '?commune=' + encodeURIComponent(this.selectedCommune);
             }
         },
 
@@ -144,8 +309,7 @@ export default function homeHero(config = {}) {
 
         async initHeroMap() {
             if (this.heroMap) return;
-            const token = this.mapboxToken;
-            if (!token || !window.mapboxgl) return;
+            if (!globalThis.google?.maps) return;
 
             await this.$nextTick();
 
@@ -155,92 +319,85 @@ export default function homeHero(config = {}) {
                 return;
             }
 
-            window.mapboxgl.accessToken = token;
-            const defaultCenter = [-3.9962, 5.3600];
-            this.heroMap = new window.mapboxgl.Map({
-                container,
-                style: 'mapbox://styles/mapbox/streets-v12',
-                center: this.userLocation
-                    ? [this.userLocation.lng, this.userLocation.lat]
-                    : defaultCenter,
+            const defaultCenter = { lat: 5.36, lng: -3.9962 };
+            this.heroMap = new globalThis.google.maps.Map(container, {
+                center: this.userLocation || defaultCenter,
                 zoom: this.userLocation ? 13 : 11,
-                interactive: false,
-                attributionControl: false,
+                disableDefaultUI: true,
+                gestureHandling: 'none',
+                clickableIcons: false,
+                streetViewControl: false,
+                fullscreenControl: false,
+                mapTypeControl: false,
             });
 
-            this.heroMap.on('load', () => {
-                this.heroMap.resize();
-                if (this.userLocation) {
-                    this.addHeroMarkers();
-                }
-                setTimeout(() => this.heroMap && this.heroMap.resize(), 500);
-            });
+            this.addHeroMarkers();
         },
 
         flyToUser() {
             if (!this.heroMap || !this.userLocation) return;
-            this.heroMap.flyTo({
-                center: [this.userLocation.lng, this.userLocation.lat],
-                zoom: 13,
-                duration: 2000,
-                essential: true,
-            });
+            this.heroMap.panTo(this.userLocation);
+            this.heroMap.setZoom(13);
             this.addHeroMarkers();
         },
 
-        _buildPriceMarkerEl(price) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'pointer-events-none';
+        _buildPriceMarkerIcon(price) {
+            const safePrice = String(price || '—');
+            const width = Math.max(56, safePrice.length * 9 + 18);
+            const height = 34;
+            const svg = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+                    <rect x="1" y="1" width="${width - 2}" height="24" rx="12" fill="#ff385c" />
+                    <path d="M${width / 2 - 6} 24 L${width / 2} 32 L${width / 2 + 6} 24 Z" fill="#ff385c" />
+                    <text x="${width / 2}" y="16" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">${safePrice}</text>
+                </svg>`;
 
-            const badge = document.createElement('div');
-            badge.className = 'bg-[#ff385c] text-white px-2 py-1 rounded-lg text-xs font-bold shadow-lg whitespace-nowrap';
-
-            const priceText = document.createTextNode(price);
-            const unitSpan = document.createElement('span');
-            unitSpan.className = 'font-normal text-white/80';
-            unitSpan.textContent = '/j';
-
-            badge.appendChild(priceText);
-            badge.appendChild(unitSpan);
-
-            const dot = document.createElement('div');
-            dot.className = 'w-2 h-2 bg-[#ff4d6d] rounded-full mx-auto mt-0.5 shadow';
-
-            wrapper.appendChild(badge);
-            wrapper.appendChild(dot);
-            return wrapper;
+            return {
+                url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`,
+                scaledSize: new globalThis.google.maps.Size(width, height),
+                anchor: new globalThis.google.maps.Point(width / 2, height),
+            };
         },
 
-        _buildUserMarkerEl() {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'relative pointer-events-none';
+        clearHeroMarkers() {
+            this.heroMarkers.forEach((marker) => marker.setMap(null));
+            this.heroMarkers = [];
 
-            const circle = document.createElement('div');
-            circle.className = 'w-5 h-5 bg-blue-600 rounded-full border-3 border-white shadow-xl';
-
-            const ping = document.createElement('div');
-            ping.className = 'absolute inset-0 w-5 h-5 bg-blue-500 rounded-full animate-ping opacity-50';
-
-            wrapper.appendChild(circle);
-            wrapper.appendChild(ping);
-            return wrapper;
+            if (this.userMarker) {
+                this.userMarker.setMap(null);
+                this.userMarker = null;
+            }
         },
 
         addHeroMarkers() {
             if (!this.heroMap || !this.userLocation) return;
 
+            this.clearHeroMarkers();
+
             this.featuredResidences.forEach(r => {
                 if (!r.lat || !r.lng) return;
-                const el = this._buildPriceMarkerEl(r.price);
-                new window.mapboxgl.Marker({ element: el, anchor: 'bottom' })
-                    .setLngLat([r.lng, r.lat])
-                    .addTo(this.heroMap);
+                const marker = new globalThis.google.maps.Marker({
+                    position: { lat: r.lat, lng: r.lng },
+                    map: this.heroMap,
+                    icon: this._buildPriceMarkerIcon(r.price),
+                    title: r.name || 'Résidence',
+                });
+                this.heroMarkers.push(marker);
             });
 
-            const userEl = this._buildUserMarkerEl();
-            new window.mapboxgl.Marker({ element: userEl })
-                .setLngLat([this.userLocation.lng, this.userLocation.lat])
-                .addTo(this.heroMap);
+            this.userMarker = new globalThis.google.maps.Marker({
+                position: this.userLocation,
+                map: this.heroMap,
+                title: 'Votre position',
+                icon: {
+                    path: globalThis.google.maps.SymbolPath.CIRCLE,
+                    scale: 8,
+                    fillColor: '#2563eb',
+                    fillOpacity: 1,
+                    strokeColor: '#ffffff',
+                    strokeWeight: 3,
+                },
+            });
         },
     };
 }

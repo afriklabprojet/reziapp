@@ -1,6 +1,6 @@
 ---
 version: alpha
-name: REZI Orange
+name: ReziApp Orange
 description: A bold residential marketplace anchored on a high-contrast system: pure white canvas, deep black typography, controlled dark gray for secondary copy, and a single vivid orange (#F16A00) for every primary action. The interface should feel direct, legible, and practical rather than ornamental. Rounded cards and pill actions remain, but the identity is now driven by contrast and warmth instead of pink gradients.
 
 colors:
@@ -328,7 +328,7 @@ components:
 
 ## Overview
 
-REZI uses a direct, high-contrast marketplace language. The base canvas is **pure white** (`{colors.canvas}` — #FFFFFF), headlines and primary labels use deep black (`{colors.ink}` — #0F0F0F), secondary copy uses dark gray (`{colors.body}` — #555555), and a single accent of **orange principal** (`{colors.primary}` — #F16A00) carries every important action: CTA backgrounds, interactive highlights, active states, and key wayfinding moments.
+ReziApp uses a direct, high-contrast marketplace language. The base canvas is **pure white** (`{colors.canvas}` — #FFFFFF), headlines and primary labels use deep black (`{colors.ink}` — #0F0F0F), secondary copy uses dark gray (`{colors.body}` — #555555), and a single accent of **orange principal** (`{colors.primary}` — #F16A00) carries every important action: CTA backgrounds, interactive highlights, active states, and key wayfinding moments.
 
 Type runs **Plus Jakarta Sans** with Circular and the system stack as fallbacks. Headlines stay compact and readable, with visual emphasis coming from contrast, spacing, and imagery instead of oversized display weights.
 

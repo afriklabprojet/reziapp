@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', $residence->name . ' - REZI')
+@section('title', $residence->name . ' - ReziApp')
 
 @section('owner-content')
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -111,7 +111,7 @@
                         <!-- Photo principale -->
                         <div class="relative h-80 bg-gray-200 rounded-lg overflow-hidden mb-4">
                             @foreach ($residence->photos as $index => $photo)
-                                <img loading="lazy" src="{{ storage_url($photo->path) }}" alt="Photo {{ $index + 1 }}"
+                                <img loading="lazy" src="{{ storage_url($photo->path) }}" alt="Visuel {{ $index + 1 }}"
                                     class="w-full h-full object-cover transition-opacity duration-300"
                                     x-show="activePhoto === {{ $index }}">
                             @endforeach
@@ -206,28 +206,17 @@
                         </p>
                     </div>
                     @if($residence->latitude && $residence->longitude)
-                        <div id="residence-map" class="h-64 rounded-lg overflow-hidden"></div>
-                        <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet">
-                        <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
-                        <style>.mapboxgl-ctrl-logo,.mapboxgl-ctrl-attrib{display:none!important;}</style>
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                if (!window.mapboxgl) return;
-                                mapboxgl.accessToken = @js(config('services.mapbox.access_token'));
-                                var map = new mapboxgl.Map({
-                                    container: 'residence-map',
-                                    style: 'mapbox://styles/mapbox/streets-v12',
-                                    center: [{{ $residence->longitude }}, {{ $residence->latitude }}],
-                                    zoom: 15,
-                                    interactive: true
-                                });
-                                map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-                                new mapboxgl.Marker({ color: '#3B82F6' })
-                                    .setLngLat([{{ $residence->longitude }}, {{ $residence->latitude }}])
-                                    .setPopup(new mapboxgl.Popup().setHTML('<strong>{{ addslashes($residence->name) }}</strong><br>{{ addslashes($residence->address) }}'))
-                                    .addTo(map);
-                            });
-                        </script>
+                        <div
+                            x-data="ownerResidenceMap({{ \Illuminate\Support\Js::encode([
+                                'lat' => (float) $residence->latitude,
+                                'lng' => (float) $residence->longitude,
+                                'title' => $residence->name,
+                                'address' => $residence->address,
+                            ]) }})"
+                            x-init="init()"
+                        >
+                            <div id="residence-map" x-ref="map" class="h-64 rounded-lg overflow-hidden"></div>
+                        </div>
                     @else
                         <div class="h-64 bg-gray-200 rounded-lg flex items-center justify-center">
                             <p class="text-gray-500">Coordonnées GPS non renseignées</p>
@@ -466,3 +455,5 @@
         </div>
     </div>
 @endsection
+
+<x-google-maps-loader stack="owner-scripts" />

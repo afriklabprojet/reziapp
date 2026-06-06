@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Commission REZI - REZI')
+@section('title', 'Commission ReziApp - ReziApp')
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -18,7 +18,7 @@
                 <span class="inline-flex rounded-full border border-orange-300/30 bg-orange-400/10 px-4 py-1 text-sm font-semibold text-orange-200">
                     Aucun abonnement mensuel
                 </span>
-                <h1 class="mt-4 text-3xl font-bold sm:text-4xl">REZI prélève {{ rtrim(rtrim(number_format($commissionRate, 2, ',', ' '), '0'), ',') }}% sur chaque réservation propriétaire</h1>
+                <h1 class="mt-4 text-3xl font-bold sm:text-4xl">ReziApp prélève {{ rtrim(rtrim(number_format($commissionRate, 2, ',', ' '), '0'), ',') }}% sur chaque réservation propriétaire</h1>
                 <p class="mt-3 text-base text-white/75 sm:text-lg">
                     Le modèle économique est simple: pas d'abonnement SaaS, pas de forfait annuel, pas de plan à choisir. La plateforme retient uniquement une commission sur le montant total encaissé pour chaque réservation confirmée.
                 </p>
@@ -28,7 +28,7 @@
                 <p class="mt-2 text-2xl font-bold">{{ number_format($exampleBookingAmount, 0, ',', ' ') }} FCFA</p>
                 <p class="text-sm text-white/70">montant total réservation</p>
                 <div class="mt-3 h-px bg-white/10"></div>
-                <p class="mt-3 text-lg font-semibold text-orange-200">Commission REZI: {{ number_format($exampleCommissionAmount, 0, ',', ' ') }} FCFA</p>
+                <p class="mt-3 text-lg font-semibold text-orange-200">Commission ReziApp: {{ number_format($exampleCommissionAmount, 0, ',', ' ') }} FCFA</p>
             </div>
         </div>
     </div>
@@ -43,7 +43,7 @@
             <p class="mt-2 text-3xl font-bold text-gray-900">{{ number_format($totalReservationVolume, 0, ',', ' ') }} FCFA</p>
         </div>
         <div class="rounded-2xl border border-orange-200 bg-orange-50 p-5 shadow-sm">
-            <p class="text-sm font-medium text-orange-700">Commission REZI</p>
+            <p class="text-sm font-medium text-orange-700">Commission ReziApp</p>
             <p class="mt-2 text-3xl font-bold text-orange-900">{{ number_format($totalCommission, 0, ',', ' ') }} FCFA</p>
         </div>
         <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
@@ -57,7 +57,7 @@
             <div class="flex items-center justify-between gap-4">
                 <div>
                     <h2 class="text-xl font-bold text-gray-900">Dernières commissions calculées</h2>
-                    <p class="mt-1 text-sm text-gray-500">Chaque ligne reprend le montant total de la réservation et la retenue REZI appliquée côté propriétaire.</p>
+                    <p class="mt-1 text-sm text-gray-500">Chaque ligne reprend le montant total de la réservation et la retenue ReziApp appliquée côté propriétaire.</p>
                 </div>
                 <a href="{{ route('owner.marketing.subscriptions.history') }}" class="btn-secondary">Voir tout</a>
             </div>
@@ -101,7 +101,7 @@
                 </li>
                 <li class="flex gap-3">
                     <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-orange-500 text-xs font-bold text-white">2</span>
-                    <span>REZI retient {{ rtrim(rtrim(number_format($commissionRate, 2, ',', ' '), '0'), ',') }}% du montant total de la réservation, côté propriétaire.</span>
+                    <span>ReziApp retient {{ rtrim(rtrim(number_format($commissionRate, 2, ',', ' '), '0'), ',') }}% du montant total de la réservation, côté propriétaire.</span>
                 </li>
                 <li class="flex gap-3">
                     <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-xs font-bold text-white">3</span>
@@ -111,7 +111,7 @@
 
             <div class="mt-6 rounded-2xl bg-gray-50 p-4">
                 <p class="text-sm font-semibold text-gray-900">Important</p>
-                <p class="mt-2 text-sm text-gray-600">Il n'existe plus de plan mensuel, annuel ou formule d'abonnement à souscrire sur REZI pour les propriétaires.</p>
+                <p class="mt-2 text-sm text-gray-600">Il n'existe plus de plan mensuel, annuel ou formule d'abonnement à souscrire sur ReziApp pour les propriétaires.</p>
             </div>
 
             <a href="{{ route('owner.earnings.index') }}" class="btn-primary mt-6 w-full justify-center">Ouvrir mes revenus</a>

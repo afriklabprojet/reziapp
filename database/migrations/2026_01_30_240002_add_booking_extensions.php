@@ -236,7 +236,7 @@ return new class () extends Migration {
         $codes = [
             [
                 'code' => 'BIENVENUE10',
-                'name' => 'Bienvenue sur REZI',
+                'name' => 'Bienvenue sur ReziApp',
                 'description' => '10% de réduction pour votre première réservation',
                 'type' => 'percentage',
                 'value' => 10,
@@ -250,7 +250,7 @@ return new class () extends Migration {
                 'updated_at' => now(),
             ],
             [
-                'code' => 'REZI2026',
+                'code' => 'ReziApp2026',
                 'name' => 'Offre 2026',
                 'description' => '15% de réduction',
                 'type' => 'percentage',

@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Tableau de performance — REZI')
+@section('title', 'Tableau de performance — ReziApp')
 
 @section('owner-content')
 <div class="space-y-6">

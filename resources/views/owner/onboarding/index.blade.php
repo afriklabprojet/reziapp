@@ -1,11 +1,11 @@
 @extends('layouts.owner')
 
-@section('title', 'Démarrage — REZI')
+@section('title', 'Démarrage — ReziApp')
 
 @section('owner-content')
 <div class="space-y-6">
     <div>
-        <h1 class="text-2xl font-bold text-gray-900">Bienvenue sur REZI 🎉</h1>
+        <h1 class="text-2xl font-bold text-gray-900">Bienvenue sur ReziApp 🎉</h1>
         <p class="text-sm text-gray-500 mt-1">Complétez ces étapes pour optimiser vos chances de réservation</p>
     </div>
 

@@ -193,90 +193,13 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function configureRateLimiting(): void
     {
-        // Limite pour l'API générale
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
-        });
+        foreach ($this->userAwareRateLimits() as [$name, $method, $maxAttempts]) {
+            $this->registerUserAwareLimiter($name, $method, $maxAttempts);
+        }
 
-        // Limite pour les recherches géolocalisées (plus permissive)
-        RateLimiter::for('geo-search', function (Request $request) {
-            return Limit::perMinute(120)->by($request->user()?->id ?: $request->ip());
-        });
-
-        // Limite stricte pour la création de contacts (anti-spam)
-        RateLimiter::for('contact', function (Request $request) {
-            return Limit::perHour(10)->by($request->user()?->id ?: $request->ip());
-        });
-
-        // Limite pour l'authentification (anti-brute force)
-        RateLimiter::for('login', function (Request $request) {
-            return Limit::perMinute(5)->by($request->ip());
-        });
-
-        // Limite pour l'inscription
-        RateLimiter::for('register', function (Request $request) {
-            return Limit::perHour(3)->by($request->ip());
-        });
-
-        // Limite pour l'upload de photos
-        RateLimiter::for('upload', function (Request $request) {
-            return Limit::perMinute(20)->by($request->user()?->id ?: $request->ip());
-        });
-
-        // Limite pour les réservations (anti-fraude)
-        RateLimiter::for('booking', function (Request $request) {
-            return Limit::perHour(10)->by($request->user()?->id ?: $request->ip());
-        });
-
-        // Limite pour les avis (anti-spam)
-        RateLimiter::for('review', function (Request $request) {
-            return Limit::perDay(5)->by($request->user()?->id ?: $request->ip());
-        });
-
-        // Limite pour les signalements
-        RateLimiter::for('report', function (Request $request) {
-            return Limit::perHour(5)->by($request->user()?->id ?: $request->ip());
-        });
-
-        // Limite pour les webhooks externes
-        RateLimiter::for('webhook', function (Request $request) {
-            return Limit::perMinute(100)->by($request->ip());
-        });
-
-        // Limite pour les exports de données
-        RateLimiter::for('export', function (Request $request) {
-            return Limit::perHour(10)->by($request->user()?->id ?: $request->ip());
-        });
-
-        // Limite pour les notifications push
-        RateLimiter::for('push', function (Request $request) {
-            return Limit::perMinute(30)->by($request->user()?->id ?: $request->ip());
-        });
-
-        // Limite pour les messages chat
-        RateLimiter::for('chat', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
-        });
-
-        // Limite pour la création de résidences
-        RateLimiter::for('residence-create', function (Request $request) {
-            return Limit::perDay(5)->by($request->user()?->id ?: $request->ip());
-        });
-
-        // Limite pour les paiements
-        RateLimiter::for('payment', function (Request $request) {
-            return Limit::perHour(20)->by($request->user()?->id ?: $request->ip());
-        });
-
-        // Limite stricte pour password reset (anti-spam email)
-        RateLimiter::for('password-reset', function (Request $request) {
-            return Limit::perHour(3)->by($request->ip());
-        });
-
-        // Limite stricte pour admin (protection du panel)
-        RateLimiter::for('admin', function (Request $request) {
-            return Limit::perMinute(30)->by($request->user()?->id ?: $request->ip());
-        });
+        foreach ($this->ipRateLimits() as [$name, $method, $maxAttempts]) {
+            $this->registerIpLimiter($name, $method, $maxAttempts);
+        }
 
         // Limite stricte pour OTP/SMS
         RateLimiter::for('otp', function (Request $request) {
@@ -285,5 +208,59 @@ class AppServiceProvider extends ServiceProvider
                 Limit::perHour(5)->by($request->user()?->id ?: $request->ip()),
             ];
         });
+    }
+
+    /**
+     * @return array<int, array{string, string, int}>
+     */
+    private function userAwareRateLimits(): array
+    {
+        return [
+            ['api', 'perMinute', 60],
+            ['geo-search', 'perMinute', 120],
+            ['contact', 'perHour', 10],
+            ['upload', 'perMinute', 20],
+            ['booking', 'perHour', 10],
+            ['review', 'perDay', 5],
+            ['report', 'perHour', 5],
+            ['export', 'perHour', 10],
+            ['push', 'perMinute', 30],
+            ['chat', 'perMinute', 60],
+            ['residence-create', 'perDay', 5],
+            ['payment', 'perHour', 20],
+            ['admin', 'perMinute', 30],
+        ];
+    }
+
+    /**
+     * @return array<int, array{string, string, int}>
+     */
+    private function ipRateLimits(): array
+    {
+        return [
+            ['login', 'perMinute', 5],
+            ['register', 'perHour', 3],
+            ['webhook', 'perMinute', 20],
+            ['password-reset', 'perHour', 3],
+        ];
+    }
+
+    private function registerUserAwareLimiter(string $name, string $method, int $maxAttempts): void
+    {
+        RateLimiter::for($name, function (Request $request) use ($method, $maxAttempts) {
+            return Limit::{$method}($maxAttempts)->by($this->resolveUserOrIpThrottleKey($request));
+        });
+    }
+
+    private function registerIpLimiter(string $name, string $method, int $maxAttempts): void
+    {
+        RateLimiter::for($name, function (Request $request) use ($method, $maxAttempts) {
+            return Limit::{$method}($maxAttempts)->by($request->ip());
+        });
+    }
+
+    private function resolveUserOrIpThrottleKey(Request $request): int|string
+    {
+        return $request->user()?->id ?: $request->ip();
     }
 }

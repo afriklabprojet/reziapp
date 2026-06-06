@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 /**
- * Service de géolocalisation pour REZI
+ * Service de géolocalisation pour ReziApp
  *
  * Gère les calculs de distance et recherches géographiques optimisées
  * avec support du cache par zone géographique (geohash)

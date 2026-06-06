@@ -1,4 +1,4 @@
-# 🔍 Audit complet Frontend — REZI
+# 🔍 Audit complet Frontend — ReziApp
 > **Date** : 17 février 2026  
 > **Scope** : 212 vues Blade, 42 modules JS, CSS, PWA, Vite build
 
@@ -68,7 +68,7 @@ Ces composants sont appelés via `x-data="interactiveMap(...)"` et `x-data="cale
 
 ---
 
-### 4. Theme-color incohérent — `#4f46e5` (indigo) vs `#F7931E` (orange REZI)
+### 4. Theme-color incohérent — `#4f46e5` (indigo) vs `#F7931E` (orange ReziApp)
 **Impact** : Barre d'adresse mobile avec couleur incorrecte
 
 | Fichier | Valeur | Attendu |

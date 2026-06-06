@@ -286,7 +286,7 @@
 
     {{-- Pied de page --}}
     <div class="footer">
-        REZI – Plateforme immobilière Abidjan | Document généré le {{ now()->format('d/m/Y à H:i') }}<br>
+        ReziApp – Plateforme immobilière Abidjan | Document généré le {{ now()->format('d/m/Y à H:i') }}<br>
         Référence : {{ $inspection->reference }} | Ce document fait foi d'état des lieux et engage les deux parties.
     </div>
 

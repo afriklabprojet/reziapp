@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', $guidebook->title . ' — REZI')
+@section('title', $guidebook->title . ' — ReziApp')
 
 @section('owner-content')
 <div class="space-y-6">

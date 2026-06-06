@@ -45,7 +45,7 @@
             {{ $this->whyForm }}
             <div class="mt-4">
                 <x-filament::button type="submit">
-                    Enregistrer Pourquoi REZI
+                    Enregistrer Pourquoi ReziApp
                 </x-filament::button>
             </div>
         </form>

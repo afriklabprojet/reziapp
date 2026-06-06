@@ -167,8 +167,8 @@ class ShareController extends Controller
     protected function getPlatformUrl(PropertyShare $share, Residence $residence): string
     {
         $shareUrl = $share->getShareUrl();
-        $quartierName = $residence->quartier?->name ?? $residence->commune ?? $residence->city ?? 'REZI';
-        $description = "Découvrez ce logement à {$quartierName} sur REZI";
+        $quartierName = $residence->quartier?->name ?? $residence->commune ?? $residence->city ?? 'ReziApp';
+        $description = "Découvrez ce logement à {$quartierName} sur ReziApp";
 
         return match($share->platform) {
             'whatsapp' => 'https://wa.me/?text='.urlencode("{$description}\n\n{$shareUrl}"),

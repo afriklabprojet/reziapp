@@ -215,7 +215,7 @@
                                         </a>
                                     @endif
                                     <button
-                                        onclick="navigator.share ? navigator.share({title: '{{ $user->name }} sur REZI', url: window.location.href}) : navigator.clipboard.writeText(window.location.href).then(() => alert('Lien copié!'))"
+                                        onclick="navigator.share ? navigator.share({title: '{{ $user->name }} sur ReziApp', url: window.location.href}) : navigator.clipboard.writeText(window.location.href).then(() => alert('Lien copié!'))"
                                         class="inline-flex items-center gap-2 px-4 py-3 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 rounded-xl font-medium transition-all">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

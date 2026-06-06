@@ -22,21 +22,14 @@ class SubscriptionPayment extends Model
         'payment_provider',
         'transaction_id',
         'reference',
-        'provider_reference',
-        'period_start',
-        'period_end',
         'paid_at',
         'provider_response',
-        'metadata',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'paid_at' => 'datetime',
-        'period_start' => 'datetime',
-        'period_end' => 'datetime',
         'provider_response' => 'array',
-        'metadata' => 'array',
     ];
 
     /**
@@ -48,7 +41,7 @@ class SubscriptionPayment extends Model
 
         static::creating(function ($payment) {
             if (empty($payment->reference)) {
-                $payment->reference = 'SUB-'.strtoupper(Str::random(12));
+                $payment->reference = 'REZI-SUB-'.strtoupper(Str::random(12));
             }
         });
     }
@@ -91,7 +84,7 @@ class SubscriptionPayment extends Model
     public function markAsPaid(?string $transactionId = null, array $metadata = []): bool
     {
         $this->update([
-            'status' => 'paid',
+            'status' => 'completed',
             'paid_at' => now(),
             'transaction_id' => $transactionId ?? $this->transaction_id,
             'provider_response' => array_merge($this->provider_response ?? [], $metadata),
@@ -106,7 +99,13 @@ class SubscriptionPayment extends Model
             $pendingPlanId = $subscription->metadata['pending_plan_change'] ?? null;
             if ($pendingPlanId) {
                 $newPlan = SubscriptionPlan::find($pendingPlanId);
-                if ($newPlan) {
+                $expectedAmount = $subscription->billing_cycle === 'yearly' && $newPlan?->price_yearly
+                    ? (float) $newPlan->price_yearly
+                    : (float) ($newPlan?->price_monthly ?? 0);
+                $paidAmountCents = (int) round((float) $this->amount * 100);
+                $expectedAmountCents = (int) round($expectedAmount * 100);
+
+                if ($newPlan && $paidAmountCents === $expectedAmountCents) {
                     $subscription->update([
                         'subscription_plan_id' => $newPlan->id,
                         'metadata' => array_diff_key($subscription->metadata ?? [], ['pending_plan_change' => null]),

@@ -5,7 +5,7 @@
 @section('content')
 <div class="min-h-screen bg-gray-50 py-8">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         <!-- En-tête -->
         <div class="mb-8">
             <a href="{{ route('bookings.show', $booking) }}" class="inline-flex items-center text-sm text-gray-500 hover:text-gray-700">
@@ -22,16 +22,16 @@
             <!-- Formulaire de paiement -->
             <div class="lg:col-span-2 order-2 lg:order-1">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    
+
                     <!-- Méthodes de paiement -->
                     <div class="p-6 border-b border-gray-200">
                         <h2 class="text-lg font-semibold text-gray-900 mb-4">Choisissez votre mode de paiement</h2>
-                        
+
                         <!-- Opérateurs Mobile Money -->
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" x-data="{ selected: 'orange_money' }">
                             @foreach($operators as $code => $operator)
                             <label class="relative cursor-pointer">
-                                <input type="radio" name="operator" value="{{ $code }}" 
+                                <input type="radio" name="operator" value="{{ $code }}"
                                        x-model="selected"
                                        class="sr-only peer">
                                 <div class="flex flex-col items-center p-4 border-2 rounded-lg peer-checked:border-[#F16A00] peer-checked:bg-[#FFF4EB] hover:bg-gray-50 transition-colors">
@@ -44,13 +44,13 @@
                     </div>
 
                     <!-- Formulaire -->
-                    <form id="payment-form" class="p-6 space-y-6" x-data="paymentForm(@js([
+                    <form id="payment-form" class="p-6 space-y-6" x-data="paymentForm({{ \Illuminate\Support\Js::encode([
                         'phone' => Auth::user()->phone ?? '',
                         'initiateUrl' => route('payments.initiate', $booking),
                         'returnUrl' => route('payments.return', ':uuid'),
                         'csrfToken' => csrf_token(),
-                    ]))">
-                        
+                    ]) }})">
+
                         <!-- Numéro de téléphone -->
                         <div>
                             <label for="phone_number" class="block text-sm font-medium text-gray-700 mb-2">
@@ -82,12 +82,12 @@
                             <div class="space-y-2">
                                 @foreach($savedMethods as $method)
                                 <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                                    <input type="radio" name="saved_method" value="{{ $method->id }}" 
+                                    <input type="radio" name="saved_method" value="{{ $method->id }}"
                                            @change="phoneNumber = '{{ $method->phone_number }}'"
                                            class="text-[#CC5A00] focus:ring-[#F16A00]">
                                     <div class="ml-3 flex items-center">
-                                        <img loading="lazy" src="{{ $method->provider->logo ?? '/images/payment/mobile.png' }}" 
-                                             alt="{{ $method->provider->name ?? 'Mobile Money' }}" 
+                                        <img loading="lazy" src="{{ $method->provider->logo ?? '/images/payment/mobile.png' }}"
+                                             alt="{{ $method->provider->name ?? 'Mobile Money' }}"
                                              class="h-6 w-auto mr-2">
                                         <span class="text-sm text-gray-900">{{ $method->display_name }}</span>
                                         @if($method->is_default)
@@ -110,7 +110,7 @@
                         </div>
 
                         <!-- Bouton de paiement -->
-                        <button type="submit" 
+                        <button type="submit"
                                 class="w-full flex items-center justify-center px-6 py-4 bg-[#CC5A00] text-white font-semibold rounded-lg hover:bg-[#A34700] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F16A00] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                 :disabled="loading"
                                 @click.prevent="initiatePayment">
@@ -145,7 +145,7 @@
                          x-transition:leave-end="opacity-0">
                         <div class="flex items-center justify-center min-h-screen px-4">
                             <div class="fixed inset-0 bg-gray-500/75" @click="showOtpModal = false"></div>
-                            
+
                             <div class="relative bg-white rounded-xl shadow-xl max-w-md w-full p-6 z-10">
                                 <div class="text-center">
                                     <div class="mx-auto w-16 h-16 bg-[#FFE7D1] rounded-full flex items-center justify-center mb-4">
@@ -174,7 +174,7 @@
                                                required>
                                     </div>
 
-                                    <button type="submit" 
+                                    <button type="submit"
                                             class="w-full py-3 bg-[#CC5A00] text-white font-semibold rounded-lg hover:bg-[#A34700] disabled:opacity-50"
                                             :disabled="loading || otp.length !== 6">
                                         <span x-show="!loading">Confirmer le paiement</span>
@@ -216,11 +216,11 @@
             <div class="lg:col-span-1 order-1 lg:order-2">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:sticky lg:top-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Récapitulatif</h3>
-                    
+
                     <!-- Résidence -->
                     <div class="flex items-start space-x-4 pb-4 border-b border-gray-200">
                         @if($booking->residence->photos->first())
-                        <img loading="lazy" src="{{ $booking->residence->photos->first()?->url }}" 
+                        <img loading="lazy" src="{{ $booking->residence->photos->first()?->url }}"
                              alt="{{ $booking->residence->name }}"
                              class="w-20 h-20 object-cover rounded-lg">
                         @endif

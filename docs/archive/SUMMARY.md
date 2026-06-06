@@ -1,4 +1,4 @@
-# 🎉 REZI - Résumé du développement MVP
+# 🎉 ReziApp - Résumé du développement MVP
 
 ## ✅ Statut: **MVP COMPLET** (100%)
 
@@ -351,4 +351,4 @@ Accès:
 
 ---
 
-**Développé avec ❤️ pour REZI - Abidjan, Côte d'Ivoire 🇨🇮**
+**Développé avec ❤️ pour ReziApp - Abidjan, Côte d'Ivoire 🇨🇮**

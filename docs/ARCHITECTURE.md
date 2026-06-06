@@ -1,4 +1,4 @@
-# REZI — Architecture Technique
+# ReziApp — Architecture Technique
 
 **Derniere mise a jour** : 2026-06-01
 **Environnement** : Production — <https://reziapp.ci>

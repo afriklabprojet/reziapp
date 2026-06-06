@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\FraudReport;
 use App\Models\MarketPriceData;
 use App\Models\Residence;
+use App\Support\SensitiveData;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -221,8 +222,8 @@ class SecurityService
 
         if ($isSuspicious) {
             Log::warning('Suspicious login attempt', [
-                'ip' => $ip,
-                'email' => $email,
+                'ip' => SensitiveData::maskIp($ip),
+                'email' => SensitiveData::maskEmail($email),
                 'attempts' => $attempts,
                 'blacklisted' => $isBlacklisted,
             ]);

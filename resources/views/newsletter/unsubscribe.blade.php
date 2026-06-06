@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Désabonnement newsletter - REZI')
+@section('title', 'Désabonnement newsletter - ReziApp')
 
 @section('content')
     <div class="min-h-[60vh] flex items-center justify-center px-4 py-16">

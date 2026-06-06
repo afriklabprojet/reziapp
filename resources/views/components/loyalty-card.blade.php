@@ -1,5 +1,5 @@
 {{--
-    Composant Carte de fidélité REZI (style Genius/Booking.com)
+    Composant Carte de fidélité ReziApp (style Genius/Booking.com)
     Usage : <x-loyalty-card :user="auth()->user()" />
     Usage dans profil : <x-loyalty-card :user="$user" :show-progress="true" />
 --}}
@@ -60,7 +60,7 @@
                 <span class="text-3xl">{{ $cfg['icon'] }}</span>
                 <div>
                     <p class="font-bold text-base {{ $c['text'] }}">{{ $cfg['label'] }}</p>
-                    <p class="text-xs {{ $c['text'] }} opacity-70">Programme fidélité REZI</p>
+                    <p class="text-xs {{ $c['text'] }} opacity-70">Programme fidélité ReziApp</p>
                 </div>
             </div>
             @if ($cfg['discount'] > 0)

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Models\Promotion;
-use App\Models\SponsoredListing;
 use App\Notifications\PromotionExpiring;
 use App\Notifications\SponsoredListingExpiring;
+use App\Services\SponsoredListingService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -17,6 +17,11 @@ class CheckExpiringPromotionsCommand extends Command
                             {--days=2 : Nombre de jours avant expiration pour notifier}';
 
     protected $description = 'Notifier les propriétaires des promotions et mises en avant expirant bientôt';
+
+    public function __construct(private readonly SponsoredListingService $sponsoredListingService)
+    {
+        parent::__construct();
+    }
 
     public function handle(): int
     {
@@ -53,11 +58,7 @@ class CheckExpiringPromotionsCommand extends Command
         }
 
         // Mises en avant (sponsored listings) expirant bientôt
-        $sponsoredListings = SponsoredListing::where('status', 'active')
-            ->where('ends_at', '<=', $threshold)
-            ->where('ends_at', '>', now())
-            ->with(['residence.owner', 'user'])
-            ->get();
+    $sponsoredListings = $this->sponsoredListingService->getExpiringActiveListings($threshold);
 
         $sponsoredCount = 0;
         foreach ($sponsoredListings as $listing) {

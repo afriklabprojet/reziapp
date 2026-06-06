@@ -30,7 +30,7 @@
                 </button>
             @else
                 <a href="{{ route('home') }}" class="flex items-center">
-                    <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="REZI" class="h-8">
+                    <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="ReziApp" class="h-8">
                 </a>
             @endif
         </div>

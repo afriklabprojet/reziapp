@@ -198,7 +198,7 @@ class VerificationService
 
         $code = $verification->generateOtp();
         $phone = $verification->getFullPhone();
-        $message = "Votre code REZI : {$code}. Valable 10 minutes. Ne partagez ce code avec personne.";
+        $message = "Votre code ReziApp : {$code}. Valable 10 minutes. Ne partagez ce code avec personne.";
 
         try {
             app(SmsService::class)->send($phone, $message);

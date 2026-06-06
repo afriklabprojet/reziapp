@@ -12,7 +12,7 @@
         $houseRules = $residence->house_rules ?? [];
     @endphp
 
-    <div class="min-h-screen bg-white" x-data="bookingCreateForm(@js([
+    <div class="min-h-screen bg-white" x-data="bookingCreateForm({{ \Illuminate\Support\Js::encode([
     'maxGuests' => $residence->max_guests ?? 10,
     'minNights' => $residence->min_nights ?? 1,
     'maxNights' => $residence->max_nights ?? 365,
@@ -27,7 +27,7 @@
     'childrenInit' => $children ?? 0,
     'infantsInit' => $infants ?? 0,
     'pricePreview' => $pricePreview,
-]))">
+]) }})">
 
         {{-- ════════════════════════════════════════════
              HEADER — Bouton retour style Airbnb
@@ -658,7 +658,7 @@
                                         <div class="flex justify-between" x-show="price?.service_fee > 0">
                                             <span class="underline decoration-dotted text-gray-600 cursor-help"
                                                 title="Support 24/7, garantie réservation, paiement sécurisé">Frais de
-                                                service REZI</span>
+                                                service ReziApp</span>
                                             <span x-text="formatCurrency(price?.service_fee)"></span>
                                         </div>
 

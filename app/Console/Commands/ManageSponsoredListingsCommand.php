@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\SponsoredListing;
 use App\Notifications\SponsoredListingCompleted;
+use App\Services\SponsoredListingService;
 use Illuminate\Console\Command;
 
 class ManageSponsoredListingsCommand extends Command
@@ -12,14 +13,12 @@ class ManageSponsoredListingsCommand extends Command
 
     protected $description = 'Auto-complete expired sponsored listings and pause budget-exhausted ones';
 
-    public function handle(): int
+    public function handle(SponsoredListingService $sponsoredListingService): int
     {
         $this->info('🔄 Gestion des mises en avant...');
 
         // 1. Auto-complete expired active campaigns
-        $expired = SponsoredListing::where('status', 'active')
-            ->where('ends_at', '<', now())
-            ->get();
+        $expired = $sponsoredListingService->completeExpiredActiveListings();
 
         $expiredCount = $expired->count();
 
@@ -31,10 +30,7 @@ class ManageSponsoredListingsCommand extends Command
         }
 
         // 2. Pause campaigns that exhausted their budget
-        $budgetExhausted = SponsoredListing::where('status', 'active')
-            ->whereNotNull('total_budget')
-            ->whereColumn('amount_spent', '>=', 'total_budget')
-            ->get();
+        $budgetExhausted = $sponsoredListingService->pauseBudgetExhaustedListings();
 
         $budgetCount = $budgetExhausted->count();
 
@@ -45,9 +41,7 @@ class ManageSponsoredListingsCommand extends Command
         }
 
         // 3. Auto-complete paused expired campaigns (ended while paused)
-        $pausedExpired = SponsoredListing::where('status', 'paused')
-            ->where('ends_at', '<', now())
-            ->get();
+        $pausedExpired = $sponsoredListingService->completeExpiredPausedListings();
 
         $pausedExpiredCount = $pausedExpired->count();
 

@@ -1,5 +1,5 @@
 <x-app-layout>
-    @section('title', 'Écrire un avis - ' . $residence->title . ' - REZI')
+    @section('title', 'Écrire un avis - ' . $residence->title . ' - ReziApp')
 
     <div class="py-6">
         <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -21,7 +21,7 @@
                     <p class="text-gray-600 mt-1">Donnez votre avis sur <strong>{{ $residence->title }}</strong></p>
                 </div>
 
-                <form action="{{ route('reviews.store', $residence) }}" method="POST" x-data="reviewForm(@js(['rating_cleanliness' => old('rating_cleanliness', 0), 'rating_location' => old('rating_location', 0), 'rating_value' => old('rating_value', 0), 'rating_communication' => old('rating_communication', 0)]))">
+                <form action="{{ route('reviews.store', $residence) }}" method="POST" x-data="reviewForm({{ \Illuminate\Support\Js::encode(['rating_cleanliness' => old('rating_cleanliness', 0), 'rating_location' => old('rating_location', 0), 'rating_value' => old('rating_value', 0), 'rating_communication' => old('rating_communication', 0)]) }})">
                     @csrf
 
                     <!-- Notes par catégorie -->
@@ -35,13 +35,13 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-900 mb-1">{{ $info['label'] }}</label>
                                 <p class="text-xs text-gray-500 mb-2">{{ $info['description'] }}</p>
-                                
+
                                 <div class="flex items-center gap-1">
                                     @for($i = 1; $i <= 5; $i++)
-                                        <button type="button" 
+                                        <button type="button"
                                                 @click="ratings.{{ $field }} = {{ $i }}"
                                                 class="p-1 focus:outline-none transition-transform hover:scale-110">
-                                            <svg class="w-8 h-8 transition-colors" 
+                                            <svg class="w-8 h-8 transition-colors"
                                                  :class="ratings.{{ $field }} >= {{ $i }} ? 'text-yellow-400' : 'text-gray-300'"
                                                  fill="currentColor" viewBox="0 0 20 20">
                                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
@@ -73,7 +73,7 @@
                     <div class="mt-6">
                         <label for="comment" class="block text-sm font-medium text-gray-900 mb-1">Votre commentaire</label>
                         <p class="text-xs text-gray-500 mb-2">Partagez les détails de votre expérience (optionnel mais recommandé)</p>
-                        <textarea name="comment" id="comment" rows="5" 
+                        <textarea name="comment" id="comment" rows="5"
                                   class="w-full border-gray-300 rounded-xl focus:border-[#F16A00] focus:ring-[#F16A00]"
                                   placeholder="Décrivez votre séjour, les points positifs et négatifs...">{{ old('comment') }}</textarea>
                         @error('comment')
@@ -86,7 +86,7 @@
                         <a href="{{ route('residences.show', $residence) }}" class="text-gray-600 hover:text-gray-900 transition-colors">
                             Annuler
                         </a>
-                        <button type="submit" 
+                        <button type="submit"
                                 class="inline-flex items-center gap-2 bg-[#CC5A00] text-white px-6 py-3 rounded-xl hover:bg-[#A34700] transition-colors"
                                 :disabled="!isValid"
                                 :class="{ 'opacity-50 cursor-not-allowed': !isValid }">

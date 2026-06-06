@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->command->info('🌱 Seeding REZI database...');
+        $this->command->info('🌱 Seeding ReziApp database...');
 
         // 1. Créer les catégories
         $this->command->info('Creating categories...');
@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
         // 3. Créer un admin
         $this->command->info('Creating admin user...');
         $admin = User::factory()->create([
-            'name' => 'Admin REZI',
+            'name' => 'Admin ReziApp',
             'email' => 'admin@rezi.ci',
             'password' => Hash::make('password'),
             'role' => 'admin',

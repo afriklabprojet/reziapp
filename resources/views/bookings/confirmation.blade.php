@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Réservation confirmée - REZI')
+@section('title', 'Réservation confirmée - ReziApp')
 
 @section('content')
 <div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">

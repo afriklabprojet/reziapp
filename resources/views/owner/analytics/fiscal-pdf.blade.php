@@ -228,7 +228,7 @@
     <div class="container">
         <!-- En-tête officiel -->
         <div class="header">
-            <div class="logo">REZI</div>
+            <div class="logo">ReziApp</div>
             <div class="document-title">RÉCAPITULATIF FISCAL ANNUEL</div>
             <div class="document-subtitle">Année {{ $year }}</div>
         </div>
@@ -327,7 +327,7 @@
         <!-- Mentions légales -->
         <div class="legal-notice">
             <strong>⚠️ Avertissement important</strong>
-            Ce document est généré automatiquement par la plateforme REZI à titre informatif uniquement.
+            Ce document est généré automatiquement par la plateforme ReziApp à titre informatif uniquement.
             Les montants indiqués sont des estimations basées sur les réservations enregistrées sur notre plateforme.
             La taxe de séjour est calculée à un taux indicatif de 5%. Pour vos déclarations fiscales officielles,
             veuillez consulter un expert-comptable agréé ou les services de la Direction Générale des Impôts
@@ -341,8 +341,8 @@
                 <div class="signature-line">Signature du propriétaire</div>
             </div>
             <div class="signature-box">
-                <p>Cachet REZI</p>
-                <div class="signature-line">Pour la plateforme REZI</div>
+                <p>Cachet ReziApp</p>
+                <div class="signature-line">Pour la plateforme ReziApp</div>
             </div>
         </div>
 
@@ -351,8 +351,8 @@
             <p class="footer-note">Document généré automatiquement - Référence:
                 REZI-FISCAL-{{ $year }}-{{ strtoupper(substr(md5($data['owner']['email'] . $year), 0, 8)) }}
             </p>
-            <p class="footer-note">REZI - Plateforme de location de résidences meublées en Afrique de l'Ouest</p>
-            <p class="footer-note">© {{ date('Y') }} REZI - Tous droits réservés</p>
+            <p class="footer-note">ReziApp - Plateforme de location de résidences meublées en Afrique de l'Ouest</p>
+            <p class="footer-note">© {{ date('Y') }} ReziApp - Tous droits réservés</p>
         </div>
     </div>
 </body>

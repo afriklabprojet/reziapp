@@ -1,4 +1,4 @@
-# 🔍 AUDIT FRONTEND COMPLET — REZI
+# 🔍 AUDIT FRONTEND COMPLET — ReziApp
 
 > **Date** : 12 février 2026  
 > **Analysé** : 170+ fichiers Blade, 318 routes, 30+ contrôleurs  

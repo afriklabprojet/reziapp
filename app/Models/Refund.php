@@ -140,7 +140,7 @@ class Refund extends Model
     {
         return match($this->method) {
             'original_payment' => 'Moyen de paiement original',
-            'credit' => 'Crédit REZI',
+            'credit' => 'Crédit ReziApp',
             'bank_transfer' => 'Virement bancaire',
             'mobile_money' => 'Mobile Money',
             default => $this->method,
@@ -271,7 +271,7 @@ class Refund extends Model
     {
         return [
             'original_payment' => 'Moyen de paiement original',
-            'credit' => 'Crédit REZI (instantané)',
+            'credit' => 'Crédit ReziApp (instantané)',
             'bank_transfer' => 'Virement bancaire (3-5 jours)',
             'mobile_money' => 'Mobile Money (24-48h)',
         ];

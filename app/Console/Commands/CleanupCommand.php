@@ -18,7 +18,7 @@ class CleanupCommand extends Command
         $dryRun = $this->option('dry-run');
         $totalFreed = 0;
 
-        $this->info('🧹 REZI — Nettoyage '.($dryRun ? '(simulation)' : 'en cours').'...');
+        $this->info('🧹 ReziApp — Nettoyage '.($dryRun ? '(simulation)' : 'en cours').'...');
         $this->newLine();
 
         // 1. Logs Laravel > 7 jours
@@ -43,7 +43,7 @@ class CleanupCommand extends Command
             $this->formatBytes($totalFreed),
         ));
 
-        Log::info('REZI cleanup terminé', [
+        Log::info('ReziApp cleanup terminé', [
             'freed_bytes' => $totalFreed,
             'dry_run' => $dryRun,
         ]);

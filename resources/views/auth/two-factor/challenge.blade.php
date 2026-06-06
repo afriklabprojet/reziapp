@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Vérification 2FA - REZI')
+@section('title', 'Vérification 2FA - ReziApp')
 
 @section('content')
     <div class="min-h-screen flex items-center justify-center px-4 py-12 bg-gray-50">
@@ -9,8 +9,8 @@
             {{-- Logo --}}
             <div class="text-center mb-8">
                 <a href="{{ url('/') }}" class="inline-block">
-                    <img src="{{ asset('images/logo.svg') }}" alt="REZI" class="h-8 mx-auto"
-                        onerror="this.outerHTML='<span class=\'text-2xl font-black text-gray-900\'>REZI</span>'">
+                    <img src="{{ asset('images/logo.svg') }}" alt="ReziApp" class="h-8 mx-auto"
+                        onerror="this.outerHTML='<span class=\'text-2xl font-black text-gray-900\'>ReziApp</span>'">
                 </a>
             </div>
 

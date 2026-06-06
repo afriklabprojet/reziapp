@@ -65,7 +65,7 @@ class SubscriptionController extends Controller
     public function subscribe(Request $request, SubscriptionPlan $plan)
     {
         return redirect()->route('owner.marketing.subscriptions.index')
-            ->with('info', 'REZI ne fonctionne pas avec des abonnements. La plateforme prélève uniquement 10% sur le montant total de chaque réservation, côté propriétaire.');
+            ->with('info', 'ReziApp ne fonctionne pas avec des abonnements. La plateforme prélève uniquement 10% sur le montant total de chaque réservation, côté propriétaire.');
     }
 
     /**
@@ -74,7 +74,7 @@ class SubscriptionController extends Controller
     public function changePlan(Request $request, SubscriptionPlan $plan)
     {
         return redirect()->route('owner.marketing.subscriptions.index')
-            ->with('info', 'Aucun changement de plan n\'est nécessaire: REZI applique un modèle unique de commission de 10% sur chaque réservation propriétaire.');
+            ->with('info', 'Aucun changement de plan n\'est nécessaire: ReziApp applique un modèle unique de commission de 10% sur chaque réservation propriétaire.');
     }
 
     /**
@@ -83,7 +83,7 @@ class SubscriptionController extends Controller
     public function cancel(Request $request)
     {
         return redirect()->route('owner.marketing.subscriptions.index')
-            ->with('info', 'Aucun abonnement à annuler: REZI facture uniquement une commission de 10% sur les réservations encaissées par le propriétaire.');
+            ->with('info', 'Aucun abonnement à annuler: ReziApp facture uniquement une commission de 10% sur les réservations encaissées par le propriétaire.');
     }
 
     /**
@@ -92,7 +92,7 @@ class SubscriptionController extends Controller
     public function resume()
     {
         return redirect()->route('owner.marketing.subscriptions.index')
-            ->with('info', 'REZI n\'utilise pas de réactivation d\'abonnement. Le modèle économique repose sur une commission propriétaire de 10% par réservation.');
+            ->with('info', 'ReziApp n\'utilise pas de réactivation d\'abonnement. Le modèle économique repose sur une commission propriétaire de 10% par réservation.');
     }
 
     /**
@@ -132,7 +132,7 @@ class SubscriptionController extends Controller
     public function paymentSuccess(Request $request)
     {
         return redirect()->route('owner.marketing.subscriptions.index')
-            ->with('info', 'Aucun paiement d\'abonnement n\'est attendu. REZI prélève directement 10% sur le montant total de chaque réservation propriétaire.');
+            ->with('info', 'Aucun paiement d\'abonnement n\'est attendu. ReziApp prélève directement 10% sur le montant total de chaque réservation propriétaire.');
     }
 
     /**
@@ -141,6 +141,6 @@ class SubscriptionController extends Controller
     public function paymentError(Request $request)
     {
         return redirect()->route('owner.marketing.subscriptions.index')
-            ->with('info', 'Cette page d\'erreur d\'abonnement n\'est plus utilisée. Le modèle REZI est une commission propriétaire de 10% par réservation.');
+            ->with('info', 'Cette page d\'erreur d\'abonnement n\'est plus utilisée. Le modèle ReziApp est une commission propriétaire de 10% par réservation.');
     }
 }

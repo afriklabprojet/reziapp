@@ -152,6 +152,29 @@ class PushNotificationTest extends TestCase
         $response->assertJsonValidationErrors(['endpoint']);
     }
 
+    /**     * Un endpoint push hors allowlist est refusé
+     */
+    #[Test]
+    public function push_subscription_endpoint_must_be_from_an_allowed_provider(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->postJson('/notifications/push/subscribe', [
+                'endpoint' => 'https://example.com/push/endpoint',
+                'keys' => [
+                    'p256dh' => 'test-public-key',
+                    'auth' => 'test-auth-token',
+                ],
+            ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['endpoint']);
+
+        $this->assertDatabaseMissing('push_subscriptions', [
+            'user_id' => $this->user->id,
+            'endpoint' => 'https://example.com/push/endpoint',
+        ]);
+    }
+
     // ========================================
     // TESTS D'ENVOI DE NOTIFICATIONS
     // ========================================
@@ -205,6 +228,29 @@ class PushNotificationTest extends TestCase
         // Vérifier qu'aucune subscription n'a été créée
         $this->assertDatabaseMissing('push_subscriptions', [
             'user_id' => $this->user->id,
+        ]);
+    }
+
+    /**     * Les subscriptions push invalides stockées sont supprimées avant envoi
+     */
+    #[Test]
+    public function invalid_stored_push_subscriptions_are_deleted_before_send(): void
+    {
+        $subscription = PushSubscription::create([
+            'user_id' => $this->user->id,
+            'endpoint' => 'https://example.com/push/bad-endpoint',
+            'public_key' => 'test-key',
+            'auth_token' => 'test-token',
+        ]);
+
+        $service = new NotificationService(app(\App\Services\PublicUrlGuard::class));
+        $method = new \ReflectionMethod(NotificationService::class, 'sendPush');
+        $method->setAccessible(true);
+
+        $method->invoke($service, $this->user, 'Test', 'Body', []);
+
+        $this->assertDatabaseMissing('push_subscriptions', [
+            'id' => $subscription->id,
         ]);
     }
 

@@ -1,62 +1,150 @@
+const DEFAULT_RADIUS_KM = 5;
+
+function buildDefaultFilters(filters = {}) {
+    return {
+        city: filters.city || '',
+        commune: filters.commune || '',
+        quartier: filters.quartier || '',
+        min_price: filters.min_price || '',
+        max_price: filters.max_price || '',
+        type: filters.type || '',
+        bedrooms: filters.bedrooms || '',
+        bathrooms: filters.bathrooms || '',
+        max_guests: filters.max_guests || '',
+        min_rating: filters.min_rating || '',
+        cancellation_policy: filters.cancellation_policy || '',
+        amenities: Array.isArray(filters.amenities) ? filters.amenities : [],
+        instant_book: Boolean(filters.instant_book),
+        has_promotion: Boolean(filters.has_promotion),
+        available_now: Boolean(filters.available_now),
+        is_accessible: Boolean(filters.is_accessible),
+        check_in: filters.check_in || '',
+        check_out: filters.check_out || '',
+        flex_window: filters.flex_window || 0,
+        flex_dates: Boolean(filters.flex_dates),
+        flex_type: filters.flex_type || '',
+        category: filters.category || '',
+    };
+}
+
+function appendSearchParams(state, params) {
+    const scalarParams = [
+        ['latitude', state.latitude],
+        ['longitude', state.longitude],
+        ['city', state.filters.city],
+        ['commune', state.filters.commune],
+        ['quartier', state.filters.quartier],
+        ['min_price', state.filters.min_price],
+        ['max_price', state.filters.max_price],
+        ['type', state.filters.type],
+        ['bedrooms', state.filters.bedrooms],
+        ['bathrooms', state.filters.bathrooms],
+        ['max_guests', state.filters.max_guests],
+        ['min_rating', state.filters.min_rating],
+        ['cancellation_policy', state.filters.cancellation_policy],
+        ['category', state.filters.category],
+    ];
+
+    scalarParams.forEach(([key, value]) => {
+        if (value !== '' && value !== null && value !== undefined) {
+            params.set(key, value);
+        }
+    });
+
+    if (state.radius) {
+        params.set('radius', Math.round(Number(state.radius) * 1000));
+    }
+
+    state.filters.amenities.forEach((id) => params.append('amenities[]', id));
+
+    const booleanParams = [
+        ['instant_book', state.filters.instant_book],
+        ['has_promotion', state.filters.has_promotion],
+        ['available_now', state.filters.available_now],
+        ['is_accessible', state.filters.is_accessible],
+    ];
+
+    booleanParams.forEach(([key, enabled]) => {
+        if (enabled) {
+            params.set(key, '1');
+        }
+    });
+}
+
+function appendDateParams(state, params) {
+    if (state.dateMode === 'exact' && state.filters.check_in && state.filters.check_out) {
+        params.set('check_in', state.filters.check_in);
+        params.set('check_out', state.filters.check_out);
+
+        if (state.filters.flex_window > 0) {
+            params.set('flex_window', state.filters.flex_window);
+        }
+
+        return;
+    }
+
+    if (state.dateMode === 'flex' && state.filters.flex_type) {
+        params.set('flex_dates', '1');
+        params.set('flex_type', state.filters.flex_type);
+        return;
+    }
+
+    if (state.dateMode === 'weekend' || state.dateMode === 'month') {
+        params.set('flex_dates', '1');
+        params.set('flex_type', state.dateMode);
+    }
+}
+
+function buildSearchParams(state) {
+    const params = new URLSearchParams();
+
+    appendSearchParams(state, params);
+    appendDateParams(state, params);
+
+    if (state.sortBy && state.sortBy !== 'distance') {
+        params.set('sort', state.sortBy);
+    }
+
+    return params;
+}
+
 /**
- * Search Page - Alpine.js component for residence search with filters
- * Extracted from resources/views/residences/search.blade.php
- *
- * Usage in Blade:
- *   Alpine.data('searchPage', () => searchPage(config))
- *   where config is passed via @js()
+ * Search Page - Alpine.js component for residence search with filters.
  */
-export default function searchPage(config) {
+export default function searchPage(config = {}) {
+    const filters = buildDefaultFilters(config.filters);
+    const defaultRadius = Number.isFinite(Number(config.radius))
+        ? Number(config.radius)
+        : Number(config.defaultRadius ?? DEFAULT_RADIUS_KM);
+
     return {
         // État
-        searchQuery: config.commune || '',
+        searchQuery: config.searchQuery || config.commune || '',
         latitude: config.latitude || null,
         longitude: config.longitude || null,
-        radius: config.radius,
+        radius: defaultRadius,
+        defaultRadius,
         suggestions: [],
-        showFilters: config.showFilters,
+        showFilters: Boolean(config.showFilters),
         mobileView: 'map',
-        sortBy: config.sortBy || 'distance',
+        sortBy: config.sortBy || 'newest',
         loading: false,
-        residences: config.residences,
+        residences: Array.isArray(config.residences) ? config.residences : [],
+        searchUrl: config.searchUrl || '/residences/search',
 
         // Sprint 2 — Search-as-I-move
-        searchAsIMove: localStorage.getItem('rezi:search-as-i-move') === '1',
+        searchAsIMove: globalThis.localStorage?.getItem('rezi:search-as-i-move') === '1',
         showSearchHereButton: false,
         boundsLoading: false,
         currentBounds: null,
         boundsTotal: null,
 
         // Filtres
-        filters: {
-            commune: config.filters.commune || '',
-            quartier: config.filters.quartier || '',
-            min_price: config.filters.min_price || '',
-            max_price: config.filters.max_price || '',
-            type: config.filters.type || '',
-            bedrooms: config.filters.bedrooms || '',
-            bathrooms: config.filters.bathrooms || '',
-            max_guests: config.filters.max_guests || '',
-            min_rating: config.filters.min_rating || '',
-            cancellation_policy: config.filters.cancellation_policy || '',
-            amenities: config.filters.amenities || [],
-            instant_book: config.filters.instant_book || false,
-            has_promotion: config.filters.has_promotion || false,
-            available_now: config.filters.available_now || false,
-            is_accessible: config.filters.is_accessible || false,
-            // Sprint 2 — dates
-            check_in: config.filters.check_in || '',
-            check_out: config.filters.check_out || '',
-            flex_window: config.filters.flex_window || 0,
-            flex_dates: config.filters.flex_dates || false,
-            flex_type: config.filters.flex_type || '',
-            // Sprint 2 — catégorie visuelle
-            category: config.filters.category || '',
-        },
+        filters,
 
         // Sprint 2 — Date mode pour UI tabs
         dateMode: (() => {
-            const f = config.filters || {};
+            const f = filters;
             if (f.flex_type === 'weekend') return 'weekend';
             if (f.flex_type === 'month') return 'month';
             if (f.flex_type) return 'flex';
@@ -66,24 +154,30 @@ export default function searchPage(config) {
             return new Date().toISOString().split('T')[0];
         },
 
+        get residencesCount() {
+            return Number.isFinite(Number(this.boundsTotal))
+                ? Number(this.boundsTotal)
+                : this.residences.length;
+        },
+
         init() {
             // Écouter les événements de la carte
-            window.addEventListener('map:user-location', (e) => {
+            globalThis.addEventListener('map:user-location', (e) => {
                 this.latitude = e.detail.lat;
                 this.longitude = e.detail.lng;
                 this.updateSearch();
             });
 
-            window.addEventListener('map:residence-hover', (e) => {
+            globalThis.addEventListener('map:residence-hover', (e) => {
                 this.highlightListItem(e.detail.id);
             });
 
-            window.addEventListener('map:residence-unhover', (e) => {
+            globalThis.addEventListener('map:residence-unhover', (e) => {
                 this.unhighlightListItem(e.detail.id);
             });
 
             // Sprint 2 — Search-as-I-move
-            window.addEventListener('map:bounds-changed', (e) => {
+            globalThis.addEventListener('map:bounds-changed', (e) => {
                 this.currentBounds = e.detail;
                 if (this.searchAsIMove) {
                     this.searchInBounds(e.detail);
@@ -96,7 +190,7 @@ export default function searchPage(config) {
 
         toggleSearchAsIMove() {
             this.searchAsIMove = !this.searchAsIMove;
-            localStorage.setItem('rezi:search-as-i-move', this.searchAsIMove ? '1' : '0');
+            globalThis.localStorage?.setItem('rezi:search-as-i-move', this.searchAsIMove ? '1' : '0');
             if (this.searchAsIMove && this.currentBounds) {
                 this.showSearchHereButton = false;
                 this.searchInBounds(this.currentBounds);
@@ -144,7 +238,7 @@ export default function searchPage(config) {
                 this.boundsTotal = json.data.total;
 
                 // Mettre à jour les markers
-                window.dispatchEvent(new CustomEvent('map:update-residences', {
+                globalThis.dispatchEvent(new CustomEvent('map:update-residences', {
                     detail: { residences: this.residences },
                 }));
             } catch (error) {
@@ -202,11 +296,11 @@ export default function searchPage(config) {
             }
 
             try {
-                // 1. Tenter l'API REZI (zones, quartiers, résidences) — POI-aware
+                // 1. Tenter l'API ReziApp (zones, quartiers, résidences) — POI-aware
                 const reziUrl = `/api/v1/geo/autocomplete?q=${encodeURIComponent(this.searchQuery)}`;
                 const reziResp = await fetch(reziUrl, { headers: { 'Accept': 'application/json' } });
                 const reziJson = await reziResp.json();
-                let suggestions = (reziJson.data || []).map(s => ({
+                const suggestions = (reziJson.data || []).map(s => ({
                     place_name: s.label,
                     text: s.label,
                     subtitle: s.subtitle,
@@ -215,23 +309,6 @@ export default function searchPage(config) {
                     residence_id: s.residence_id || null,
                     center: [s.longitude, s.latitude],
                 }));
-
-                // 2. Compléter avec Mapbox si peu de résultats locaux (≥ 3 chars)
-                if (suggestions.length < 3 && this.searchQuery.length >= 3 && config.mapboxToken) {
-                    const bbox = '-8.6,4.3,2.4,15.1';
-                    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(this.searchQuery)}.json?access_token=${config.mapboxToken}&bbox=${bbox}&limit=4&language=fr`;
-                    const resp = await fetch(url);
-                    const data = await resp.json();
-                    const mapboxSuggestions = (data.features || []).map(f => ({
-                        place_name: f.place_name,
-                        text: f.text,
-                        subtitle: f.place_type?.[0] === 'poi' ? '📌 Lieu' : '🌍 Mapbox',
-                        icon: '🌍',
-                        type: 'mapbox',
-                        center: f.center,
-                    }));
-                    suggestions = suggestions.concat(mapboxSuggestions);
-                }
 
                 this.suggestions = suggestions.slice(0, 10);
             } catch (error) {
@@ -246,7 +323,7 @@ export default function searchPage(config) {
 
             // Si c'est une résidence directe, rediriger
             if (suggestion.type === 'residence' && suggestion.residence_id) {
-                window.location.href = `/residences/${suggestion.residence_id}`;
+                globalThis.location.href = `/residences/${suggestion.residence_id}`;
                 return;
             }
 
@@ -254,7 +331,7 @@ export default function searchPage(config) {
             this.latitude = suggestion.center[1];
 
             // Centrer la carte
-            window.dispatchEvent(new CustomEvent('map:center-on', {
+            globalThis.dispatchEvent(new CustomEvent('map:center-on', {
                 detail: { lat: this.latitude, lng: this.longitude, zoom: 14 }
             }));
 
@@ -262,70 +339,16 @@ export default function searchPage(config) {
         },
 
         updateSearch() {
-            // Mettre à jour le cercle de rayon
-            window.dispatchEvent(new CustomEvent('map:update-radius', {
+            globalThis.dispatchEvent(new CustomEvent('map:update-radius', {
                 detail: { radius: this.radius }
             }));
 
-            // Construire les paramètres de recherche
-            const params = new URLSearchParams();
+            const params = buildSearchParams(this);
+            const queryString = params.toString();
 
-            // Géolocalisation
-            if (this.latitude) params.set('latitude', this.latitude);
-            if (this.longitude) params.set('longitude', this.longitude);
-            if (this.radius) params.set('radius', this.radius * 1000);
-
-            // Localisation textuelle
-            if (this.filters.commune) params.set('commune', this.filters.commune);
-            if (this.filters.quartier) params.set('quartier', this.filters.quartier);
-
-            // Prix
-            if (this.filters.min_price) params.set('min_price', this.filters.min_price);
-            if (this.filters.max_price) params.set('max_price', this.filters.max_price);
-
-            // Type et caractéristiques
-            if (this.filters.type) params.set('type', this.filters.type);
-            if (this.filters.bedrooms) params.set('bedrooms', this.filters.bedrooms);
-            if (this.filters.bathrooms) params.set('bathrooms', this.filters.bathrooms);
-            if (this.filters.max_guests) params.set('max_guests', this.filters.max_guests);
-
-            // Note et politique
-            if (this.filters.min_rating) params.set('min_rating', this.filters.min_rating);
-            if (this.filters.cancellation_policy) params.set('cancellation_policy', this.filters.cancellation_policy);
-
-            // Équipements
-            this.filters.amenities.forEach(id => params.append('amenities[]', id));
-
-            // Options spéciales
-            if (this.filters.instant_book) params.set('instant_book', '1');
-            if (this.filters.has_promotion) params.set('has_promotion', '1');
-            if (this.filters.available_now) params.set('available_now', '1');
-            if (this.filters.is_accessible) params.set('is_accessible', '1');
-
-            // Sprint 2 — Dates
-            if (this.dateMode === 'exact' && this.filters.check_in && this.filters.check_out) {
-                params.set('check_in', this.filters.check_in);
-                params.set('check_out', this.filters.check_out);
-                if (this.filters.flex_window > 0) params.set('flex_window', this.filters.flex_window);
-            } else if (this.dateMode === 'flex' && this.filters.flex_type) {
-                params.set('flex_dates', '1');
-                params.set('flex_type', this.filters.flex_type);
-            } else if (this.dateMode === 'weekend') {
-                params.set('flex_dates', '1');
-                params.set('flex_type', 'weekend');
-            } else if (this.dateMode === 'month') {
-                params.set('flex_dates', '1');
-                params.set('flex_type', 'month');
-            }
-
-            // Sprint 2 — catégorie
-            if (this.filters.category) params.set('category', this.filters.category);
-
-            // Tri
-            if (this.sortBy && this.sortBy !== 'distance') params.set('sort', this.sortBy);
-
-            // Rediriger avec les nouveaux paramètres
-            window.location.href = config.searchUrl + '?' + params.toString();
+            globalThis.location.href = queryString
+                ? `${this.searchUrl}?${queryString}`
+                : this.searchUrl;
         },
 
         // Sprint 2 — UI dates helpers
@@ -370,37 +393,16 @@ export default function searchPage(config) {
         },
 
         resetFilters() {
-            this.filters = {
-                commune: '',
-                quartier: '',
-                min_price: '',
-                max_price: '',
-                type: '',
-                bedrooms: '',
-                bathrooms: '',
-                max_guests: '',
-                min_rating: '',
-                cancellation_policy: '',
-                amenities: [],
-                instant_book: false,
-                has_promotion: false,
-                available_now: false,
-                is_accessible: false,
-                check_in: '',
-                check_out: '',
-                flex_window: 0,
-                flex_dates: false,
-                flex_type: '',
-                category: '',
-            };
+            this.filters = buildDefaultFilters();
             this.dateMode = 'exact';
-            this.radius = config.defaultRadius;
+            this.radius = this.defaultRadius;
             this.searchQuery = '';
             this.latitude = null;
             this.longitude = null;
-            this.sortBy = 'distance';
+            this.sortBy = 'newest';
+            this.boundsTotal = null;
 
-            window.location.href = config.searchUrl;
+            globalThis.location.href = this.searchUrl;
         },
 
         sortResidences() {
@@ -408,8 +410,16 @@ export default function searchPage(config) {
             this.updateSearch();
         },
 
+        formatResidenceType(type) {
+            if (!type) {
+                return '';
+            }
+
+            return `${type.charAt(0).toUpperCase()}${type.slice(1)}`;
+        },
+
         highlightMarker(id) {
-            window.dispatchEvent(new CustomEvent('map:highlight-residence', {
+            globalThis.dispatchEvent(new CustomEvent('map:highlight-residence', {
                 detail: { id }
             }));
         },

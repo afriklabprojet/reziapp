@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', $request->reference . ' — Maintenance — REZI')
+@section('title', $request->reference . ' — Maintenance — ReziApp')
 
 @section('owner-content')
 <div class="max-w-3xl mx-auto space-y-6">

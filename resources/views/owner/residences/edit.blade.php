@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Modifier - ' . $residence->name . ' - REZI')
+@section('title', 'Modifier - ' . $residence->name . ' - ReziApp')
 
 @section('owner-content')
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -79,12 +79,12 @@
                     <div class="card">
                         <h2 class="text-xl font-semibold text-gray-900 mb-4">Localisation</h2>
 
-                        <div class="space-y-4" x-data="citySelector(@js([
+                        <div class="space-y-4" x-data="citySelector({{ \Illuminate\Support\Js::encode([
                             'selectedCountry' => old('country_code', $residence->country_code ?? 'CI'),
                             'selectedCity'    => old('city', $residence->city ?? ''),
                             'countries'       => $countries->map(fn($c) => ['code' => $c->code, 'name' => $c->name]),
                             'allCities'       => $cities->map(fn($c) => ['id' => $c->id, 'name' => $c->name, 'country_id' => $c->country_id, 'country_code' => $c->country?->code, 'communes' => $c->communes->pluck('name')]),
-                        ]))">
+                        ]) }})">
                             <div x-data="addressAutocomplete()">
                                 <label for="address" class="block text-sm font-medium text-gray-700 mb-1">
                                     Adresse complète *
@@ -188,10 +188,10 @@
 
                             <!-- Carte pour positionnement -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <p class="block text-sm font-medium text-gray-700 mb-2">
                                     Position sur la carte * <span class="text-gray-500 font-normal">(Cliquez pour
                                         positionner)</span>
-                                </label>
+                                </p>
                                 <div id="location-map"
                                     class="h-80 bg-gray-200 rounded-lg border-2 border-dashed border-gray-300"
                                     x-ref="map"></div>
@@ -501,7 +501,7 @@
                                 @foreach ($residence->photos as $photo)
                                     <div class="relative group">
                                         <img loading="lazy" src="{{ storage_url($photo->path) }}"
-                                            alt="Photo {{ $loop->iteration }}"
+                                            alt="Visuel {{ $loop->iteration }}"
                                             class="w-full h-32 object-cover rounded-lg">
 
                                         <!-- Badge photo principale -->
@@ -593,7 +593,7 @@
                             <div x-show="previews.length > 0" class="mt-6 grid grid-cols-4 gap-4">
                                 <template x-for="(preview, index) in previews" :key="index">
                                     <div class="relative">
-                                        <img loading="lazy" :src="preview" alt="Image"
+                                        <img loading="lazy" :src="preview" :alt="'Aperçu ' + (index + 1)"
                                             class="w-full h-20 object-cover rounded-lg">
                                         <button type="button" @click="removePreview(index)"
                                             class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
@@ -695,17 +695,7 @@
     </div>
 
     @push('owner-scripts')
-        <script>
-            function __addressAutocompleteCallback() {
-                if (typeof window.__addressAutocompleteInit === 'function') {
-                    window.__addressAutocompleteInit();
-                }
-            }
-        </script>
-        <script
-            src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&libraries=places&callback=__addressAutocompleteCallback"
-            async
-            defer
-        ></script>
     @endpush
+
+    <x-google-maps-loader stack="owner-scripts" />
 @endsection

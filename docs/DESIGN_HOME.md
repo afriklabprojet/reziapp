@@ -1,4 +1,4 @@
-# REZI — Refonte de la page d’accueil
+# ReziApp — Refonte de la page d’accueil
 
 ## 🎯 Objectifs UX
 - Compréhension du produit en moins de 5 secondes.
@@ -12,7 +12,7 @@
 
 ```
 [HEADER]
-- Logo REZI
+- Logo ReziApp
 - Accès Résidences / Carte / Connexion
 
 [HERO]

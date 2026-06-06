@@ -1,5 +1,5 @@
                 {{-- CTA STICKY MOBILE --}}
-                <div x-data="{ visible: false }" x-init="window.addEventListener('scroll', () => { visible = window.scrollY > 500 }, { passive: true })" x-show="visible"
+                <div x-data="scrollReveal(500)" x-init="init()" x-show="visible"
                     x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="translate-y-full opacity-0" x-transition:enter-end="translate-y-0 opacity-100"
                     x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-y-0 opacity-100"
@@ -16,7 +16,7 @@
 
                         {{-- Boutons d'action --}}
                         <a href="{{ route('residences.index') }}"
-                            class="shrink-0 px-4 py-2.5 bg-[#F16A00] text-white text-sm font-semibold rounded-xl hover:bg-[#CC5A00] transition-colors shadow-lg shadow-none flex items-center gap-2">
+                            class="shrink-0 px-4 py-2.5 bg-[#F16A00] text-white text-sm font-semibold rounded-xl hover:bg-[#CC5A00] transition-colors flex items-center gap-2">
                             <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

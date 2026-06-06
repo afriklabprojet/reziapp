@@ -21,7 +21,7 @@ return new class () extends Migration {
             $table->integer('max_residences')->default(1);           // Nombre max de résidences
             $table->integer('max_photos_per_residence')->default(10);
             $table->integer('max_sponsored_per_month')->default(0);  // Boosts gratuits par mois
-            $table->decimal('commission_rate', 5, 2)->default(3.00); // Taux de commission REZI (%)
+            $table->decimal('commission_rate', 5, 2)->default(3.00); // Taux de commission ReziApp (%)
             $table->boolean('priority_support')->default(false);
             $table->boolean('analytics_advanced')->default(false);
             $table->boolean('auto_replies')->default(false);

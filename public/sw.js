@@ -1,4 +1,4 @@
-// REZI Service Worker v2.0 - West Africa Optimized
+// ReziApp Service Worker v2.0 - West Africa Optimized
 // Enhanced for: Offline mode, Lite mode, Low bandwidth optimization
 const CACHE_VERSION = 'v8';
 const CACHE_NAME = `rezi-cache-${CACHE_VERSION}`;
@@ -497,7 +497,7 @@ self.addEventListener('push', (event) => {
     console.log('[ServiceWorker] Notification push reçue');
 
     let notificationData = {
-        title: 'REZI',
+        title: 'ReziApp',
         body: 'Vous avez une nouvelle notification',
         icon: '/images/icons/icon-192x192.png',
         badge: '/images/icons/icon-72x72.png',

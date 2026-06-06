@@ -1,7 +1,7 @@
-# 🔧 REZI — Fiche de Corrections Complète
+# 🔧 ReziApp — Fiche de Corrections Complète
 
 > **Date** : 20 février 2026  
-> **Projet** : REZI — Plateforme de résidences meublées (Abidjan, Côte d'Ivoire)  
+> **Projet** : ReziApp — Plateforme de résidences meublées (Abidjan, Côte d'Ivoire)  
 > **Stack** : Laravel 12 • PHP 8.4 • Tailwind v4 • Alpine.js • Filament v3  
 > **Auteur** : Audit automatisé  
 > **Statut** : ✅ Corrections en cours (P0-3, P0-5, P1-1 à P1-5, P2-1 à P2-6 ✅)
@@ -65,7 +65,7 @@ MAIL_MAILER=mailgun
 MAILGUN_DOMAIN=mg.rezi.ci
 MAILGUN_SECRET=key-XXXXXXXXXXXXXX
 MAIL_FROM_ADDRESS="contact@rezi.ci"
-MAIL_FROM_NAME="REZI"
+MAIL_FROM_NAME="ReziApp"
 ```
 
 ```env
@@ -77,13 +77,13 @@ MAIL_USERNAME=votre_identifiant
 MAIL_PASSWORD=votre_mot_de_passe
 MAIL_ENCRYPTION=tls
 MAIL_FROM_ADDRESS="contact@rezi.ci"
-MAIL_FROM_NAME="REZI"
+MAIL_FROM_NAME="ReziApp"
 ```
 
 **Vérification** :
 ```bash
 php artisan tinker
-> Mail::raw('Test REZI', fn($m) => $m->to('test@example.com')->subject('Test'));
+> Mail::raw('Test ReziApp', fn($m) => $m->to('test@example.com')->subject('Test'));
 ```
 
 **Statut** : ✅ Corrigé — Resend intégré comme mailer (`resend/resend-laravel` installé, `.env` configuré avec `MAIL_MAILER=resend` + `RESEND_API_KEY`). Remplacer le placeholder par la vraie clé API depuis https://resend.com/api-keys.  
@@ -221,13 +221,13 @@ TWILIO_FROM=+225XXXXXXXXXX
 ```php
 // Remplacer :
 // TODO: Envoyer le SMS via une API (Orange, MTN, Twilio, etc.)
-// SmsService::send($verification->getFullPhone(), "Votre code REZI: {$code}");
+// SmsService::send($verification->getFullPhone(), "Votre code ReziApp: {$code}");
 \Log::info("OTP sent to {$verification->getFullPhone()}: {$code}");
 
 // Par :
 SmsService::send(
     $verification->getFullPhone(),
-    "Votre code REZI : {$code}. Valable 10 minutes."
+    "Votre code ReziApp : {$code}. Valable 10 minutes."
 );
 ```
 
@@ -326,7 +326,7 @@ protected function processOriginalPaymentRefund(Refund $refund): array
     return $jekoService->refund(
         transactionId: $payment->provider_transaction_id,
         amount: (int) $refund->amount,
-        reason: $refund->reason ?? 'Remboursement REZI'
+        reason: $refund->reason ?? 'Remboursement ReziApp'
     );
 }
 ```
@@ -792,7 +792,7 @@ stdout_logfile=/var/www/rezi/storage/logs/worker.log
 
 ```env
 MAIL_FROM_ADDRESS="contact@rezi.ci"
-MAIL_FROM_NAME="REZI"
+MAIL_FROM_NAME="ReziApp"
 ```
 
 **Statut** : ✅ Corrigé — `.env` mis à jour avec `contact@rezi.ci`  

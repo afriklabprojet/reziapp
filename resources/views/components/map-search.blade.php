@@ -8,18 +8,16 @@
     'interactive' => true,
 ])
 
-<div x-data="mapSearch(@js([
-    'accessToken' => config('services.mapbox.access_token'),
-    'style' => config('services.mapbox.style'),
+<div x-data="mapSearch({{ \Illuminate\Support\Js::encode([
     'center' => $center,
     'zoom' => $zoom,
     'radius' => $radius,
     'showRadiusCircle' => $showRadiusCircle,
     'residences' => $residences,
     'interactive' => $interactive,
-]))" x-init="initMap()"
+]) }})" x-init="initMap()"
     {{ $attributes->merge(['class' => 'relative rounded-lg overflow-hidden shadow-lg']) }}>
-    <!-- Carte Mapbox -->
+    <!-- Carte Google Maps -->
     <div x-ref="mapContainer" class="w-full {{ $height }} bg-gray-200">
         <!-- Loader -->
         <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
@@ -177,21 +175,11 @@
     </template>
 </div>
 
-@once
-    @push('styles')
-        <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet" integrity="sha384-SDYx9Nwa5fE1fRuBplOPejrcbPOK/ql0Uym6hsGsTvnlC784P5LZhBJIbo8O/O+0" crossorigin="anonymous" />
-        <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js" integrity="sha384-GCe89tb5amHPhp10tMEUmIOUpgyTbhqwThspGxJoQMvr5I6Zfq7lYU6ydn7dVKA6" crossorigin="anonymous"></script>
-    @endpush
-@endonce
+<x-google-maps-loader />
 
 @once
     @push('styles')
         <style>
-            .mapboxgl-ctrl-logo,
-            .mapboxgl-ctrl-attrib {
-                display: none !important;
-            }
-
             .residence-marker {
                 cursor: pointer;
                 transition: transform 0.2s ease;

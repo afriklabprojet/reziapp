@@ -78,7 +78,7 @@
         <x-filament.admin.hero
             eyebrow="Vue exécutive"
             title="Statistiques de la plateforme"
-            subtitle="Un tableau de bord plus lisible pour suivre l’acquisition, la performance commerciale et la qualité opérationnelle de REZI."
+            subtitle="Un tableau de bord plus lisible pour suivre l’acquisition, la performance commerciale et la qualité opérationnelle de ReziApp."
             icon="heroicon-o-chart-bar-square"
             tone="orange"
         >

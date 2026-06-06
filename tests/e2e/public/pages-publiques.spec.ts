@@ -9,7 +9,7 @@ test.describe('Accueil', () => {
   test('affiche le titre et les résidences vedettes', async ({ page }) => {
     await page.goto('/');
 
-    await expect(page).toHaveTitle(/REZI|Rezi/i);
+    await expect(page).toHaveTitle(/ReziApp|Rezi/i);
 
     // Hero / CTA principal visible
     await expect(page.locator('h1').first()).toBeVisible();

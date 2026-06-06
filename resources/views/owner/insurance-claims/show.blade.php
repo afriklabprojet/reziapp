@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Réclamation #' . $claim->claim_number . ' — REZI')
+@section('title', 'Réclamation #' . $claim->claim_number . ' — ReziApp')
 
 @section('owner-content')
 <div class="space-y-6">
@@ -48,7 +48,7 @@
 
             @if($claim->admin_notes)
             <div class="bg-blue-50 rounded-2xl border border-blue-200 p-6">
-                <h2 class="text-lg font-bold text-blue-900 mb-2">Note de l'équipe REZI</h2>
+                <h2 class="text-lg font-bold text-blue-900 mb-2">Note de l'équipe ReziApp</h2>
                 <p class="text-sm text-blue-800">{{ $claim->admin_notes }}</p>
             </div>
             @endif

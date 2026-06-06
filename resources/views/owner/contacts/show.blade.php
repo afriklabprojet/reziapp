@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Contact - ' . ($contact->user->name ?? 'Détail') . ' | REZI')
+@section('title', 'Contact - ' . ($contact->user->name ?? 'Détail') . ' | ReziApp')
 
 @section('owner-content')
     <div class="min-h-screen bg-gray-50/50">

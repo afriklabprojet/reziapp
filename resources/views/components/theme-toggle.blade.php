@@ -1,13 +1,7 @@
 {{-- Dark / Light mode toggle — persists in localStorage --}}
 <button
-    x-data="{
-        dark: document.documentElement.classList.contains('dark'),
-        toggle() {
-            this.dark = !this.dark;
-            document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', this.dark ? 'dark' : 'light');
-        }
-    }"
+    x-data="themeToggle()"
+    x-init="init()"
     @click="toggle()"
     :title="dark ? 'Mode clair' : 'Mode sombre'"
     :aria-label="dark ? 'Activer le mode clair' : 'Activer le mode sombre'"
@@ -19,7 +13,7 @@
     </svg>
 
     {{-- Moon icon (shown in light mode → click to switch to dark) --}}
-    <svg x-show="!dark" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <svg x-show="!dark" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
     </svg>
 </button>

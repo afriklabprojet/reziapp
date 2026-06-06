@@ -1,4 +1,4 @@
-# 🎨 REZI - Plan de Développement Frontend Complet
+# 🎨 ReziApp - Plan de Développement Frontend Complet
 
 ## 📊 État Actuel
 
@@ -25,11 +25,11 @@
 
 ---
 
-## 🎯 Charte Graphique REZI
+## 🎯 Charte Graphique ReziApp
 
 ### Couleurs Principales
 ```css
-/* Orange REZI - Couleur principale */
+/* Orange ReziApp - Couleur principale */
 --orange-500: #F97316;  /* Primary */
 --orange-600: #EA580C;  /* Hover */
 --orange-400: #FB923C;  /* Light */
@@ -100,7 +100,7 @@ resources/views/components/
 - [x] Hero avec géolocalisation
 - [x] Section "Comment ça marche"
 - [x] Preview carte
-- [x] Avantages REZI
+- [x] Avantages ReziApp
 - [x] Section propriétaires
 - [x] Témoignages
 - [x] Footer complet

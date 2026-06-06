@@ -157,7 +157,7 @@ return new class () extends Migration {
             $table->string('client_phone')->nullable();
             $table->text('client_address')->nullable();
 
-            // Vendeur (Propriétaire ou REZI)
+            // Vendeur (Propriétaire ou ReziApp)
             $table->string('seller_name');
             $table->string('seller_email');
             $table->string('seller_phone')->nullable();
@@ -194,7 +194,7 @@ return new class () extends Migration {
 
             // Montants
             $table->decimal('gross_amount', 12, 2); // Montant brut
-            $table->decimal('platform_fee', 10, 2)->default(0); // Commission REZI
+            $table->decimal('platform_fee', 10, 2)->default(0); // Commission ReziApp
             $table->decimal('transfer_fee', 10, 2)->default(0); // Frais de virement
             $table->decimal('net_amount', 12, 2); // Montant net versé
             $table->string('currency', 3)->default('XOF');

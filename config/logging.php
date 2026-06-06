@@ -127,7 +127,7 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
-        // REZI — Channels métier dédiés
+        // ReziApp — Channels métier dédiés
         'critical' => [
             'driver' => 'daily',
             'path' => storage_path('logs/critical.log'),

@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Selfie de vérification - REZI')
+@section('title', 'Selfie de vérification - ReziApp')
 
 @section('owner-content')
     <div class="space-y-6" x-data="selfieCapture()">

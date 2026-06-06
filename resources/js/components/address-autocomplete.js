@@ -1,16 +1,8 @@
+const DEFAULT_LATITUDE = 5.36;
+const DEFAULT_LONGITUDE = -4.0083;
+
 /**
  * Alpine.js component — Google Places Autocomplete
- *
- * Usage : x-data="addressAutocomplete()"
- *
- * Initialise le champ d'adresse avec Google Places Autocomplete.
- * Remplit automatiquement les champs cachés #latitude et #longitude
- * à partir de la sélection, et tente de pré-remplir la commune.
- *
- * Chargement asynchrone de l'API Google Maps supporté :
- *   - Si Maps est déjà chargé : initialisation immédiate.
- *   - Si Maps charge après Alpine : le callback `__addressAutocompleteCallback`
- *     déclenche l'initialisation.
  */
 export default function addressAutocomplete() {
     return {
@@ -18,20 +10,17 @@ export default function addressAutocomplete() {
         isReady: false,
         map: null,
         marker: null,
-        mapLatitude: 5.3600,
-        mapLongitude: -4.0083,
+        mapLatitude: DEFAULT_LATITUDE,
+        mapLongitude: DEFAULT_LONGITUDE,
 
         init() {
-            // Récupérer les valeurs initiales des champs cachés
             const latInput = document.getElementById('latitude');
             const lngInput = document.getElementById('longitude');
-            const hasCustomCoords = latInput && lngInput &&
-                latInput.value && lngInput.value &&
-                !(parseFloat(latInput.value) === 5.36 && parseFloat(lngInput.value) === -4.0083);
+            const hasCustomCoords = this.hasCustomCoords(latInput, lngInput);
 
             if (hasCustomCoords) {
-                this.mapLatitude = parseFloat(latInput.value);
-                this.mapLongitude = parseFloat(lngInput.value);
+                this.mapLatitude = Number.parseFloat(latInput.value);
+                this.mapLongitude = Number.parseFloat(lngInput.value);
             }
 
             const doInit = () => {
@@ -39,69 +28,77 @@ export default function addressAutocomplete() {
                 this.initMap();
             };
 
-            if (
-                typeof google !== 'undefined' &&
-                google.maps &&
-                google.maps.places
-            ) {
-                if (!hasCustomCoords) {
-                    this._detectIpLocation().then(doInit);
-                } else {
+            if (typeof google !== 'undefined' && google.maps?.places) {
+                if (hasCustomCoords) {
                     doInit();
+                } else {
+                    this._detectIpLocation().then(doInit);
                 }
-            } else {
-                // Sera appelé par le callback de chargement de l'API Maps
-                window.__addressAutocompleteInit = () => {
-                    if (!hasCustomCoords) {
-                        this._detectIpLocation().then(doInit);
-                    } else {
-                        doInit();
-                    }
-                };
+
+                return;
             }
+
+            globalThis.__googleMapsCallbacks = globalThis.__googleMapsCallbacks || [];
+            globalThis.__googleMapsCallbacks.push(() => {
+                if (hasCustomCoords) {
+                    doInit();
+                } else {
+                    this._detectIpLocation().then(doInit);
+                }
+            });
         },
 
-        /**
-         * Détecte la localisation approximative via l'IP du visiteur.
-         * Utilise ipapi.co (gratuit, pas de clé requise).
-         * Ne modifie les coordonnées que si la détection réussit.
-         */
+        hasCustomCoords(latInput, lngInput) {
+            if (!latInput?.value || !lngInput?.value) {
+                return false;
+            }
+
+            const latitude = Number.parseFloat(latInput.value);
+            const longitude = Number.parseFloat(lngInput.value);
+
+            return latitude !== DEFAULT_LATITUDE || longitude !== DEFAULT_LONGITUDE;
+        },
+
         async _detectIpLocation() {
             try {
-                const res = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(4000) });
-                if (!res.ok) return;
-                const data = await res.json();
-                if (data.latitude && data.longitude) {
-                    this.mapLatitude = parseFloat(data.latitude);
-                    this.mapLongitude = parseFloat(data.longitude);
-                    // Mise à jour des inputs cachés
-                    const latInput = document.getElementById('latitude');
-                    const lngInput = document.getElementById('longitude');
-                    if (latInput) latInput.value = this.mapLatitude;
-                    if (lngInput) lngInput.value = this.mapLongitude;
+                const response = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(4000) });
+                if (!response.ok) return;
 
-                    // Auto-sélectionner le pays détecté
-                    if (data.country_code) {
-                        const countrySelect = document.getElementById('country_code');
-                        if (countrySelect) {
-                            const opt = Array.from(countrySelect.options).find(
-                                o => o.value.toLowerCase() === data.country_code.toLowerCase()
-                            );
-                            if (opt) {
-                                countrySelect.value = opt.value;
-                                countrySelect.dispatchEvent(new Event('change'));
-                            }
-                        }
-                    }
-                }
+                const data = await response.json();
+                if (!data.latitude || !data.longitude) return;
+
+                this.mapLatitude = Number.parseFloat(data.latitude);
+                this.mapLongitude = Number.parseFloat(data.longitude);
+                this.syncHiddenCoordinates();
+                this.selectDetectedCountry(data.country_code);
             } catch {
-                // Silencieux : fallback sur Abidjan par défaut
+                // Fallback silencieux sur Abidjan
             }
         },
 
-        /**
-         * Initialise la carte interactive pour le positionnement.
-         */
+        syncHiddenCoordinates() {
+            const latInput = document.getElementById('latitude');
+            const lngInput = document.getElementById('longitude');
+            if (latInput) latInput.value = this.mapLatitude;
+            if (lngInput) lngInput.value = this.mapLongitude;
+        },
+
+        selectDetectedCountry(countryCode) {
+            if (!countryCode) return;
+
+            const countrySelect = document.getElementById('country_code');
+            if (!countrySelect) return;
+
+            const option = Array.from(countrySelect.options).find(
+                (currentOption) => currentOption.value.toLowerCase() === countryCode.toLowerCase()
+            );
+
+            if (!option) return;
+
+            countrySelect.value = option.value;
+            countrySelect.dispatchEvent(new Event('change'));
+        },
+
         initMap() {
             const mapContainer = this.$refs.createMap;
             if (!mapContainer || typeof google === 'undefined') return;
@@ -111,36 +108,29 @@ export default function addressAutocomplete() {
             this.map = new google.maps.Map(mapContainer, {
                 center: position,
                 zoom: 14,
-                styles: [
-                    { featureType: 'poi', stylers: [{ visibility: 'off' }] }
-                ]
+                styles: [{ featureType: 'poi', stylers: [{ visibility: 'off' }] }],
             });
 
             this.marker = new google.maps.Marker({
-                position: position,
+                position,
                 map: this.map,
                 draggable: true,
-                title: 'Glissez pour repositionner'
+                title: 'Glissez pour repositionner',
             });
 
-            // Déplacement du marqueur
             this.marker.addListener('dragend', () => {
-                const pos = this.marker.getPosition();
-                this._updateLatLng(pos.lat(), pos.lng());
-                this._reverseGeocode(pos.lat(), pos.lng());
+                const positionAfterDrag = this.marker.getPosition();
+                this._updateLatLng(positionAfterDrag.lat(), positionAfterDrag.lng());
+                this._reverseGeocode(positionAfterDrag.lat(), positionAfterDrag.lng());
             });
 
-            // Clic sur la carte
-            this.map.addListener('click', (e) => {
-                this._updateLatLng(e.latLng.lat(), e.latLng.lng());
-                this.marker.setPosition(e.latLng);
-                this._reverseGeocode(e.latLng.lat(), e.latLng.lng());
+            this.map.addListener('click', (event) => {
+                this._updateLatLng(event.latLng.lat(), event.latLng.lng());
+                this.marker.setPosition(event.latLng);
+                this._reverseGeocode(event.latLng.lat(), event.latLng.lng());
             });
         },
 
-        /**
-         * Met à jour les coordonnées (inputs cachés + état interne + carte).
-         */
         _updateLatLng(lat, lng) {
             this.mapLatitude = lat;
             this.mapLongitude = lng;
@@ -156,82 +146,44 @@ export default function addressAutocomplete() {
             if (!input) return;
 
             this.autocomplete = new google.maps.places.Autocomplete(input, {
-                // Restreint à la Côte d'Ivoire (et Burkina Faso optionnel)
                 componentRestrictions: { country: ['ci'] },
-                // Champs minimaux pour limiter la facturation
                 fields: ['formatted_address', 'geometry', 'address_components'],
                 types: ['geocode', 'establishment'],
             });
 
             this.autocomplete.addListener('place_changed', () => {
                 const place = this.autocomplete.getPlace();
-
-                if (!place || !place.geometry) {
-                    return;
-                }
+                if (!place?.geometry) return;
 
                 const lat = place.geometry.location.lat();
                 const lng = place.geometry.location.lng();
-
-                // Remplir les inputs cachés latitude / longitude
                 this._updateLatLng(lat, lng);
 
-                // Centrer la carte et déplacer le marqueur
                 if (this.map && this.marker) {
-                    const pos = new google.maps.LatLng(lat, lng);
-                    this.map.setCenter(pos);
+                    const position = new google.maps.LatLng(lat, lng);
+                    this.map.setCenter(position);
                     this.map.setZoom(16);
-                    this.marker.setPosition(pos);
+                    this.marker.setPosition(position);
                 }
 
-                // Tenter de pré-remplir commune et quartier
                 this._fillAddressComponents(place.address_components || []);
-
                 this.isReady = true;
             });
         },
 
-        /**
-         * Extraire les composantes d'adresse Google et pré-remplir
-         * les selects commune / quartier si disponibles.
-         */
         _fillAddressComponents(components) {
-            const get = (types) => {
-                const comp = components.find((c) =>
-                    types.some((t) => c.types.includes(t))
-                );
-                return comp ? comp.long_name : null;
-            };
-
-            // Commune → locality ou administrative_area_level_2
             const commune =
-                get(['locality', 'administrative_area_level_2', 'sublocality_level_1']) ||
-                get(['administrative_area_level_1']);
+                this.getAddressComponentValue(components, ['locality', 'administrative_area_level_2', 'sublocality_level_1']) ||
+                this.getAddressComponentValue(components, ['administrative_area_level_1']);
 
-            // Quartier → sublocality_level_1 ou neighborhood
             const quartier =
-                get(['sublocality_level_1', 'neighborhood', 'sublocality']) ||
-                get(['premise']);
+                this.getAddressComponentValue(components, ['sublocality_level_1', 'neighborhood', 'sublocality']) ||
+                this.getAddressComponentValue(components, ['premise']);
 
-            // Pré-remplir le select commune si trouvé
             if (commune) {
-                const communeSelect = document.getElementById('commune');
-                if (communeSelect) {
-                    const options = Array.from(communeSelect.options);
-                    const match = options.find(
-                        (o) =>
-                            o.text.toLowerCase().includes(commune.toLowerCase()) ||
-                            commune.toLowerCase().includes(o.text.toLowerCase())
-                    );
-                    if (match) {
-                        communeSelect.value = match.value;
-                        // Déclencher un événement change pour Alpine si nécessaire
-                        communeSelect.dispatchEvent(new Event('change'));
-                    }
-                }
+                this.syncCommuneSelect(commune);
             }
 
-            // Pré-remplir le champ quartier si vide
             if (quartier) {
                 const quartierInput = document.getElementById('quartier');
                 if (quartierInput && !quartierInput.value) {
@@ -240,13 +192,35 @@ export default function addressAutocomplete() {
             }
         },
 
-        /**
-         * Reverse geocoding : coordonnées → adresse.
-         * Appelé quand l'utilisateur déplace le marqueur ou clique sur la carte.
-         */
+        getAddressComponentValue(components, expectedTypes) {
+            for (const component of components) {
+                if (expectedTypes.some((type) => component.types.includes(type))) {
+                    return component.long_name;
+                }
+            }
+
+            return null;
+        },
+
+        syncCommuneSelect(commune) {
+            const communeSelect = document.getElementById('commune');
+            if (!communeSelect) return;
+
+            const match = Array.from(communeSelect.options).find(
+                (option) =>
+                    option.text.toLowerCase().includes(commune.toLowerCase()) ||
+                    commune.toLowerCase().includes(option.text.toLowerCase())
+            );
+
+            if (!match) return;
+
+            communeSelect.value = match.value;
+            communeSelect.dispatchEvent(new Event('change'));
+        },
+
         async _reverseGeocode(lat, lng) {
             try {
-                const res = await fetch('/api/v1/maps/reverse-geocode', {
+                const response = await fetch('/api/v1/maps/reverse-geocode', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -254,60 +228,41 @@ export default function addressAutocomplete() {
                     },
                     body: JSON.stringify({ lat, lng }),
                 });
-                const json = await res.json();
+                const json = await response.json();
+                if (!json.success || !json.data) return;
 
-                if (json.success && json.data) {
-                    const data = json.data;
-
-                    // Mettre à jour l'adresse
-                    const addressInput = this.$refs.addressInput;
-                    if (addressInput && data.address) {
-                        addressInput.value = data.address;
-                    }
-
-                    // Remplir commune
-                    if (data.commune) {
-                        const communeSelect = document.getElementById('commune');
-                        if (communeSelect) {
-                            const options = Array.from(communeSelect.options);
-                            const match = options.find(o =>
-                                o.text.toLowerCase().includes(data.commune.toLowerCase()) ||
-                                data.commune.toLowerCase().includes(o.text.toLowerCase())
-                            );
-                            if (match) {
-                                communeSelect.value = match.value;
-                                communeSelect.dispatchEvent(new Event('change'));
-                            }
-                        }
-                    }
-
-                    // Remplir quartier
-                    if (data.quartier) {
-                        const quartierInput = document.getElementById('quartier');
-                        if (quartierInput) {
-                            quartierInput.value = data.quartier;
-                            quartierInput.dispatchEvent(new Event('input'));
-                        }
-                    }
-
-                    // Valider l'adresse
-                    this._showAddressValidation(lat, lng);
-                }
-            } catch (e) {
-                console.warn('Reverse geocode failed:', e);
+                this.applyReverseGeocodeData(json.data);
+                this._showAddressValidation(lat, lng);
+            } catch (error) {
+                console.warn('Reverse geocode failed:', error);
             }
         },
 
-        /**
-         * Valider que les coordonnées correspondent à une vraie adresse.
-         * Affiche un indicateur visuel de confiance.
-         */
+        applyReverseGeocodeData(data) {
+            const addressInput = this.$refs.addressInput;
+            if (addressInput && data.address) {
+                addressInput.value = data.address;
+            }
+
+            if (data.commune) {
+                this.syncCommuneSelect(data.commune);
+            }
+
+            if (data.quartier) {
+                const quartierInput = document.getElementById('quartier');
+                if (quartierInput) {
+                    quartierInput.value = data.quartier;
+                    quartierInput.dispatchEvent(new Event('input'));
+                }
+            }
+        },
+
         async _showAddressValidation(lat, lng) {
             try {
                 const citySelect = document.getElementById('city');
                 const city = citySelect ? citySelect.value : null;
 
-                const res = await fetch('/api/v1/maps/validate-address', {
+                const response = await fetch('/api/v1/maps/validate-address', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -315,27 +270,27 @@ export default function addressAutocomplete() {
                     },
                     body: JSON.stringify({ lat, lng, city }),
                 });
-                const json = await res.json();
+                const json = await response.json();
+                if (!json.success || !json.data) return;
 
-                if (json.success && json.data) {
-                    const v = json.data;
-                    const badge = document.getElementById('address-validation-badge');
-                    if (badge) {
-                        if (v.valid && v.confidence >= 70) {
-                            badge.className = 'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700';
-                            badge.innerHTML = '✅ Adresse vérifiée (' + v.confidence + '%)';
-                        } else if (v.valid) {
-                            badge.className = 'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700';
-                            badge.innerHTML = '⚠️ Adresse approximative (' + v.confidence + '%)';
-                        } else {
-                            badge.className = 'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700';
-                            badge.innerHTML = '❌ ' + (v.issues[0] || 'Position invalide');
-                        }
-                        badge.style.display = 'inline-flex';
-                    }
+                const validation = json.data;
+                const badge = document.getElementById('address-validation-badge');
+                if (!badge) return;
+
+                if (validation.valid && validation.confidence >= 70) {
+                    badge.className = 'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700';
+                    badge.innerHTML = `✅ Adresse vérifiée (${validation.confidence}%)`;
+                } else if (validation.valid) {
+                    badge.className = 'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700';
+                    badge.innerHTML = `⚠️ Adresse approximative (${validation.confidence}%)`;
+                } else {
+                    badge.className = 'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700';
+                    badge.innerHTML = `❌ ${validation.issues[0] || 'Position invalide'}`;
                 }
-            } catch (_e) {
-                // Silently fail
+
+                badge.style.display = 'inline-flex';
+            } catch (error) {
+                console.warn('Address validation failed:', error);
             }
         },
     };

@@ -1,12 +1,12 @@
 @extends('layouts.client', ['sidebarActive' => 'payments'])
 
-@section('title', 'Mes paiements - REZI')
+@section('title', 'Mes paiements - ReziApp')
 
 @section('client-content')
     {{-- En-tête --}}
     <div class="mb-8">
         <h1 class="text-2xl font-bold text-gray-900">Mes paiements</h1>
-        <p class="text-gray-600">Historique de toutes vos transactions sur REZI</p>
+        <p class="text-gray-600">Historique de toutes vos transactions sur ReziApp</p>
     </div>
 
     {{-- Statistiques --}}
@@ -224,7 +224,7 @@
                 @if ($status !== 'all')
                     Aucun paiement avec ce statut.
                 @else
-                    Vous n'avez pas encore effectué de paiement sur REZI.
+                    Vous n'avez pas encore effectué de paiement sur ReziApp.
                 @endif
             </p>
             @if ($status !== 'all')

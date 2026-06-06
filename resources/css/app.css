@@ -11,14 +11,14 @@
 /* Class-based dark mode toggle (manual + respects prefers-color-scheme fallback) */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ===== REZI Design System — Tailwind v4 CSS config ===== */
+/* ===== ReziApp Design System — Tailwind v4 CSS config ===== */
 @theme {
     /* ─── Typographie : Plus Jakarta Sans (fallback Circular-like) ─── */
     --font-display: 'Plus Jakarta Sans', Circular, -apple-system, system-ui, Roboto, 'Helvetica Neue', sans-serif;
     --font-body: 'Plus Jakarta Sans', Circular, -apple-system, system-ui, Roboto, 'Helvetica Neue', sans-serif;
     --font-sans: 'Plus Jakarta Sans', Circular, -apple-system, system-ui, Roboto, 'Helvetica Neue', sans-serif;
 
-    /* ─── Palette REZI ─── */
+    /* ─── Palette ReziApp ─── */
     --color-primary-50:  #FFF4EB;
     --color-primary-100: #FFE7D1;
     --color-primary-200: #FFD0A3;
@@ -175,7 +175,7 @@
     display: none;
 }
 
-/* REZI × Airbnb Custom Components */
+/* ReziApp × Airbnb Custom Components */
 @layer components {
 
     /* Touch-friendly minimum: 44px height pour tous les boutons (WCAG 2.5.8) */
@@ -519,7 +519,7 @@
     }
 }
 
-/* ===== REZI Premium Utilities ===== */
+/* ===== ReziApp Premium Utilities ===== */
 @layer utilities {
 
     /* Glass card — fond blanc semi-transparent, blur + ring subtil */

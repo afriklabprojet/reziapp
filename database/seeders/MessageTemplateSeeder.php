@@ -36,7 +36,7 @@ class MessageTemplateSeeder extends Seeder
             ],
             [
                 'name' => 'Non disponible',
-                'content' => "Bonjour,\n\nMerci de votre intérêt. Malheureusement, ce logement n'est plus disponible actuellement.\n\nJe vous invite à consulter mes autres annonces sur REZI.\n\nCordialement",
+                'content' => "Bonjour,\n\nMerci de votre intérêt. Malheureusement, ce logement n'est plus disponible actuellement.\n\nJe vous invite à consulter mes autres annonces sur ReziApp.\n\nCordialement",
                 'category' => 'availability',
                 'shortcut' => 'indispo',
             ],
@@ -104,7 +104,7 @@ class MessageTemplateSeeder extends Seeder
             ],
             [
                 'name' => 'Merci séjour',
-                'content' => "Bonjour {user_name},\n\nMerci pour votre séjour chez moi !\n\nJ'espère que vous avez passé un agréable moment. Si vous avez apprécié votre expérience, je vous serais reconnaissant de laisser un avis sur REZI.\n\nÀ bientôt peut-être !",
+                'content' => "Bonjour {user_name},\n\nMerci pour votre séjour chez moi !\n\nJ'espère que vous avez passé un agréable moment. Si vous avez apprécié votre expérience, je vous serais reconnaissant de laisser un avis sur ReziApp.\n\nÀ bientôt peut-être !",
                 'category' => 'thank_you',
                 'shortcut' => 'mercisejour',
             ],

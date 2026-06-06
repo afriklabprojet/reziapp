@@ -20,6 +20,7 @@ class ResidenceService
     public function __construct(
         private ResidenceRepository $repository,
         private PhotoUploadService $photoService,
+        private SponsoredListingService $sponsoredListingService,
     ) {
     }
 
@@ -311,17 +312,11 @@ class ResidenceService
      *
      * @param Residence $residence
      */
-    public function recordContact(Residence $residence): void
+    public function recordContact(Residence $residence, ?int $userId = null): void
     {
         $this->repository->incrementContacts($residence);
 
-        // Enregistrer le contact sponsorisé si applicable
-        if ($residence->isSponsored()) {
-            $activeSponsoredListing = $residence->activeSponsoredListing();
-            if ($activeSponsoredListing) {
-                $activeSponsoredListing->recordContact(request()->ip(), auth()->id());
-            }
-        }
+        $this->sponsoredListingService->recordResidenceContact($residence, request()->ip(), $userId);
 
         Log::info('Residence contact recorded', [
             'residence_id' => $residence->id,
@@ -365,6 +360,9 @@ class ResidenceService
                     $priceWeek = $priceWeek ?? round($priceMonth / 3.5, 0);
                     $priceDay = $priceDay ?? round($priceMonth / 22, 0);
                 }
+                break;
+
+            default:
                 break;
         }
 

@@ -1,9 +1,9 @@
 @extends('layouts.client', ['sidebarActive' => 'notifications'])
 
-@section('title', 'Préférences de notifications - REZI')
+@section('title', 'Préférences de notifications - ReziApp')
 
 @section('client-content')
-    <div x-data="notificationPreferences(@js([
+    <div x-data="notificationPreferences({{ \Illuminate\Support\Js::encode([
     'preferences' => [
         'messages_email' => $preferences->messages_email,
         'messages_push' => $preferences->messages_push,
@@ -29,7 +29,7 @@
     'subscribeUrl' => route('notifications.push.subscribe'),
     'unsubscribeUrl' => route('notifications.push.unsubscribe'),
     'csrfToken' => csrf_token(),
-]))">
+]) }})">
         {{-- En-tête --}}
         <div class="mb-6">
             <div class="flex items-center justify-between">

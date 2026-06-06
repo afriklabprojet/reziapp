@@ -29,7 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('REZI Admin')
+            ->brandName('ReziApp Admin')
             ->brandLogo(fn () => view('filament.brand-logo'))
             ->favicon(asset('favicon.ico'))
             ->darkMode(true)

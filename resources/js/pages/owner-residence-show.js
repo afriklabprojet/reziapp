@@ -4,29 +4,104 @@
  */
 export default function ownerResidenceMap(config = {}) {
     return {
+        infoWindow: null,
+        isInfoWindowOpen: false,
+
         init() {
-            const position = {
-                lat: config.lat,
-                lng: config.lng
+            const renderMap = () => {
+                if (typeof google === 'undefined' || !google.maps) {
+                    return;
+                }
+
+                const mapContainer = this.$refs.map || document.getElementById('residence-map');
+                if (!mapContainer) {
+                    return;
+                }
+
+                const position = {
+                    lat: config.lat,
+                    lng: config.lng,
+                };
+
+                const map = new google.maps.Map(mapContainer, {
+                    center: position,
+                    zoom: 15,
+                    styles: [
+                        {
+                            featureType: 'poi',
+                            stylers: [{ visibility: 'off' }],
+                        },
+                    ],
+                });
+
+                this.marker = new google.maps.Marker({
+                    position,
+                    map,
+                    title: config.title || '',
+                });
+
+                this.infoWindow = this.createInfoWindow();
+                if (this.infoWindow) {
+                    this.infoWindow.addListener('closeclick', () => {
+                        this.isInfoWindowOpen = false;
+                    });
+
+                    this.marker.addListener('click', () => {
+                        this.toggleInfoWindow(map);
+                    });
+                }
             };
 
-            if (typeof google === 'undefined') return;
+            if (typeof google !== 'undefined' && google.maps) {
+                renderMap();
+            } else {
+                globalThis.__googleMapsCallbacks = globalThis.__googleMapsCallbacks || [];
+                globalThis.__googleMapsCallbacks.push(renderMap);
+            }
 
-            const map = new google.maps.Map(document.getElementById('map'), {
-                center: position,
-                zoom: 15,
-                styles: [
-                    {
-                        featureType: 'poi',
-                        stylers: [{ visibility: 'off' }]
-                    }
-                ]
-            });
+        },
 
-            new google.maps.Marker({
-                position: position,
-                map: map,
-                title: config.title || ''
+        toggleInfoWindow(map) {
+            if (!this.infoWindow) {
+                return;
+            }
+
+            if (this.isInfoWindowOpen) {
+                this.infoWindow.close();
+                this.isInfoWindowOpen = false;
+                return;
+            }
+
+            this.infoWindow.open({ anchor: this.marker, map });
+            this.isInfoWindowOpen = true;
+        },
+
+        createInfoWindow() {
+            if (typeof google === 'undefined' || !google.maps) {
+                return null;
+            }
+
+            const container = document.createElement('div');
+            container.className = 'text-sm leading-5';
+
+            if (config.title) {
+                const title = document.createElement('strong');
+                title.textContent = config.title;
+                container.appendChild(title);
+            }
+
+            if (config.address) {
+                const address = document.createElement('div');
+                address.textContent = config.address;
+                container.appendChild(address);
+            }
+
+            if (container.childNodes.length === 0) {
+                return null;
+            }
+
+            return new google.maps.InfoWindow({
+                content: container,
             });
         }
     };

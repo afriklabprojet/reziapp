@@ -44,10 +44,10 @@
                 </select>
             </div>
 
-            <div x-data="leaseTenantSearch(@js([
+            <div x-data="leaseTenantSearch({{ \Illuminate\Support\Js::encode([
                     'selectedId' => old('tenant_id'),
                     'tenants'    => $tenants->map(fn($t) => ['id' => $t->id, 'name' => $t->name, 'email' => $t->email]),
-                ]))">
+                ]) }})">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Locataire *</label>
                 <input type="hidden" name="tenant_id" :value="selectedId" required>
                 <div class="relative">
@@ -130,7 +130,7 @@
 
         {{-- Conditions financières --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4"
-            x-data="leaseTypeSection(@js(['leaseType' => old('lease_type', 'short_term')]))">
+            x-data="leaseTypeSection({{ \Illuminate\Support\Js::encode(['leaseType' => old('lease_type', 'short_term')]) }})">
             <h2 class="font-semibold text-gray-800 border-b pb-2">Conditions financières</h2>
 
             <div class="grid grid-cols-2 gap-4">
@@ -166,13 +166,13 @@
 
         {{-- Clauses et services avec IA --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4"
-            x-data="leaseClausesSection(@js([
+            x-data="leaseClausesSection({{ \Illuminate\Support\Js::encode([
                 'services'    => old('included_services', []),
                 'clauses'     => old('special_clauses', ''),
                 'generateUrl' => route('owner.ai.generate-clauses'),
                 'suggestUrl'  => route('owner.ai.suggest-services'),
                 'csrfToken'   => csrf_token(),
-            ]))">
+            ]) }})">
             <div class="flex items-center justify-between border-b pb-2">
                 <h2 class="font-semibold text-gray-800">Clauses et services (optionnel)</h2>
                 <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full text-[10px] font-bold uppercase tracking-wide">
