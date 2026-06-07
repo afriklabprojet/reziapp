@@ -10,8 +10,10 @@ use App\Models\Booking;
 use App\Models\BookingRequest;
 use App\Models\Residence;
 use App\Models\User;
+use App\Models\Payment;
 use App\Services\BookingService;
 use App\Services\JekoPaymentService;
+use App\Services\PaymentService;
 use App\Services\PricingService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -189,7 +191,10 @@ class BookingController extends Controller
                 array_merge($request->all(), ['booking_type' => 'instant']),
             );
 
-            return $this->redirectToPayment($booking, $request->input('payment_method', 'wave'));
+            return $this->redirectToPayment($booking, $request->input('payment_method', 'wave'), [
+                'use_wallet_credit'   => (bool) $request->input('use_wallet_credit', false),
+                'use_referral_credit' => (bool) $request->input('use_referral_credit', false),
+            ]);
         } catch (\Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
@@ -207,7 +212,10 @@ class BookingController extends Controller
                 array_merge($request->all(), ['booking_type' => 'request']),
             );
 
-            return $this->redirectToPayment($booking, $request->input('payment_method', 'wave'));
+            return $this->redirectToPayment($booking, $request->input('payment_method', 'wave'), [
+                'use_wallet_credit'   => (bool) $request->input('use_wallet_credit', false),
+                'use_referral_credit' => (bool) $request->input('use_referral_credit', false),
+            ]);
         } catch (\Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
@@ -261,7 +269,10 @@ class BookingController extends Controller
                 ],
             );
 
-            return $this->redirectToPayment($booking, $request->input('payment_method', 'wave'));
+            return $this->redirectToPayment($booking, $request->input('payment_method', 'wave'), [
+                'use_wallet_credit'   => (bool) $request->input('use_wallet_credit', false),
+                'use_referral_credit' => (bool) $request->input('use_referral_credit', false),
+            ]);
         } catch (\Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
@@ -279,23 +290,30 @@ class BookingController extends Controller
 
     /**
      * Initier le paiement Jeko et rediriger vers la page de paiement.
+     *
+     * @param  array  $walletOptions  ['use_wallet_credit' => bool, 'use_referral_credit' => bool]
      */
-    protected function redirectToPayment(Booking $booking, string $paymentMethod)
+    protected function redirectToPayment(Booking $booking, string $paymentMethod, array $walletOptions = [])
     {
         $jeko = app(JekoPaymentService::class);
 
         if ($jeko->isEnabled()) {
-            $walletOptions = [
-                'use_wallet_credit'   => (bool) request('use_wallet_credit', false),
-                'use_referral_credit' => (bool) request('use_referral_credit', false),
-            ];
-            $result = $jeko->createBookingPaymentRequest($booking, $paymentMethod, $walletOptions);
+            // Create the Payment record first — atomically deducts wallet/referral credits
+            $payment = app(PaymentService::class)->createBookingPayment(
+                $booking,
+                $booking->user,
+                $walletOptions,
+            );
 
-            if ($result['success'] && !empty($result['redirect_url'])) {
+            // Pass the post-credit charge amount to Jeko
+            $result = $jeko->createBookingPaymentRequest($booking, $paymentMethod, $payment);
+
+            if ($result['success'] && ! empty($result['redirect_url'])) {
                 return redirect()->away($result['redirect_url']);
             }
 
-            // Jeko failed — supprimer la réservation et renvoyer le client sur le formulaire pour réessayer
+            // Jeko failed — mark payment as failed so PaymentObserver restores credits
+            $payment->update(['status' => Payment::STATUS_FAILED]);
             $booking->delete();
 
             return back()
