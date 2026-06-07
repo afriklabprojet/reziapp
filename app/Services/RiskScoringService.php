@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Models\Residence;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Moteur de scoring risque actuariel pour les assurances résidences.
@@ -248,8 +249,14 @@ class RiskScoringService
                 ->sum(fn ($b) => $b->check_in->diffInDays($b->check_out ?? $b->check_in->addDay()));
 
             return min(100, (int)(($bookedDays / $totalDays) * 100));
-        } catch (\Throwable) {
-            return 50; // valeur par défaut
+        } catch (\Throwable $exception) {
+            Log::error('RiskScoring: occupancy score calculation failed', [
+                'residence_id' => $residence->id ?? null,
+                'error' => $exception->getMessage(),
+            ]);
+            report($exception);
+
+            return 50;
         }
     }
 
@@ -279,7 +286,13 @@ class RiskScoringService
             )->whereIn('status', ['approved', 'paid'])->count()
             +
             \App\Models\InsuranceSubscription::where('owner_id', $owner->id)->sum('claim_count');
-        } catch (\Throwable) {
+        } catch (\Throwable $exception) {
+            Log::error('RiskScoring: claim history count failed', [
+                'owner_id' => $owner->id ?? null,
+                'error' => $exception->getMessage(),
+            ]);
+            report($exception);
+
             return 0;
         }
     }
@@ -329,8 +342,14 @@ class RiskScoringService
             }
 
             return 10; // aucun équipement de sécurité
-        } catch (\Throwable) {
-            return 7; // valeur par défaut
+        } catch (\Throwable $exception) {
+            Log::error('RiskScoring: security features score failed', [
+                'residence_id' => $residence->id ?? null,
+                'error' => $exception->getMessage(),
+            ]);
+            report($exception);
+
+            return 7;
         }
     }
 
@@ -350,7 +369,13 @@ class RiskScoringService
             }
 
             return empty($found) ? 'Aucun équipement détecté' : implode(', ', $found);
-        } catch (\Throwable) {
+        } catch (\Throwable $exception) {
+            Log::error('RiskScoring: security description failed', [
+                'residence_id' => $residence->id ?? null,
+                'error' => $exception->getMessage(),
+            ]);
+            report($exception);
+
             return 'Non renseigné';
         }
     }
