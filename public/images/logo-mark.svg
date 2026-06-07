@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Rezi mark</title>
+  <desc id="desc">Monogramme Rezi orange inspiré d'une épingle de localisation.</desc>
+  <g fill="#FF6A00" fill-rule="evenodd">
+    <rect x="96" y="88" width="84" height="258" rx="14" />
+    <path d="M300 92C389.47 92 448 158.84 448 242.83c0 59.68-31.66 104.23-78.6 175.14L300 512l-69.4-94.03C183.66 347.06 152 302.51 152 242.83 152 158.84 210.53 92 300 92Zm0 74c-43.68 0-74 32.04-74 76.83 0 24.36 10.77 49.35 39.41 93.04L300 387.95l34.59-52.08C363.23 292.18 374 267.19 374 242.83 374 198.04 343.68 166 300 166Z" />
+    <circle cx="300" cy="244" r="41" fill="#000" />
+  </g>
+</svg>
