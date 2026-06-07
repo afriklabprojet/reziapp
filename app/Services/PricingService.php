@@ -234,30 +234,13 @@ class PricingService
     ): array {
         $promoCode = PromoCode::byCode($code)->active()->first();
 
-        if (!$promoCode) {
-            return ['discount' => 0, 'code' => null, 'error' => 'Code promo invalide ou expiré'];
+        $error = $this->validatePromoCodeEligibility($promoCode, $residence, $subtotal, $nights, $user);
+        if ($error !== null) {
+            return ['discount' => 0, 'code' => null, 'error' => $error];
         }
-
-        if (!$promoCode->canBeUsedBy($user)) {
-            return ['discount' => 0, 'code' => null, 'error' => 'Vous ne pouvez pas utiliser ce code'];
-        }
-
-        if (!$promoCode->isApplicableToResidence($residence->id)) {
-            return ['discount' => 0, 'code' => null, 'error' => 'Ce code n\'est pas valide pour cette résidence'];
-        }
-
-        if (!$promoCode->isApplicableToNights($nights)) {
-            return ['discount' => 0, 'code' => null, 'error' => 'Minimum '.$promoCode->min_nights.' nuits requis'];
-        }
-
-        if (!$promoCode->isApplicableToAmount($subtotal)) {
-            return ['discount' => 0, 'code' => null, 'error' => 'Montant minimum '.number_format($promoCode->min_amount, 0, ',', ' ').' FCFA'];
-        }
-
-        $discount = $promoCode->calculateDiscount($subtotal);
 
         return [
-            'discount' => $discount,
+            'discount' => $promoCode->calculateDiscount($subtotal),
             'code' => [
                 'code' => $promoCode->code,
                 'name' => $promoCode->name,
@@ -267,6 +250,32 @@ class PricingService
             ],
             'error' => null,
         ];
+    }
+
+    private function validatePromoCodeEligibility(
+        ?PromoCode $promoCode,
+        Residence $residence,
+        float $subtotal,
+        int $nights,
+        User $user,
+    ): ?string {
+        if (! $promoCode) {
+            return 'Code promo invalide ou expiré';
+        }
+        if (! $promoCode->canBeUsedBy($user)) {
+            return 'Vous ne pouvez pas utiliser ce code';
+        }
+        if (! $promoCode->isApplicableToResidence($residence->id)) {
+            return 'Ce code n\'est pas valide pour cette résidence';
+        }
+        if (! $promoCode->isApplicableToNights($nights)) {
+            return 'Minimum '.$promoCode->min_nights.' nuits requis';
+        }
+        if (! $promoCode->isApplicableToAmount($subtotal)) {
+            return 'Montant minimum '.number_format($promoCode->min_amount, 0, ',', ' ').' FCFA';
+        }
+
+        return null;
     }
 
     /**
@@ -333,7 +342,7 @@ class PricingService
     /**
      * Formater un prix pour l'affichage
      */
-    public static function formatPrice(float $amount, string $currency = 'XOF'): string
+    public static function formatPrice(float $amount): string
     {
         return number_format($amount, 0, ',', ' ').' FCFA';
     }
@@ -355,42 +364,33 @@ class PricingService
     /**
      * Résoudre le meilleur tarif nuitée pour une résidence selon la durée du séjour.
      *
-     * Logique de tarification intelligente :
-     * - Séjour >= 30 nuits → utilise price_per_month / 30 si disponible
-     * - Séjour >= 7 nuits  → utilise price_per_week / 7 si disponible
-     * - Sinon              → utilise price_per_day
-     * - Fallback           → dérive depuis le tarif disponible le plus pertinent
+     * Priorité : mensuel (≥30 nuits) > hebdo (≥7 nuits) > journalier > fallback.
      */
     protected function resolveBasePrice(Residence $residence, int $nights): float
     {
-        $pricePerDay = $residence->price_per_day ? (float) $residence->price_per_day : null;
-        $pricePerWeek = $residence->price_per_week ? (float) $residence->price_per_week : null;
-        $pricePerMonth = $residence->price_per_month ? (float) $residence->price_per_month : null;
+        $perDay   = $residence->price_per_day   ? (float) $residence->price_per_day   : null;
+        $perWeek  = $residence->price_per_week  ? (float) $residence->price_per_week  : null;
+        $perMonth = $residence->price_per_month ? (float) $residence->price_per_month : null;
 
-        // Séjour long (>= 30 nuits) → tarif mensuel si dispo
-        if ($nights >= 30 && $pricePerMonth && $pricePerMonth > 0) {
-            return round($pricePerMonth / 30);
-        }
+        // Candidates ordered by preference for the given stay length
+        $candidates = match (true) {
+            $nights >= 30 => array_filter([
+                $perMonth ? round($perMonth / 30) : null,
+                $perWeek  ? round($perWeek  / 7)  : null,
+                $perDay,
+            ]),
+            $nights >= 7  => array_filter([
+                $perWeek  ? round($perWeek  / 7)  : null,
+                $perDay,
+                $perMonth ? round($perMonth / 30) : null,
+            ]),
+            default       => array_filter([
+                $perDay,
+                $perWeek  ? round($perWeek  / 7)  : null,
+                $perMonth ? round($perMonth / 30) : null,
+            ]),
+        };
 
-        // Séjour moyen (>= 7 nuits) → tarif hebdo si dispo
-        if ($nights >= 7 && $pricePerWeek && $pricePerWeek > 0) {
-            return round($pricePerWeek / 7);
-        }
-
-        // Tarif nuitée direct
-        if ($pricePerDay && $pricePerDay > 0) {
-            return $pricePerDay;
-        }
-
-        // Fallback : dérivation depuis le tarif disponible
-        if ($pricePerWeek && $pricePerWeek > 0) {
-            return round($pricePerWeek / 7);
-        }
-
-        if ($pricePerMonth && $pricePerMonth > 0) {
-            return round($pricePerMonth / 30);
-        }
-
-        return 0;
+        return (float) (reset($candidates) ?: 0);
     }
 }
