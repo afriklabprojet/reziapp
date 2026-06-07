@@ -644,6 +644,7 @@ class JekoPaymentServiceTest extends TestCase
             'payment_status' => 'processing',
         ]);
 
+        // total_budget is 100 XOF; handler expects amountCents = total_budget * 100 = 10000
         $payload = json_encode([
             'event' => 'transaction.completed',
             'data'  => [
@@ -655,7 +656,7 @@ class JekoPaymentServiceTest extends TestCase
                     'reference' => $sponsored->jeko_reference,
                 ],
                 'amount' => [
-                    'amount' => 100,
+                    'amount' => 10000,
                 ],
             ],
         ]);
