@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Observers\PaymentObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
+#[ObservedBy([PaymentObserver::class])]
 class Payment extends Model
 {
     use HasFactory;
@@ -36,7 +39,6 @@ class Payment extends Model
         'provider_reference',
         'provider_transaction_id',
         'phone_number',
-        'otp_code',
         'otp_expires_at',
         'metadata',
         'provider_response',
