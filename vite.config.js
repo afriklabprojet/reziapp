@@ -2,6 +2,9 @@ import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 
 export default defineConfig({
+    optimizeDeps: {
+        include: ['alpinejs', '@alpinejs/intersect', '@alpinejs/collapse'],
+    },
     server: {
         // Forcer IPv4 pour éviter que le navigateur reçoive http://[::1]:port
         // qui est une source invalide dans les directives CSP.

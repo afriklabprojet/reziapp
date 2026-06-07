@@ -1,7 +1,7 @@
-# REZI - Laravel Project Instructions
+# ReziApp - Laravel Project Instructions
 
 ## Project Overview
-REZI is a SaaS platform for geolocated furnished residence search in Abidjan, Côte d'Ivoire.
+ReziApp is a SaaS platform for geolocated furnished residence search in Abidjan, Côte d'Ivoire.
 
 ## Tech Stack
 - **Backend**: Laravel (latest stable)
