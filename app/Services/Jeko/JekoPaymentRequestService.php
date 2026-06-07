@@ -120,16 +120,21 @@ class JekoPaymentRequestService
         );
     }
 
-    public function createBookingPaymentRequest(Booking $booking, string $paymentMethod): array
+    public function createBookingPaymentRequest(Booking $booking, string $paymentMethod, array $options = []): array
     {
         if (! $this->isEnabled()) {
             return $this->failure(self::ERROR_JEKO_DISABLED);
         }
 
         $reference = 'REZI-BK-'.$booking->id.'-'.Str::random(8);
-        $chargeAmount = ($booking->payment_split && $booking->deposit_amount > 0)
+        $baseAmount = ($booking->payment_split && $booking->deposit_amount > 0)
             ? (float) $booking->deposit_amount
             : (float) $booking->total_amount;
+
+        // Deduct wallet/referral credits from the amount to charge via Jeko
+        $walletDeduct   = ! empty($options['use_wallet_credit'])   ? (float) ($booking->user->wallet_credit   ?? 0) : 0;
+        $referralDeduct = ! empty($options['use_referral_credit']) ? (float) ($booking->user->referral_balance ?? 0) : 0;
+        $chargeAmount   = max(0.0, $baseAmount - $walletDeduct - $referralDeduct);
 
         if ($chargeAmount < 100) {
             return $this->failure(self::ERROR_MINIMUM_AMOUNT);
