@@ -85,8 +85,16 @@ class ReferralService
                 return false;
             }
 
-            $locked->referrer->increment('referral_balance', $locked->referrer_reward);
-            $locked->referred->increment('referral_balance', $locked->referred_reward);
+            // Verrouiller les deux users dans un ordre déterministe (id croissant)
+            // pour prévenir les deadlocks sur récompenses simultanées.
+            $referrerId = $locked->referrer_id;
+            $referredId = $locked->referred_id;
+
+            $userIds = collect([$referrerId, $referredId])->sort()->values()->all();
+            User::whereIn('id', $userIds)->orderBy('id')->lockForUpdate()->get();
+
+            User::where('id', $referrerId)->increment('referral_balance', $locked->referrer_reward);
+            User::where('id', $referredId)->increment('referral_balance', $locked->referred_reward);
 
             $locked->update([
                 'status' => 'rewarded',
