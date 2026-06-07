@@ -155,7 +155,9 @@ jobs:
           rsync -azP \
             --exclude='.git' \
             --exclude='node_modules' \
-            --exclude='storage/app/public/photos' \
+            --exclude='storage/app/public' \
+            --exclude='storage/app/private' \
+            --exclude='storage/logs' \
             --exclude='.env' \
             --exclude='public/build' \
             --exclude='public/hot' \
@@ -202,7 +204,8 @@ jobs:
             # Migrations
             php artisan migrate --force
 
-            # Caches production
+            # Caches production — charger .env pour que APP_KEY soit disponible
+            set -a; source .env; set +a
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
