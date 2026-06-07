@@ -26,6 +26,8 @@ class Payment extends Model
         'payment_method_id',
         'amount',
         'fee',
+        'wallet_credit_used',
+        'referral_credit_used',
         'total_amount',
         'currency',
         'type',
@@ -51,6 +53,8 @@ class Payment extends Model
     protected $casts = [
         'amount' => 'decimal:2',
         'fee' => 'decimal:2',
+        'wallet_credit_used' => 'decimal:2',
+        'referral_credit_used' => 'decimal:2',
         'total_amount' => 'decimal:2',
         'metadata' => 'array',
         'provider_response' => 'array',
