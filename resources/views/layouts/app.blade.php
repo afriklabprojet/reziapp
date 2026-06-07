@@ -25,7 +25,7 @@
     @stack('meta')
 
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#F16A00">
+    <meta name="theme-color" content="#FF6A00">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -36,7 +36,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/icons/favicon-16x16.png">
     <link rel="shortcut icon" href="/favicon.ico">
-    <meta name="msapplication-TileColor" content="#F16A00">
+    <meta name="msapplication-TileColor" content="#FF6A00">
     <meta name="msapplication-config" content="/browserconfig.xml">
 
     <!-- Fonts: Plus Jakarta Sans (Airbnb Cereal / Circular fallback) -->
