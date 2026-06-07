@@ -1,6 +1,6 @@
 {
-    "name": "REZI - Location meublée à Abidjan",
-    "short_name": "REZI",
+    "name": "Rezi Studio Meublé Faya",
+    "short_name": "Rezi Studio",
     "description": "Trouvez votre résidence meublée idéale à Abidjan. Recherche géolocalisée, photos, contact direct avec les propriétaires.",
     "start_url": "/",
     "display": "standalone",
@@ -81,14 +81,14 @@
             "sizes": "1280x720",
             "type": "image/png",
             "form_factor": "wide",
-            "label": "Page d'accueil REZI — version desktop"
+            "label": "Page d'accueil Rezi Studio Meublé Faya — version desktop"
         },
         {
             "src": "/images/screenshots/home-mobile.png",
             "sizes": "375x812",
             "type": "image/png",
             "form_factor": "narrow",
-            "label": "Page d'accueil REZI — version mobile"
+            "label": "Page d'accueil Rezi Studio Meublé Faya — version mobile"
         }
     ],
     "shortcuts": [
