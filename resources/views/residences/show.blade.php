@@ -222,7 +222,7 @@
         {{-- ═══════════════════════════════════
          Sticky Section Navigation (Airbnb)
         ═══════════════════════════════════ --}}
-        <div x-data="stickyNav()" x-init="init()"
+        <div x-data="stickyNav"
              x-show="visible"
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0 -translate-y-1"
@@ -457,7 +457,7 @@
             </button>
             {{-- Single dynamic image (loads only current photo) --}}
               <img alt=""
-                  x-bind:src="(photoUrls ?? [])[currentPhoto] ?? ''"
+                  x-bind:src="(photoUrls || [])[currentPhoto] || ''"
                   x-bind:alt="'Visuel ' + (currentPhoto + 1)"
                  x-transition:enter="transition-opacity duration-200"
                  x-transition:enter-start="opacity-0"
@@ -898,7 +898,7 @@
 
                         {{-- Itinéraire interactif --}}
                         @if ($residence->latitude && $residence->longitude)
-                            <div x-data="directionsWidget()" class="mt-4">
+                            <div x-data="directionsWidget" class="mt-4">
                                 <button @click="getDirections()" :disabled="loading"
                                     class="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition disabled:opacity-50">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -920,17 +920,17 @@
                                 <div x-show="result" x-cloak class="mt-3 bg-gray-50 rounded-xl p-4">
                                     <div class="flex items-center gap-4">
                                         <div class="text-center">
-                                            <p class="text-2xl font-bold text-gray-900" x-text="result?.duration?.text || '—'"></p>
-                                            <p class="text-xs text-gray-500" x-text="result?.distance?.text || ''"></p>
+                                            <p class="text-2xl font-bold text-gray-900" x-text="(result && result.duration) ? result.duration.text : '—'"></p>
+                                            <p class="text-xs text-gray-500" x-text="(result && result.distance) ? result.distance.text : ''"></p>
                                         </div>
                                         <div class="flex-1 text-sm text-gray-600">
-                                            <p>Depuis : <span x-text="result?.start_address || 'Votre position'" class="font-medium"></span></p>
-                                            <p>Vers : <span x-text="result?.end_address || ''" class="font-medium"></span></p>
+                                            <p>Depuis : <span x-text="(result && result.start_address) ? result.start_address : 'Votre position'" class="font-medium"></span></p>
+                                            <p>Vers : <span x-text="(result && result.end_address) ? result.end_address : ''" class="font-medium"></span></p>
                                         </div>
                                     </div>
                                     {{-- Steps --}}
                                     <div x-show="showSteps" x-cloak class="mt-3 space-y-1 border-t border-gray-200 pt-3">
-                                        <template x-for="step in result?.steps || []" :key="step.instruction">
+                                        <template x-for="step in (result && result.steps ? result.steps : [])" :key="step.instruction">
                                             <div class="flex items-start gap-2 text-xs text-gray-600">
                                                 <span class="text-gray-400 mt-0.5">→</span>
                                                 <span x-text="step.instruction + ' (' + step.distance + ')'"></span>
@@ -947,7 +947,7 @@
 
                     {{-- Points d'intérêt à proximité --}}
                     @if ($residence->latitude && $residence->longitude)
-                        <div id="proximite" class="py-8 border-b border-gray-200" x-data="nearbyPOI()">
+                        <div id="proximite" class="py-8 border-b border-gray-200" x-data="nearbyPOI">
                             <h2 class="text-[22px] font-semibold text-gray-900 mb-2">À proximité</h2>
                             <p class="text-gray-500 text-sm mb-5">Ce qui se trouve autour de ce logement</p>
 
@@ -969,7 +969,7 @@
                                             <span class="ml-auto text-xs text-gray-400 bg-gray-200 px-1.5 py-0.5 rounded-full" x-text="group.count"></span>
                                         </div>
                                         {{-- Premier résultat --}}
-                                        <p class="text-xs text-gray-500 truncate" x-text="group.places[0]?.name + ' · ' + group.places[0]?.distance"></p>
+                                        <p class="text-xs text-gray-500 truncate" x-text="(group.places && group.places[0]) ? group.places[0].name + ' · ' + group.places[0].distance : ''"></p>
 
                                         {{-- Expanded details --}}
                                         <div x-show="expanded === group.type" x-cloak class="mt-2 space-y-1.5 border-t border-gray-200 pt-2">
@@ -993,7 +993,7 @@
 
                     {{-- Street View --}}
                     @if ($residence->latitude && $residence->longitude)
-                        <div id="streetview" class="py-8 border-b border-gray-200" x-data="streetViewWidget()">
+                        <div id="streetview" class="py-8 border-b border-gray-200" x-data="streetViewWidget">
                             <template x-if="available">
                                 <div>
                                     <h2 class="text-[22px] font-semibold text-gray-900 mb-2">Vue du quartier</h2>
@@ -1016,7 +1016,7 @@
 
                     {{-- Zones accessibles (Isochrone) --}}
                     @if ($residence->latitude && $residence->longitude)
-                        <div id="isochrone" class="py-8 border-b border-gray-200" x-data="isochroneWidget()">
+                        <div id="isochrone" class="py-8 border-b border-gray-200" x-data="isochroneWidget">
                             <h2 class="text-[22px] font-semibold text-gray-900 mb-2">Zones accessibles</h2>
                             <p class="text-gray-500 text-sm mb-4">Tout ce qui est accessible à pied depuis ce logement</p>
 
@@ -1813,13 +1813,14 @@
 
         {{-- Maps Alpine.js widgets --}}
         <script nonce="{{ $cspNonce }}">
+            document.addEventListener('alpine:init', function () {
             const RESIDENCE_ID = {{ $residence->id }};
             const API_BASE = '/api/v1/maps';
 
             /**
              * Widget : Points d'intérêt à proximité
              */
-            function nearbyPOI() {
+            Alpine.data('nearbyPOI', function () {
                 return {
                     groups: [],
                     loading: true,
@@ -1836,12 +1837,12 @@
                         }
                     }
                 };
-            }
+            });
 
             /**
              * Widget : Itinéraire (directions)
              */
-            function directionsWidget() {
+            Alpine.data('directionsWidget', function () {
                 return {
                     mode: 'driving',
                     modes: [
@@ -1882,12 +1883,12 @@
                         });
                     }
                 };
-            }
+            });
 
             /**
              * Widget : Street View
              */
-            function streetViewWidget() {
+            Alpine.data('streetViewWidget', function () {
                 return {
                     available: false,
                     imageUrl: null,
@@ -1906,12 +1907,12 @@
                         }
                     }
                 };
-            }
+            });
 
             /**
              * Widget : Isochrone (zones accessibles)
              */
-            function isochroneWidget() {
+            Alpine.data('isochroneWidget', function () {
                 return {
                     profile: 'walking',
                     profiles: [
@@ -2010,7 +2011,9 @@
                         }
                     }
                 };
-            }
+            }); // isochroneWidget
+
+            }); // alpine:init
         </script>
     @endif
 
@@ -2020,7 +2023,8 @@
 
     {{-- Sticky Section Navigation Alpine component --}}
     <script nonce="{{ $cspNonce }}">
-        function stickyNav() {
+        document.addEventListener('alpine:init', function () {
+        Alpine.data('stickyNav', function () {
             return {
                 visible: false,
                 navActive: '',
@@ -2060,6 +2064,8 @@
                     window.scrollTo({ top: y, behavior: 'smooth' });
                 }
             };
-        }
+        }); // stickyNav
+
+        }); // alpine:init
     </script>
 @endpush
