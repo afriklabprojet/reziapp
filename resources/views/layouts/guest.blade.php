@@ -17,16 +17,17 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    @production
+    @php($clarityId = config('services.clarity.id'))
+    @if (app()->isProduction() && filled($clarityId))
     <!-- Microsoft Clarity -->
     <script type="text/javascript" nonce="{{ $cspNonce }}">
         (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
             t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
             y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "wfqugxj6q3");
+        })(window, document, "clarity", "script", {{ \Illuminate\Support\Js::encode($clarityId) }});
     </script>
-    @endproduction
+    @endif
 </head>
 
 <body class="font-sans text-[#0F0F0F] antialiased">
