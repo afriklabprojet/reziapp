@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Events\MessageSent;
 use App\Events\MessagesRead;
 use App\Events\UserTyping;
+use App\Models\Booking;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\Residence;
@@ -55,6 +56,13 @@ class MessagingTest extends TestCase
     #[Test]
     public function user_can_start_conversation_with_owner(): void
     {
+        // A booking is required before a user can contact an owner
+        Booking::factory()->create([
+            'user_id' => $this->user->id,
+            'residence_id' => $this->residence->id,
+            'status' => 'confirmed',
+        ]);
+
         $response = $this->actingAs($this->user)
             ->post(route('chat.start'), [
                 'residence_id' => $this->residence->id,
