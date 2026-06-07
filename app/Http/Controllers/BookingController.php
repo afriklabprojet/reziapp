@@ -8,9 +8,9 @@ use App\Http\Requests\StoreBookingRequestRequest;
 use App\Http\Requests\StoreInstantBookingRequest;
 use App\Models\Booking;
 use App\Models\BookingRequest;
+use App\Models\Payment;
 use App\Models\Residence;
 use App\Models\User;
-use App\Models\Payment;
 use App\Services\BookingService;
 use App\Services\JekoPaymentService;
 use App\Services\PaymentService;
@@ -305,6 +305,13 @@ class BookingController extends Controller
                 $walletOptions,
             );
 
+            // Credits cover the full amount — no Jeko charge needed
+            if ((float) $payment->total_amount < 100) {
+                $payment->update(['status' => Payment::STATUS_COMPLETED, 'paid_at' => now()]);
+
+                return redirect()->route('bookings.confirmation', $booking->uuid);
+            }
+
             // Pass the post-credit charge amount to Jeko
             $result = $jeko->createBookingPaymentRequest($booking, $paymentMethod, $payment);
 
@@ -313,8 +320,12 @@ class BookingController extends Controller
             }
 
             // Jeko failed — mark payment as failed so PaymentObserver restores credits
-            $payment->update(['status' => Payment::STATUS_FAILED]);
-            $booking->delete();
+            try {
+                $payment->update(['status' => Payment::STATUS_FAILED]);
+                $booking->delete();
+            } catch (\Throwable $e) {
+                report($e);
+            }
 
             return back()
                 ->withErrors(['payment' => $result['error'] ?? 'Le paiement a échoué. Veuillez réessayer.'])
