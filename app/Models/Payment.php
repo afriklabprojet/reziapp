@@ -64,8 +64,7 @@ class Payment extends Model
 
     protected $hidden = [
         'otp_code',
-        'provider_response', // Données sensibles du prestataire Jeko — jamais exposées dans les réponses API
-        'provider_response', // Données sensibles du prestataire Jeko — jamais exposées dans les réponses API
+        'provider_response',
     ];
 
     // ===== CONSTANTS =====
@@ -238,18 +237,17 @@ class Payment extends Model
     // ===== METHODS =====
 
     /**
-     * Générer une référence unique
+     * Générer une référence unique de façon atomique.
+     * Utilise MAX(id) + 1 sur les paiements de l'année pour éviter les doublons
+     * en cas de création concurrente. La contrainte UNIQUE sur `reference`
+     * reste le filet de sécurité final.
      */
     public static function generateReference(): string
     {
         $year = date('Y');
-        $lastPayment = static::whereYear('created_at', $year)
-            ->orderBy('id', 'desc')
-            ->first();
+        $maxId = (int) static::whereYear('created_at', $year)->max('id');
 
-        $sequence = $lastPayment ? ((int) substr($lastPayment->reference, -6)) + 1 : 1;
-
-        return sprintf('PAY-%s-%06d', $year, $sequence);
+        return sprintf('PAY-%s-%06d', $year, $maxId + 1);
     }
 
     /**
@@ -317,7 +315,7 @@ class Payment extends Model
             return false;
         }
 
-        return $this->otp_code === $otp;
+        return \Illuminate\Support\Facades\Hash::check($otp, $this->otp_code);
     }
 
     /**
