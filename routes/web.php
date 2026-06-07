@@ -46,7 +46,15 @@ Route::get('/admin/files/private/{path}', function (string $path) {
         403
     );
 
-    $path = ltrim($path, '/');
+    $path = ltrim(str_replace('\\', '/', $path), '/');
+
+    abort_if($path === '' || str_contains($path, "\0"), 404);
+
+    foreach (explode('/', $path) as $segment) {
+        if ($segment === '' || $segment === '.' || $segment === '..') {
+            abort(404);
+        }
+    }
 
     /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
     $disk = Storage::disk('private');
@@ -59,7 +67,13 @@ Route::get('/admin/files/private/{path}', function (string $path) {
     $stream = $disk->readStream($path);
 
     return response()->stream(
-        function () use ($stream) { fpassthru($stream); },
+        function () use ($stream) {
+            fpassthru($stream);
+
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+        },
         200,
         [
             'Content-Type'        => $mime,
