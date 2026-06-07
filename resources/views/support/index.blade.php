@@ -128,7 +128,7 @@
                 </summary>
                 <p class="mt-2 text-blue-700 pl-4">
                     Les remboursements sont traités sous 5 à 10 jours ouvrés selon votre mode de paiement. 
-                    Les crédits ReziApp sont instantanés.
+                    Les crédits Rezi Studio Meublé Faya sont instantanés.
                 </p>
             </details>
             <details class="group">

@@ -1,5 +1,5 @@
 <x-app-layout>
-    @section('title', 'ReziApp – Location de résidences meublés à ' . ($userLocation['city'] ??
+    @section('title', 'Rezi Studio Meublé Faya – Location de résidences meublés à ' . ($userLocation['city'] ??
         (\App\Services\UserLocationService::current()['city'] ?? 'Abidjan')))
 
         {{-- APP STATE MANAGEMENT --}}

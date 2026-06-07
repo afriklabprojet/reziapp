@@ -1,5 +1,5 @@
 <x-app-layout>
-    @section('title', 'Inscription réussie - ReziApp')
+    @section('title', 'Inscription réussie - Rezi Studio Meublé Faya')
 
     <div class="min-h-[calc(100vh-56px)] md:min-h-[calc(100vh-64px)] flex">
         {{-- Left Side - Branding (Desktop only) --}}
@@ -40,7 +40,7 @@
                         <span class="text-3xl font-bold bg-linear-to-r from-[#F16A00] to-[#F16A00] bg-clip-text text-transparent">R</span>
                     </div>
                 </div>
-                <h1 class="text-4xl font-bold text-center mb-4">Bienvenue sur ReziApp !</h1>
+                <h1 class="text-4xl font-bold text-center mb-4">Bienvenue sur Rezi Studio Meublé Faya !</h1>
                 <p class="text-xl text-[#FFE7D1] text-center mb-12 max-w-md">
                     Votre compte a été créé avec succès. Découvrez des centaines de résidences meublées à Abidjan.
                 </p>

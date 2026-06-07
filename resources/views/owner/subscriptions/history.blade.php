@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Historique des commissions - ReziApp')
+@section('title', 'Historique des commissions - Rezi Studio Meublé Faya')
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -8,13 +8,13 @@
     <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
             <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Historique des commissions</h1>
-            <p class="mt-2 text-gray-600">Commission ReziApp prélevée à {{ rtrim(rtrim(number_format($commissionRate, 2, ',', ' '), '0'), ',') }}% sur chaque réservation payée</p>
+            <p class="mt-2 text-gray-600">Commission Rezi Studio Meublé Faya prélevée à {{ rtrim(rtrim(number_format($commissionRate, 2, ',', ' '), '0'), ',') }}% sur chaque réservation payée</p>
         </div>
         <a href="{{ route('owner.marketing.subscriptions.index') }}" class="btn-secondary">
             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
             </svg>
-            Retour au modèle ReziApp
+            Retour au modèle Rezi Studio Meublé Faya
         </a>
     </div>
 
@@ -29,7 +29,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Réf. paiement</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Résidence</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant total</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Commission ReziApp</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Commission Rezi Studio Meublé Faya</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net propriétaire</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Référence</th>
                     </tr>
@@ -76,7 +76,7 @@
                 <h3 class="mt-4 text-lg font-medium text-gray-900">Aucune commission enregistrée</h3>
                 <p class="mt-2 text-gray-500">Les commissions apparaîtront ici dès que vous aurez des réservations payées.</p>
                 <a href="{{ route('owner.marketing.subscriptions.index') }}" class="mt-4 inline-flex items-center btn-primary">
-                    Voir le modèle ReziApp
+                    Voir le modèle Rezi Studio Meublé Faya
                 </a>
             </div>
         @endif

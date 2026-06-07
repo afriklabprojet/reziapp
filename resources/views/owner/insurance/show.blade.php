@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Contrat #' . $insurance->policy_number . ' — ReziApp')
+@section('title', 'Contrat #' . $insurance->policy_number . ' — Rezi Studio Meublé Faya')
 
 @section('owner-content')
 <div class="max-w-4xl mx-auto space-y-6">

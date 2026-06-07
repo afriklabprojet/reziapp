@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Simulateur de devis — ReziApp')
+@section('title', 'Simulateur de devis — Rezi Studio Meublé Faya')
 
 @section('owner-content')
 <div class="max-w-4xl mx-auto space-y-6">

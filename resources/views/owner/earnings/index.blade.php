@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Mes Revenus | ReziApp')
+@section('title', 'Mes Revenus | Rezi Studio Meublé Faya')
 
 @section('owner-content')
     <div class="min-h-screen bg-gray-50/50">
@@ -101,7 +101,7 @@
                     </p>
                 </div>
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-                    <p class="text-[11px] text-gray-400 font-medium mb-1">Commission ReziApp</p>
+                    <p class="text-[11px] text-gray-400 font-medium mb-1">Commission Rezi Studio Meublé Faya</p>
                     <p class="text-lg font-bold text-gray-900">
                         {{ number_format($totalCommission, 0, ',', ' ') }}
                         <span class="text-[10px] text-gray-400 font-medium">F</span>
@@ -318,7 +318,7 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="text-sm font-bold text-gray-900">Commission ReziApp : {{ $commissionRate * 100 }}%</p>
+                        <p class="text-sm font-bold text-gray-900">Commission Rezi Studio Meublé Faya : {{ $commissionRate * 100 }}%</p>
                         <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">
                             Cette commission couvre les frais de la plateforme, le support client et la gestion des
                             paiements.

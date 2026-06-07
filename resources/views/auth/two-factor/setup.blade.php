@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Double authentification - ReziApp')
+@section('title', 'Double authentification - Rezi Studio Meublé Faya')
 
 @section('owner-content')
     <div class="space-y-6">
@@ -485,7 +485,7 @@
                             </div>
                             <div>
                                 <p class="text-sm font-semibold text-gray-900">Scannez le QR code</p>
-                                <p class="text-xs text-gray-500 mt-0.5">Liez votre compte ReziApp à l'application</p>
+                                <p class="text-xs text-gray-500 mt-0.5">Liez votre compte Rezi Studio Meublé Faya à l'application</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors">

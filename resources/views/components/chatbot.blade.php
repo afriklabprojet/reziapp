@@ -1,5 +1,5 @@
 {{--
-    Chatbot IA ReziApp — widget flottant 24/7
+    Chatbot IA Rezi Studio Meublé Faya — widget flottant 24/7
     Usage : <x-chatbot />
     Params optionnels : commune, budget, residence
 --}}
@@ -21,7 +21,7 @@ $config = json_encode([
     x-data="chatbot({{ $config }})"
     x-init="init()"
     class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3"
-    aria-label="Assistant ReziApp"
+    aria-label="Assistant Rezi Studio Meublé Faya"
 >
     {{-- ==================== FENÊTRE DE CHAT ==================== --}}
     <div
@@ -44,7 +44,7 @@ $config = json_encode([
                 </svg>
             </div>
             <div class="flex-1 min-w-0">
-                <p class="font-semibold text-sm leading-tight">Assistant ReziApp</p>
+                <p class="font-semibold text-sm leading-tight">Assistant Rezi Studio Meublé Faya</p>
                 <p class="text-xs text-[#FFE7D1]">Disponible 24h/24</p>
             </div>
             <button
@@ -162,7 +162,7 @@ $config = json_encode([
             aria-hidden="true"
         ></span>
 
-        <span class="text-sm font-semibold" x-show="!open">Assistant ReziApp</span>
+        <span class="text-sm font-semibold" x-show="!open">Assistant Rezi Studio Meublé Faya</span>
 
         {{-- Tooltip --}}
         <span class="absolute right-16 whitespace-nowrap bg-gray-900 text-white text-xs px-2.5 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" x-show="!open">

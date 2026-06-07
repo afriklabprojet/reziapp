@@ -159,7 +159,7 @@
             <div class="sig-date">{{ now()->format('d/m/Y') }}</div>
         </div>
         <div class="stamp">
-            <div class="stamp-inner">ReziApp</div>
+            <div class="stamp-inner">Rezi Studio Meublé Faya</div>
         </div>
         <div class="sig-block" style="text-align: right;">
             <div class="sig-label">Cachet électronique</div>
@@ -170,7 +170,7 @@
 
     {{-- Pied de page --}}
     <div class="footer">
-        ReziApp – Plateforme immobilière Abidjan | Document généré le {{ now()->format('d/m/Y à H:i') }}<br>
+        Rezi Studio Meublé Faya – Plateforme immobilière Abidjan | Document généré le {{ now()->format('d/m/Y à H:i') }}<br>
         Ce document fait foi de paiement de la location pour la période indiquée.
     </div>
 

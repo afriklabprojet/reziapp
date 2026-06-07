@@ -1,6 +1,6 @@
 @extends('layouts.client', ['sidebarActive' => 'contacts'])
 
-@section('title', 'Mes demandes de contact - ReziApp')
+@section('title', 'Mes demandes de contact - Rezi Studio Meublé Faya')
 
 @section('client-content')
     {{-- En-tête --}}

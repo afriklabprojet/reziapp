@@ -1,6 +1,6 @@
 @extends('layouts.client', ['sidebarActive' => 'statistics'])
 
-@section('title', 'Mes statistiques - ReziApp')
+@section('title', 'Mes statistiques - Rezi Studio Meublé Faya')
 
 @push('styles')
     @vite('resources/js/chart.js')
@@ -10,7 +10,7 @@
     {{-- En-tête --}}
     <div class="mb-8">
         <h1 class="text-2xl font-bold text-gray-900">Mes statistiques</h1>
-        <p class="text-gray-600">Analysez votre activité sur ReziApp</p>
+        <p class="text-gray-600">Analysez votre activité sur Rezi Studio Meublé Faya</p>
     </div>
 
     {{-- Infos membre --}}

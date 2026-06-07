@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Vérification 2FA - ReziApp')
+@section('title', 'Vérification 2FA - Rezi Studio Meublé Faya')
 
 @section('content')
     <div class="min-h-screen flex items-center justify-center px-4 py-12 bg-gray-50">
@@ -9,8 +9,8 @@
             {{-- Logo --}}
             <div class="text-center mb-8">
                 <a href="{{ url('/') }}" class="inline-block">
-                    <img src="{{ asset('images/logo.svg') }}" alt="ReziApp" class="h-8 mx-auto"
-                        onerror="this.outerHTML='<span class=\'text-2xl font-black text-gray-900\'>ReziApp</span>'">
+                    <img src="{{ asset('images/logo.svg') }}" alt="Rezi Studio Meublé Faya" class="h-8 mx-auto"
+                        onerror="this.outerHTML='<span class=\'text-2xl font-black text-gray-900\'>Rezi Studio Meublé Faya</span>'">
                 </a>
             </div>
 

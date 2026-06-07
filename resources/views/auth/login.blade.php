@@ -1,5 +1,5 @@
 <x-app-layout>
-    @section('title', 'Connexion - ReziApp')
+    @section('title', 'Connexion - Rezi Studio Meublé Faya')
 
     <div class="min-h-[calc(100vh-56px)] md:min-h-[calc(100vh-64px)] flex" x-data="{ showPassword: false }">
         {{-- ══════════════════════════════════════
@@ -31,7 +31,7 @@
                         class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-2xl mx-auto mb-4">
                         <span class="text-2xl font-extrabold text-[#F16A00]">R</span>
                     </div>
-                    <h1 class="text-4xl font-extrabold tracking-tight">ReziApp</h1>
+                    <h1 class="text-4xl font-extrabold tracking-tight">Rezi Studio Meublé Faya</h1>
                     <p class="text-sm text-gray-400 mt-1 font-medium tracking-wider uppercase">Location meublée en
                         Afrique de l'Ouest</p>
                 </div>
@@ -139,7 +139,7 @@
                         class="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
                         <span class="text-lg font-extrabold text-[#FF8A1F]">R</span>
                     </div>
-                    <p class="text-xs text-gray-400 font-medium uppercase tracking-widest">ReziApp · Location meublée</p>
+                    <p class="text-xs text-gray-400 font-medium uppercase tracking-widest">Rezi Studio Meublé Faya · Location meublée</p>
                 </div>
 
                 {{-- Header --}}

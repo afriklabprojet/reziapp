@@ -1,6 +1,6 @@
 @extends('layouts.client', ['sidebarActive' => 'view-history'])
 
-@section('title', 'Historique des visites - ReziApp')
+@section('title', 'Historique des visites - Rezi Studio Meublé Faya')
 
 @section('client-content')
     {{-- En-tête --}}

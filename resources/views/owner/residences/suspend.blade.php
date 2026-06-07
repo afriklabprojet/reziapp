@@ -49,7 +49,7 @@
                     class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                     @csrf
                     <h2 class="text-lg font-semibold text-gray-900 mb-4">Réactiver l'annonce</h2>
-                    <p class="text-gray-600 mb-6">Votre annonce sera à nouveau visible sur ReziApp.</p>
+                    <p class="text-gray-600 mb-6">Votre annonce sera à nouveau visible sur Rezi Studio Meublé Faya.</p>
 
                     <button type="submit"
                         class="w-full px-6 py-3 bg-[#F16A00] text-white rounded-xl hover:bg-[#CC5A00] transition flex items-center justify-center gap-2">

@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Inviter un co-hôte - ' . $residence->name . ' - ReziApp')
+@section('title', 'Inviter un co-hôte - ' . $residence->name . ' - Rezi Studio Meublé Faya')
 
 @section('owner-content')
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

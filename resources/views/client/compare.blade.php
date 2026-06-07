@@ -1,6 +1,6 @@
 @extends('layouts.client', ['sidebarActive' => 'compare'])
 
-@section('title', 'Comparer les résidences - ReziApp')
+@section('title', 'Comparer les résidences - Rezi Studio Meublé Faya')
 
 @section('client-content')
     {{-- En-tête --}}

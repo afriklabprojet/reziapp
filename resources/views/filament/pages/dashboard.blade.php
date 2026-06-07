@@ -7,7 +7,7 @@
         <x-filament.admin.hero
             eyebrow="{{ now()->locale('fr')->isoFormat('dddd D MMMM YYYY') }}"
             title="Bienvenue, {{ auth()->user()->name }}"
-            subtitle="Tableau de bord ReziApp — vue d'ensemble de la plateforme, des alertes critiques et des leviers d’action prioritaires."
+            subtitle="Tableau de bord Rezi Studio Meublé Faya — vue d'ensemble de la plateforme, des alertes critiques et des leviers d’action prioritaires."
             icon="heroicon-o-home-modern"
             tone="rose"
         >

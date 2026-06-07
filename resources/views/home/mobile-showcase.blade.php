@@ -12,7 +12,7 @@
     <header class="sticky top-0 z-30 border-b border-[#ebebeb] bg-white/95 px-4 pb-3 pt-[max(env(safe-area-inset-top),0.75rem)] backdrop-blur-xl">
         <div class="flex items-center gap-3">
             <a href="{{ route('home') }}" class="flex items-center gap-2" aria-label="Accueil Rezi">
-                <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="ReziApp" class="h-9 w-auto">
+                <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="Rezi Studio Meublé Faya" class="h-9 w-auto">
             </a>
 
             <form @submit.prevent="searchMobile()" class="flex h-14 min-w-0 flex-1 items-center gap-3 rounded-full border border-[#dddddd] bg-white px-4 shadow-[0_2px_8px_rgba(0,0,0,0.12)]">

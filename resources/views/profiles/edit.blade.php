@@ -1,6 +1,6 @@
 @extends('layouts.client', ['sidebarActive' => 'profile'])
 
-@section('title', 'Mon profil - ReziApp')
+@section('title', 'Mon profil - Rezi Studio Meublé Faya')
 
 @section('client-content')
     {{-- En-tête --}}

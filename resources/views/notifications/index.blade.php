@@ -1,6 +1,6 @@
 @extends('layouts.client', ['sidebarActive' => 'notifications'])
 
-@section('title', 'Mes notifications - ReziApp')
+@section('title', 'Mes notifications - Rezi Studio Meublé Faya')
 
 @section('client-content')
     <div>

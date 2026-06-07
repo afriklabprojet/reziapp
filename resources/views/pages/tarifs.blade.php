@@ -19,7 +19,7 @@
                 <span class="text-[#FF8A1F]">transparent et juste</span>
             </h1>
             <p class="text-gray-300 text-lg max-w-2xl mx-auto">
-                Chez ReziApp, les locataires ne paient aucun frais de plateforme. Côté propriétaire, ReziApp prélève 10% sur le montant total de chaque réservation confirmée, sans abonnement mensuel ni annuel.
+                Chez Rezi Studio Meublé Faya, les locataires ne paient aucun frais de plateforme. Côté propriétaire, Rezi Studio Meublé Faya prélève 10% sur le montant total de chaque réservation confirmée, sans abonnement mensuel ni annuel.
             </p>
         </div>
     </section>
@@ -96,7 +96,7 @@
                             'Tableau de bord propriétaire complet',
                             'Chat et réservations intégrés',
                             'Contrats & documents automatisés',
-                            'Support prioritaire équipe ReziApp',
+                            'Support prioritaire équipe Rezi Studio Meublé Faya',
                         ] as $item)
                         <li class="flex items-center gap-3 text-sm text-gray-700">
                             <svg class="w-4 h-4 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -164,19 +164,19 @@
         </div>
     </section>
 
-    {{-- COMPARAISON ReziApp vs AGENCES --}}
+    {{-- COMPARAISON Rezi Studio Meublé Faya vs AGENCES --}}
     <section class="py-16 sm:py-20 bg-white">
         <div class="max-w-4xl mx-auto px-4 sm:px-6">
             <div class="text-center mb-10">
-                <h2 class="font-sans text-3xl font-extrabold text-gray-900">ReziApp vs les agences immobilières</h2>
-                <p class="mt-2 text-gray-500">Pourquoi choisir ReziApp vous fait économiser des centaines de milliers de FCFA</p>
+                <h2 class="font-sans text-3xl font-extrabold text-gray-900">Rezi Studio Meublé Faya vs les agences immobilières</h2>
+                <p class="mt-2 text-gray-500">Pourquoi choisir Rezi Studio Meublé Faya vous fait économiser des centaines de milliers de FCFA</p>
             </div>
             <div class="overflow-x-auto rounded-2xl border border-gray-200 shadow-sm">
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-gray-50 border-b border-gray-200">
                             <th class="px-6 py-4 text-left font-semibold text-gray-500">Critère</th>
-                            <th class="px-6 py-4 text-center font-bold text-[#CC5A00]">ReziApp</th>
+                            <th class="px-6 py-4 text-center font-bold text-[#CC5A00]">Rezi Studio Meublé Faya</th>
                             <th class="px-6 py-4 text-center font-semibold text-gray-400">Agences traditionnelles</th>
                         </tr>
                     </thead>
@@ -234,7 +234,7 @@
                 Prêt à commencer gratuitement ?
             </h2>
             <p class="text-[#FFE7D1] text-lg mb-8">
-                Rejoignez les propriétaires qui font confiance à ReziApp pour louer plus vite et sans intermédiaire.
+                Rejoignez les propriétaires qui font confiance à Rezi Studio Meublé Faya pour louer plus vite et sans intermédiaire.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="{{ route('owner.residences.create') }}"

@@ -3,7 +3,7 @@
         <x-filament.admin.hero
             eyebrow="Paramètres"
             title="Localisation du site"
-            subtitle="Définissez le pays, la devise, le fuseau et les conventions régionales qui cadrent l’expérience ReziApp."
+            subtitle="Définissez le pays, la devise, le fuseau et les conventions régionales qui cadrent l’expérience Rezi Studio Meublé Faya."
             icon="heroicon-o-map-pin"
             tone="blue"
         />

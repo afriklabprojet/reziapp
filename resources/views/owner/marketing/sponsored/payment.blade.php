@@ -252,7 +252,7 @@
                                 <p class="text-xs text-blue-600 mt-1 leading-relaxed">
                                     Vous serez redirigé vers la page de paiement sécurisée Jeko.
                                     Confirmez le paiement sur votre téléphone, puis vous serez automatiquement redirigé vers
-                                    ReziApp.
+                                    Rezi Studio Meublé Faya.
                                 </p>
                             </div>
                         </div>

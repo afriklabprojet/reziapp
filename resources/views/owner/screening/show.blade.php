@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Score de ' . ($guestScore->user?->name ?? 'Voyageur') . ' — ReziApp')
+@section('title', 'Score de ' . ($guestScore->user?->name ?? 'Voyageur') . ' — Rezi Studio Meublé Faya')
 
 @section('owner-content')
 <div class="space-y-6">

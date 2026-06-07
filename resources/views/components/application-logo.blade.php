@@ -10,5 +10,5 @@
 @endphp
 
 <div {{ $attributes->merge(['class' => 'flex items-center']) }}>
-    <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="ReziApp Logo" class="{{ $sizeClass }} w-auto">
+    <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="Rezi Studio Meublé Faya Logo" class="{{ $sizeClass }} w-auto">
 </div>

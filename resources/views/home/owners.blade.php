@@ -1,4 +1,4 @@
-                {{-- 8. SECTION PROPRIÉTAIRES — Devenez propriétaire ReziApp --}}
+                {{-- 8. SECTION PROPRIÉTAIRES — Devenez propriétaire Rezi Studio Meublé Faya --}}
                 <section class="py-8 sm:py-12 bg-linear-to-br from-gray-900 via-gray-900 to-[#3d0014] text-white overflow-hidden relative">
                     {{-- Déco background --}}
                     <div class="absolute inset-0 opacity-10 pointer-events-none"

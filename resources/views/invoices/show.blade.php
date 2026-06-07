@@ -33,7 +33,7 @@
         <div class="bg-gray-50 border-b p-4 sm:p-6">
             <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
                 <div>
-                    <h2 class="text-xl font-bold text-gray-900">ReziApp</h2>
+                    <h2 class="text-xl font-bold text-gray-900">Rezi Studio Meublé Faya</h2>
                     <p class="text-sm text-gray-500 mt-1">Plateforme de résidences meublées</p>
                 </div>
                 <div class="text-right">
@@ -80,7 +80,7 @@
                             Réservation — {{ $invoice->booking->residence->title ?? 'Résidence' }}
                             <br><span class="text-sm text-gray-500">{{ $invoice->booking->check_in?->format('d/m/Y') }} → {{ $invoice->booking->check_out?->format('d/m/Y') }}</span>
                             @else
-                            {{ $invoice->description ?? 'Service ReziApp' }}
+                            {{ $invoice->description ?? 'Service Rezi Studio Meublé Faya' }}
                             @endif
                         </td>
                         <td class="py-3 text-right font-medium text-gray-900">{{ number_format($invoice->amount ?? $invoice->total ?? 0, 0, ',', ' ') }} FCFA</td>

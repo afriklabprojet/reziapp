@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Avis reçus — ReziApp')
+@section('title', 'Avis reçus — Rezi Studio Meublé Faya')
 
 @section('owner-content')
 <div class="space-y-6" x-data="{ respondingTo: null, responseText: {} }">

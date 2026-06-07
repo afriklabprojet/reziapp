@@ -1,5 +1,5 @@
 <x-app-layout>
-    @section('title', 'Écrire un avis - ' . $residence->title . ' - ReziApp')
+    @section('title', 'Écrire un avis - ' . $residence->title . ' - Rezi Studio Meublé Faya')
 
     <div class="py-6">
         <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">

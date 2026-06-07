@@ -1,6 +1,6 @@
 <x-app-layout>
-    @section('title', $metaTitle ?? $content['title'] ?? "Guide Propriétaire - ReziApp")
-    @section('description', $metaDescription ?? "Guide complet pour les propriétaires sur ReziApp.")
+    @section('title', $metaTitle ?? $content['title'] ?? "Guide Propriétaire - Rezi Studio Meublé Faya")
+    @section('description', $metaDescription ?? "Guide complet pour les propriétaires sur Rezi Studio Meublé Faya.")
 
     <div class="min-h-screen bg-gray-50">
 
@@ -15,7 +15,7 @@
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
                     <div>
                         <h1 class="text-3xl sm:text-4xl font-bold text-white">{{ $content['title'] ?? "Guide du Propriétaire" }}</h1>
-                        <p class="mt-3 text-[#FFE7D1] text-lg max-w-xl">{{ $content['subtitle'] ?? "Tout ce que vous devez savoir pour réussir sur ReziApp" }}</p>
+                        <p class="mt-3 text-[#FFE7D1] text-lg max-w-xl">{{ $content['subtitle'] ?? "Tout ce que vous devez savoir pour réussir sur Rezi Studio Meublé Faya" }}</p>
                     </div>
                     <div class="shrink-0 flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-2xl px-5 py-3 text-white text-sm font-medium whitespace-nowrap">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -31,7 +31,7 @@
                     </div>
                     <div class="bg-white/15 backdrop-blur-sm rounded-2xl p-4 text-center">
                         <div class="text-2xl font-bold text-white">0%</div>
-                        <div class="text-xs text-[#FFE7D1] mt-0.5">Commission ReziApp</div>
+                        <div class="text-xs text-[#FFE7D1] mt-0.5">Commission Rezi Studio Meublé Faya</div>
                     </div>
                     <div class="bg-white/15 backdrop-blur-sm rounded-2xl p-4 text-center">
                         <div class="text-2xl font-bold text-white">24h</div>
@@ -183,7 +183,7 @@
                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                 </div>
                 <h3 class="text-2xl font-bold text-white mb-2">Prêt à publier votre résidence ?</h3>
-                <p class="text-[#FFE7D1] mb-8 max-w-md mx-auto">Publication gratuite, sans commission. Rejoignez les propriétaires qui font confiance à ReziApp.</p>
+                <p class="text-[#FFE7D1] mb-8 max-w-md mx-auto">Publication gratuite, sans commission. Rejoignez les propriétaires qui font confiance à Rezi Studio Meublé Faya.</p>
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
                     @auth
                     <a href="{{ route('owner.residences.create') }}"

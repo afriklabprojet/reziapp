@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Page non trouvée - ReziApp</title>
+    <title>Page non trouvée - Rezi Studio Meublé Faya</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
     <div class="min-h-screen flex flex-col items-center justify-center px-4">
         {{-- Logo --}}
         <a href="{{ route('home') }}" class="mb-8">
-            <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="ReziApp" class="h-12 w-auto">
+            <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="Rezi Studio Meublé Faya" class="h-12 w-auto">
         </a>
 
         {{-- Error illustration --}}

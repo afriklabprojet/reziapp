@@ -14,7 +14,7 @@
                 Retour au parrainage
             </a>
             <h1 class="text-2xl font-bold text-gray-900">Partager mon code</h1>
-            <p class="text-gray-500 mt-1">Invitez vos amis à rejoindre ReziApp et gagnez des récompenses</p>
+            <p class="text-gray-500 mt-1">Invitez vos amis à rejoindre Rezi Studio Meublé Faya et gagnez des récompenses</p>
         </div>
 
         {{-- Referral Code Card --}}
