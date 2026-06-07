@@ -252,8 +252,8 @@ class GeoSearchTest extends TestCase
     public function test_rejects_coordinates_outside_coverage(): void
     {
         $response = $this->postJson(self::GEO_SEARCH_API, [
-            'latitude' => 48.8566, // Paris — hors zone
-            'longitude' => 2.3522, // Paris — hors limites CI/BF
+            'latitude' => 48.8566,  // Paris — hors zone (>max_lat CI/BF ~15°)
+            'longitude' => 100.0,   // Asie — hors zone (>max_lng CI/BF ~3°)
             'radius' => 5000,
         ]);
 
