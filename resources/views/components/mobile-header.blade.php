@@ -3,8 +3,13 @@
 
 <header x-data="{
     scrolled: false,
-    menuOpen: false
-}" @scroll.window="scrolled = window.scrollY > 20"
+    menuOpen: false,
+    init() {
+        const update = () => { this.scrolled = window.scrollY > 20; };
+        update();
+        window.addEventListener('scroll', update, { passive: true });
+    }
+}"
     class="fixed top-0 inset-x-0 z-40 md:hidden transition-all duration-300 pt-safe"
     :class="{
         'bg-white/98 shadow-sm': scrolled || !{{ $transparent ? 'true' : 'false' }},
