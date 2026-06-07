@@ -79,13 +79,14 @@ class JekoPaymentService
     /**
      * Create a payment request for a booking via Jeko redirect flow.
      *
-     * @param  Booking  $booking  The booking to pay for
-     * @param  string  $paymentMethod  One of: wave, orange, mtn, moov, djamo
+     * @param  Booking  $booking        The booking to pay for
+     * @param  string   $paymentMethod  One of: wave, orange, mtn, moov, djamo
+     * @param  array    $options        Optional: use_wallet_credit (bool), use_referral_credit (bool)
      * @return array{success: bool, redirect_url?: string, payment_id?: string, reference?: string, error?: string}
      */
-    public function createBookingPaymentRequest(Booking $booking, string $paymentMethod): array
+    public function createBookingPaymentRequest(Booking $booking, string $paymentMethod, array $options = []): array
     {
-        return $this->paymentRequests->createBookingPaymentRequest($booking, $paymentMethod);
+        return $this->paymentRequests->createBookingPaymentRequest($booking, $paymentMethod, $options);
     }
 
     /**
