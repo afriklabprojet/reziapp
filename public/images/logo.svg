@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 240" role="img" aria-labelledby="title desc">
+  <title id="title">Rezi logo</title>
+  <desc id="desc">Logo Rezi orange avec monogramme et mot-symbole.</desc>
+  <g transform="translate(12 8)">
+    <g fill="#FF6A00" fill-rule="evenodd" transform="translate(0 2)">
+      <rect x="28" y="24" width="46" height="142" rx="8" />
+      <path d="M140 26c49.28 0 81 36.06 81 80.6 0 32.1-16.62 55.88-42.31 94.53L140 256l-38.69-54.87C75.62 162.48 59 138.7 59 106.6 59 62.06 90.72 26 140 26Zm0 40c-27.01 0-45 18.8-45 40.6 0 13.14 5.82 27.48 23.53 55.18L140 194.47l21.47-32.69C179.18 134.08 185 119.74 185 106.6 185 84.8 167.01 66 140 66Z" transform="translate(0 -2) scale(0.82)" />
+      <circle cx="140" cy="108" r="22" fill="#fff" />
+    </g>
+    <text x="210" y="170" fill="#FF6A00" font-size="118" font-weight="700" font-family="Avenir Next, Poppins, Arial Rounded MT Bold, Helvetica, Arial, sans-serif" letter-spacing="-6">rezi</text>
+  </g>
+</svg>
