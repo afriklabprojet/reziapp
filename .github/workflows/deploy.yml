@@ -158,6 +158,7 @@ jobs:
             --exclude='storage/app/public/photos' \
             --exclude='.env' \
             --exclude='public/build' \
+            --exclude='public/hot' \
             --delete \
             -e "ssh -i ~/.ssh/id_ed25519" \
             ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ env.DEPLOY_PATH }}/
