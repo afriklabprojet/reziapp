@@ -414,6 +414,46 @@
 
                     <hr class="border-gray-200">
 
+                    {{-- ─── SECTION : Crédits disponibles ─── --}}
+                    @auth
+                        @php
+                            $walletBalance   = (float) (auth()->user()->wallet_credit ?? 0);
+                            $referralBalance = (float) (auth()->user()->referral_balance ?? 0);
+                        @endphp
+
+                        @if ($walletBalance > 0 || $referralBalance > 0)
+                            <section class="border-t border-gray-200 pt-8">
+                                <h2 class="text-[22px] font-semibold text-gray-900 mb-4">Crédits disponibles</h2>
+                                <div class="space-y-3">
+
+                                    @if ($walletBalance > 0)
+                                        <label class="flex items-center justify-between rounded-xl border border-gray-200 px-4 py-3 cursor-pointer hover:border-gray-400 has-[:checked]:border-gray-900 has-[:checked]:bg-gray-50">
+                                            <div>
+                                                <p class="font-medium text-gray-900">Crédit wallet</p>
+                                                <p class="text-sm text-gray-500">{{ number_format($walletBalance, 0, ',', ' ') }} FCFA disponibles</p>
+                                            </div>
+                                            <input type="checkbox" name="use_wallet_credit" value="1" class="w-5 h-5 rounded text-gray-900 border-gray-300 focus:ring-gray-900">
+                                        </label>
+                                    @endif
+
+                                    @if ($referralBalance > 0)
+                                        <label class="flex items-center justify-between rounded-xl border border-gray-200 px-4 py-3 cursor-pointer hover:border-gray-400 has-[:checked]:border-gray-900 has-[:checked]:bg-gray-50">
+                                            <div>
+                                                <p class="font-medium text-gray-900">Crédit parrainage</p>
+                                                <p class="text-sm text-gray-500">{{ number_format($referralBalance, 0, ',', ' ') }} FCFA disponibles</p>
+                                            </div>
+                                            <input type="checkbox" name="use_referral_credit" value="1" class="w-5 h-5 rounded text-gray-900 border-gray-300 focus:ring-gray-900">
+                                        </label>
+                                    @endif
+
+                                </div>
+                                <p class="mt-2 text-xs text-gray-400">Les crédits cochés seront déduits du total avant le paiement mobile.</p>
+                            </section>
+
+                            <hr class="border-gray-200">
+                        @endif
+                    @endauth
+
                     {{-- ─── SECTION 7 : Mode de paiement ─── --}}
                     <section>
                         <h2 class="text-lg font-semibold text-gray-900 mb-3">Mode de paiement</h2>
