@@ -12,6 +12,10 @@ use Carbon\Carbon;
 
 class PricingService
 {
+    public function __construct(private readonly LoyaltyService $loyaltyService)
+    {
+    }
+
     /**
      * Calculer le prix total d'une réservation
      */
@@ -87,8 +91,11 @@ class PricingService
             $appliedCoupon = $couponResult['coupon'];
         }
 
+        // Remise fidélité (palier Bronze–Platinum)
+        $loyaltyDiscount = $user ? $this->loyaltyService->calculateDiscount($user, $subtotal) : 0.0;
+
         // Total réductions
-        $totalDiscount = $longStayDiscount + $promoDiscount + $couponDiscount;
+        $totalDiscount = $longStayDiscount + $promoDiscount + $couponDiscount + $loyaltyDiscount;
 
         // Sous-total après réductions
         $subtotalAfterDiscount = $subtotal - $totalDiscount;
@@ -98,6 +105,11 @@ class PricingService
 
         // Taxe d'État fixe : configurable depuis l'admin, défaut 1 000 FCFA
         $taxes = (int) \App\Models\PlatformSetting::getValue('state_tax', config('rezi.pricing.state_tax', 1000));
+
+        // Crédits disponibles pour imputation (wallet + parrainage) — informatif, pas encore déduits ici
+        $availableWalletCredit = $user ? (float) ($user->wallet_credit ?? 0) : 0.0;
+        $availableReferralCredit = $user ? (float) ($user->referral_balance ?? 0) : 0.0;
+        $totalAvailableCredit = $availableWalletCredit + $availableReferralCredit;
 
         // Total final
         $totalAmount = $subtotalAfterDiscount + $cleaningFee + $taxes;
@@ -127,11 +139,18 @@ class PricingService
             'promo_code' => $appliedPromoCode,
             'coupon_discount' => $couponDiscount,
             'coupon' => $appliedCoupon,
+            'loyalty_discount' => $loyaltyDiscount,
+            'loyalty_tier' => $user?->loyalty_tier ?? 'standard',
             'total_discount' => $totalDiscount,
 
             // Taxe d'État
             'taxes' => $taxes,
             'tax_rate' => 0,
+
+            // Crédits utilisateur disponibles (wallet + parrainage)
+            'available_wallet_credit' => $availableWalletCredit,
+            'available_referral_credit' => $availableReferralCredit,
+            'total_available_credit' => $totalAvailableCredit,
 
             // Total
             'total_amount' => $totalAmount,
