@@ -21,14 +21,36 @@ if (!function_exists('storage_url')) {
      */
     function storage_url(?string $path): string
     {
+        static $resolvedUrls = [];
+
         if (empty($path)) {
             return '';
         }
 
-        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
-            return $path;
+        if (array_key_exists($path, $resolvedUrls)) {
+            return $resolvedUrls[$path];
         }
 
-        return Storage::url($path);
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $resolvedUrls[$path] = $path;
+        }
+
+        $normalizedPath = ltrim($path, '/');
+
+        if (str_starts_with($normalizedPath, 'storage/')) {
+            $normalizedPath = substr($normalizedPath, strlen('storage/'));
+        }
+
+        if (Storage::disk('public')->exists($normalizedPath)) {
+            $publicBaseUrl = rtrim((string) config('filesystems.disks.public.url', asset('storage')), '/');
+
+            return $resolvedUrls[$path] = $publicBaseUrl.'/'.$normalizedPath;
+        }
+
+        if (file_exists(public_path($normalizedPath))) {
+            return $resolvedUrls[$path] = asset($normalizedPath);
+        }
+
+        return $resolvedUrls[$path] = asset('images/placeholder-residence.jpg');
     }
 }
