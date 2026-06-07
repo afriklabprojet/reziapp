@@ -9,7 +9,7 @@
             {{-- Logo --}}
             <div class="text-center mb-8">
                 <a href="{{ url('/') }}" class="inline-block">
-                    <img src="{{ asset('images/logo.svg') }}" alt="Rezi App" class="h-8 mx-auto"
+                    <img src="{{ asset('images/logo-rezi.png') }}" alt="Rezi App" class="h-8 mx-auto"
                         onerror="this.outerHTML='<span class=\'text-2xl font-black text-gray-900\'>Rezi App</span>'">
                 </a>
             </div>
