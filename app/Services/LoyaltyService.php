@@ -8,7 +8,7 @@ use App\Models\Booking;
 use App\Models\User;
 
 /**
- * Gère le programme de fidélité ReziApp (style Genius / Booking.com).
+ * Gère le programme de fidélité Rezi Studio Meublé Faya (style Genius / Booking.com).
  *
  * Paliers :
  *  Standard  →  0 réservations,   0 % de remise

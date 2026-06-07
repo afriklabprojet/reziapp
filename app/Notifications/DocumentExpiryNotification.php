@@ -47,7 +47,7 @@ class DocumentExpiryNotification extends Notification implements ShouldQueue
         return $mail
             ->line('Veuillez mettre à jour vos documents pour maintenir votre profil à jour et continuer à recevoir des réservations.')
             ->action('Gérer mes documents', url('/owner/documents'))
-            ->salutation('L\'équipe ReziApp');
+            ->salutation('L\'équipe Rezi Studio Meublé Faya');
     }
 
     public function toArray(object $notifiable): array

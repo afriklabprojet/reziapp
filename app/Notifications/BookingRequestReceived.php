@@ -56,7 +56,7 @@ class BookingRequestReceived extends Notification implements ShouldQueue
             })
             ->action('Répondre à la demande', route('owner.bookings.requests'))
             ->line('Vous avez 48h pour accepter ou refuser cette demande.')
-            ->salutation('L\'équipe ReziApp');
+            ->salutation('L\'équipe Rezi Studio Meublé Faya');
     }
 
     public function toArray(object $notifiable): array

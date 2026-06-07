@@ -17,6 +17,6 @@ class VerifyEmailFr extends VerifyEmail
             ->line('Veuillez cliquer sur le bouton ci-dessous pour vérifier votre adresse e-mail.')
             ->action('Vérifier mon adresse e-mail', $url)
             ->line('Si vous n\'avez pas créé de compte, aucune action n\'est requise.')
-            ->salutation('Cordialement, l\'équipe ReziApp');
+            ->salutation('Cordialement, l\'équipe Rezi Studio Meublé Faya');
     }
 }

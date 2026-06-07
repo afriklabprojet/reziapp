@@ -30,10 +30,10 @@ class ReferralQualified extends Notification implements ShouldQueue
         return (new MailMessage())
             ->subject('✅ Parrainage qualifié – Réclamez votre récompense !')
             ->greeting("Bonjour {$notifiable->name} !")
-            ->line("**{$referredName}** a effectué sa première réservation confirmée sur ReziApp.")
+            ->line("**{$referredName}** a effectué sa première réservation confirmée sur Rezi Studio Meublé Faya.")
             ->line("Votre parrainage est maintenant **qualifié**. Vous pouvez réclamer votre récompense de **{$reward} FCFA** dès maintenant.")
             ->action('Réclamer ma récompense', route('owner.marketing.referrals.index'))
-            ->line('Merci d\'être un ambassadeur ReziApp !');
+            ->line('Merci d\'être un ambassadeur Rezi Studio Meublé Faya !');
     }
 
     public function toArray(object $notifiable): array

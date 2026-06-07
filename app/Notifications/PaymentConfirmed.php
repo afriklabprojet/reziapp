@@ -50,7 +50,7 @@ class PaymentConfirmed extends Notification implements ShouldQueue
                 ? route('bookings.show', $this->payment->booking)
                 : url('/'))
             ->line('Une facture vous sera envoyée séparément.')
-            ->salutation('L\'équipe ReziApp');
+            ->salutation('L\'équipe Rezi Studio Meublé Faya');
     }
 
     public function toArray(object $notifiable): array

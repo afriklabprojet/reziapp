@@ -55,11 +55,11 @@ class SeoService
             $title .= " - {$price} FCFA/jour";
         }
 
-        $title .= ' | ReziApp';
+        $title .= ' | Rezi Studio Meublé Faya';
 
         // Limiter à 60 caractères
         if (strlen($title) > 60) {
-            $title = "{$type} meublé à {$location} | ReziApp";
+            $title = "{$type} meublé à {$location} | Rezi Studio Meublé Faya";
         }
 
         return $title;
@@ -94,11 +94,11 @@ class SeoService
             ? number_format((float) $residence->price_per_night, 0, ',', ' ').' FCFA/jour'
             : '';
 
-        $description = "Louez ce {$type} meublé à {$location}{$featuresText}. {$price}. Réservation en ligne sécurisée sur ReziApp.";
+        $description = "Louez ce {$type} meublé à {$location}{$featuresText}. {$price}. Réservation en ligne sécurisée sur Rezi Studio Meublé Faya.";
 
         // Limiter à 155 caractères
         if (strlen($description) > 155) {
-            $description = "Louez ce {$type} meublé à {$location}. {$price}. Réservation sécurisée sur ReziApp.";
+            $description = "Louez ce {$type} meublé à {$location}. {$price}. Réservation sécurisée sur Rezi Studio Meublé Faya.";
         }
 
         return $description;
@@ -194,7 +194,7 @@ class SeoService
             'og:description' => $this->generateDescription($residence),
             'og:url' => route('residences.show', $residence),
             'og:image' => $photo ? asset('storage/'.$photo->path) : asset('images/og-default.jpg'),
-            'og:site_name' => 'ReziApp',
+            'og:site_name' => 'Rezi Studio Meublé Faya',
             'og:locale' => 'fr_CI',
             'twitter:card' => 'summary_large_image',
             'twitter:site' => '@reziapp',

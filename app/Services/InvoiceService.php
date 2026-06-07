@@ -91,7 +91,7 @@ class InvoiceService
 
             // Frais de service
             if (($booking->service_fee ?? 0) > 0) {
-                $invoice->addLineItem('Frais de service ReziApp', 1, $booking->service_fee);
+                $invoice->addLineItem('Frais de service Rezi Studio Meublé Faya', 1, $booking->service_fee);
             }
         } else {
             // Paiement sans réservation
@@ -132,9 +132,9 @@ class InvoiceService
             }
         }
 
-        // Facture ReziApp par défaut
+        // Facture Rezi Studio Meublé Faya par défaut
         return [
-            'name' => config('rezi.company.name', 'ReziApp SAS'),
+            'name' => config('rezi.company.name', 'Rezi Studio Meublé Faya SAS'),
             'email' => config('rezi.company.email', 'facturation@rezi.ci'),
             'phone' => config('rezi.company.phone', '+225 07 00 00 00 00'),
             'address' => config('rezi.company.address', 'Abidjan, Cocody\nCôte d\'Ivoire'),

@@ -559,7 +559,7 @@ class VerificationController extends Controller
      */
     protected function sendOtpSms(string $phone, string $code): void
     {
-        $message = "Votre code ReziApp : {$code}. Valable 10 minutes. Ne partagez ce code avec personne.";
+        $message = "Votre code Rezi Studio Meublé Faya : {$code}. Valable 10 minutes. Ne partagez ce code avec personne.";
 
         try {
             app(\App\Services\SmsService::class)->send($phone, $message);

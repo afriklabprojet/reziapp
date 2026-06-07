@@ -40,7 +40,7 @@ class SponsoredListingExpiring extends Notification implements ShouldQueue
             ->line("• Contacts générés : {$this->sponsoredListing->contacts_generated}")
             ->action('Renouveler la mise en avant', route('owner.marketing.sponsored.create'))
             ->line('Renouvelez pour maintenir votre visibilité !')
-            ->salutation('L\'équipe ReziApp');
+            ->salutation('L\'équipe Rezi Studio Meublé Faya');
     }
 
     public function toArray(object $notifiable): array

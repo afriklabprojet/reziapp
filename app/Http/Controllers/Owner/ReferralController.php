@@ -55,7 +55,7 @@ class ReferralController extends Controller
         $channel = $request->input('channel', 'copy');
 
         $referralUrl = route('register', ['ref' => $user->referral_code]);
-        $message = "Rejoins ReziApp et trouve ta résidence meublée idéale ! Utilise mon code {$user->referral_code} pour bénéficier d'une remise. {$referralUrl}";
+        $message = "Rejoins Rezi Studio Meublé Faya et trouve ta résidence meublée idéale ! Utilise mon code {$user->referral_code} pour bénéficier d'une remise. {$referralUrl}";
 
         // Enregistrer l'action de partage (pour analytics)
         // ...
@@ -68,7 +68,7 @@ class ReferralController extends Controller
             case 'twitter':
                 return redirect('https://twitter.com/intent/tweet?text='.urlencode($message));
             case 'email':
-                return redirect('mailto:?subject=Rejoins ReziApp !&body='.urlencode($message));
+                return redirect('mailto:?subject=Rejoins Rezi Studio Meublé Faya !&body='.urlencode($message));
             default:
                 return back()->with('referral_url', $referralUrl);
         }

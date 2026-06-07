@@ -9,7 +9,7 @@ use Illuminate\Validation\Rule;
 /**
  * Request de validation pour la recherche géolocalisée
  *
- * Cœur de ReziApp : validation stricte des coordonnées et du rayon
+ * Cœur de Rezi Studio Meublé Faya : validation stricte des coordonnées et du rayon
  * Supporte CI + Burkina Faso (limites dynamiques depuis la BDD)
  */
 class GeoSearchRequest extends FormRequest

@@ -51,7 +51,7 @@ class SponsoredListingCompleted extends Notification implements ShouldQueue
             ->line("• Budget dépensé : **{$amountSpent} FCFA**")
             ->action('Voir les détails', route('owner.marketing.sponsored.show', $this->sponsoredListing))
             ->line('Relancez une nouvelle campagne pour maintenir votre visibilité !')
-            ->salutation('L\'équipe ReziApp');
+            ->salutation('L\'équipe Rezi Studio Meublé Faya');
     }
 
     public function toArray(object $notifiable): array

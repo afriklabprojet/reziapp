@@ -16,11 +16,11 @@ class CreateSuperAdmin extends Command
                             {--email= : Adresse email}
                             {--password= : Mot de passe (min 12 caractères)}';
 
-    protected $description = 'Créer un compte super administrateur ReziApp';
+    protected $description = 'Créer un compte super administrateur Rezi Studio Meublé Faya';
 
     public function handle(): int
     {
-        $this->info('=== Création Super Admin ReziApp ===');
+        $this->info('=== Création Super Admin Rezi Studio Meublé Faya ===');
 
         $name     = $this->option('name')     ?? $this->ask('Nom complet');
         $email    = $this->option('email')    ?? $this->ask('Adresse email');

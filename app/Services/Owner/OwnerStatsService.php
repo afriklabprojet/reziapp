@@ -475,7 +475,7 @@ class OwnerStatsService
                 'icon'        => 'clock',
                 'color'       => 'yellow',
                 'title'       => $n.' annonce'.($n > 1 ? 's' : '').' en attente de validation',
-                'description' => 'L\'équipe ReziApp examine votre annonce',
+                'description' => 'L\'équipe Rezi Studio Meublé Faya examine votre annonce',
                 'action_url'  => route('owner.residences.index'),
                 'action_text' => 'Voir',
                 'urgent'      => false,

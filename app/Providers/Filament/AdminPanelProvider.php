@@ -29,7 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('ReziApp Admin')
+            ->brandName('Rezi Studio Meublé Faya Admin')
             ->brandLogo(fn () => view('filament.brand-logo'))
             ->favicon(asset('favicon.ico'))
             ->darkMode(true)

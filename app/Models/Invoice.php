@@ -353,7 +353,7 @@ class Invoice extends Model
             'client_address' => $user->address,
 
             // Vendeur
-            'seller_name' => $sellerInfo['name'] ?? config('rezi.company.name', 'ReziApp SAS'),
+            'seller_name' => $sellerInfo['name'] ?? config('rezi.company.name', 'Rezi Studio Meublé Faya SAS'),
             'seller_email' => $sellerInfo['email'] ?? config('rezi.company.email', 'contact@rezi.ci'),
             'seller_phone' => $sellerInfo['phone'] ?? config('rezi.company.phone', '+225 07 00 00 00 00'),
             'seller_address' => $sellerInfo['address'] ?? config('rezi.company.address', 'Abidjan, Côte d\'Ivoire'),
@@ -380,7 +380,7 @@ class Invoice extends Model
             }
 
             if ($booking->service_fee > 0) {
-                $invoice->addLineItem('Frais de service ReziApp', 1, $booking->service_fee);
+                $invoice->addLineItem('Frais de service Rezi Studio Meublé Faya', 1, $booking->service_fee);
             }
         } else {
             $invoice->addLineItem(

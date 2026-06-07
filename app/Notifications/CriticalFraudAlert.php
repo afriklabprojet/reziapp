@@ -36,7 +36,7 @@ class CriticalFraudAlert extends Notification implements ShouldQueue
             ->line('**Description :** '.($this->report->description ?? 'Aucune'))
             ->action('Voir le signalement', url('/admin/fraud-reports/'.$this->report->id))
             ->line('Action immédiate requise.')
-            ->salutation('Système ReziApp — Détection automatique');
+            ->salutation('Système Rezi Studio Meublé Faya — Détection automatique');
     }
 
     public function toArray(object $notifiable): array

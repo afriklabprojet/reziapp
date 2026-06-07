@@ -176,7 +176,7 @@ class IcalService
         $lines = [
             'BEGIN:VCALENDAR',
             'VERSION:2.0',
-            'PRODID:-//ReziApp//Calendar//FR',
+            'PRODID:-//Rezi Studio Meublé Faya//Calendar//FR',
             'CALSCALE:GREGORIAN',
             'METHOD:PUBLISH',
             'X-WR-CALNAME:'.$residence->name,

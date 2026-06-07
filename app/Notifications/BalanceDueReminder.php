@@ -34,7 +34,7 @@ class BalanceDueReminder extends Notification implements ShouldQueue
             ->line("Conformément à votre choix de paiement échelonné, le solde de **{$balance} FCFA** est à régler avant le **{$dueAt}**.")
             ->action('Régler le solde maintenant', route('bookings.show', $this->booking))
             ->line('Sans paiement à la date prévue, votre réservation pourrait être annulée automatiquement.')
-            ->salutation('L\'équipe ReziApp');
+            ->salutation('L\'équipe Rezi Studio Meublé Faya');
     }
 
     public function toArray(object $notifiable): array

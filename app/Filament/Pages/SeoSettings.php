@@ -34,7 +34,7 @@ class SeoSettings extends Page implements HasForms
         $s = PlatformSetting::all()->keyBy('key');
 
         $this->seoData = [
-            'seo_site_title'         => $s->get('seo_site_title')?->value         ?? 'ReziApp – Résidences meublées à Abidjan',
+            'seo_site_title'         => $s->get('seo_site_title')?->value         ?? 'Rezi Studio Meublé Faya – Résidences meublées à Abidjan',
             'seo_site_description'   => $s->get('seo_site_description')?->value   ?? '',
             'seo_site_keywords'      => $s->get('seo_site_keywords')?->value      ?? '',
             'seo_og_image'           => $s->get('seo_og_image')?->value           ?? '',
@@ -64,7 +64,7 @@ class SeoSettings extends Page implements HasForms
                             ->label('Titre du site')
                             ->required()
                             ->maxLength(70)
-                            ->placeholder('ReziApp – Résidences meublées à Abidjan')
+                            ->placeholder('Rezi Studio Meublé Faya – Résidences meublées à Abidjan')
                             ->helperText('Recommandé : 50–70 caractères')
                             ->columnSpanFull(),
 

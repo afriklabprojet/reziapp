@@ -19,7 +19,7 @@ use Illuminate\Validation\Rule;
 /**
  * API Controller pour la recherche géolocalisée optimisée
  *
- * Core feature de ReziApp : recherche de résidences par rayon intelligent
+ * Core feature de Rezi Studio Meublé Faya : recherche de résidences par rayon intelligent
  * avec cache géohash et tri par distance.
  */
 class GeoSearchController extends Controller

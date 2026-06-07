@@ -18,7 +18,7 @@ class BackupDatabase extends Command
     /**
      * The console command description.
      */
-    protected $description = 'Create a backup of the ReziApp database';
+    protected $description = 'Create a backup of the Rezi Studio Meublé Faya database';
 
     /**
      * Execute the console command.
