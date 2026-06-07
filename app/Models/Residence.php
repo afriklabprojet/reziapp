@@ -680,9 +680,14 @@ class Residence extends Model
         }
 
         // MySQL: MBRContains drives the SPATIAL INDEX; ST_Distance_Sphere refines
-        $bboxWkt  = "POLYGON(({$minLng} {$minLat},{$maxLng} {$minLat},{$maxLng} {$maxLat},{$minLng} {$maxLat},{$minLng} {$minLat}))";
+        // Use sprintf with fixed-point notation to guarantee locale-independent pure-decimal output
+        // that cannot contain SQL metacharacters regardless of PHP locale settings.
+        $bboxWkt  = sprintf(
+            'POLYGON((%.10f %.10f,%.10f %.10f,%.10f %.10f,%.10f %.10f,%.10f %.10f))',
+            $minLng, $minLat, $maxLng, $minLat, $maxLng, $maxLat, $minLng, $maxLat, $minLng, $minLat,
+        );
         $bboxExpr = "ST_GeomFromText('{$bboxWkt}', 4326)";
-        $ptExpr   = "ST_GeomFromText('POINT({$lng} {$lat})', 4326)";
+        $ptExpr   = sprintf("ST_GeomFromText('POINT(%.10f %.10f)', 4326)", $lng, $lat);
 
         $query = $query
             ->whereRaw("MBRContains({$bboxExpr}, location)")
@@ -781,9 +786,12 @@ class Residence extends Model
         $minLng = $lng - $lngDelta;
         $maxLng = $lng + $lngDelta;
 
-        $bboxWkt  = "POLYGON(({$minLng} {$minLat},{$maxLng} {$minLat},{$maxLng} {$maxLat},{$minLng} {$maxLat},{$minLng} {$minLat}))";
+        $bboxWkt  = sprintf(
+            'POLYGON((%.10f %.10f,%.10f %.10f,%.10f %.10f,%.10f %.10f,%.10f %.10f))',
+            $minLng, $minLat, $maxLng, $minLat, $maxLng, $maxLat, $minLng, $maxLat, $minLng, $minLat,
+        );
         $bboxExpr = "ST_GeomFromText('{$bboxWkt}', 4326)";
-        $ptExpr   = "ST_GeomFromText('POINT({$lng} {$lat})', 4326)";
+        $ptExpr   = sprintf("ST_GeomFromText('POINT(%.10f %.10f)', 4326)", $lng, $lat);
 
         return $query
             ->whereRaw("MBRContains({$bboxExpr}, location)")
