@@ -62,7 +62,7 @@ class BookingRaceConditionTest extends TestCase
         ]);
 
         $this->bookingService = new BookingService(
-            new PricingService(),
+            app(PricingService::class),
             app(PaymentService::class),
             app(CouponService::class),
         );
