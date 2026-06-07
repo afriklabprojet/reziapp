@@ -28,12 +28,13 @@ class LoyaltyService
         // Points = 1 pt par 1 000 FCFA dépensés (arrondi à l'entier inférieur)
         $points = (int) floor(($booking->total_amount ?? 0) / 1000);
 
-        $user->loyalty_points          = ($user->loyalty_points ?? 0) + $points;
-        $user->loyalty_bookings_count  = ($user->loyalty_bookings_count ?? 0) + 1;
-        $user->loyalty_nights_count    = ($user->loyalty_nights_count ?? 0) + ($booking->nights ?? 1);
-        $user->loyalty_total_spent     = ($user->loyalty_total_spent ?? 0) + ($booking->total_amount ?? 0);
-        $user->save();
+        // Increments atomiques pour éviter les race conditions sur réservations simultanées
+        $user->increment('loyalty_points', $points);
+        $user->increment('loyalty_bookings_count', 1);
+        $user->increment('loyalty_nights_count', $booking->nights ?? 1);
+        $user->increment('loyalty_total_spent', $booking->total_amount ?? 0);
 
+        $user->refresh();
         $user->recalculateLoyaltyTier();
     }
 
