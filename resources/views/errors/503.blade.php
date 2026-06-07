@@ -13,7 +13,7 @@
     <div class="min-h-screen flex flex-col items-center justify-center px-4">
         {{-- Logo --}}
         <div class="mb-8">
-            <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="Rezi App" class="h-16 w-auto brightness-0 invert">
+            <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="Rezi App" class="h-16 w-auto">
         </div>
 
         {{-- Maintenance illustration --}}
