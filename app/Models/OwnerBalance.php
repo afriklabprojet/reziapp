@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
 
 class OwnerBalance extends Model
 {
@@ -117,16 +118,21 @@ class OwnerBalance extends Model
     }
 
     /**
-     * Annuler des gains (en cas d'annulation)
+     * Annuler des gains (en cas d'annulation) — atomique avec lockForUpdate
      */
     public function cancelEarnings(float $amount, bool $isPending = true): void
     {
-        if ($isPending) {
-            $this->decrement('pending_balance', min($amount, $this->pending_balance));
-        } else {
-            $this->decrement('available_balance', min($amount, $this->available_balance));
-        }
-        $this->decrement('total_earned', $amount);
+        DB::transaction(function () use ($amount, $isPending) {
+            /** @var self $locked */
+            $locked = self::lockForUpdate()->find($this->id);
+
+            if ($isPending) {
+                $locked->decrement('pending_balance', min($amount, (float) $locked->pending_balance));
+            } else {
+                $locked->decrement('available_balance', min($amount, (float) $locked->available_balance));
+            }
+            $locked->decrement('total_earned', $amount);
+        });
     }
 
     /**
