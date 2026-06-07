@@ -30,7 +30,7 @@ final class GenericPaymentHandler extends AbstractJekoPaymentHandler
         return $subject->isCompleted();
     }
 
-    protected function processSuccess(mixed $subject, TransactionCompletedData $data): void
+    protected function processSuccess(mixed $subject, TransactionCompletedData $data): bool
     {
         $subject->markAsCompleted([
             'jeko_transaction_id' => $data->transactionId,
@@ -41,6 +41,8 @@ final class GenericPaymentHandler extends AbstractJekoPaymentHandler
         if ($subject->booking_id) {
             $this->paymentService->onPaymentSuccess($subject);
         }
+
+        return true;
     }
 
     protected function processFailure(mixed $subject, TransactionCompletedData $data): void
