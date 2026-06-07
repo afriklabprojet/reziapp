@@ -28,6 +28,12 @@ class PaymentService
     /**
      * Créer un paiement pour une réservation.
      * IDEMPOTENT: Si un paiement pending/processing existe déjà pour ce booking, on le retourne.
+     *
+     * Options:
+     *   - provider            (string)  Payment provider code, default 'jeko'
+     *   - payment_method_id   (int)     Saved payment method to associate
+     *   - use_wallet_credit   (bool)    Deduct from users.wallet_credit
+     *   - use_referral_credit (bool)    Deduct from users.referral_balance
      */
     public function createBookingPayment(Booking $booking, User $user, array $options = []): Payment
     {
@@ -48,11 +54,45 @@ class PaymentService
                 return $existing;
             }
 
+            // Lock user row to prevent concurrent credit double-spend
+            $lockedUser = User::where('id', $user->id)->lockForUpdate()->firstOrFail();
+
             $provider = PaymentProvider::where('code', $options['provider'] ?? 'jeko')->first();
 
-            $fees = $provider?->calculateFees($lockedBooking->total_amount) ?? [
+            $bookingAmount = (float) $lockedBooking->total_amount;
+
+            // ── Credit deduction (applied before provider fees) ──────────────────────
+            $walletCreditUsed   = 0.0;
+            $referralCreditUsed = 0.0;
+            $remainingAmount    = $bookingAmount;
+
+            if (! empty($options['use_wallet_credit'])) {
+                $available = max(0.0, (float) $lockedUser->wallet_credit);
+                $walletCreditUsed = min($available, $remainingAmount);
+
+                if ($walletCreditUsed > 0) {
+                    $lockedUser->decrement('wallet_credit', $walletCreditUsed);
+                    $remainingAmount -= $walletCreditUsed;
+                }
+            }
+
+            if (! empty($options['use_referral_credit']) && $remainingAmount > 0) {
+                $available = max(0.0, (float) $lockedUser->referral_balance);
+                $referralCreditUsed = min($available, $remainingAmount);
+
+                if ($referralCreditUsed > 0) {
+                    $lockedUser->decrement('referral_balance', $referralCreditUsed);
+                    $remainingAmount -= $referralCreditUsed;
+                }
+            }
+
+            // Ensure amount charged to provider is never negative
+            $chargeableAmount = max(0.0, $remainingAmount);
+
+            // Provider fees are calculated on the post-credit chargeable amount
+            $fees = $provider?->calculateFees($chargeableAmount) ?? [
                 'total_fee' => 0,
-                'total_amount' => $lockedBooking->total_amount,
+                'total_amount' => $chargeableAmount,
             ];
 
             $attempt = Payment::withTrashed()
@@ -62,33 +102,84 @@ class PaymentService
                 ->count() + 1;
 
             $payment = Payment::create([
-                'idempotency_key' => 'bk_'.$lockedBooking->id.'_'.$user->id.'_attempt_'.$attempt,
-                'user_id' => $user->id,
-                'booking_id' => $lockedBooking->id,
-                'payment_provider_id' => $provider?->id,
-                'payment_method_id' => $options['payment_method_id'] ?? null,
-                'amount' => $lockedBooking->total_amount,
-                'fee' => $fees['total_fee'],
-                'total_amount' => $fees['total_amount'],
-                'currency' => 'XOF',
-                'type' => Payment::TYPE_BOOKING,
-                'status' => Payment::STATUS_PENDING,
-                'metadata' => [
-                    'booking_reference' => $lockedBooking->reference,
-                    'residence_id' => $lockedBooking->residence_id,
-                    'check_in' => $lockedBooking->check_in->toDateString(),
-                    'check_out' => $lockedBooking->check_out->toDateString(),
+                'idempotency_key'      => 'bk_'.$lockedBooking->id.'_'.$user->id.'_attempt_'.$attempt,
+                'user_id'              => $user->id,
+                'booking_id'           => $lockedBooking->id,
+                'payment_provider_id'  => $provider?->id,
+                'payment_method_id'    => $options['payment_method_id'] ?? null,
+                'amount'               => $chargeableAmount,
+                'fee'                  => $fees['total_fee'],
+                'wallet_credit_used'   => $walletCreditUsed,
+                'referral_credit_used' => $referralCreditUsed,
+                'total_amount'         => $fees['total_amount'],
+                'currency'             => 'XOF',
+                'type'                 => Payment::TYPE_BOOKING,
+                'status'               => Payment::STATUS_PENDING,
+                'metadata'             => [
+                    'booking_reference'    => $lockedBooking->reference,
+                    'residence_id'         => $lockedBooking->residence_id,
+                    'check_in'             => $lockedBooking->check_in->toDateString(),
+                    'check_out'            => $lockedBooking->check_out->toDateString(),
+                    'wallet_credit_used'   => $walletCreditUsed,
+                    'referral_credit_used' => $referralCreditUsed,
                 ],
             ]);
 
             Log::channel('payments')->info('Payment created', [
-                'payment_id' => $payment->id,
-                'booking_id' => $lockedBooking->id,
-                'amount' => $payment->total_amount,
-                'user_id' => $user->id,
+                'payment_id'           => $payment->id,
+                'booking_id'           => $lockedBooking->id,
+                'amount'               => $payment->total_amount,
+                'wallet_credit_used'   => $walletCreditUsed,
+                'referral_credit_used' => $referralCreditUsed,
+                'user_id'              => $user->id,
             ]);
 
             return $payment;
+        });
+    }
+
+    /**
+     * Restore wallet and referral credits deducted for a payment.
+     * Called when payment fails or is cancelled after credits were already deducted.
+     * Safe to call multiple times — amounts are re-read fresh from the DB each time.
+     */
+    public function restoreCredits(Payment $payment): void
+    {
+        $walletCredit   = (float) $payment->wallet_credit_used;
+        $referralCredit = (float) $payment->referral_credit_used;
+
+        if ($walletCredit <= 0 && $referralCredit <= 0) {
+            return;
+        }
+
+        DB::transaction(function () use ($payment, $walletCredit, $referralCredit) {
+            $user = User::where('id', $payment->user_id)->lockForUpdate()->firstOrFail();
+
+            if ($walletCredit > 0) {
+                $user->increment('wallet_credit', $walletCredit);
+            }
+
+            if ($referralCredit > 0) {
+                $user->increment('referral_balance', $referralCredit);
+            }
+
+            // Mark as restored so subsequent calls are no-ops
+            $payment->update([
+                'wallet_credit_used'   => 0,
+                'referral_credit_used' => 0,
+                'metadata'             => array_merge($payment->metadata ?? [], [
+                    'credits_restored_at'            => now()->toIso8601String(),
+                    'wallet_credit_restored'         => $walletCredit,
+                    'referral_credit_restored'       => $referralCredit,
+                ]),
+            ]);
+
+            Log::channel('payments')->info('Credits restored', [
+                'payment_id'           => $payment->id,
+                'user_id'              => $payment->user_id,
+                'wallet_credit'        => $walletCredit,
+                'referral_credit'      => $referralCredit,
+            ]);
         });
     }
 
@@ -497,5 +588,21 @@ class PaymentService
         }
 
         return $method;
+    }
+
+    /**
+     * Handle payment failure: mark payment as failed and restore any deducted credits.
+     * Credits are also restored automatically via PaymentObserver when markAsFailed() is
+     * called directly on the model, but this method provides an explicit service-level hook.
+     */
+    public function onPaymentFailure(Payment $payment, string $reason = ''): void
+    {
+        if (! in_array($payment->status, [Payment::STATUS_FAILED, Payment::STATUS_CANCELLED], true)) {
+            $payment->markAsFailed($reason ?: 'Paiement échoué');
+            // PaymentObserver::updated() will trigger restoreCredits() automatically
+        } else {
+            // Already in a terminal state — ensure credits are restored if not yet done
+            $this->restoreCredits($payment);
+        }
     }
 }
