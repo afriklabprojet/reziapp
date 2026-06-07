@@ -59,7 +59,10 @@ class PaymentService
 
             $provider = PaymentProvider::where('code', $options['provider'] ?? 'jeko')->first();
 
-            $bookingAmount = (float) $lockedBooking->total_amount;
+            // When payment_split is active, charge only the deposit (first instalment)
+            $bookingAmount = ($lockedBooking->payment_split && (float) $lockedBooking->deposit_amount > 0)
+                ? (float) $lockedBooking->deposit_amount
+                : (float) $lockedBooking->total_amount;
 
             // ── Credit deduction (applied before provider fees) ──────────────────────
             $walletCreditUsed   = 0.0;
