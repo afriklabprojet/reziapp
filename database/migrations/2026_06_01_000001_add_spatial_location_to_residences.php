@@ -29,9 +29,8 @@ return new class () extends Migration {
             // after adding the column. Using DB::statement for full MySQL SPATIAL syntax.
         });
 
-        // Blueprint does not expose SRID via column definition in all Laravel versions,
-        // so we use raw DDL for precise control.
-        DB::statement('ALTER TABLE residences ADD COLUMN location POINT NOT NULL SRID 4326 AFTER longitude');
+        // Add nullable first so existing rows don't violate NOT NULL, backfill, then enforce NOT NULL.
+        DB::statement('ALTER TABLE residences ADD COLUMN location POINT NULL SRID 4326 AFTER longitude');
 
         // Backfill: ST_GeomFromText expects (longitude latitude) for SRID 4326
         DB::statement(
@@ -39,6 +38,9 @@ return new class () extends Migration {
              SET location = ST_GeomFromText(CONCAT('POINT(', longitude, ' ', latitude, ')'), 4326)
              WHERE latitude IS NOT NULL AND longitude IS NOT NULL",
         );
+
+        // Now enforce NOT NULL (safe: all rows have been backfilled)
+        DB::statement('ALTER TABLE residences MODIFY COLUMN location POINT NOT NULL SRID 4326');
 
         DB::statement('CREATE SPATIAL INDEX idx_residences_location ON residences (location)');
     }
