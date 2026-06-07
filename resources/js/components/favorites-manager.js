@@ -191,7 +191,7 @@ export default function favoritesManager(config = {}) {
 
             if (navigator.share) {
                 navigator.share({
-                    title: 'Mes résidences favorites sur ReziApp',
+                    title: 'Mes résidences favorites sur Rezi Studio Meublé Faya',
                     text: `Découvrez mes ${this.favorites.length} résidences préférées`,
                     url: shareUrl
                 });

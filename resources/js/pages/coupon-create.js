@@ -43,7 +43,7 @@ export default function couponCreate() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let iterations = 0;
             const interval = setInterval(() => {
-                let result = 'ReziApp';
+                let result = 'Rezi Studio Meublé Faya';
                 for (let i = 0; i < 6; i++) {
                     result += chars.charAt(Math.floor(Math.random() * chars.length));
                 }

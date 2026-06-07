@@ -296,7 +296,7 @@ export default function searchPage(config = {}) {
             }
 
             try {
-                // 1. Tenter l'API ReziApp (zones, quartiers, résidences) — POI-aware
+                // 1. Tenter l'API Rezi Studio Meublé Faya (zones, quartiers, résidences) — POI-aware
                 const reziUrl = `/api/v1/geo/autocomplete?q=${encodeURIComponent(this.searchQuery)}`;
                 const reziResp = await fetch(reziUrl, { headers: { 'Accept': 'application/json' } });
                 const reziJson = await reziResp.json();

@@ -1,5 +1,5 @@
 /**
- * Chatbot IA ReziApp — widget flottant 24/7
+ * Chatbot IA Rezi Studio Meublé Faya — widget flottant 24/7
  * Alpine component : x-data="chatbot(config)"
  */
 export default function chatbot(config = {}) {
@@ -25,7 +25,7 @@ export default function chatbot(config = {}) {
             // Message de bienvenue
             this.messages = [{
                 role: 'assistant',
-                content: "Bonjour ! Je suis l'assistant ReziApp 🏠\nComment puis-je vous aider à trouver votre résidence idéale à Abidjan ?",
+                content: "Bonjour ! Je suis l'assistant Rezi Studio Meublé Faya 🏠\nComment puis-je vous aider à trouver votre résidence idéale à Abidjan ?",
             }];
 
             // Scroll auto sur nouveaux messages
