@@ -1,18 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- Arc orange extérieur -->
-  <path d="M16 3 A10 10 0 0 1 26 13" stroke="#F7931E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-  <path d="M6 13 A10 10 0 0 1 16 3" stroke="#F7931E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-  <!-- Arc gris intérieur -->
-  <path d="M16 6 A7 7 0 0 1 23 13" stroke="#6B7280" stroke-width="2" fill="none" stroke-linecap="round"/>
-  <path d="M9 13 A7 7 0 0 1 16 6" stroke="#6B7280" stroke-width="2" fill="none" stroke-linecap="round"/>
-  <!-- Toit principal gris -->
-  <polyline points="5,17 16,8 27,17" stroke="#6B7280" stroke-width="2.2" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
-  <!-- Fenêtre orange -->
-  <rect x="14.5" y="13.5" width="3" height="3" rx="0.4" fill="#F7931E"/>
-  <!-- Toit secondaire -->
-  <polyline points="8,21 16,14 24,21" stroke="#6B7280" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
-  <!-- Losanges orange -->
-  <rect x="10.5" y="21.5" width="2.5" height="2.5" rx="0.3" fill="#F7931E" transform="rotate(45 11.75 22.75)"/>
-  <rect x="19" y="21.5" width="2.5" height="2.5" rx="0.3" fill="#F7931E" transform="rotate(45 20.25 22.75)"/>
-  <rect x="15" y="25" width="2" height="2" rx="0.2" fill="#F7931E" transform="rotate(45 16 26)"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Rezi favicon</title>
+  <desc id="desc">Icône Rezi sur fond noir.</desc>
+  <rect width="512" height="512" rx="108" fill="#000" />
+  <g fill="#FF6A00" fill-rule="evenodd" transform="translate(0 4)">
+    <rect x="106" y="86" width="88" height="268" rx="16" />
+    <path d="M306 92c93.56 0 152 70.17 152 157.18 0 62.44-33.12 109.02-82.47 183.17L306 526l-69.53-93.65C187.12 358.2 154 311.62 154 249.18 154 162.17 212.44 92 306 92Zm0 74c-45.69 0-78 33.5-78 83.18 0 24.84 11.02 50.45 40.33 95.32L306 401.02l37.67-56.52C372.98 299.63 384 274.02 384 249.18 384 199.5 351.69 166 306 166Z" />
+    <circle cx="306" cy="250" r="42" fill="#000" />
+  </g>
 </svg>
