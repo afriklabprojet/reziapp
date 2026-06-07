@@ -4,8 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
-
 class PhotoResource extends JsonResource
 {
     /**
@@ -15,10 +13,12 @@ class PhotoResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $photoUrl = \storage_url($this->path);
+
         return [
             'id' => $this->id,
-            'url' => Storage::url($this->path),
-            'full_url' => url(Storage::url($this->path)),
+            'url' => $photoUrl,
+            'full_url' => str_starts_with($photoUrl, 'http://') || str_starts_with($photoUrl, 'https://') ? $photoUrl : url($photoUrl),
             'is_primary' => (bool) $this->is_primary,
             'order' => $this->order,
             'created_at' => $this->created_at->toIso8601String(),
