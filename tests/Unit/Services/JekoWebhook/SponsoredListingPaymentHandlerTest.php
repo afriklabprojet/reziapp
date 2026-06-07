@@ -18,7 +18,7 @@ class SponsoredListingPaymentHandlerTest extends TestCase
     {
         $listing = $this->makeSponsoredListing();
 
-        (new SponsoredListingPaymentHandler())->handle(new TransactionCompletedData(
+        app(SponsoredListingPaymentHandler::class)->handle(new TransactionCompletedData(
             reference: $listing->jeko_reference,
             transactionId: 'tx-underpaid-sponsored',
             status: 'success',
@@ -41,7 +41,7 @@ class SponsoredListingPaymentHandlerTest extends TestCase
     {
         $listing = $this->makeSponsoredListing();
 
-        (new SponsoredListingPaymentHandler())->handle(new TransactionCompletedData(
+        app(SponsoredListingPaymentHandler::class)->handle(new TransactionCompletedData(
             reference: $listing->jeko_reference,
             transactionId: 'tx-sponsored-paid',
             status: 'success',
@@ -65,7 +65,7 @@ class SponsoredListingPaymentHandlerTest extends TestCase
     {
         $listing = $this->makeSponsoredListing();
 
-        $handler = new SponsoredListingPaymentHandler();
+        $handler = app(SponsoredListingPaymentHandler::class);
         $firstPayload = new TransactionCompletedData(
             reference: $listing->jeko_reference,
             transactionId: 'tx-sponsored-once',
