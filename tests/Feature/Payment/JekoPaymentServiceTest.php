@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\BookingInsurance;
 use App\Models\CancellationPolicy;
 use App\Models\InsurancePlan;
+use App\Models\Payment;
 use App\Models\Residence;
 use App\Models\SponsoredListing;
 use App\Models\Subscription;
@@ -177,6 +178,21 @@ class JekoPaymentServiceTest extends TestCase
         ], $config));
 
         return new JekoPaymentService();
+    }
+
+    /**
+     * Create a minimal pending Payment record for the given booking with the given total amount.
+     * Used to satisfy the new JekoPaymentService::createBookingPaymentRequest(Payment) signature.
+     */
+    protected function makePayment(Booking $booking, float $totalAmount): Payment
+    {
+        return Payment::factory()->create([
+            'user_id'     => $booking->user_id,
+            'booking_id'  => $booking->id,
+            'amount'      => $totalAmount,
+            'total_amount' => $totalAmount,
+            'status'      => Payment::STATUS_PENDING,
+        ]);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -365,8 +381,9 @@ class JekoPaymentServiceTest extends TestCase
             ], 200),
         ]);
 
+        $payment = $this->makePayment($this->booking, (float) $this->booking->total_amount);
         $service = $this->makeService();
-        $result = $service->createBookingPaymentRequest($this->booking, 'wave');
+        $result = $service->createBookingPaymentRequest($this->booking, 'wave', $payment);
 
         $this->assertTrue($result['success']);
         $this->assertEquals(self::REDIRECT_URL, $result['redirect_url']);
@@ -385,8 +402,9 @@ class JekoPaymentServiceTest extends TestCase
             ], 200),
         ]);
 
+        $payment = $this->makePayment($this->booking, (float) $this->booking->total_amount);
         $service = $this->makeService();
-        $service->createBookingPaymentRequest($this->booking, 'wave');
+        $service->createBookingPaymentRequest($this->booking, 'wave', $payment);
 
         Http::assertSent(function ($request) {
             $body = $request->data();
@@ -428,8 +446,9 @@ class JekoPaymentServiceTest extends TestCase
             'api.jeko.africa/*' => Http::response(['id' => 'x', 'redirectUrl' => 'https://pay.jeko.africa/pr/x', 'status' => 'pending'], 200),
         ]);
 
+        $payment = $this->makePayment($booking, (float) $booking->total_amount);
         $service = $this->makeService();
-        $service->createBookingPaymentRequest($booking, 'orange');
+        $service->createBookingPaymentRequest($booking, 'orange', $payment);
 
         Http::assertSent(fn ($req) => $req->data()['amountCents'] === 5000000);
     }
@@ -445,8 +464,9 @@ class JekoPaymentServiceTest extends TestCase
             ], 200),
         ]);
 
+        $payment = $this->makePayment($this->booking, (float) $this->booking->total_amount);
         $service = $this->makeService();
-        $service->createBookingPaymentRequest($this->booking, 'wave');
+        $service->createBookingPaymentRequest($this->booking, 'wave', $payment);
 
         $this->booking->refresh();
         $this->assertNotNull($this->booking->payment_reference);
@@ -461,8 +481,9 @@ class JekoPaymentServiceTest extends TestCase
             'api.jeko.africa/*' => Http::response(['message' => 'Invalid store'], 422),
         ]);
 
+        $payment = $this->makePayment($this->booking, (float) $this->booking->total_amount);
         $service = $this->makeService();
-        $result = $service->createBookingPaymentRequest($this->booking, 'wave');
+        $result = $service->createBookingPaymentRequest($this->booking, 'wave', $payment);
 
         $this->assertFalse($result['success']);
         $this->assertStringContainsString('Invalid store', $result['error']);
@@ -477,8 +498,9 @@ class JekoPaymentServiceTest extends TestCase
             },
         ]);
 
+        $payment = $this->makePayment($this->booking, (float) $this->booking->total_amount);
         $service = $this->makeService();
-        $result = $service->createBookingPaymentRequest($this->booking, 'wave');
+        $result = $service->createBookingPaymentRequest($this->booking, 'wave', $payment);
 
         $this->assertFalse($result['success']);
         $this->assertArrayHasKey('error', $result);
@@ -487,8 +509,9 @@ class JekoPaymentServiceTest extends TestCase
     #[Test]
     public function create_booking_payment_request_returns_error_when_jeko_disabled(): void
     {
+        $payment = $this->makePayment($this->booking, (float) $this->booking->total_amount);
         $service = $this->makeService(['services.jeko.enabled' => false]);
-        $result = $service->createBookingPaymentRequest($this->booking, 'wave');
+        $result = $service->createBookingPaymentRequest($this->booking, 'wave', $payment);
 
         $this->assertFalse($result['success']);
         Http::assertNothingSent();
@@ -503,8 +526,9 @@ class JekoPaymentServiceTest extends TestCase
             'total_amount' => 50, // < 100 XOF minimum
         ]);
 
+        $payment = $this->makePayment($booking, (float) $booking->total_amount);
         $service = $this->makeService();
-        $result = $service->createBookingPaymentRequest($booking, 'wave');
+        $result = $service->createBookingPaymentRequest($booking, 'wave', $payment);
 
         $this->assertFalse($result['success']);
         Http::assertNothingSent();
@@ -527,8 +551,10 @@ class JekoPaymentServiceTest extends TestCase
             'api.jeko.africa/*' => Http::response(['id' => 'x', 'redirectUrl' => 'https://pay.jeko.africa/pr/x', 'status' => 'pending'], 200),
         ]);
 
+        // PaymentService::createBookingPayment() applies deposit logic; simulate its output here
+        $payment = $this->makePayment($booking, (float) $booking->deposit_amount);
         $service = $this->makeService();
-        $service->createBookingPaymentRequest($booking, 'wave');
+        $service->createBookingPaymentRequest($booking, 'wave', $payment);
 
         Http::assertSent(fn ($req) => $req->data()['amountCents'] === 3000000);
     }
