@@ -35,6 +35,6 @@ class Photo360 extends Model
     // Accessors
     public function getUrlAttribute(): string
     {
-        return asset('storage/'.$this->path);
+        return \storage_url($this->path);
     }
 }

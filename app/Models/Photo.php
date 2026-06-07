@@ -88,11 +88,7 @@ class Photo extends Model
      */
     public function getUrlAttribute(): string
     {
-        if (str_starts_with($this->path, 'http://') || str_starts_with($this->path, 'https://')) {
-            return $this->path;
-        }
-
-        return Storage::url($this->path);
+        return \storage_url($this->path);
     }
 
     /**
@@ -104,7 +100,7 @@ class Photo extends Model
         if ($this->is_optimized && !str_starts_with($this->path, 'http')) {
             $thumbPath = preg_replace('/(\.\w+)$/i', '_thumb$1', $this->path);
             if ($thumbPath !== $this->path && Storage::disk('public')->exists($thumbPath)) {
-                return Storage::disk('public')->url($thumbPath);
+                return \storage_url($thumbPath);
             }
         }
 
