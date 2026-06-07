@@ -11,6 +11,7 @@ use App\Models\Residence;
 use App\Models\User;
 use App\Services\BookingService;
 use App\Services\CouponService;
+use App\Services\LoyaltyService;
 use App\Services\PaymentService;
 use App\Services\PricingService;
 use Carbon\Carbon;
@@ -62,7 +63,7 @@ class BookingServiceTest extends TestCase
         ]);
 
         $this->bookingService = new BookingService(
-            new PricingService(),
+            new PricingService(app(LoyaltyService::class)),
             app(PaymentService::class),
             app(CouponService::class),
         );
