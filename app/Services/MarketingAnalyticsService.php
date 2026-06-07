@@ -11,6 +11,7 @@ use App\Models\Referral;
 use App\Models\SponsoredListing;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class MarketingAnalyticsService
@@ -28,7 +29,12 @@ class MarketingAnalyticsService
                 'active_promotions' => Promotion::active()->count(),
                 'active_sponsored' => SponsoredListing::active()->count(),
             ];
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
+            Log::error('MarketingAnalytics: general dashboard stats failed', [
+                'error' => $exception->getMessage(),
+            ]);
+            report($exception);
+
             return [
                 'total_campaigns' => 0,
                 'active_campaigns' => 0,
