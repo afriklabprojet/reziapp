@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Residence;
+use App\Services\LoyaltyService;
 use App\Services\PricingService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -24,7 +25,7 @@ class PricingServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new PricingService();
+        $this->service = new PricingService(app(LoyaltyService::class));
 
         // Fixer les taux pour des tests déterministes
         config([
