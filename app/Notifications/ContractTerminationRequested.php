@@ -12,7 +12,9 @@ class ContractTerminationRequested extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(private readonly LeaseContract $contract) {}
+    public function __construct(private readonly LeaseContract $contract)
+    {
+    }
 
     public function via(object $notifiable): array
     {
@@ -21,13 +23,13 @@ class ContractTerminationRequested extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
-            ->subject('Demande de résiliation de contrat — ' . $this->contract->reference)
+        return (new MailMessage())
+            ->subject('Demande de résiliation de contrat — '.$this->contract->reference)
             ->greeting('Bonjour,')
-            ->line('Le locataire **' . $this->contract->tenant?->full_name . '** a demandé la résiliation de son contrat.')
-            ->line('**Contrat :** ' . $this->contract->reference)
-            ->line('**Résidence :** ' . $this->contract->residence?->title)
-            ->line('**Motif :** ' . $this->contract->termination_request_reason)
+            ->line('Le locataire **'.$this->contract->tenant?->full_name.'** a demandé la résiliation de son contrat.')
+            ->line('**Contrat :** '.$this->contract->reference)
+            ->line('**Résidence :** '.$this->contract->residence?->title)
+            ->line('**Motif :** '.$this->contract->termination_request_reason)
             ->action('Voir le contrat', route('filament.admin.resources.lease-contracts.index'))
             ->line('Veuillez traiter cette demande dans les meilleurs délais.');
     }

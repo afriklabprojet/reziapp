@@ -112,4 +112,3 @@ final class SubscriptionPaymentHandler extends AbstractJekoPaymentHandler
         ];
     }
 }
-

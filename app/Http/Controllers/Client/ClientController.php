@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Payment;
 use App\Models\Residence;
 use App\Models\ResidenceView;
 use App\Models\SearchHistory;
-use App\Models\Payment;
 use App\Services\ClientDashboardService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -573,7 +573,7 @@ class ClientController extends Controller
         $user->savedSearches()->create([
             'name'            => $search->commune
                 ? "Alerte {$search->commune}"
-                : ($search->type ? 'Alerte ' . ucfirst($search->type) : 'Alerte personnalisée'),
+                : ($search->type ? 'Alerte '.ucfirst($search->type) : 'Alerte personnalisée'),
             'filters'         => array_filter([
                 'type'      => $search->type,
                 'bedrooms'  => $search->bedrooms,

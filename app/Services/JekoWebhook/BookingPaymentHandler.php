@@ -13,7 +13,8 @@ final class BookingPaymentHandler extends AbstractJekoPaymentHandler
 {
     public function __construct(
         private readonly PaymentService $paymentService,
-    ) {}
+    ) {
+    }
 
     public function supports(string $reference): bool
     {
@@ -139,4 +140,3 @@ final class BookingPaymentHandler extends AbstractJekoPaymentHandler
         return (int) round($amount * 100);
     }
 }
-

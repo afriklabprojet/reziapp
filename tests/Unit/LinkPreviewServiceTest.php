@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use App\Services\PublicUrlGuard;
 use App\Services\LinkPreviewService;
-use Illuminate\Support\Facades\Cache;
+use App\Services\PublicUrlGuard;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -74,8 +73,7 @@ class LinkPreviewServiceTest extends TestCase
 
     public function test_blocks_hostname_resolving_to_private_ip(): void
     {
-        $service = new LinkPreviewService(new class extends PublicUrlGuard
-        {
+        $service = new LinkPreviewService(new class () extends PublicUrlGuard {
             public function resolveHostIps(string $host): array
             {
                 return [implode('.', [10, 0, 0, 5])];
@@ -113,7 +111,7 @@ class LinkPreviewServiceTest extends TestCase
         Http::fake([
             'example.com/*' => Http::response(
                 '<html><head><meta property="og:title" content="Hello World"/></head></html>',
-                200
+                200,
             ),
         ]);
 

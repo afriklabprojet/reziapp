@@ -68,4 +68,3 @@ class GoogleMapsUrlService
         return "{$this->baseUrl}/streetview?".http_build_query($params);
     }
 }
-

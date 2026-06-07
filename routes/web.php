@@ -43,7 +43,7 @@ Route::get('/admin/files/private/{path}', function (string $path) {
     $auth = auth();
     abort_unless(
         $auth->check() && $auth->user()->isAdmin(),
-        403
+        403,
     );
 
     $path = ltrim(str_replace('\\', '/', $path), '/');
@@ -80,6 +80,6 @@ Route::get('/admin/files/private/{path}', function (string $path) {
             'Content-Disposition' => 'inline',
             'Cache-Control'       => 'no-store, private',
             'X-Robots-Tag'        => 'noindex',
-        ]
+        ],
     );
 })->where('path', '.*')->name('admin.private-file')->middleware(['web', 'auth']);

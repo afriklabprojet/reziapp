@@ -26,7 +26,8 @@ class ResidenceController extends Controller
         private readonly SponsoredListingService $sponsoredListingService,
         private readonly ResidenceBrowseSupport $browseSupport,
         private readonly ResidenceShowSupport $showSupport,
-    ) {}
+    ) {
+    }
 
     /**
      * Liste des résidences
@@ -139,7 +140,7 @@ class ResidenceController extends Controller
 
         $mapFilterKey = 'filter_communes_'.strtolower(
             ($hasLocationScope ? ($location['country_code'] ?? 'all') : 'all').'_'
-            .($hasLocationScope ? ($location['city'] ?? 'all') : 'all')
+            .($hasLocationScope ? ($location['city'] ?? 'all') : 'all'),
         );
         $communes = \Illuminate\Support\Facades\Cache::remember(
             $mapFilterKey,

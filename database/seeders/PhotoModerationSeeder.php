@@ -19,6 +19,7 @@ class PhotoModerationSeeder extends Seeder
 
         if ($photos->isEmpty()) {
             $this->command->warn('Aucune photo en base — seeder ignoré.');
+
             return;
         }
 

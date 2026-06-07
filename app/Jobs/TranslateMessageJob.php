@@ -15,13 +15,18 @@ use Illuminate\Support\Facades\Log;
 
 class TranslateMessageJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public int $tries = 2;
 
     public int $timeout = 30;
 
-    public function __construct(public int $messageId) {}
+    public function __construct(public int $messageId)
+    {
+    }
 
     public function handle(MessageTranslationService $service): void
     {

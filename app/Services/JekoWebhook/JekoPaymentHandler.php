@@ -10,4 +10,3 @@ interface JekoPaymentHandler
 
     public function handle(TransactionCompletedData $data): void;
 }
-

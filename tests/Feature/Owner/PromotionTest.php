@@ -110,7 +110,7 @@ class PromotionTest extends TestCase
             'user_id'       => $this->owner->id,
             'title'         => 'Promo Test',
             'discount_type' => 'percentage',
-            'discount_value'=> 20,
+            'discount_value' => 20,
             'is_active'     => true,
         ]);
     }

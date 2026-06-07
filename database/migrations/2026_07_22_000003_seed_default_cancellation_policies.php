@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
  * Si la table contient déjà des politiques, on garantit juste qu'une `flexible_48h`
  * existe et qu'elle est marquée comme `is_default`.
  */
-return new class extends Migration {
+return new class () extends Migration {
     public function up(): void
     {
         $now = now();

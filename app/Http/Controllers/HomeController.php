@@ -11,13 +11,15 @@ use App\Services\GeolocationService;
 use App\Services\SponsoredListingService;
 use App\Services\UserLocationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Collection;
 
 class HomeController extends Controller
 {
-    public function __construct(private readonly SponsoredListingService $sponsoredListingService) {}
+    public function __construct(private readonly SponsoredListingService $sponsoredListingService)
+    {
+    }
 
     /**
      * Display the homepage with search functionality

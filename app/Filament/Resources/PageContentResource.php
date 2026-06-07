@@ -103,7 +103,7 @@ class PageContentResource extends Resource
                                     ->label('Fonctionnalités (une par entrée)')
                                     ->placeholder('Ajouter une fonctionnalité'),
                             ])
-                            ->itemLabel(fn (array $state): ?string => ($state['emoji'] ?? '') . ' ' . ($state['name'] ?? 'Plan'))
+                            ->itemLabel(fn (array $state): ?string => ($state['emoji'] ?? '').' '.($state['name'] ?? 'Plan'))
                             ->collapsible()
                             ->reorderableWithButtons()
                             ->maxItems(5),

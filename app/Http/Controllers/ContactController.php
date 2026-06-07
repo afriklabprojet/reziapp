@@ -20,7 +20,9 @@ use Illuminate\View\View;
  */
 class ContactController extends Controller
 {
-    public function __construct(private readonly ResidenceService $residenceService) {}
+    public function __construct(private readonly ResidenceService $residenceService)
+    {
+    }
 
     /**
      * Envoyer une demande de contact

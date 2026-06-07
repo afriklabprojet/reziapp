@@ -3,12 +3,7 @@
 namespace App\Http\Controllers\Webhook;
 
 use App\Http\Controllers\Controller;
-use App\Models\BookingInsurance;
-use App\Models\Payment;
 use App\Models\Payout;
-use App\Models\SponsoredListing;
-use App\Models\Subscription;
-use App\Models\SubscriptionPayment;
 use App\Models\WebhookEvent;
 use App\Services\JekoPaymentService;
 use App\Services\JekoWebhook\PaymentHandlerRegistry;

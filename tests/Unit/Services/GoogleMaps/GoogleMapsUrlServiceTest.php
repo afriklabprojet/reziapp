@@ -62,4 +62,3 @@ class GoogleMapsUrlServiceTest extends TestCase
         $this->assertStringNotContainsString('heading=', $withoutHeading);
     }
 }
-

@@ -66,6 +66,7 @@ class Message extends Model
             if ($message->type !== self::TYPE_TEXT || empty($message->content)) {
                 return;
             }
+
             try {
                 \App\Jobs\TranslateMessageJob::dispatch($message->id)->afterCommit();
             } catch (\Throwable $e) {

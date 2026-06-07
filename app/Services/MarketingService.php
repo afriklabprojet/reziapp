@@ -12,7 +12,8 @@ class MarketingService
 {
     public function __construct(
         private readonly CouponService $couponService,
-    ) {}
+    ) {
+    }
 
     // ==========================================
     // PROMOTIONS

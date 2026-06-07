@@ -8,14 +8,16 @@ use App\Models\SponsoredListing;
 use App\Models\User;
 use App\Services\JekoPaymentService;
 use App\Services\SponsoredListingService;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class SponsoredController extends Controller
 {
-    public function __construct(private readonly SponsoredListingService $sponsoredListingService) {}
+    public function __construct(private readonly SponsoredListingService $sponsoredListingService)
+    {
+    }
 
     public function index(Request $request)
     {

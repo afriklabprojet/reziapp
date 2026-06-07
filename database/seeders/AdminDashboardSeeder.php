@@ -6,17 +6,15 @@ use App\Models\Booking;
 use App\Models\FraudReport;
 use App\Models\NewsletterSubscriber;
 use App\Models\Payment;
-use App\Models\PaymentMethod;
 use App\Models\PaymentProvider;
 use App\Models\Payout;
-use App\Models\Residence;
 use App\Models\Promotion;
+use App\Models\Residence;
 use App\Models\SponsoredListing;
 use App\Models\SupportTicket;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class AdminDashboardSeeder extends Seeder
@@ -449,7 +447,7 @@ class AdminDashboardSeeder extends Seeder
                     'verified_at'   => Carbon::now()->subDays($daysAgo)->addMinutes(rand(5, 60)),
                     'created_at'    => Carbon::now()->subDays($daysAgo),
                     'updated_at'    => Carbon::now()->subDays($daysAgo),
-                ]
+                ],
             );
         }
 
@@ -472,7 +470,7 @@ class AdminDashboardSeeder extends Seeder
                     'unsubscribed_at'   => Carbon::now()->subDays(rand(5, $daysAgo - 1)),
                     'created_at'        => Carbon::now()->subDays($daysAgo),
                     'updated_at'        => Carbon::now()->subDays(rand(0, 5)),
-                ]
+                ],
             );
         }
     }

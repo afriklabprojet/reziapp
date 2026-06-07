@@ -73,6 +73,7 @@ class SeoData extends Model
             set: function (?string $value) {
                 $data = $this->og_data ?? [];
                 $data['title'] = $value;
+
                 return ['og_data' => $data];
             },
         );
@@ -85,6 +86,7 @@ class SeoData extends Model
             set: function (?string $value) {
                 $data = $this->og_data ?? [];
                 $data['description'] = $value;
+
                 return ['og_data' => $data];
             },
         );
@@ -97,6 +99,7 @@ class SeoData extends Model
             set: function (?string $value) {
                 $data = $this->og_data ?? [];
                 $data['image'] = $value;
+
                 return ['og_data' => $data];
             },
         );
@@ -109,6 +112,7 @@ class SeoData extends Model
             set: function (?string $value) {
                 $data = $this->og_data ?? [];
                 $data['og:type'] = $value ?? 'website';
+
                 return ['og_data' => $data];
             },
         );
@@ -125,6 +129,7 @@ class SeoData extends Model
                     return ['structured_data' => null];
                 }
                 $decoded = json_decode($value, true);
+
                 return ['structured_data' => $decoded ?: null];
             },
         );
@@ -168,8 +173,12 @@ class SeoData extends Model
 
         // Robots
         $robots = [];
-        if ($this->is_noindex) $robots[] = 'noindex';
-        if ($this->is_nofollow) $robots[] = 'nofollow';
+        if ($this->is_noindex) {
+            $robots[] = 'noindex';
+        }
+        if ($this->is_nofollow) {
+            $robots[] = 'nofollow';
+        }
         if ($robots) {
             $tags[] = '<meta name="robots" content="'.e(implode(', ', $robots)).'">';
         }
@@ -214,8 +223,7 @@ class SeoData extends Model
 
         return '<script type="application/ld+json">'.json_encode(
             $this->structured_data,
-            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
         ).'</script>';
     }
 }
-

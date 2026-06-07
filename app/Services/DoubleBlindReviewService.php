@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Models\Booking;
 use App\Models\Review;
 use App\Models\TenantReview;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 /**

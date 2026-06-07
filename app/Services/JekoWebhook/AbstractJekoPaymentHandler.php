@@ -84,4 +84,3 @@ abstract class AbstractJekoPaymentHandler implements JekoPaymentHandler
         return $paidAmountCents > 0 ? $paidAmountCents : null;
     }
 }
-

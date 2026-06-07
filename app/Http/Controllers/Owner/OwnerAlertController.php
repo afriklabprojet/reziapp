@@ -66,7 +66,7 @@ class OwnerAlertController extends Controller
     {
         $validated = $request->validate([
             'enabled_types'   => 'nullable|array',
-            'enabled_types.*' => 'string|in:' . implode(',', array_keys(OwnerAlert::TYPES)),
+            'enabled_types.*' => 'string|in:'.implode(',', array_keys(OwnerAlert::TYPES)),
         ]);
 
         $request->user()->update([

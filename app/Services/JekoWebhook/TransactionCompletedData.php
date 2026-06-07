@@ -13,7 +13,8 @@ final class TransactionCompletedData
         public readonly ?string $paymentMethod,
         public readonly ?string $executedAt,
         public readonly array $rawData,
-    ) {}
+    ) {
+    }
 
     public static function fromWebhook(array $data): self
     {
@@ -32,4 +33,3 @@ final class TransactionCompletedData
         return $this->status === 'success';
     }
 }
-

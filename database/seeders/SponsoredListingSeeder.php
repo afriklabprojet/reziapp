@@ -17,6 +17,7 @@ class SponsoredListingSeeder extends Seeder
 
         if ($residences->isEmpty()) {
             $this->command->warn('⚠️  Aucune résidence active.');
+
             return;
         }
 
@@ -151,7 +152,9 @@ class SponsoredListingSeeder extends Seeder
 
         foreach ($listings as $data) {
             $residence = $data['residence'];
-            if (! $residence) continue;
+            if (! $residence) {
+                continue;
+            }
 
             SponsoredListing::create([
                 'residence_id'       => $residence->id,

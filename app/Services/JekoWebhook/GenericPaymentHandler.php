@@ -11,7 +11,8 @@ final class GenericPaymentHandler extends AbstractJekoPaymentHandler
 {
     public function __construct(
         private readonly PaymentService $paymentService,
-    ) {}
+    ) {
+    }
 
     public function supports(string $reference): bool
     {
@@ -88,4 +89,3 @@ final class GenericPaymentHandler extends AbstractJekoPaymentHandler
         ];
     }
 }
-

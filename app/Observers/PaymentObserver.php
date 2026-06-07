@@ -19,7 +19,8 @@ class PaymentObserver
 {
     public function __construct(
         protected PaymentService $paymentService,
-    ) {}
+    ) {
+    }
 
     /**
      * Restore credits when a payment moves to a terminal failure state.

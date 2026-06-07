@@ -12,7 +12,9 @@ class BalanceDueReminder extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(protected Booking $booking) {}
+    public function __construct(protected Booking $booking)
+    {
+    }
 
     public function via(object $notifiable): array
     {

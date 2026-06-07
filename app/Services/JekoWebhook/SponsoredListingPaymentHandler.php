@@ -12,7 +12,9 @@ use Illuminate\Support\Facades\Log;
 
 final class SponsoredListingPaymentHandler extends AbstractJekoPaymentHandler
 {
-    public function __construct(private readonly SponsoredListingService $sponsoredListingService) {}
+    public function __construct(private readonly SponsoredListingService $sponsoredListingService)
+    {
+    }
 
     public function supports(string $reference): bool
     {
@@ -129,4 +131,3 @@ final class SponsoredListingPaymentHandler extends AbstractJekoPaymentHandler
         ];
     }
 }
-

@@ -402,4 +402,3 @@ class JekoPaymentRequestService
         return $result;
     }
 }
-

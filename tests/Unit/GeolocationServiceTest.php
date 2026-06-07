@@ -233,7 +233,7 @@ class GeolocationServiceTest extends TestCase
             $this->assertStringNotContainsString(
                 $raw,
                 $expectedFragment,
-                "Cache key fragment must not embed raw coordinate: {$raw}"
+                "Cache key fragment must not embed raw coordinate: {$raw}",
             );
         }
 

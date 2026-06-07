@@ -16,7 +16,8 @@ class BookingStateService
 {
     public function __construct(
         private readonly ?LoyaltyService $loyaltyService = null,
-    ) {}
+    ) {
+    }
 
     public function confirmBooking(Booking $booking): Booking
     {
@@ -148,4 +149,3 @@ class BookingStateService
             ->delete();
     }
 }
-

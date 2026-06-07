@@ -25,7 +25,8 @@ class NotificationService
 
     public function __construct(
         private readonly ?PublicUrlGuard $publicUrlGuard = null,
-    ) {}
+    ) {
+    }
 
     /**
      * Envoyer une notification de nouveau message
@@ -221,7 +222,7 @@ class NotificationService
         }
 
         $validSubscriptions = $subscriptions->filter(
-            fn (PushSubscription $subscription): bool => $this->isAllowedPushEndpoint($subscription->endpoint)
+            fn (PushSubscription $subscription): bool => $this->isAllowedPushEndpoint($subscription->endpoint),
         );
 
         $invalidSubscriptionIds = $subscriptions

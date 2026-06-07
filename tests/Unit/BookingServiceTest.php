@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use App\Models\Booking;
 use App\Models\BlockedDate;
+use App\Models\Booking;
 use App\Models\CancellationPolicy;
 use App\Models\Residence;
 use App\Models\User;

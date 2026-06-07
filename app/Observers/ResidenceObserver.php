@@ -182,7 +182,7 @@ class ResidenceObserver
             ->where('id', $residence->id)
             ->update([
                 'location' => DB::raw(
-                    "ST_GeomFromText('POINT({$residence->longitude} {$residence->latitude})', 4326)"
+                    "ST_GeomFromText('POINT({$residence->longitude} {$residence->latitude})', 4326)",
                 ),
             ]);
     }

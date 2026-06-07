@@ -22,8 +22,7 @@ class IcalServiceTest extends TestCase
     public function test_blocks_private_ical_url_without_outbound_request(): void
     {
         $feed = $this->makeFeed(importUrl: $this->metadataUrl(), platform: IcalFeed::PLATFORM_OTHER);
-        $service = new IcalService(new class extends PublicUrlGuard
-        {
+        $service = new IcalService(new class () extends PublicUrlGuard {
             public function isSafe(string $url, array $allowedHostSuffixes = []): bool
             {
                 return false;
@@ -43,8 +42,7 @@ class IcalServiceTest extends TestCase
     public function test_blocks_untrusted_host_for_known_airbnb_platform(): void
     {
         $feed = $this->makeFeed(importUrl: self::PUBLIC_CALENDAR_URL, platform: IcalFeed::PLATFORM_AIRBNB);
-        $service = new IcalService(new class extends PublicUrlGuard
-        {
+        $service = new IcalService(new class () extends PublicUrlGuard {
             public function resolveHostIps(string $host): array
             {
                 return [implode('.', [8, 8, 8, 8])];
@@ -62,8 +60,7 @@ class IcalServiceTest extends TestCase
     public function test_imports_public_ical_feed(): void
     {
         $feed = $this->makeFeed(importUrl: self::PUBLIC_CALENDAR_URL, platform: IcalFeed::PLATFORM_OTHER);
-        $service = new IcalService(new class extends PublicUrlGuard
-        {
+        $service = new IcalService(new class () extends PublicUrlGuard {
             public function resolveHostIps(string $host): array
             {
                 return [implode('.', [8, 8, 8, 8])];
@@ -98,8 +95,7 @@ class IcalServiceTest extends TestCase
     public function test_rejects_oversized_ical_feed(): void
     {
         $feed = $this->makeFeed(importUrl: self::PUBLIC_CALENDAR_URL, platform: IcalFeed::PLATFORM_OTHER);
-        $service = new IcalService(new class extends PublicUrlGuard
-        {
+        $service = new IcalService(new class () extends PublicUrlGuard {
             public function resolveHostIps(string $host): array
             {
                 return [implode('.', [8, 8, 8, 8])];
@@ -120,8 +116,7 @@ class IcalServiceTest extends TestCase
     public function test_rejects_ical_feed_with_too_many_events(): void
     {
         $feed = $this->makeFeed(importUrl: self::PUBLIC_CALENDAR_URL, platform: IcalFeed::PLATFORM_OTHER);
-        $service = new IcalService(new class extends PublicUrlGuard
-        {
+        $service = new IcalService(new class () extends PublicUrlGuard {
             public function resolveHostIps(string $host): array
             {
                 return [implode('.', [8, 8, 8, 8])];

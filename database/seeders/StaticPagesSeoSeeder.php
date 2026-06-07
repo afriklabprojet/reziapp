@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\SeoData;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -199,4 +198,3 @@ class StaticPagesSeoSeeder extends Seeder
         $this->command->info('✅ SEO données seedées pour '.count($pages).' pages statiques.');
     }
 }
-

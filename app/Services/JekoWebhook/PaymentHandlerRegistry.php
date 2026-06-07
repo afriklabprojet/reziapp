@@ -38,4 +38,3 @@ final class PaymentHandlerRegistry
         return $this->handlers[array_key_last($this->handlers)];
     }
 }
-

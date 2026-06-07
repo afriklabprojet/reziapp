@@ -274,7 +274,7 @@ class FooterSettings extends Page implements HasForms
             if (str_ends_with($key, '_url')) {
                 \App\Models\PlatformSetting::updateOrCreate(
                     ['key' => $key],
-                    ['value' => $value, 'type' => 'string', 'group' => 'footer', 'is_public' => false]
+                    ['value' => $value, 'type' => 'string', 'group' => 'footer', 'is_public' => false],
                 );
                 \Illuminate\Support\Facades\Cache::forget("setting.{$key}");
             } else {

@@ -429,11 +429,11 @@ class PageContent extends Model
                 ],
                 [
                     'q' => 'Les options Boost sont-elles remboursables ?',
-                    'a' => "Les Boosts sont activés instantanément. En cas de problème technique de notre part, nous procédons à un remboursement intégral ou à un crédit équivalent.",
+                    'a' => 'Les Boosts sont activés instantanément. En cas de problème technique de notre part, nous procédons à un remboursement intégral ou à un crédit équivalent.',
                 ],
                 [
                     'q' => "Comment ReziApp gagne-t-il de l'argent ?",
-                    'a' => "ReziApp génère ses revenus principalement via une commission de 10% sur le montant total de chaque réservation côté propriétaire, complétée par des options Boost et services premium facultatifs.",
+                    'a' => 'ReziApp génère ses revenus principalement via une commission de 10% sur le montant total de chaque réservation côté propriétaire, complétée par des options Boost et services premium facultatifs.',
                 ],
             ],
         ];

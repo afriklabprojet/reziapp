@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CampaignResource\Support\CampaignResourceUi;
 use App\Filament\Resources\CampaignResource\Pages;
+use App\Filament\Resources\CampaignResource\Support\CampaignResourceUi;
 use App\Models\Campaign;
 use Filament\Forms;
 use Filament\Forms\Form;

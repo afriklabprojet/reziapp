@@ -5,8 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Corriger max_guests pour toutes les résidences.
      *
@@ -27,7 +26,7 @@ return new class extends Migration
         //   2 chambres → 4
         //   3 chambres → 6
         //   4+ chambres → 8
-        DB::statement("
+        DB::statement('
             UPDATE residences
             SET max_guests = CASE
                 WHEN bedrooms >= 4 THEN 8
@@ -36,7 +35,7 @@ return new class extends Migration
                 ELSE 2
             END
             WHERE max_guests <= 2
-        ");
+        ');
     }
 
     public function down(): void

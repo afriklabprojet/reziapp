@@ -368,25 +368,25 @@ class PricingService
      */
     protected function resolveBasePrice(Residence $residence, int $nights): float
     {
-        $perDay   = $residence->price_per_day   ? (float) $residence->price_per_day   : null;
-        $perWeek  = $residence->price_per_week  ? (float) $residence->price_per_week  : null;
+        $perDay   = $residence->price_per_day ? (float) $residence->price_per_day : null;
+        $perWeek  = $residence->price_per_week ? (float) $residence->price_per_week : null;
         $perMonth = $residence->price_per_month ? (float) $residence->price_per_month : null;
 
         // Candidates ordered by preference for the given stay length
         $candidates = match (true) {
             $nights >= 30 => array_filter([
                 $perMonth ? round($perMonth / 30) : null,
-                $perWeek  ? round($perWeek  / 7)  : null,
+                $perWeek ? round($perWeek  / 7) : null,
                 $perDay,
             ]),
             $nights >= 7  => array_filter([
-                $perWeek  ? round($perWeek  / 7)  : null,
+                $perWeek ? round($perWeek  / 7) : null,
                 $perDay,
                 $perMonth ? round($perMonth / 30) : null,
             ]),
             default       => array_filter([
                 $perDay,
-                $perWeek  ? round($perWeek  / 7)  : null,
+                $perWeek ? round($perWeek  / 7) : null,
                 $perMonth ? round($perMonth / 30) : null,
             ]),
         };

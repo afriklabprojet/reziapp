@@ -15,7 +15,9 @@ use Illuminate\View\View;
 
 class ChannelListingController extends Controller
 {
-    public function __construct(private ChannelManagerService $service) {}
+    public function __construct(private ChannelManagerService $service)
+    {
+    }
 
     public function index(Residence $residence): View
     {

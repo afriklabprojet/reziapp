@@ -10,15 +10,15 @@
  */
 
 $worktreeRoot = dirname(__DIR__);
-$mainVendor = realpath($worktreeRoot . '/vendor');
+$mainVendor = realpath($worktreeRoot.'/vendor');
 
-require $mainVendor . '/autoload.php';
+require $mainVendor.'/autoload.php';
 
 // Prepend the worktree's app/ so it shadows the main project's app/
 spl_autoload_register(function (string $class) use ($worktreeRoot): void {
     if (str_starts_with($class, 'App\\')) {
         $relative = str_replace('\\', '/', substr($class, 4));
-        $file = $worktreeRoot . '/app/' . $relative . '.php';
+        $file = $worktreeRoot.'/app/'.$relative.'.php';
         if (file_exists($file)) {
             require_once $file;
         }
@@ -26,7 +26,7 @@ spl_autoload_register(function (string $class) use ($worktreeRoot): void {
 
     if (str_starts_with($class, 'Tests\\')) {
         $relative = str_replace('\\', '/', substr($class, 6));
-        $file = $worktreeRoot . '/tests/' . $relative . '.php';
+        $file = $worktreeRoot.'/tests/'.$relative.'.php';
         if (file_exists($file)) {
             require_once $file;
         }

@@ -33,7 +33,7 @@ class CreateSuperAdmin extends Command
                 'name'     => ['required', 'string', 'max:255'],
                 'email'    => ['required', 'email', 'unique:users,email'],
                 'password' => ['required', 'string', 'min:12'],
-            ]
+            ],
         );
 
         if ($validator->fails()) {
@@ -60,7 +60,7 @@ class CreateSuperAdmin extends Command
         $this->info('✅ Super admin créé avec succès :');
         $this->table(
             ['ID', 'Nom', 'Email', 'Rôle'],
-            [[$user->id, $user->name, $user->email, $user->role]]
+            [[$user->id, $user->name, $user->email, $user->role]],
         );
         $this->warn('⚠️  Conservez ces identifiants en lieu sûr et changez le mot de passe après la première connexion.');
 

@@ -7,7 +7,6 @@ namespace App\Console\Commands;
 use App\Models\Booking;
 use App\Models\Residence;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class SyncResidenceOccupancy extends Command
@@ -51,10 +50,12 @@ class SyncResidenceOccupancy extends Command
             // A eu au moins une réservation confirmée (logique : c'est nous qui avons mis false)
             ->whereHas('bookings', fn ($q) => $q->where('status', 'confirmed'))
             // Mais aucune ne couvre aujourd'hui
-            ->whereDoesntHave('bookings', fn ($q) => $q
+            ->whereDoesntHave(
+                'bookings',
+                fn ($q) => $q
                 ->where('status', 'confirmed')
                 ->where('check_in', '<=', $today)
-                ->where('check_out', '>', $today)
+                ->where('check_out', '>', $today),
             )
             // Ne pas toucher aux résidences dont le propriétaire a un mode vacances actif
             ->whereNotIn('owner_id', function ($q) {

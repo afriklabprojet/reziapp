@@ -106,6 +106,7 @@ class MapBoundsSearchController extends Controller
                 ->get()
                 ->map(function (Residence $r) {
                     $primary = $r->photos->firstWhere('is_primary', true) ?? $r->photos->first();
+
                     return [
                         'id' => $r->id,
                         'title' => $r->name,

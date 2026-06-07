@@ -6,8 +6,8 @@ use App\Models\Booking;
 use App\Models\FraudReport;
 use App\Models\MarketPriceData;
 use App\Models\Residence;
-use App\Support\SensitiveData;
 use App\Models\User;
+use App\Support\SensitiveData;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 

@@ -57,12 +57,12 @@ class PendingApprovalsWidget extends BaseWidget
                     ->color('success')
                     ->requiresConfirmation()
                     ->modalHeading('Approuver cette résidence ?')
-                    ->modalDescription(fn ($record) => "Valider \"" . $record->name . "\" et la rendre visible aux locataires.")
+                    ->modalDescription(fn ($record) => 'Valider "'.$record->name.'" et la rendre visible aux locataires.')
                     ->action(function ($record) {
                         $record->update(['status' => 'active']);
                         \Filament\Notifications\Notification::make()
                             ->title('Résidence approuvée')
-                            ->body($record->name . ' est maintenant active.')
+                            ->body($record->name.' est maintenant active.')
                             ->success()
                             ->send();
                     }),
@@ -72,12 +72,12 @@ class PendingApprovalsWidget extends BaseWidget
                     ->color('danger')
                     ->requiresConfirmation()
                     ->modalHeading('Rejeter cette résidence ?')
-                    ->modalDescription(fn ($record) => "Rejeter \"" . $record->name . "\" et notifier le propriétaire.")
+                    ->modalDescription(fn ($record) => 'Rejeter "'.$record->name.'" et notifier le propriétaire.')
                     ->action(function ($record) {
                         $record->update(['status' => 'rejected']);
                         \Filament\Notifications\Notification::make()
                             ->title('Résidence rejetée')
-                            ->body($record->name . ' a été rejetée.')
+                            ->body($record->name.' a été rejetée.')
                             ->danger()
                             ->send();
                     }),

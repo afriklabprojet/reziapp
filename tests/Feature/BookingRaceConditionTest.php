@@ -194,6 +194,7 @@ class BookingRaceConditionTest extends TestCase
         $booking1 = $this->bookingService->createBooking($this->residence, $this->guest, $data);
 
         $exceptionThrown = false;
+
         try {
             $this->bookingService->createBooking($this->residence, $guest2, $data);
         } catch (\Exception $e) {

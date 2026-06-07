@@ -28,7 +28,8 @@ class IcalService
 
     public function __construct(
         private readonly ?PublicUrlGuard $publicUrlGuard = null,
-    ) {}
+    ) {
+    }
 
     /**
      * Importer les événements depuis une URL iCal

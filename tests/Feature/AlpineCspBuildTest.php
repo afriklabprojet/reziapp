@@ -13,7 +13,7 @@ use Tests\TestCase;
  */
 class AlpineCspBuildTest extends TestCase
 {
-    private const APP_JS_PATH = __DIR__ . '/../../resources/js/app.js';
+    private const APP_JS_PATH = __DIR__.'/../../resources/js/app.js';
 
     #[Test]
     public function app_js_imports_alpinejs_csp_build(): void
@@ -25,7 +25,7 @@ class AlpineCspBuildTest extends TestCase
         $this->assertStringContainsString(
             "from '@alpinejs/csp'",
             $contents,
-            'app.js must import Alpine from @alpinejs/csp to avoid unsafe-eval CSP requirement'
+            'app.js must import Alpine from @alpinejs/csp to avoid unsafe-eval CSP requirement',
         );
     }
 
@@ -37,14 +37,14 @@ class AlpineCspBuildTest extends TestCase
         $this->assertStringNotContainsString(
             "from 'alpinejs'",
             $contents,
-            'app.js must not import from the standard alpinejs package (which requires unsafe-eval)'
+            'app.js must not import from the standard alpinejs package (which requires unsafe-eval)',
         );
     }
 
     #[Test]
     public function csp_build_package_is_in_dependencies(): void
     {
-        $packageJsonPath = __DIR__ . '/../../package.json';
+        $packageJsonPath = __DIR__.'/../../package.json';
         $this->assertFileExists($packageJsonPath);
 
         $package = json_decode(file_get_contents($packageJsonPath), true);
@@ -52,7 +52,7 @@ class AlpineCspBuildTest extends TestCase
         $this->assertArrayHasKey(
             '@alpinejs/csp',
             $package['dependencies'] ?? [],
-            '@alpinejs/csp must be listed in package.json dependencies (not devDependencies)'
+            '@alpinejs/csp must be listed in package.json dependencies (not devDependencies)',
         );
     }
 }

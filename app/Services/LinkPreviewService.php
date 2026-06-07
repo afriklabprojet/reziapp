@@ -10,7 +10,8 @@ class LinkPreviewService
 {
     public function __construct(
         private readonly ?PublicUrlGuard $publicUrlGuard = null,
-    ) {}
+    ) {
+    }
 
     /**
      * Extraire l'aperçu Open Graph d'une URL

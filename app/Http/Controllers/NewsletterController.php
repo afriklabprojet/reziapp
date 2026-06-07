@@ -227,7 +227,7 @@ class NewsletterController extends Controller
         $appUrl      = config('app.url');
         $firstName   = $name ? explode(' ', trim($name))[0] : null;
         $greeting    = $firstName ? "Bonjour {$firstName}," : 'Bonjour,';
-        $ctaUrl      = $appUrl . '?utm_source=newsletter&utm_medium=email&utm_campaign=welcome&utm_content=cta';
+        $ctaUrl      = $appUrl.'?utm_source=newsletter&utm_medium=email&utm_campaign=welcome&utm_content=cta';
         $headerEmoji = $isReturn ? '🎉' : '👋';
 
         $intro = $isReturn
@@ -235,7 +235,7 @@ class NewsletterController extends Controller
             : 'Merci de rejoindre la communauté ReziApp. Vous serez parmi les premiers à recevoir nos nouvelles annonces et promotions exclusives.';
 
         $unsubscribeBlock = $unsubscribeUrl
-            ? '<a href="' . $unsubscribeUrl . '?utm_source=newsletter&utm_medium=email&utm_campaign=welcome" style="color:#9ca3af;text-decoration:underline;">Se désabonner</a>'
+            ? '<a href="'.$unsubscribeUrl.'?utm_source=newsletter&utm_medium=email&utm_campaign=welcome" style="color:#9ca3af;text-decoration:underline;">Se désabonner</a>'
             : '';
 
         return <<<HTML
@@ -403,4 +403,3 @@ HTML;
         ]);
     }
 }
-

@@ -58,7 +58,7 @@ class CheckExpiringPromotionsCommand extends Command
         }
 
         // Mises en avant (sponsored listings) expirant bientôt
-    $sponsoredListings = $this->sponsoredListingService->getExpiringActiveListings($threshold);
+        $sponsoredListings = $this->sponsoredListingService->getExpiringActiveListings($threshold);
 
         $sponsoredCount = 0;
         foreach ($sponsoredListings as $listing) {

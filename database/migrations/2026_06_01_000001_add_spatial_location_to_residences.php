@@ -15,8 +15,7 @@ use Illuminate\Support\Facades\Schema;
  *   MBRContains(<bbox>, location)  → uses the index (fast O(log n))
  *   ST_Distance_Sphere(location, <point>) <= radius  → precise refinement
  */
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         // SQLite (used in tests) does not support MySQL SPATIAL types or SRID.
@@ -38,7 +37,7 @@ return new class extends Migration
         DB::statement(
             "UPDATE residences
              SET location = ST_GeomFromText(CONCAT('POINT(', longitude, ' ', latitude, ')'), 4326)
-             WHERE latitude IS NOT NULL AND longitude IS NOT NULL"
+             WHERE latitude IS NOT NULL AND longitude IS NOT NULL",
         );
 
         DB::statement('CREATE SPATIAL INDEX idx_residences_location ON residences (location)');

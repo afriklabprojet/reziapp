@@ -33,7 +33,7 @@ class SensitiveDataTest extends TestCase
     {
         $this->assertSame(
             SensitiveData::hash('USER@example.com '),
-            SensitiveData::hash('user@example.com')
+            SensitiveData::hash('user@example.com'),
         );
     }
 }

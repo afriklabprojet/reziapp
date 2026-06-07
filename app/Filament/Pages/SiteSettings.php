@@ -49,7 +49,6 @@ class SiteSettings extends Page implements HasForms
             'site_locale'        => $s->get('site_locale')?->value        ?? 'fr',
         ];
 
-
     }
 
     protected function getForms(): array
@@ -130,7 +129,7 @@ class SiteSettings extends Page implements HasForms
         foreach ($data as $key => $value) {
             PlatformSetting::updateOrCreate(
                 ['key' => $key],
-                ['value' => $value, 'type' => 'string', 'group' => 'site', 'is_public' => false]
+                ['value' => $value, 'type' => 'string', 'group' => 'site', 'is_public' => false],
             );
             Cache::forget("setting.{$key}");
         }

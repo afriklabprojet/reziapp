@@ -154,4 +154,3 @@ class BookingService
         return $this->availabilityService->getOwnerBookingStats($ownerId);
     }
 }
-

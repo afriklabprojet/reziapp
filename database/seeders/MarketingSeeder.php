@@ -11,7 +11,6 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class MarketingSeeder extends Seeder
 {
@@ -24,6 +23,7 @@ class MarketingSeeder extends Seeder
 
         if ($users->isEmpty()) {
             $this->command->warn('⚠️  Aucun utilisateur trouvé.');
+
             return;
         }
 
@@ -64,7 +64,7 @@ class MarketingSeeder extends Seeder
         foreach ($settings as $key => $value) {
             DB::table('referral_settings')->updateOrInsert(
                 ['key' => $key],
-                ['value' => $value, 'updated_at' => now(), 'created_at' => now()]
+                ['value' => $value, 'updated_at' => now(), 'created_at' => now()],
             );
         }
     }
@@ -81,7 +81,9 @@ class MarketingSeeder extends Seeder
         for ($i = 0; $i < min(4, $count); $i++) {
             $referrer = $usersArr[$i];
             $referred = $usersArr[$i + 1];
-            if ($referrer->id === $referred->id) continue;
+            if ($referrer->id === $referred->id) {
+                continue;
+            }
 
             $daysAgo = rand(20, 90);
             Referral::firstOrCreate(
@@ -96,7 +98,7 @@ class MarketingSeeder extends Seeder
                     'notes'           => 'Parrainage validé automatiquement après première réservation.',
                     'created_at'      => Carbon::now()->subDays($daysAgo),
                     'updated_at'      => Carbon::now()->subDays($daysAgo - 7),
-                ]
+                ],
             );
         }
 
@@ -117,7 +119,7 @@ class MarketingSeeder extends Seeder
                         'notes'           => null,
                         'created_at'      => Carbon::now()->subDays(10),
                         'updated_at'      => Carbon::now()->subDays(3),
-                    ]
+                    ],
                 );
             }
         }
@@ -135,7 +137,7 @@ class MarketingSeeder extends Seeder
                         'notes'       => null,
                         'created_at'  => Carbon::now()->subDays(2),
                         'updated_at'  => Carbon::now()->subDays(2),
-                    ]
+                    ],
                 );
             }
         }
@@ -156,7 +158,7 @@ class MarketingSeeder extends Seeder
                 'discount_value'    => 20.00,
                 'max_discount'      => 15000.00,
                 'scope'             => 'global',
-                'first_booking_only'=> 1,
+                'first_booking_only' => 1,
                 'max_uses'          => 100,
                 'uses_count'        => 34,
                 'min_nights'        => 2,
@@ -172,7 +174,7 @@ class MarketingSeeder extends Seeder
                 'discount_value'    => 5000.00,
                 'max_discount'      => null,
                 'scope'             => 'global',
-                'first_booking_only'=> 0,
+                'first_booking_only' => 0,
                 'max_uses'          => 50,
                 'uses_count'        => 12,
                 'min_nights'        => 3,
@@ -188,7 +190,7 @@ class MarketingSeeder extends Seeder
                 'discount_value'    => 15.00,
                 'max_discount'      => 20000.00,
                 'scope'             => 'global',
-                'first_booking_only'=> 0,
+                'first_booking_only' => 0,
                 'max_uses'          => 200,
                 'uses_count'        => 7,
                 'min_nights'        => 4,
@@ -205,7 +207,7 @@ class MarketingSeeder extends Seeder
                 'discount_value'    => 25.00,
                 'max_discount'      => 25000.00,
                 'scope'             => 'global',
-                'first_booking_only'=> 0,
+                'first_booking_only' => 0,
                 'max_uses'          => 150,
                 'uses_count'        => 148,
                 'min_nights'        => 2,
@@ -222,7 +224,7 @@ class MarketingSeeder extends Seeder
                 'discount_value'    => 10.00,
                 'max_discount'      => 10000.00,
                 'scope'             => 'global',
-                'first_booking_only'=> 0,
+                'first_booking_only' => 0,
                 'max_uses'          => 300,
                 'uses_count'        => 0,
                 'min_nights'        => 2,
@@ -244,7 +246,7 @@ class MarketingSeeder extends Seeder
                     'allowed_user_ids'  => null,
                     'created_at'        => Carbon::now()->subDays(rand(5, 60)),
                     'updated_at'        => Carbon::now()->subDays(rand(0, 5)),
-                ])
+                ]),
             );
         }
     }
@@ -265,7 +267,7 @@ class MarketingSeeder extends Seeder
                 'max_uses'          => 500,
                 'uses_count'        => 87,
                 'min_nights'        => null,
-                'first_booking_only'=> 0,
+                'first_booking_only' => 0,
                 'is_active'         => 1,
                 'valid_from'        => Carbon::now()->subMonths(3)->toDateString(),
                 'valid_until'       => Carbon::now()->addMonths(6)->toDateString(),
@@ -280,7 +282,7 @@ class MarketingSeeder extends Seeder
                 'max_uses'          => 50,
                 'uses_count'        => 49,
                 'min_nights'        => 3,
-                'first_booking_only'=> 0,
+                'first_booking_only' => 0,
                 'is_active'         => 0,
                 'valid_from'        => Carbon::now()->subDays(10)->toDateString(),
                 'valid_until'       => Carbon::now()->subDays(8)->toDateString(),
@@ -295,7 +297,7 @@ class MarketingSeeder extends Seeder
                 'max_uses'          => 20,
                 'uses_count'        => 3,
                 'min_nights'        => 5,
-                'first_booking_only'=> 0,
+                'first_booking_only' => 0,
                 'is_active'         => 1,
                 'valid_from'        => Carbon::now()->subMonth()->toDateString(),
                 'valid_until'       => Carbon::now()->addMonths(5)->toDateString(),
@@ -310,7 +312,7 @@ class MarketingSeeder extends Seeder
                 'max_uses'          => 1000,
                 'uses_count'        => 156,
                 'min_nights'        => null,
-                'first_booking_only'=> 0,
+                'first_booking_only' => 0,
                 'is_active'         => 1,
                 'valid_from'        => Carbon::create(2026, 1, 1)->toDateString(),
                 'valid_until'       => Carbon::create(2026, 12, 31)->toDateString(),
@@ -325,7 +327,7 @@ class MarketingSeeder extends Seeder
                 'max_uses'          => null,
                 'uses_count'        => 22,
                 'min_nights'        => 2,
-                'first_booking_only'=> 0,
+                'first_booking_only' => 0,
                 'is_active'         => 1,
                 'valid_from'        => Carbon::now()->subDays(15)->toDateString(),
                 'valid_until'       => Carbon::now()->addDays(30)->toDateString(),
@@ -342,7 +344,7 @@ class MarketingSeeder extends Seeder
                     'max_uses_per_user' => 1,
                     'created_at'        => Carbon::now()->subDays(rand(5, 90)),
                     'updated_at'        => Carbon::now()->subDays(rand(0, 5)),
-                ])
+                ]),
             );
         }
     }
@@ -466,7 +468,7 @@ class MarketingSeeder extends Seeder
                 'user_id'          => $admin?->id,
                 'template'         => null,
                 'audience_filters' => null,
-                'excluded_user_ids'=> null,
+                'excluded_user_ids' => null,
                 'track_opens'      => 1,
                 'track_clicks'     => 1,
                 'created_at'       => Carbon::now()->subDays(rand(1, 60)),

@@ -130,7 +130,7 @@ class SeoSettings extends Page implements HasForms
         foreach ($data as $key => $value) {
             PlatformSetting::updateOrCreate(
                 ['key' => $key],
-                ['value' => $value ?? '', 'type' => 'string', 'group' => 'seo', 'is_public' => false]
+                ['value' => $value ?? '', 'type' => 'string', 'group' => 'seo', 'is_public' => false],
             );
             Cache::forget("setting.{$key}");
         }

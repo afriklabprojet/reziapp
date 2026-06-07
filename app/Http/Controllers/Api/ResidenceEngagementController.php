@@ -7,14 +7,16 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Residence;
 use App\Services\ResidenceService;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 
 class ResidenceEngagementController extends Controller
 {
     private const VIEW_DEDUPLICATION_TTL_MINUTES = 10;
 
-    public function __construct(private readonly ResidenceService $residenceService) {}
+    public function __construct(private readonly ResidenceService $residenceService)
+    {
+    }
 
     public function recordView(\Illuminate\Http\Request $request, Residence $residence): JsonResponse
     {

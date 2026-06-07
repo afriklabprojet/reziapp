@@ -21,6 +21,7 @@ class IdentityVerificationResource extends Resource
         if (blank($path)) {
             return null;
         }
+
         return route('admin.private-file', ['path' => $path]);
     }
 

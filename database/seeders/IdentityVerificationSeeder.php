@@ -7,7 +7,6 @@ use App\Models\PhoneVerification;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class IdentityVerificationSeeder extends Seeder
 {
@@ -22,14 +21,14 @@ class IdentityVerificationSeeder extends Seeder
                 'user_id'         => 2,
                 'document_type'   => 'cni',
                 'document_number' => encrypt('CI-2021-0041872'),
-                'document_country'=> 'CI',
+                'document_country' => 'CI',
                 'first_name'      => 'Isaias',
                 'last_name'       => 'Dicki',
                 'birth_date'      => '1985-06-15',
                 'document_expiry' => '2028-06-14',
                 'status'          => 'approved',
-                'face_match_score'=> 94.50,
-                'face_match_passed'=> true,
+                'face_match_score' => 94.50,
+                'face_match_passed' => true,
                 'reviewed_by'     => 1,
                 'reviewed_at'     => Carbon::now()->subDays(10),
                 'admin_notes'     => 'Document clair, correspondance visage excellente.',
@@ -44,14 +43,14 @@ class IdentityVerificationSeeder extends Seeder
                 'user_id'         => 3,
                 'document_type'   => 'passport',
                 'document_number' => encrypt('A12345678'),
-                'document_country'=> 'CI',
+                'document_country' => 'CI',
                 'first_name'      => 'Katrina',
                 'last_name'       => 'Windler',
                 'birth_date'      => '1990-03-22',
                 'document_expiry' => '2030-03-21',
                 'status'          => 'approved',
-                'face_match_score'=> 88.20,
-                'face_match_passed'=> true,
+                'face_match_score' => 88.20,
+                'face_match_passed' => true,
                 'reviewed_by'     => 1,
                 'reviewed_at'     => Carbon::now()->subDays(5),
                 'admin_notes'     => 'Passeport valide.',
@@ -66,14 +65,14 @@ class IdentityVerificationSeeder extends Seeder
                 'user_id'         => 4,
                 'document_type'   => 'cni',
                 'document_number' => encrypt('CI-2019-0078234'),
-                'document_country'=> 'CI',
+                'document_country' => 'CI',
                 'first_name'      => 'Caitlyn',
                 'last_name'       => 'Mayer',
                 'birth_date'      => '1993-11-08',
                 'document_expiry' => '2027-11-07',
                 'status'          => 'manual_review',
-                'face_match_score'=> 71.00,
-                'face_match_passed'=> false,
+                'face_match_score' => 71.00,
+                'face_match_passed' => false,
                 'reviewed_by'     => null,
                 'reviewed_at'     => null,
                 'admin_notes'     => null,
@@ -88,14 +87,14 @@ class IdentityVerificationSeeder extends Seeder
                 'user_id'         => 5,
                 'document_type'   => 'cni',
                 'document_number' => encrypt('CI-2022-0056123'),
-                'document_country'=> 'CI',
+                'document_country' => 'CI',
                 'first_name'      => 'Cristal',
                 'last_name'       => 'Erdman',
                 'birth_date'      => '1988-07-04',
                 'document_expiry' => '2029-07-03',
                 'status'          => 'submitted',
-                'face_match_score'=> null,
-                'face_match_passed'=> false,
+                'face_match_score' => null,
+                'face_match_passed' => false,
                 'reviewed_by'     => null,
                 'reviewed_at'     => null,
                 'admin_notes'     => null,
@@ -110,15 +109,15 @@ class IdentityVerificationSeeder extends Seeder
                 'user_id'         => 7,
                 'document_type'   => 'cni',
                 'document_number' => encrypt('CI-2017-0099821'),
-                'document_country'=> 'CI',
+                'document_country' => 'CI',
                 'first_name'      => 'Domenick',
                 'last_name'       => 'Schmeler',
                 'birth_date'      => '1982-02-14',
                 'document_expiry' => '2025-02-13', // document expiré
                 'status'          => 'rejected',
-                'face_match_score'=> 45.00,
-                'face_match_passed'=> false,
-                'rejection_reason'=> 'Document expiré. Veuillez soumettre un document valide.',
+                'face_match_score' => 45.00,
+                'face_match_passed' => false,
+                'rejection_reason' => 'Document expiré. Veuillez soumettre un document valide.',
                 'reviewed_by'     => 1,
                 'reviewed_at'     => Carbon::now()->subDays(2),
                 'admin_notes'     => 'Document CNI expiré depuis 2025-02-13.',
@@ -133,14 +132,14 @@ class IdentityVerificationSeeder extends Seeder
                 'user_id'         => 8,
                 'document_type'   => 'passport',
                 'document_number' => encrypt('B98765432'),
-                'document_country'=> 'CI',
+                'document_country' => 'CI',
                 'first_name'      => 'Kaylie',
                 'last_name'       => 'Bayer',
                 'birth_date'      => '1995-09-28',
                 'document_expiry' => '2031-09-27',
                 'status'          => 'manual_review',
-                'face_match_score'=> 82.50,
-                'face_match_passed'=> true,
+                'face_match_score' => 82.50,
+                'face_match_passed' => true,
                 'reviewed_by'     => null,
                 'reviewed_at'     => null,
                 'admin_notes'     => null,
@@ -171,10 +170,10 @@ class IdentityVerificationSeeder extends Seeder
         }
 
         $this->command->info('✅ identity_verifications seeded: '.IdentityVerification::count().' enregistrements.');
-        $this->command->info('   → approved: '.IdentityVerification::where('status','approved')->count());
-        $this->command->info('   → manual_review: '.IdentityVerification::where('status','manual_review')->count());
-        $this->command->info('   → submitted: '.IdentityVerification::where('status','submitted')->count());
-        $this->command->info('   → rejected: '.IdentityVerification::where('status','rejected')->count());
+        $this->command->info('   → approved: '.IdentityVerification::where('status', 'approved')->count());
+        $this->command->info('   → manual_review: '.IdentityVerification::where('status', 'manual_review')->count());
+        $this->command->info('   → submitted: '.IdentityVerification::where('status', 'submitted')->count());
+        $this->command->info('   → rejected: '.IdentityVerification::where('status', 'rejected')->count());
 
         // ── VÉRIFICATIONS TÉLÉPHONE ─────────────────────────────────────
         $phoneVerifs = [

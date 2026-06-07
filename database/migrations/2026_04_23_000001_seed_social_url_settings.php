@@ -3,8 +3,7 @@
 use App\Models\PlatformSetting;
 use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         $settings = [
@@ -26,7 +25,7 @@ return new class extends Migration
                     'label'       => $setting['label'],
                     'description' => $setting['description'],
                     'is_public'   => false,
-                ]
+                ],
             );
         }
     }

@@ -675,7 +675,15 @@ class Residence extends Model
 
         if ($driver === 'sqlite') {
             return $this->scopeWithinRadiusSqlite(
-                $query, $lat, $lng, $radius, $minLat, $maxLat, $minLng, $maxLng, $sortByDistance
+                $query,
+                $lat,
+                $lng,
+                $radius,
+                $minLat,
+                $maxLat,
+                $minLng,
+                $maxLng,
+                $sortByDistance,
             );
         }
 
@@ -684,7 +692,16 @@ class Residence extends Model
         // that cannot contain SQL metacharacters regardless of PHP locale settings.
         $bboxWkt  = sprintf(
             'POLYGON((%.10f %.10f,%.10f %.10f,%.10f %.10f,%.10f %.10f,%.10f %.10f))',
-            $minLng, $minLat, $maxLng, $minLat, $maxLng, $maxLat, $minLng, $maxLat, $minLng, $minLat,
+            $minLng,
+            $minLat,
+            $maxLng,
+            $minLat,
+            $maxLng,
+            $maxLat,
+            $minLng,
+            $maxLat,
+            $minLng,
+            $minLat,
         );
         $bboxExpr = "ST_GeomFromText('{$bboxWkt}', 4326)";
         $ptExpr   = sprintf("ST_GeomFromText('POINT(%.10f %.10f)', 4326)", $lng, $lat);
@@ -788,7 +805,16 @@ class Residence extends Model
 
         $bboxWkt  = sprintf(
             'POLYGON((%.10f %.10f,%.10f %.10f,%.10f %.10f,%.10f %.10f,%.10f %.10f))',
-            $minLng, $minLat, $maxLng, $minLat, $maxLng, $maxLat, $minLng, $maxLat, $minLng, $minLat,
+            $minLng,
+            $minLat,
+            $maxLng,
+            $minLat,
+            $maxLng,
+            $maxLat,
+            $minLng,
+            $maxLat,
+            $minLng,
+            $minLat,
         );
         $bboxExpr = "ST_GeomFromText('{$bboxWkt}', 4326)";
         $ptExpr   = sprintf("ST_GeomFromText('POINT(%.10f %.10f)', 4326)", $lng, $lat);

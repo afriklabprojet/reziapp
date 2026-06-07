@@ -7,4 +7,3 @@ use DomainException;
 class CampaignUserNotAuthenticatedException extends DomainException
 {
 }
-

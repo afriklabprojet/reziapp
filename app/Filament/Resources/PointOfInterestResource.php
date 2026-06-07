@@ -44,7 +44,7 @@ class PointOfInterestResource extends Resource
                             ->label('Type')
                             ->options(array_combine(
                                 array_keys(PointOfInterest::TYPES),
-                                array_column(PointOfInterest::TYPES, 'label')
+                                array_column(PointOfInterest::TYPES, 'label'),
                             ))
                             ->required(),
                         Forms\Components\TextInput::make('distance_meters')
@@ -92,7 +92,7 @@ class PointOfInterestResource extends Resource
                     ->label('Type')
                     ->options(array_combine(
                         array_keys(PointOfInterest::TYPES),
-                        array_column(PointOfInterest::TYPES, 'label')
+                        array_column(PointOfInterest::TYPES, 'label'),
                     )),
             ])
             ->actions([

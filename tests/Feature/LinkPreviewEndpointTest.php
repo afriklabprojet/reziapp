@@ -21,7 +21,7 @@ class LinkPreviewEndpointTest extends TestCase
         Http::fake([
             'example.com/*' => Http::response(
                 '<html><head><meta property="og:title" content="Preview Title"/></head></html>',
-                200
+                200,
             ),
         ]);
 

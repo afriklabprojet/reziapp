@@ -29,7 +29,8 @@ class BookingCreationService
         private readonly BookingAvailabilityService $availabilityService,
         private readonly BookingStateService $bookingStateService,
         private readonly BookingNotificationService $bookingNotificationService,
-    ) {}
+    ) {
+    }
 
     public function createInstantBooking(Residence $residence, User $user, array $data): Booking
     {
@@ -419,4 +420,3 @@ class BookingCreationService
         }
     }
 }
-

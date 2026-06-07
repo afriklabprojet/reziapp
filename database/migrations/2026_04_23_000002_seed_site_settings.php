@@ -3,8 +3,7 @@
 use App\Models\PlatformSetting;
 use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         $settings = [
@@ -37,7 +36,7 @@ return new class extends Migration
                     'type'      => 'string',
                     'group'     => str_starts_with($setting['key'], 'seo_') ? 'seo' : 'site',
                     'is_public' => false,
-                ]
+                ],
             );
         }
     }
