@@ -42,7 +42,7 @@ class NewBookingReceived extends Notification implements ShouldQueue
             ->line("• Montant : {$total} FCFA")
             ->action('Voir la réservation', route('owner.bookings.show', $this->booking))
             ->line('Pensez à préparer votre résidence pour l\'accueil du client.')
-            ->salutation('L\'équipe Rezi Studio Meublé Faya');
+            ->salutation('L\'équipe Rezi App');
     }
 
     public function toArray(object $notifiable): array

@@ -98,7 +98,7 @@ class Page extends Model
      */
     public function getMetaTitleAttribute($value): string
     {
-        return $value ?? $this->title.' - Rezi Studio Meublé Faya';
+        return $value ?? $this->title.' - Rezi App';
     }
 
     /**

@@ -68,7 +68,7 @@ class PlatformSettings extends Page implements HasForms
         ];
 
         $this->generalData = [
-            'platform_name' => $settings->get('platform_name')?->value ?? 'Rezi Studio Meublé Faya',
+            'platform_name' => $settings->get('platform_name')?->value ?? 'Rezi App',
             'platform_email' => $settings->get('platform_email')?->value ?? '',
             'platform_phone' => $settings->get('platform_phone')?->value ?? '',
             'maintenance_mode' => (bool) ($settings->get('maintenance_mode')?->value ?? false),

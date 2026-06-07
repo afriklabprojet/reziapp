@@ -43,7 +43,7 @@ class InvoiceOverdue extends Notification implements ShouldQueue
             ->line("• Retard : {$daysOverdue} jour(s)")
             ->line('Nous vous prions de régulariser votre situation dans les plus brefs délais afin d\'éviter des pénalités.')
             ->action('Voir ma facture', url('/'))
-            ->salutation('L\'équipe Rezi Studio Meublé Faya');
+            ->salutation('L\'équipe Rezi App');
     }
 
     public function toArray(object $notifiable): array

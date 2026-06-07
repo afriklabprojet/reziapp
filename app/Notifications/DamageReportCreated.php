@@ -33,7 +33,7 @@ class DamageReportCreated extends Notification implements ShouldQueue
             ->line('Catégorie : '.(DamageReport::CATEGORIES[$this->report->category] ?? $this->report->category))
             ->line('Gravité : '.(DamageReport::SEVERITIES[$this->report->severity] ?? $this->report->severity))
             ->action('Voir le rapport', route('owner.damages.show', $this->report))
-            ->salutation('L\'équipe Rezi Studio Meublé Faya');
+            ->salutation('L\'équipe Rezi App');
     }
 
     public function toArray(object $notifiable): array

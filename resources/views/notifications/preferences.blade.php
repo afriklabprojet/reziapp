@@ -1,6 +1,6 @@
 @extends('layouts.client', ['sidebarActive' => 'notifications'])
 
-@section('title', 'Préférences de notifications - Rezi Studio Meublé Faya')
+@section('title', 'Préférences de notifications - Rezi App')
 
 @section('client-content')
     <div x-data="notificationPreferences({{ \Illuminate\Support\Js::encode([

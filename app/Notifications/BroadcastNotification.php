@@ -35,7 +35,7 @@ class BroadcastNotification extends Notification implements ShouldQueue
             $mail->action('Voir plus', $this->actionUrl);
         }
 
-        $mail->line('Merci de faire confiance à Rezi Studio Meublé Faya !');
+        $mail->line('Merci de faire confiance à Rezi App !');
 
         return $mail;
     }

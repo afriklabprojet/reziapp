@@ -17,8 +17,8 @@ class PageController extends Controller
     {
         $page = PageContent::getBySlug('cgu');
         $content = $page ? $page->data : PageContent::defaultCguData();
-        $metaTitle = $page?->meta_title ?? "Conditions Générales d'Utilisation – Rezi Studio Meublé Faya";
-        $metaDescription = $page?->meta_description ?? "Consultez les conditions générales d'utilisation de la plateforme Rezi Studio Meublé Faya.";
+        $metaTitle = $page?->meta_title ?? "Conditions Générales d'Utilisation – Rezi App";
+        $metaDescription = $page?->meta_description ?? "Consultez les conditions générales d'utilisation de la plateforme Rezi App.";
 
         return view('pages.cgu', compact('content', 'metaTitle', 'metaDescription'));
     }
@@ -30,8 +30,8 @@ class PageController extends Controller
     {
         $page = PageContent::getBySlug('confidentialite');
         $content = $page ? $page->data : PageContent::defaultConfidentialiteData();
-        $metaTitle = $page?->meta_title ?? 'Politique de Confidentialité – Rezi Studio Meublé Faya';
-        $metaDescription = $page?->meta_description ?? 'Découvrez comment Rezi Studio Meublé Faya collecte et protège vos données personnelles.';
+        $metaTitle = $page?->meta_title ?? 'Politique de Confidentialité – Rezi App';
+        $metaDescription = $page?->meta_description ?? 'Découvrez comment Rezi App collecte et protège vos données personnelles.';
 
         return view('pages.confidentialite', compact('content', 'metaTitle', 'metaDescription'));
     }
@@ -43,8 +43,8 @@ class PageController extends Controller
     {
         $page = PageContent::getBySlug('mentions-legales');
         $content = $page ? $page->data : PageContent::defaultMentionsLegalesData();
-        $metaTitle = $page?->meta_title ?? 'Mentions Légales – Rezi Studio Meublé Faya';
-        $metaDescription = $page?->meta_description ?? 'Mentions légales de la plateforme Rezi Studio Meublé Faya.';
+        $metaTitle = $page?->meta_title ?? 'Mentions Légales – Rezi App';
+        $metaDescription = $page?->meta_description ?? 'Mentions légales de la plateforme Rezi App.';
 
         return view('pages.mentions-legales', compact('content', 'metaTitle', 'metaDescription'));
     }
@@ -56,14 +56,14 @@ class PageController extends Controller
     {
         $page = PageContent::getBySlug('faq');
         $content = $page ? $page->data : PageContent::defaultFaqData();
-        $metaTitle = $page?->meta_title ?? 'FAQ – Questions Fréquentes – Rezi Studio Meublé Faya';
-        $metaDescription = $page?->meta_description ?? 'Trouvez les réponses à vos questions sur Rezi Studio Meublé Faya.';
+        $metaTitle = $page?->meta_title ?? 'FAQ – Questions Fréquentes – Rezi App';
+        $metaDescription = $page?->meta_description ?? 'Trouvez les réponses à vos questions sur Rezi App.';
 
         return view('pages.faq', compact('content', 'metaTitle', 'metaDescription'));
     }
 
     /**
-     * À propos de Rezi Studio Meublé Faya
+     * À propos de Rezi App
      */
     public function about(): View
     {
@@ -80,8 +80,8 @@ class PageController extends Controller
 
         $page = PageContent::getBySlug('about');
         $content = $page ? $page->data : PageContent::defaultAboutData();
-        $metaTitle = $page?->meta_title ?? 'À propos de Rezi Studio Meublé Faya – Location meublée en Afrique de l\'Ouest';
-        $metaDescription = $page?->meta_description ?? "Découvrez Rezi Studio Meublé Faya, la plateforme de référence pour la location de résidences meublées en Afrique de l'Ouest.";
+        $metaTitle = $page?->meta_title ?? 'À propos de Rezi App – Location meublée en Afrique de l\'Ouest';
+        $metaDescription = $page?->meta_description ?? "Découvrez Rezi App, la plateforme de référence pour la location de résidences meublées en Afrique de l'Ouest.";
 
         return view('pages.about', compact('stats', 'content', 'metaTitle', 'metaDescription'));
     }
@@ -93,8 +93,8 @@ class PageController extends Controller
     {
         $page = PageContent::getBySlug('guide-proprietaire');
         $content = $page ? $page->data : PageContent::defaultGuideProprietaireData();
-        $metaTitle = $page?->meta_title ?? 'Guide Propriétaire – Rezi Studio Meublé Faya';
-        $metaDescription = $page?->meta_description ?? 'Guide complet pour publier et gérer votre résidence sur Rezi Studio Meublé Faya.';
+        $metaTitle = $page?->meta_title ?? 'Guide Propriétaire – Rezi App';
+        $metaDescription = $page?->meta_description ?? 'Guide complet pour publier et gérer votre résidence sur Rezi App.';
 
         return view('pages.guide-proprietaire', compact('content', 'metaTitle', 'metaDescription'));
     }
@@ -106,21 +106,21 @@ class PageController extends Controller
     {
         $page = PageContent::getBySlug('contact');
         $content = $page ? $page->data : PageContent::defaultContactData();
-        $metaTitle = $page?->meta_title ?? 'Nous Contacter – Rezi Studio Meublé Faya';
-        $metaDescription = $page?->meta_description ?? "Contactez l'équipe Rezi Studio Meublé Faya pour toute question sur la location meublée.";
+        $metaTitle = $page?->meta_title ?? 'Nous Contacter – Rezi App';
+        $metaDescription = $page?->meta_description ?? "Contactez l'équipe Rezi App pour toute question sur la location meublée.";
 
         return view('pages.contact', compact('content', 'metaTitle', 'metaDescription'));
     }
 
     /**
-     * Tarifs & Modèle économique Rezi Studio Meublé Faya
+     * Tarifs & Modèle économique Rezi App
      */
     public function tarifs(): View
     {
         $content = \App\Models\PageContent::getBySlug('tarifs');
 
-        $metaTitle = 'Tarifs Rezi Studio Meublé Faya – 10% de commission propriétaire par réservation';
-        $metaDescription = 'Rezi Studio Meublé Faya ne fonctionne pas par abonnement. Les locataires ne paient aucun frais de plateforme et les propriétaires paient 10% sur le montant total de chaque réservation confirmée.';
+        $metaTitle = 'Tarifs Rezi App – 10% de commission propriétaire par réservation';
+        $metaDescription = 'Rezi App ne fonctionne pas par abonnement. Les locataires ne paient aucun frais de plateforme et les propriétaires paient 10% sur le montant total de chaque réservation confirmée.';
 
         $boostPlans = $content?->data['boost_plans'] ?? \App\Models\PageContent::defaultTarifsData()['boost_plans'];
         $faqItems = \App\Models\PageContent::defaultTarifsData()['faq'];

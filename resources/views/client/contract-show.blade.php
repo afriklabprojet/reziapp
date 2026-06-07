@@ -1,6 +1,6 @@
 @extends('layouts.client', ['sidebarActive' => 'contracts'])
 
-@section('title', 'Contrat ' . $contract->reference . ' - Rezi Studio Meublé Faya')
+@section('title', 'Contrat ' . $contract->reference . ' - Rezi App')
 
 @section('client-content')
     <div class="space-y-6">

@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Rapport Fiscal {{ $year }} — Rezi Studio Meublé Faya</title>
+    <title>Rapport Fiscal {{ $year }} — Rezi App</title>
     <style>
         body { font-family: DejaVu Sans, sans-serif; font-size: 12px; color: #333; margin: 0; padding: 30px; }
         .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #1f2937; padding-bottom: 15px; }
@@ -27,7 +27,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>Rezi Studio Meublé Faya — Rapport Fiscal {{ $year }}</h1>
+        <h1>Rezi App — Rapport Fiscal {{ $year }}</h1>
         <p>Généré le {{ now()->format('d/m/Y à H:i') }} · République de Côte d'Ivoire</p>
     </div>
 
@@ -138,7 +138,7 @@
     @endif
 
     <div class="footer">
-        <p>Ce document est généré automatiquement par Rezi Studio Meublé Faya — reziapp.ci</p>
+        <p>Ce document est généré automatiquement par Rezi App — reziapp.ci</p>
         <p>Il ne constitue pas un document officiel. Consultez un expert-comptable pour vos obligations fiscales.</p>
     </div>
 </body>

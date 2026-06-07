@@ -1,7 +1,7 @@
 {{-- Composant SEO avec Schema.org Structured Data --}}
 
 @props([
-    'title' => config('app.name', 'Rezi Studio Meublé Faya'),
+    'title' => config('app.name', 'Rezi App'),
     'description' => 'Trouvez votre résidence meublée idéale',
     'keywords' => 'résidence, meublé, location, appartement, Côte d\'Ivoire, Burkina Faso',
     'image' => null,
@@ -119,7 +119,7 @@
 
 {{-- Geo Tags --}}
 <meta name="geo.region" content="CI-AB">
-<meta name="geo.placename" content="{{ $residence?->commune ?? ($residence?->city ?? 'Rezi Studio Meublé Faya') }}">
+<meta name="geo.placename" content="{{ $residence?->commune ?? ($residence?->city ?? 'Rezi App') }}">
 @if ($residence && $residence->latitude && $residence->longitude)
     <meta name="geo.position" content="{{ $residence->latitude }};{{ $residence->longitude }}">
     <meta name="ICBM" content="{{ $residence->latitude }}, {{ $residence->longitude }}">

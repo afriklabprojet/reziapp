@@ -4,10 +4,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Rezi Studio Meublé Faya Configuration
+    | Rezi App Configuration
     |--------------------------------------------------------------------------
     |
-    | Configuration spécifique à l'application Rezi Studio Meublé Faya pour la recherche
+    | Configuration spécifique à l'application Rezi App pour la recherche
     | de résidences meublées à Abidjan.
     |
     */

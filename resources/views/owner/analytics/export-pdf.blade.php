@@ -192,7 +192,7 @@
     <div class="container">
         <!-- En-tête -->
         <div class="header">
-            <div class="logo">Rezi Studio Meublé Faya</div>
+            <div class="logo">Rezi App</div>
             <div class="title">{{ $data['title'] ?? 'Rapport de performance' }}</div>
             <div class="subtitle">
                 Période: {{ $data['period']['start'] ?? '' }} - {{ $data['period']['end'] ?? '' }}
@@ -388,8 +388,8 @@
 
         <!-- Pied de page -->
         <div class="footer">
-            <p>Ce rapport a été généré automatiquement par Rezi Studio Meublé Faya le {{ now()->format('d/m/Y à H:i') }}</p>
-            <p>© {{ date('Y') }} Rezi Studio Meublé Faya - Plateforme de location de résidences meublées</p>
+            <p>Ce rapport a été généré automatiquement par Rezi App le {{ now()->format('d/m/Y à H:i') }}</p>
+            <p>© {{ date('Y') }} Rezi App - Plateforme de location de résidences meublées</p>
         </div>
     </div>
 </body>

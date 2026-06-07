@@ -317,7 +317,7 @@ class FraudReportResource extends Resource
                 $report->targetUser,
                 'system',
                 'Avertissement ⚠️',
-                'Votre compte a fait l\'objet d\'un signalement pour '.$report->getFraudTypeLabel().'. Veuillez respecter les conditions d\'utilisation de Rezi Studio Meublé Faya.',
+                'Votre compte a fait l\'objet d\'un signalement pour '.$report->getFraudTypeLabel().'. Veuillez respecter les conditions d\'utilisation de Rezi App.',
                 route('pages.cgu'),
                 ['fraud_type' => $report->getFraudTypeLabel()],
             );

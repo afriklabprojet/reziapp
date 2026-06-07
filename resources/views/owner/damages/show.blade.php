@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', $damage->reference . ' — Rezi Studio Meublé Faya')
+@section('title', $damage->reference . ' — Rezi App')
 
 @section('owner-content')
 <div class="space-y-6">

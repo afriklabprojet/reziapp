@@ -239,7 +239,7 @@
     <table style="width: 100%; margin-bottom: 40px;">
         <tr>
             <td style="width: 50%; vertical-align: top;">
-                <div class="logo">Rezi Studio Meublé Faya</div>
+                <div class="logo">Rezi App</div>
                 <div style="color: #666; font-size: 11px; margin-top: 5px;">
                     Votre résidence meublée idéale
                 </div>

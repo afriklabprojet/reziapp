@@ -25,11 +25,11 @@ class IdentityVerificationApproved extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage())
-            ->subject('✅ Identité vérifiée — Rezi Studio Meublé Faya')
+            ->subject('✅ Identité vérifiée — Rezi App')
             ->greeting("Bonjour {$notifiable->name} !")
             ->line('Votre vérification d\'identité a été **approuvée** avec succès.')
             ->line("Votre niveau de confiance est maintenant : **{$notifiable->verification_level}**.")
-            ->line('Vous pouvez désormais profiter de toutes les fonctionnalités de Rezi Studio Meublé Faya.')
+            ->line('Vous pouvez désormais profiter de toutes les fonctionnalités de Rezi App.')
             ->action('Voir mon profil', route('verification.dashboard'))
             ->line('Merci de votre confiance !');
     }

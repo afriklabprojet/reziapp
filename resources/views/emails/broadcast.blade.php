@@ -68,7 +68,7 @@
     <div class="container">
         <div class="logo">
             <a href="https://reziapp.ci" style="text-decoration:none; display:inline-block;">
-                <img src="{{ asset('images/logo-rezi.png') }}" alt="Rezi Studio Meublé Faya" style="height:56px; width:auto; vertical-align:middle; display:inline-block;">
+                <img src="{{ asset('images/logo-rezi.png') }}" alt="Rezi App" style="height:56px; width:auto; vertical-align:middle; display:inline-block;">
                 <span style="display:inline-block; vertical-align:middle; margin-left:12px; font-size:24px; font-weight:800; color:#111827; letter-spacing:-0.5px;">Rezi <span style="color:#f97316;">App</span></span>
             </a>
         </div>
@@ -86,13 +86,13 @@
         @endif
 
         <div class="footer">
-            <p>Merci de faire confiance à <strong>Rezi Studio Meublé Faya</strong> !</p>
-            <p style="color:#6b7280; margin:8px 0;">L'équipe Rezi Studio Meublé Faya</p>
+            <p>Merci de faire confiance à <strong>Rezi App</strong> !</p>
+            <p style="color:#6b7280; margin:8px 0;">L'équipe Rezi App</p>
             <p style="margin:8px 0;">
                 <a href="https://reziapp.ci" style="color: #f97316; text-decoration:none; font-weight:600;">reziapp.ci</a> &middot;
                 <a href="mailto:contact@reziapp.ci" style="color:#f97316; text-decoration:none; font-weight:600;">contact@reziapp.ci</a>
             </p>
-            <p style="font-size:11px; color:#9ca3af; margin-top:12px;">&copy; {{ date('Y') }} Rezi Studio Meublé Faya &middot; Abidjan, Côte d'Ivoire</p>
+            <p style="font-size:11px; color:#9ca3af; margin-top:12px;">&copy; {{ date('Y') }} Rezi App &middot; Abidjan, Côte d'Ivoire</p>
         </div>
     </div>
 </body>

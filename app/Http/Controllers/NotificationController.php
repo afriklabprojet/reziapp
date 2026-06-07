@@ -268,7 +268,7 @@ class NotificationController extends Controller
         $this->getNotificationService()->sendSystemNotification(
             Auth::user(),
             'Test de notification',
-            'Ceci est un test de notification Rezi Studio Meublé Faya.',
+            'Ceci est un test de notification Rezi App.',
             ['test' => true],
         );
 
@@ -282,7 +282,7 @@ class NotificationController extends Controller
     {
         $this->getNotificationService()->sendSystemNotification(
             Auth::user(),
-            'Test Push Rezi Studio Meublé Faya 🔔',
+            'Test Push Rezi App 🔔',
             'Les notifications push fonctionnent correctement !',
             ['url' => route('notifications.index'), 'test' => true],
         );

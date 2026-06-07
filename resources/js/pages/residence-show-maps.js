@@ -42,6 +42,7 @@ export function directionsWidget(residenceId, apiBase) {
                     this.error = json.message || 'Itinéraire non disponible';
                 }
             } catch (e) {
+                console.error('Directions error:', e);
                 this.error = "Activez la géolocalisation pour calculer l'itinéraire";
             } finally {
                 this.loading = false;
@@ -49,10 +50,10 @@ export function directionsWidget(residenceId, apiBase) {
         },
         getUserPosition() {
             return new Promise((resolve, reject) => {
-                if (!navigator.geolocation) return reject('Géolocalisation non supportée');
+                if (!navigator.geolocation) return reject(new Error('Géolocalisation non supportée'));
                 navigator.geolocation.getCurrentPosition(
                     p => resolve({ lat: p.coords.latitude, lng: p.coords.longitude }),
-                    () => reject('Position refusée'),
+                    () => reject(new Error('Position refusée')),
                     { timeout: 10000, maximumAge: 300000 },
                 );
             });
@@ -109,6 +110,7 @@ export function isochroneWidget(residenceId, apiBase, lat, lng, residenceName) {
                     this.error = json.message;
                 }
             } catch (e) {
+                console.error('Isochrone error:', e);
                 this.error = 'Zones accessibles non disponibles';
             } finally {
                 this.loading = false;
@@ -116,13 +118,9 @@ export function isochroneWidget(residenceId, apiBase, lat, lng, residenceName) {
         },
         renderMap(geojson) {
             const container = this.$refs.isochroneMap;
-            if (!container || !globalThis.google || !globalThis.google.maps) return;
+            if (!container || !globalThis.google?.maps) return;
 
-            if (this.map) {
-                if (this.polygons) {
-                    this.polygons.forEach((polygon) => polygon.setMap(null));
-                }
-            }
+            this.polygons?.forEach((polygon) => polygon.setMap(null));
 
             this.map = new google.maps.Map(container, {
                 center: { lat, lng },
@@ -133,47 +131,46 @@ export function isochroneWidget(residenceId, apiBase, lat, lng, residenceName) {
                 mapTypeControl: false,
             });
 
-            const colors = ['#ef4444', '#eab308', '#22c55e'];
-            this.polygons = [];
-            const bounds = new google.maps.LatLngBounds();
-
-            new google.maps.Marker({
+            this.marker = new google.maps.Marker({
                 position: { lat, lng },
                 map: this.map,
                 title: residenceName,
             });
 
-            if (!geojson || !geojson.features) return;
+            if (!geojson?.features) return;
 
-            const features = [...geojson.features].reverse();
-            features.forEach((feature, idx) => {
+            const colors = ['#ef4444', '#eab308', '#22c55e'];
+            this.polygons = [];
+            const bounds = new google.maps.LatLngBounds();
+
+            const buildPath = (ring) => ring.map(([pLng, pLat]) => {
+                const point = { lat: pLat, lng: pLng };
+                bounds.extend(point);
+                return point;
+            });
+
+            const renderPolygon = (polygonSet, idx) => {
+                const outerRing = polygonSet?.[0] ?? [];
+                const path = buildPath(outerRing);
+                if (!path.length) return;
+                const polygon = new google.maps.Polygon({
+                    paths: path,
+                    strokeColor: colors[idx] || '#888',
+                    strokeOpacity: 0.6,
+                    strokeWeight: 1.5,
+                    fillColor: colors[idx] || '#888',
+                    fillOpacity: 0.2,
+                    map: this.map,
+                });
+                this.polygons.push(polygon);
+            };
+
+            [...geojson.features].reverse().forEach((feature, idx) => {
                 const geometry = feature.geometry || {};
                 const polygonSets = geometry.type === 'MultiPolygon'
                     ? geometry.coordinates
                     : [geometry.coordinates];
-
-                polygonSets.forEach((polygonSet) => {
-                    const outerRing = (polygonSet && polygonSet[0]) ? polygonSet[0] : [];
-                    const path = outerRing.map(([pLng, pLat]) => {
-                        const point = { lat: pLat, lng: pLng };
-                        bounds.extend(point);
-                        return point;
-                    });
-
-                    if (!path.length) return;
-
-                    const polygon = new google.maps.Polygon({
-                        paths: path,
-                        strokeColor: colors[idx] || '#888',
-                        strokeOpacity: 0.6,
-                        strokeWeight: 1.5,
-                        fillColor: colors[idx] || '#888',
-                        fillOpacity: 0.2,
-                        map: this.map,
-                    });
-
-                    this.polygons.push(polygon);
-                });
+                polygonSets.forEach((polygonSet) => renderPolygon(polygonSet, idx));
             });
 
             if (!bounds.isEmpty()) {

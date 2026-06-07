@@ -18,6 +18,6 @@ class ResetPasswordFr extends ResetPassword
             ->action('Réinitialiser mon mot de passe', $url)
             ->line('Ce lien expirera dans '.config('auth.passwords.'.config('auth.defaults.passwords').'.expire').' minutes.')
             ->line('Si vous n\'avez pas demandé de réinitialisation de mot de passe, aucune action n\'est requise.')
-            ->salutation('Cordialement, l\'équipe Rezi Studio Meublé Faya');
+            ->salutation('Cordialement, l\'équipe Rezi App');
     }
 }

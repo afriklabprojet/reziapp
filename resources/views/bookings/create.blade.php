@@ -658,7 +658,7 @@
                                         <div class="flex justify-between" x-show="price?.service_fee > 0">
                                             <span class="underline decoration-dotted text-gray-600 cursor-help"
                                                 title="Support 24/7, garantie réservation, paiement sécurisé">Frais de
-                                                service Rezi Studio Meublé Faya</span>
+                                                service Rezi App</span>
                                             <span x-text="formatCurrency(price?.service_fee)"></span>
                                         </div>
 

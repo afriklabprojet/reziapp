@@ -1,5 +1,5 @@
 <x-app-layout>
-    @section('title', 'Mot de passe oublié - Rezi Studio Meublé Faya')
+    @section('title', 'Mot de passe oublié - Rezi App')
 
     <div class="min-h-[calc(100vh-64px)] flex">
         {{-- Left Side - Branding (Desktop only) --}}

@@ -211,14 +211,14 @@ class RentReceiptService
 
     private function buildWhatsAppMessage(RentReceipt $receipt): string
     {
-        return "🏠 *Reçu de location - Rezi Studio Meublé Faya*\n\n"
+        return "🏠 *Reçu de location - Rezi App*\n\n"
             ."Bonjour {$receipt->tenant->name},\n\n"
             ."Votre reçu de location est disponible :\n"
             ."• *Référence :* {$receipt->reference}\n"
             ."• *Période :* {$receipt->period_label}\n"
             .'• *Montant :* '.number_format((float) $receipt->total_amount, 0, ',', ' ')." {$receipt->currency}\n"
             ."• *Résidence :* {$receipt->residence->title}\n\n"
-            ."Connectez-vous à votre espace Rezi Studio Meublé Faya pour télécharger le document.\n\n"
-            .'_Rezi Studio Meublé Faya – Votre plateforme de résidences meublées à Abidjan_';
+            ."Connectez-vous à votre espace Rezi App pour télécharger le document.\n\n"
+            .'_Rezi App – Votre plateforme de résidences meublées à Abidjan_';
     }
 }

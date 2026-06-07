@@ -28,10 +28,10 @@ class ResidenceApproved extends Notification implements ShouldQueue
             ->subject('✅ Votre résidence a été approuvée — '.$this->residence->name)
             ->greeting("Bonjour {$notifiable->name},")
             ->line("Bonne nouvelle ! Votre résidence **{$this->residence->name}** a été approuvée par notre équipe de modération.")
-            ->line('Elle est désormais visible par tous les utilisateurs sur Rezi Studio Meublé Faya.')
+            ->line('Elle est désormais visible par tous les utilisateurs sur Rezi App.')
             ->action('Voir ma résidence', route('residences.show', $this->residence))
             ->line('Pensez à vérifier que vos photos, tarifs et disponibilités sont à jour.')
-            ->salutation('L\'équipe Rezi Studio Meublé Faya');
+            ->salutation('L\'équipe Rezi App');
     }
 
     public function toArray(object $notifiable): array

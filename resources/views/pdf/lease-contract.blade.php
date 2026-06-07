@@ -247,7 +247,7 @@
 
     {{-- Pied de page --}}
     <div class="footer">
-        Document généré par Rezi Studio Meublé Faya – Plateforme immobilière Abidjan | {{ now()->format('d/m/Y à H:i') }}<br>
+        Document généré par Rezi App – Plateforme immobilière Abidjan | {{ now()->format('d/m/Y à H:i') }}<br>
         Référence : {{ $contract->reference }} | Ce document constitue un contrat légalement contraignant.
     </div>
 

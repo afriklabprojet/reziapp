@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Comparer les résidences - Rezi Studio Meublé Faya')
+@section('title', 'Comparer les résidences - Rezi App')
 
 @section('content')
     <livewire:residence-comparator />

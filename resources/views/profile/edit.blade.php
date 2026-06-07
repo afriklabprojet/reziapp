@@ -4,7 +4,7 @@
 
 @extends($isOwner ? 'layouts.owner' : 'layouts.client', $isOwner ? [] : ['sidebarActive' => 'profile'])
 
-@section('title', 'Mon Profil - Rezi Studio Meublé Faya')
+@section('title', 'Mon Profil - Rezi App')
 
 @section($isOwner ? 'owner-content' : 'client-content')
     {{-- En-tête du profil --}}

@@ -35,7 +35,7 @@ trait HandlesJekoTransfers
             'contactId' => $contactId,
             'amountCents' => $amountCents,
             'currency' => $this->currency,
-            'description' => 'Versement Rezi Studio Meublé Faya — '.$payout->reference,
+            'description' => 'Versement Rezi App — '.$payout->reference,
         ];
         $result = null;
 

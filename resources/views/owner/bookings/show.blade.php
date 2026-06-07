@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Réservation #' . ($booking->reference ?? $booking->id) . ' | Rezi Studio Meublé Faya')
+@section('title', 'Réservation #' . ($booking->reference ?? $booking->id) . ' | Rezi App')
 
 @section('owner-content')
     @php

@@ -33,7 +33,7 @@ class ReferralRewarded extends Notification implements ShouldQueue
                 ->subject("💰 {$reward} FCFA crédités sur votre compte !")
                 ->greeting("Bonjour {$notifiable->name} !")
                 ->line("Votre récompense de parrainage de **{$reward} FCFA** a été créditée sur votre solde de parrainage.")
-                ->line("Merci d'avoir parrainé **{$referredName}** sur Rezi Studio Meublé Faya.")
+                ->line("Merci d'avoir parrainé **{$referredName}** sur Rezi App.")
                 ->action('Voir mon solde', route('owner.marketing.referrals.index'))
                 ->line('Continuez à parrainer vos amis pour gagner encore plus !');
         }
@@ -47,7 +47,7 @@ class ReferralRewarded extends Notification implements ShouldQueue
             ->line("Grâce au parrainage de **{$referrerName}**, vous avez reçu **{$reward} FCFA** sur votre solde.")
             ->line('Ce montant sera automatiquement appliqué à votre prochaine réservation.')
             ->action('Explorer les résidences', url('/'))
-            ->line('Bienvenue sur Rezi Studio Meublé Faya !');
+            ->line('Bienvenue sur Rezi App !');
     }
 
     public function toArray(object $notifiable): array

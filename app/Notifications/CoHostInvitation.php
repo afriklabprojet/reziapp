@@ -48,13 +48,13 @@ class CoHostInvitation extends Notification implements ShouldQueue
         return (new MailMessage())
             ->subject("Invitation co-hôte — {$residenceName}")
             ->greeting("Bonjour {$this->coHost->name},")
-            ->line("{$ownerName} vous invite à devenir co-hôte de la résidence **{$residenceName}** sur Rezi Studio Meublé Faya.")
+            ->line("{$ownerName} vous invite à devenir co-hôte de la résidence **{$residenceName}** sur Rezi App.")
             ->line('**Permissions accordées :**')
             ->line($permissions->map(fn ($p) => "• {$p}")->implode("\n"))
             ->action('Accepter l\'invitation', $acceptUrl)
             ->line('Cette invitation expire dans 7 jours.')
             ->line('Si vous ne connaissez pas cette personne, vous pouvez ignorer cet email.')
-            ->salutation('L\'équipe Rezi Studio Meublé Faya');
+            ->salutation('L\'équipe Rezi App');
     }
 
     /**

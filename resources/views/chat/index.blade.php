@@ -1,6 +1,6 @@
 @extends('layouts.client')
 
-@section('title', 'Messages — Rezi Studio Meublé Faya')
+@section('title', 'Messages — Rezi App')
 
 @section('client-content')
     <div x-data="{ search: '', showNewChat: false, residenceSearch: '', selectedResidence: null, newChatMessage: '' }">

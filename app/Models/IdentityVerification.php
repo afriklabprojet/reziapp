@@ -174,7 +174,7 @@ class IdentityVerification extends Model
             $this->user,
             'verification',
             '✅ Identité vérifiée',
-            'Votre vérification d\'identité a été approuvée. Profitez de toutes les fonctionnalités Rezi Studio Meublé Faya !',
+            'Votre vérification d\'identité a été approuvée. Profitez de toutes les fonctionnalités Rezi App !',
             route('verification.dashboard'),
             ['verification_id' => $this->id],
         );

@@ -38,7 +38,7 @@ class ResidenceRejected extends Notification implements ShouldQueue
             ->line('Vous pouvez modifier votre annonce et la soumettre à nouveau.')
             ->action('Modifier ma résidence', route('owner.residences.edit', $this->residence))
             ->line('Si vous pensez qu\'il s\'agit d\'une erreur, contactez notre support.')
-            ->salutation('L\'équipe Rezi Studio Meublé Faya');
+            ->salutation('L\'équipe Rezi App');
     }
 
     public function toArray(object $notifiable): array

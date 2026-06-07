@@ -31,7 +31,7 @@ class LinkPreviewService
             try {
                 $response = Http::timeout(5)
                     ->withOptions(['allow_redirects' => false])
-                    ->withHeaders(['User-Agent' => 'Rezi Studio Meublé Faya Bot/1.0'])
+                    ->withHeaders(['User-Agent' => 'Rezi App Bot/1.0'])
                     ->get($url);
 
                 if ($response->successful()) {

@@ -416,7 +416,7 @@ class JekoService
             'amount' => (int) $amount,
             'currency' => $this->currency,
             'payout_reference' => 'PAYOUT-'.Str::uuid(),
-            'description' => $metadata['description'] ?? 'Virement Rezi Studio Meublé Faya',
+            'description' => $metadata['description'] ?? 'Virement Rezi App',
             'metadata' => $metadata,
         ];
 
@@ -562,10 +562,10 @@ class JekoService
     protected function generateDescription(Payment $payment): string
     {
         if ($payment->booking) {
-            return "Réservation Rezi Studio Meublé Faya #{$payment->booking->reference}";
+            return "Réservation Rezi App #{$payment->booking->reference}";
         }
 
-        return "Paiement Rezi Studio Meublé Faya #{$payment->reference}";
+        return "Paiement Rezi App #{$payment->reference}";
     }
 
     /**

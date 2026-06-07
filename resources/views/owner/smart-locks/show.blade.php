@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', $smartLock->name . ' — Rezi Studio Meublé Faya')
+@section('title', $smartLock->name . ' — Rezi App')
 
 @section('owner-content')
 <div class="space-y-6">

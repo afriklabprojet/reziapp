@@ -144,7 +144,7 @@ class RefundService
 
         // Appeler Jeko Pay pour le remboursement
         $jeko = new JekoService();
-        $result = $jeko->refund($payment, $refund->amount, $refund->reason ?? 'Remboursement Rezi Studio Meublé Faya');
+        $result = $jeko->refund($payment, $refund->amount, $refund->reason ?? 'Remboursement Rezi App');
 
         if ($result['success']) {
             $refund->update([
@@ -171,7 +171,7 @@ class RefundService
     }
 
     /**
-     * Process refund as Rezi Studio Meublé Faya credit
+     * Process refund as Rezi App credit
      */
     protected function processCreditRefund(Refund $refund): array
     {
@@ -234,7 +234,7 @@ class RefundService
         $operator = $jeko->detectOperator($phoneNumber) ?? 'orange_money';
 
         $result = $jeko->payout($phoneNumber, $refund->amount, $operator, [
-            'description' => "Remboursement Rezi Studio Meublé Faya — Réservation #{$refund->booking->id}",
+            'description' => "Remboursement Rezi App — Réservation #{$refund->booking->id}",
             'refund_id' => $refund->id,
             'booking_id' => $refund->booking_id,
         ]);

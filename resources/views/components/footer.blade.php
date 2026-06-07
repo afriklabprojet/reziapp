@@ -81,7 +81,7 @@
             {{-- Brand + Description + Social --}}
             <div class="col-span-2 md:col-span-3 lg:col-span-4">
                 <a href="{{ route('home') }}" class="inline-flex items-center gap-2 mb-4">
-                    <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="Rezi Studio Meublé Faya" class="h-10 w-auto">
+                    <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="Rezi App" class="h-10 w-auto">
                 </a>
                 <p class="text-sm leading-relaxed max-w-sm mb-6">
                     {{ $fc['footer_brand_description'] ?? "La plateforme de référence pour trouver votre résidence meublée en Afrique de l'Ouest. Des centaines de logements vérifiés à portée de clic." }}
@@ -285,7 +285,7 @@
             <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
                 {{-- Copyright --}}
                 <p class="text-xs text-[#555555] text-center lg:text-left">
-                    © {{ date('Y') }} Rezi Studio Meublé Faya. Tous droits réservés.
+                    © {{ date('Y') }} Rezi App. Tous droits réservés.
                 </p>
 
                 {{-- Legal Links --}}

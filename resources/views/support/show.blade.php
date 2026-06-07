@@ -71,7 +71,7 @@
                                 <div class="flex-1">
                                     <div class="flex items-center justify-between mb-1">
                                         <span class="font-medium text-gray-900">
-                                            {{ $message->is_from_customer ? $message->user->name : 'Support Rezi Studio Meublé Faya' }}
+                                            {{ $message->is_from_customer ? $message->user->name : 'Support Rezi App' }}
                                         </span>
                                         <span class="text-xs text-gray-500">
                                             {{ $message->created_at->format('d/m/Y H:i') }}

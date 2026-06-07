@@ -1,5 +1,5 @@
 {{--
-    Composant Carte de fidélité Rezi Studio Meublé Faya (style Genius/Booking.com)
+    Composant Carte de fidélité Rezi App (style Genius/Booking.com)
     Usage : <x-loyalty-card :user="auth()->user()" />
     Usage dans profil : <x-loyalty-card :user="$user" :show-progress="true" />
 --}}
@@ -60,7 +60,7 @@
                 <span class="text-3xl">{{ $cfg['icon'] }}</span>
                 <div>
                     <p class="font-bold text-base {{ $c['text'] }}">{{ $cfg['label'] }}</p>
-                    <p class="text-xs {{ $c['text'] }} opacity-70">Programme fidélité Rezi Studio Meublé Faya</p>
+                    <p class="text-xs {{ $c['text'] }} opacity-70">Programme fidélité Rezi App</p>
                 </div>
             </div>
             @if ($cfg['discount'] > 0)

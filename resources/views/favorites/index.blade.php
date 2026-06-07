@@ -1,6 +1,6 @@
 @extends('layouts.client', ['sidebarActive' => 'favorites'])
 
-@section('title', 'Mes favoris - Rezi Studio Meublé Faya')
+@section('title', 'Mes favoris - Rezi App')
 
 @section('client-content')
     <div>

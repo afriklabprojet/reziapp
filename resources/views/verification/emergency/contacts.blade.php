@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Contacts d\'urgence - Rezi Studio Meublé Faya')
+@section('title', 'Contacts d\'urgence - Rezi App')
 
 @section('owner-content')
     <div class="space-y-6" x-data="{ showAddModal: false }">
@@ -198,7 +198,7 @@
                                         clip-rule="evenodd" />
                                 </svg>
                             </div>
-                            <p class="text-xs text-gray-600">Informez-les qu'ils peuvent recevoir des alertes de Rezi Studio Meublé Faya</p>
+                            <p class="text-xs text-gray-600">Informez-les qu'ils peuvent recevoir des alertes de Rezi App</p>
                         </div>
                         <div class="flex items-start gap-2.5">
                             <div

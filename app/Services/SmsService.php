@@ -98,7 +98,7 @@ class SmsService
         $clientId = config('services.orange_sms.client_id');
         $clientSecret = config('services.orange_sms.client_secret');
         $senderAddress = config('services.orange_sms.sender_address', 'tel:+2250000');
-        $senderName = config('services.orange_sms.sender_name', 'Rezi Studio Meublé Faya');
+        $senderName = config('services.orange_sms.sender_name', 'Rezi App');
 
         if (! $clientId || ! $clientSecret) {
             Log::error('SMS Orange: Configuration incomplète (CLIENT_ID ou CLIENT_SECRET manquant)');

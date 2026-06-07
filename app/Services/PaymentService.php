@@ -340,7 +340,7 @@ class PaymentService
         try {
             $balance = OwnerBalance::getOrCreateForUser($ownerId);
 
-            // Calculer le montant propriétaire (moins commission Rezi Studio Meublé Faya depuis paramètres admin)
+            // Calculer le montant propriétaire (moins commission Rezi App depuis paramètres admin)
             $commissionRate = PlatformSetting::getCommissionRate() / 100;
             $ownerSubtotal = (float) $payment->booking->subtotal + (float) $payment->booking->cleaning_fee;
             $ownerAmount = round($ownerSubtotal * (1 - $commissionRate), 0);

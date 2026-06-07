@@ -55,7 +55,7 @@ class ResidenceBadge extends Model
             'name' => 'Nouvelle annonce',
             'icon' => '🆕',
             'color' => 'teal',
-            'description' => 'Récemment ajoutée sur Rezi Studio Meublé Faya',
+            'description' => 'Récemment ajoutée sur Rezi App',
         ],
         'responsive_host' => [
             'name' => 'Hôte réactif',

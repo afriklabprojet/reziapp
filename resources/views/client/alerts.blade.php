@@ -1,6 +1,6 @@
 @extends('layouts.client', ['sidebarActive' => 'alerts'])
 
-@section('title', 'Mes alertes - Rezi Studio Meublé Faya')
+@section('title', 'Mes alertes - Rezi App')
 
 @section('client-content')
     {{-- En-tête --}}

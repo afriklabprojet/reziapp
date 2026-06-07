@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $residence->title . ' - Rezi Studio Meublé Faya')
+@section('title', $residence->title . ' - Rezi App')
 @section('description', Str::limit(strip_tags($residence->description ?? ''), 160))
 
 {{-- SEO: utilise uniquement @section title/description consommés par le layout --}}
@@ -789,7 +789,7 @@
                                 </div>
                                 <p class="text-lg font-semibold text-gray-900">Coup de cœur voyageurs</p>
                                 <p class="text-sm text-gray-500 text-center mt-1 max-w-sm">Ce logement fait partie des
-                                    mieux notés sur Rezi Studio Meublé Faya, d'après les commentaires et évaluations des voyageurs.</p>
+                                    mieux notés sur Rezi App, d'après les commentaires et évaluations des voyageurs.</p>
                             </div>
 
                             @php
@@ -1211,7 +1211,7 @@
                                         <svg class="w-8 h-8 shrink-0 text-rose-400 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
                                         </svg>
-                                        <p class="text-sm text-gray-500 leading-relaxed">Pour protéger votre paiement, ne transférez jamais d'argent et ne communiquez pas en dehors de Rezi Studio Meublé Faya.</p>
+                                        <p class="text-sm text-gray-500 leading-relaxed">Pour protéger votre paiement, ne transférez jamais d'argent et ne communiquez pas en dehors de Rezi App.</p>
                                     </div>
                                 </div>
 
@@ -1648,7 +1648,7 @@
                                 <template x-if="!reportSent">
                                     <div>
                                         <h3 class="text-lg font-bold text-gray-900 mb-1">Signaler cette annonce</h3>
-                                        <p class="text-sm text-gray-500 mb-4">Aidez-nous à garder Rezi Studio Meublé Faya sûr. Décrivez le problème rencontré.</p>
+                                        <p class="text-sm text-gray-500 mb-4">Aidez-nous à garder Rezi App sûr. Décrivez le problème rencontré.</p>
 
                                         <form method="POST" action="{{ route('residences.report', $residence) }}"
                                             @submit.prevent="

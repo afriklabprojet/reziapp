@@ -84,9 +84,9 @@ class ShareService
     protected function getPlatformUrl(PropertyShare $share, Residence $residence): string
     {
         $shareUrl = $share->getShareUrl();
-        $title = $residence->title ?? 'Logement sur Rezi Studio Meublé Faya';
-        $quartierName = $residence->quartier ?? $residence->commune ?? $residence->city ?? 'Rezi Studio Meublé Faya';
-        $description = "Découvrez ce logement à {$quartierName} sur Rezi Studio Meublé Faya";
+        $title = $residence->title ?? 'Logement sur Rezi App';
+        $quartierName = $residence->quartier ?? $residence->commune ?? $residence->city ?? 'Rezi App';
+        $description = "Découvrez ce logement à {$quartierName} sur Rezi App";
 
         switch ($share->platform) {
             case 'whatsapp':
@@ -104,7 +104,7 @@ class ShareService
 
             case 'email':
                 $subject = urlencode("Logement à découvrir : {$title}");
-                $body = urlencode("Bonjour,\n\nJe voulais te partager ce logement que j'ai trouvé sur Rezi Studio Meublé Faya :\n\n{$shareUrl}\n\nÀ bientôt !");
+                $body = urlencode("Bonjour,\n\nJe voulais te partager ce logement que j'ai trouvé sur Rezi App :\n\n{$shareUrl}\n\nÀ bientôt !");
 
                 return "mailto:?subject={$subject}&body={$body}";
 
@@ -176,7 +176,7 @@ class ShareService
     {
         $residence = Residence::findOrFail($residenceId);
         $url = route('residences.show', $residence);
-        $quartierName = $residence->quartier ?? $residence->commune ?? $residence->city ?? 'Rezi Studio Meublé Faya';
+        $quartierName = $residence->quartier ?? $residence->commune ?? $residence->city ?? 'Rezi App';
 
         return "🏠 {$residence->title}\n📍 {$quartierName}\n💰 ".number_format($residence->price, 0, ',', ' ')." FCFA/{$residence->price_label}\n\n{$url}";
     }

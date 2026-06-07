@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Vérification d\'identité - Rezi Studio Meublé Faya')
+@section('title', 'Vérification d\'identité - Rezi App')
 
 @section('owner-content')
     <div class="space-y-6" x-data="{

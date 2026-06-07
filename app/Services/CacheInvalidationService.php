@@ -7,7 +7,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\Cache;
 
 /**
- * Centralized cache management for Rezi Studio Meublé Faya.
+ * Centralized cache management for Rezi App.
  * Single source of truth for cache keys and invalidation logic.
  *
  * Prevents stale data after mutations (booking, payment, approval, etc.)

@@ -1,5 +1,5 @@
 <x-app-layout>
-    @section('title', 'Résidences meublées à louer' . (request('commune') ? ' à ' . request('commune') : '') . ' - Rezi Studio Meublé Faya')
+    @section('title', 'Résidences meublées à louer' . (request('commune') ? ' à ' . request('commune') : '') . ' - Rezi App')
     @section('description', 'Découvrez ' . ($residences->total() ?? '') . ' résidences meublées' . (request('commune') ? ' à ' . request('commune') : ' en Côte d\'Ivoire') . '. Recherche géolocalisée, photos, contact direct avec les propriétaires.')
 
     {{-- JSON-LD ItemList pour les pages de résultats --}}

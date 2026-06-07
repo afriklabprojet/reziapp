@@ -57,7 +57,7 @@ class SendNewsletterCampaign implements ShouldQueue
         }
 
         $subject = $this->type === 'new_residence'
-            ? 'Nouvelle résidence disponible sur Rezi Studio Meublé Faya 🏠'
+            ? 'Nouvelle résidence disponible sur Rezi App 🏠'
             : 'Les meilleures résidences de la semaine 🏠';
 
         $sent = 0;
@@ -105,7 +105,7 @@ class SendNewsletterCampaign implements ShouldQueue
 
         $intro = $isWeekly
             ? 'Voici une sélection des meilleures résidences disponibles cette semaine à Abidjan.'
-            : 'Une nouvelle résidence vient d\'être validée sur Rezi Studio Meublé Faya. Découvrez-la avant tout le monde !';
+            : 'Une nouvelle résidence vient d\'être validée sur Rezi App. Découvrez-la avant tout le monde !';
 
         $cards = '';
         foreach ($residences as $residence) {
@@ -153,7 +153,7 @@ class SendNewsletterCampaign implements ShouldQueue
 
       {{-- Header --}}
       <tr><td style="background:linear-gradient(135deg,#f97316,#fb923c);padding:32px;text-align:center;">
-        <h1 style="margin:0;color:#fff;font-size:26px;font-weight:800;letter-spacing:-0.5px;">Rezi Studio Meublé Faya</h1>
+        <h1 style="margin:0;color:#fff;font-size:26px;font-weight:800;letter-spacing:-0.5px;">Rezi App</h1>
         <p style="margin:8px 0 0;color:rgba(255,255,255,0.9);font-size:13px;">Trouvez un logement à côté de vous</p>
       </td></tr>
 
@@ -174,7 +174,7 @@ class SendNewsletterCampaign implements ShouldQueue
       {{-- Footer --}}
       <tr><td style="background:#f9fafb;padding:20px 32px;border-top:1px solid #e5e7eb;text-align:center;">
         <p style="margin:0;color:#9ca3af;font-size:12px;line-height:1.8;">
-          Vous recevez cet email car vous êtes inscrit à la newsletter Rezi Studio Meublé Faya.<br>
+          Vous recevez cet email car vous êtes inscrit à la newsletter Rezi App.<br>
           <a href="'.$unsubscribeUrl.'" style="color:#f97316;text-decoration:underline;">Se désabonner</a>
         </p>
       </td></tr>

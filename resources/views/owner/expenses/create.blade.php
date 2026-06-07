@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Nouvelle dépense — Rezi Studio Meublé Faya')
+@section('title', 'Nouvelle dépense — Rezi App')
 
 @section('owner-content')
 <div class="max-w-2xl">

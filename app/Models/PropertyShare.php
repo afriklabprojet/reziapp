@@ -68,7 +68,7 @@ class PropertyShare extends Model
 
     public function getWhatsAppUrl(): string
     {
-        $text = urlencode('Découvrez ce logement sur Rezi Studio Meublé Faya : '.$this->getShareUrl());
+        $text = urlencode('Découvrez ce logement sur Rezi App : '.$this->getShareUrl());
 
         return "https://wa.me/?text={$text}";
     }
@@ -82,7 +82,7 @@ class PropertyShare extends Model
 
     public function getTwitterUrl(): string
     {
-        $text = urlencode('Découvrez ce logement sur Rezi Studio Meublé Faya');
+        $text = urlencode('Découvrez ce logement sur Rezi App');
         $url = urlencode($this->getShareUrl());
 
         return "https://twitter.com/intent/tweet?text={$text}&url={$url}";
@@ -90,8 +90,8 @@ class PropertyShare extends Model
 
     public function getEmailUrl(): string
     {
-        $subject = urlencode('Logement à découvrir sur Rezi Studio Meublé Faya');
-        $body = urlencode("Bonjour,\n\nJe voulais te partager ce logement que j'ai trouvé sur Rezi Studio Meublé Faya :\n\n".$this->getShareUrl()."\n\nÀ bientôt !");
+        $subject = urlencode('Logement à découvrir sur Rezi App');
+        $body = urlencode("Bonjour,\n\nJe voulais te partager ce logement que j'ai trouvé sur Rezi App :\n\n".$this->getShareUrl()."\n\nÀ bientôt !");
 
         return "mailto:?subject={$subject}&body={$body}";
     }

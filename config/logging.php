@@ -127,7 +127,7 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
-        // Rezi Studio Meublé Faya — Channels métier dédiés
+        // Rezi App — Channels métier dédiés
         'critical' => [
             'driver' => 'daily',
             'path' => storage_path('logs/critical.log'),

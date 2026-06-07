@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Co-hôtes - ' . $residence->name . ' - Rezi Studio Meublé Faya')
+@section('title', 'Co-hôtes - ' . $residence->name . ' - Rezi App')
 
 @section('owner-content')
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -297,7 +297,7 @@
                     <div>
                         <h3 class="font-bold text-sm text-blue-800 mb-2">Qu'est-ce qu'un co-hôte ?</h3>
                         <div class="text-xs text-blue-700 space-y-1.5">
-                            <p>Un co-hôte est une personne de confiance qui vous aide à gérer votre résidence sur Rezi Studio Meublé Faya.</p>
+                            <p>Un co-hôte est une personne de confiance qui vous aide à gérer votre résidence sur Rezi App.</p>
                             <ul class="list-disc list-inside space-y-1 ml-1">
                                 <li>Répondre aux messages des voyageurs</li>
                                 <li>Gérer le calendrier et les disponibilités</li>

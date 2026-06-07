@@ -32,7 +32,7 @@ class BalanceOverdue extends Notification implements ShouldQueue
             ->line("Le solde de votre réservation **{$residence->name}** ({$balance} FCFA) est en retard de paiement.")
             ->line('Merci de régulariser sous 48 h pour ne pas perdre votre réservation.')
             ->action('Régler maintenant', route('bookings.show', $this->booking))
-            ->salutation('L\'équipe Rezi Studio Meublé Faya');
+            ->salutation('L\'équipe Rezi App');
     }
 
     public function toArray(object $notifiable): array

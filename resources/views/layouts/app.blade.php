@@ -18,7 +18,7 @@
     </script>
 
     {{-- SEO Meta (pages enfants peuvent pousser via @push('meta')) --}}
-    <x-seo-meta :title="View::yieldContent('title', config('app.name', 'Rezi Studio Meublé Faya'))" :description="View::yieldContent(
+    <x-seo-meta :title="View::yieldContent('title', config('app.name', 'Rezi App'))" :description="View::yieldContent(
         'description',
         'Trouvez votre résidence meublée idéale en Afrique de l\'Ouest. Recherche géolocalisée, photos, contact direct avec les propriétaires.',
     )" />
@@ -29,7 +29,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Rezi Studio Meublé Faya">
+    <meta name="apple-mobile-web-app-title" content="Rezi App">
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
@@ -142,7 +142,7 @@
     })();
     </script>
 
-    {{-- Chatbot IA Rezi Studio Meublé Faya — masqué sur mobile (évite collision avec la bottom nav) --}}
+    {{-- Chatbot IA Rezi App — masqué sur mobile (évite collision avec la bottom nav) --}}
     <div class="hidden md:block">
         <x-chatbot
             :commune="request()->query('commune') ?: null"

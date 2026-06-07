@@ -1,6 +1,6 @@
 @extends('layouts.owner')
 
-@section('title', 'Créer une annonce - Rezi Studio Meublé Faya')
+@section('title', 'Créer une annonce - Rezi App')
 
 @section('owner-content')
     <div x-data="residenceWizard({{ \Illuminate\Support\Js::encode([

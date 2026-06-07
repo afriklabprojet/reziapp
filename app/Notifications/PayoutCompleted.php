@@ -29,7 +29,7 @@ class PayoutCompleted extends Notification implements ShouldQueue
         $methodLabel = match ($this->paymentMethod) {
             'mobile_money' => 'Mobile Money',
             'bank_transfer' => 'Virement bancaire',
-            'wallet' => 'Portefeuille Rezi Studio Meublé Faya',
+            'wallet' => 'Portefeuille Rezi App',
             default => $this->paymentMethod,
         };
 
@@ -43,7 +43,7 @@ class PayoutCompleted extends Notification implements ShouldQueue
             ->line("• Référence : {$this->reference}")
             ->action('Voir mes revenus', route('owner.earnings.index'))
             ->line('Le montant sera crédité sous 24-48h selon votre méthode de paiement.')
-            ->salutation('L\'équipe Rezi Studio Meublé Faya');
+            ->salutation('L\'équipe Rezi App');
     }
 
     public function toArray(object $notifiable): array

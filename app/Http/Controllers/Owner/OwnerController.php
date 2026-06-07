@@ -406,7 +406,7 @@ class OwnerController extends Controller
                 return [
                     'type' => 'approval',
                     'title' => 'Annonce approuvée',
-                    'message' => "Votre annonce \"{$residence->name}\" est maintenant visible sur Rezi Studio Meublé Faya",
+                    'message' => "Votre annonce \"{$residence->name}\" est maintenant visible sur Rezi App",
                     'action_url' => route('residences.show', $residence),
                     'action_text' => "Voir l'annonce",
                     'created_at' => $residence->updated_at,

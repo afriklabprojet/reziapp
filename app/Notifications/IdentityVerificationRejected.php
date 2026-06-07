@@ -25,7 +25,7 @@ class IdentityVerificationRejected extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $mail = (new MailMessage())
-            ->subject('❌ Vérification d\'identité rejetée — Rezi Studio Meublé Faya')
+            ->subject('❌ Vérification d\'identité rejetée — Rezi App')
             ->greeting("Bonjour {$notifiable->name},")
             ->line('Votre demande de vérification d\'identité a été **rejetée**.');
 
@@ -41,7 +41,7 @@ class IdentityVerificationRejected extends Notification implements ShouldQueue
                 ->action('Contacter le support', route('verification.dashboard'));
         }
 
-        return $mail->line('L\'équipe Rezi Studio Meublé Faya');
+        return $mail->line('L\'équipe Rezi App');
     }
 
     public function toDatabase(object $notifiable): array

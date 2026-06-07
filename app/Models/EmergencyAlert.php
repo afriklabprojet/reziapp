@@ -138,7 +138,7 @@ class EmergencyAlert extends Model
         $name = $this->user->name;
         $type = $this->getAlertTypeLabel();
 
-        $message = "⚠️ ALERTE URGENCE Rezi Studio Meublé Faya\n\n";
+        $message = "⚠️ ALERTE URGENCE Rezi App\n\n";
         $message .= "{$name} a déclenché une alerte ({$type}).\n";
 
         if ($this->message) {

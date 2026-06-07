@@ -51,7 +51,7 @@ class TwoFactorController extends Controller
         session(['2fa_setup_secret' => $secret]);
 
         $qrCodeUrl = $this->google2fa->getQRCodeUrl(
-            config('app.name', 'Rezi Studio Meublé Faya'),
+            config('app.name', 'Rezi App'),
             $user->email,
             $secret,
         );

@@ -37,7 +37,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Rezi Studio Meublé Faya - Services tiers
+    | Rezi App - Services tiers
     |--------------------------------------------------------------------------
     */
 
@@ -119,7 +119,7 @@ return [
         'client_id' => env('ORANGE_SMS_CLIENT_ID'),
         'client_secret' => env('ORANGE_SMS_CLIENT_SECRET'),
         'sender_address' => env('ORANGE_SMS_SENDER_ADDRESS', 'tel:+2250000'),
-        'sender_name' => env('ORANGE_SMS_SENDER_NAME', 'Rezi Studio Meublé Faya'),
+        'sender_name' => env('ORANGE_SMS_SENDER_NAME', 'Rezi App'),
     ],
 
     /*

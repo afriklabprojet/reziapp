@@ -338,9 +338,9 @@ class WhatsAppWebhookController extends Controller
         $type = $keywords['type'];
 
         $responses = [
-            'greeting' => "Bonjour ! 👋\n\nBienvenue sur Rezi Studio Meublé Faya, votre partenaire pour trouver la résidence meublée idéale à Abidjan.\n\nComment puis-je vous aider ?\n• Tapez 'aide' pour voir les options\n• Tapez 'réservation' pour vos réservations\n• Tapez 'contact' pour nous joindre",
+            'greeting' => "Bonjour ! 👋\n\nBienvenue sur Rezi App, votre partenaire pour trouver la résidence meublée idéale à Abidjan.\n\nComment puis-je vous aider ?\n• Tapez 'aide' pour voir les options\n• Tapez 'réservation' pour vos réservations\n• Tapez 'contact' pour nous joindre",
 
-            'help' => "🏠 *Rezi Studio Meublé Faya - Aide*\n\nVoici ce que je peux faire pour vous :\n\n1️⃣ Chercher une résidence\n🔗 https://reziapp.ci/residences\n\n2️⃣ Voir mes réservations\n🔗 https://reziapp.ci/bookings\n\n3️⃣ Contacter le support\n📞 +225 XX XX XX XX XX\n\n4️⃣ Questions fréquentes\n🔗 https://reziapp.ci/faq",
+            'help' => "🏠 *Rezi App - Aide*\n\nVoici ce que je peux faire pour vous :\n\n1️⃣ Chercher une résidence\n🔗 https://reziapp.ci/residences\n\n2️⃣ Voir mes réservations\n🔗 https://reziapp.ci/bookings\n\n3️⃣ Contacter le support\n📞 +225 XX XX XX XX XX\n\n4️⃣ Questions fréquentes\n🔗 https://reziapp.ci/faq",
 
             'booking_info' => "📋 *Vos réservations*\n\nPour gérer vos réservations :\n🔗 https://reziapp.ci/bookings\n\nOu contactez notre équipe pour assistance.",
 
@@ -348,7 +348,7 @@ class WhatsAppWebhookController extends Controller
 
             'pricing' => "💰 *Tarifs*\n\nLes prix varient selon :\n• Le type de résidence\n• La localisation\n• La durée du séjour\n\nConsultez nos offres :\n🔗 https://reziapp.ci/residences",
 
-            'contact' => "📞 *Contact Rezi Studio Meublé Faya*\n\n📱 WhatsApp: +225 XX XX XX XX XX\n📧 Email: support@reziapp.ci\n🌐 Site: https://reziapp.ci\n\nNos horaires :\nLun-Ven: 8h-18h\nSam: 9h-13h",
+            'contact' => "📞 *Contact Rezi App*\n\n📱 WhatsApp: +225 XX XX XX XX XX\n📧 Email: support@reziapp.ci\n🌐 Site: https://reziapp.ci\n\nNos horaires :\nLun-Ven: 8h-18h\nSam: 9h-13h",
         ];
 
         $message = $responses[$type] ?? $responses['help'];
@@ -363,7 +363,7 @@ class WhatsAppWebhookController extends Controller
     {
         $greeting = $name ? "Bonjour {$name} ! 👋" : 'Bonjour ! 👋';
 
-        $message = "{$greeting}\n\nMerci de contacter Rezi Studio Meublé Faya, votre plateforme de location de résidences meublées à Abidjan.\n\n🏠 Créez votre compte gratuitement :\nhttps://reziapp.ci/register\n\n✨ Avantages :\n• Accès à +500 résidences\n• Réservation en ligne\n• Paiement sécurisé\n• Support 7j/7\n\nÀ bientôt sur Rezi Studio Meublé Faya !";
+        $message = "{$greeting}\n\nMerci de contacter Rezi App, votre plateforme de location de résidences meublées à Abidjan.\n\n🏠 Créez votre compte gratuitement :\nhttps://reziapp.ci/register\n\n✨ Avantages :\n• Accès à +500 résidences\n• Réservation en ligne\n• Paiement sécurisé\n• Support 7j/7\n\nÀ bientôt sur Rezi App !";
 
         $this->whatsAppService->sendText($phone, $message);
     }

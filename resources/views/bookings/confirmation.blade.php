@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Réservation confirmée - Rezi Studio Meublé Faya')
+@section('title', 'Réservation confirmée - Rezi App')
 
 @section('content')
 <div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">

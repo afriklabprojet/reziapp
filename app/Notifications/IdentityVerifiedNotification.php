@@ -19,13 +19,13 @@ class IdentityVerifiedNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage())
-            ->subject('✅ Votre identité a été vérifiée - Rezi Studio Meublé Faya')
+            ->subject('✅ Votre identité a été vérifiée - Rezi App')
             ->greeting("Bonjour {$notifiable->name} !")
             ->line('Bonne nouvelle ! Votre identité a été vérifiée avec succès.')
             ->line('Vous avez maintenant accès au badge "Identité vérifiée" qui sera affiché sur votre profil.')
             ->line('Ce badge renforce la confiance des locataires potentiels et peut augmenter vos chances de recevoir des réservations.')
             ->action('Voir mon profil', url('/owner/profile'))
-            ->line('Merci de faire partie de la communauté Rezi Studio Meublé Faya !');
+            ->line('Merci de faire partie de la communauté Rezi App !');
     }
 
     public function toArray(object $notifiable): array
