@@ -26,7 +26,7 @@ class StoreDamageReportRequest extends FormRequest
             'description'    => ['required', 'string', 'max:5000'],
             'estimated_cost' => ['nullable', 'numeric', 'min:0'],
             'photos'         => ['nullable', 'array', 'max:10'],
-            'photos.*'       => ['image', 'max:5120'],
+            'photos.*'       => ['image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
         ];
     }
 
