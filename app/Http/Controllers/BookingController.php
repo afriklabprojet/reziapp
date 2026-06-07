@@ -285,7 +285,11 @@ class BookingController extends Controller
         $jeko = app(JekoPaymentService::class);
 
         if ($jeko->isEnabled()) {
-            $result = $jeko->createBookingPaymentRequest($booking, $paymentMethod);
+            $walletOptions = [
+                'use_wallet_credit'   => (bool) request('use_wallet_credit', false),
+                'use_referral_credit' => (bool) request('use_referral_credit', false),
+            ];
+            $result = $jeko->createBookingPaymentRequest($booking, $paymentMethod, $walletOptions);
 
             if ($result['success'] && !empty($result['redirect_url'])) {
                 return redirect()->away($result['redirect_url']);
