@@ -97,7 +97,7 @@ class StoreResidenceRequest extends FormRequest
         return [
             // Informations générales
             'name' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string', 'min:10', 'max:5000'],
+            'description' => ['required', 'string', 'min:50', 'max:5000'],
             'type' => ['required', 'string', 'in:studio,apartment,house,villa,duplex,other'],
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'rental_type' => ['nullable', 'string', 'in:standard,short_term,colocation,corporate,seasonal'],
