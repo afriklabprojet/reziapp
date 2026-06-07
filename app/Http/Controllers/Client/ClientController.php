@@ -251,24 +251,29 @@ class ClientController extends Controller
         // Activité par mois (derniers 6 mois) — une seule requête GROUP BY par métrique
         $sixMonthsAgo = now()->subMonths(5)->startOfMonth();
 
+        $driver = DB::connection()->getDriverName();
+        $ymExpr = $driver === 'sqlite'
+            ? "strftime('%Y-%m', created_at) as ym"
+            : "DATE_FORMAT(created_at, '%Y-%m') as ym";
+
         $viewsByMonth = $user->residenceViews()
             ->reorder()
             ->where('created_at', '>=', $sixMonthsAgo)
-            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as ym, COUNT(*) as cnt")
+            ->selectRaw("{$ymExpr}, COUNT(*) as cnt")
             ->groupBy('ym')
             ->pluck('cnt', 'ym');
 
         $searchesByMonth = $user->searchHistories()
             ->reorder()
             ->where('created_at', '>=', $sixMonthsAgo)
-            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as ym, COUNT(*) as cnt")
+            ->selectRaw("{$ymExpr}, COUNT(*) as cnt")
             ->groupBy('ym')
             ->pluck('cnt', 'ym');
 
         $contactsByMonth = $user->sentContacts()
             ->reorder()
             ->where('created_at', '>=', $sixMonthsAgo)
-            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as ym, COUNT(*) as cnt")
+            ->selectRaw("{$ymExpr}, COUNT(*) as cnt")
             ->groupBy('ym')
             ->pluck('cnt', 'ym');
 
