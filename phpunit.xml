@@ -11,13 +11,6 @@
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
         </testsuite>
-        <testsuite name="MySQL">
-            <file>tests/Unit/VerificationServiceTest.php</file>
-            <file>tests/Feature/Owner/SponsoredListingTest.php</file>
-            <file>tests/Feature/SupportTicketTest.php</file>
-            <file>tests/Feature/DisputeTest.php</file>
-            <file>tests/Feature/Api/BookingServiceTest.php</file>
-        </testsuite>
     </testsuites>
     <source>
         <include>
