@@ -44,9 +44,11 @@ class PaymentApiController extends Controller
     public function initiate(Request $request, Booking $booking): JsonResponse
     {
         $request->validate([
-            'phone_number' => ['required', 'string', 'regex:/^[0-9]{8,10}$/'],
-            'operator' => ['nullable', 'string', 'in:orange_money,mtn_momo,moov_money,wave'],
-            'save_method' => ['nullable', 'boolean'],
+            'phone_number'        => ['required', 'string', 'regex:/^[0-9]{8,10}$/'],
+            'operator'            => ['nullable', 'string', 'in:orange_money,mtn_momo,moov_money,wave'],
+            'save_method'         => ['nullable', 'boolean'],
+            'use_wallet_credit'   => ['nullable', 'boolean'],
+            'use_referral_credit' => ['nullable', 'boolean'],
         ]);
 
         // Authorization
@@ -91,7 +93,9 @@ class PaymentApiController extends Controller
         try {
             // Create payment (idempotent)
             $payment = $this->paymentService->createBookingPayment($booking, Auth::user(), [
-                'provider' => 'jeko',
+                'provider'            => 'jeko',
+                'use_wallet_credit'   => (bool) $request->boolean('use_wallet_credit'),
+                'use_referral_credit' => (bool) $request->boolean('use_referral_credit'),
             ]);
 
             // Initiate Mobile Money
