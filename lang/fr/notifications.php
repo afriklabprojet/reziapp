@@ -3,7 +3,7 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Traductions des notifications mail — ReziApp
+    | Traductions des notifications mail — Rezi Studio Meublé Faya
     |--------------------------------------------------------------------------
     */
 
