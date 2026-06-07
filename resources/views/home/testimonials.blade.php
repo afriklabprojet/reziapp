@@ -1,23 +1,57 @@
                 {{-- 7. TÉMOIGNAGES CLIENTS —— Carousel infini --}}
                 @php
-                $testimonials = [
-                    ['initials' => 'SA', 'name' => 'Sarah Adjoua', 'city' => 'Cocody', 'color' => 'from-[#FF8A1F] to-[#CC5A00]', 'stars' => 5,
-                     'text' => '"J\'arrivais de France pour un contrat de 2 ans. En 3 jours j\'ai visité 5 appartements à Riviera via Rezi Studio Meublé Faya. Le propriétaire m\'a aidée pour l\'électricité et internet. Parfait !"'],
-                    ['initials' => 'KD', 'name' => 'Konan Désirée', 'city' => 'Marcory', 'color' => 'from-blue-400 to-blue-600', 'stars' => 5,
-                     'text' => '"Budget serré, étudiante en master. Rezi Studio Meublé Faya m\'a montré des studios meublés dans mon budget à Marcory. J\'ai pu négocier 2 mois d\'avance au lieu de 6. Super !"'],
-                    ['initials' => 'YK', 'name' => 'Yves Kouassi', 'city' => 'Plateau', 'color' => 'from-emerald-400 to-emerald-600', 'stars' => 5,
-                     'text' => '"Mutation d\'urgence à Abidjan. La géolocalisation m\'a aidé à trouver près du bureau. Emménagement en 1 semaine, tout équipé. Fini les hôtels chers !"'],
-                    ['initials' => 'ML', 'name' => 'Marie-Louise Brou', 'city' => 'Yopougon', 'color' => 'from-purple-400 to-purple-600', 'stars' => 4,
-                     'text' => '"Divorcée avec 2 enfants, je cherchais près des écoles. Rezi Studio Meublé Faya m\'a trouvé un 3 pièces meublé à Yopougon avec jardin. Les enfants adorent. Nouvelle vie !"'],
-                    ['initials' => 'AB', 'name' => 'Amadou Bakayoko', 'city' => 'Riviera', 'color' => 'from-rose-400 to-rose-600', 'stars' => 5,
-                     'text' => '"Entrepreneur, je voyage souvent. L\'appart Rezi Studio Meublé Faya à Riviera est ma base parfaite. Wifi, clim, sécurité 24h. Le proprio comprend mes besoins business."'],
-                    ['initials' => 'FC', 'name' => 'Fatima Cissé', 'city' => 'Deux Plateaux', 'color' => 'from-teal-400 to-teal-600', 'stars' => 5,
-                     'text' => '"Stage ONG 6 mois. Rezi Studio Meublé Faya m\'a évité les galères : photos vraies, prix fixe, contrat clair. La propriétaire m\'a même prêtée des draps en attendant mes affaires."'],
-                    ['initials' => 'JA', 'name' => 'Jean-Baptiste Akpa', 'city' => 'Angré', 'color' => 'from-indigo-400 to-indigo-600', 'stars' => 5,
-                     'text' => '"Cadre expatrié, j\'ai comparé 15 résidences en 2 jours sur la carte Rezi Studio Meublé Faya. Trouvé villa 4 chambres à Angré pour la famille. Les enfants vont à l\'école française."'],
-                    ['initials' => 'NK', 'name' => 'Nawa Kané', 'city' => 'Cocody', 'color' => 'from-amber-400 to-amber-600', 'stars' => 4,
-                     'text' => '"Première location à Abidjan, j\'avais peur des arnaques. Rezi Studio Meublé Faya m\'a rassuré : profils vérifiés, visites virtuelles, pas d\'argent avant signature. Merci !"'],
+                $colors = [
+                    'from-[#FF8A1F] to-[#CC5A00]',
+                    'from-blue-400 to-blue-600',
+                    'from-emerald-400 to-emerald-600',
+                    'from-purple-400 to-purple-600',
+                    'from-rose-400 to-rose-600',
+                    'from-teal-400 to-teal-600',
+                    'from-indigo-400 to-indigo-600',
+                    'from-amber-400 to-amber-600',
                 ];
+
+                // Fallback si aucun avis validé en base
+                $fallbackTestimonials = [
+                    ['initials' => 'SA', 'name' => 'Sarah Adjoua', 'city' => 'Cocody', 'color' => $colors[0], 'stars' => 5,
+                     'text' => '"J\'arrivais de France pour un contrat de 2 ans. En 3 jours j\'avais visité 5 appartements à Riviera via Rezi. Le propriétaire m\'a aidée pour l\'électricité et internet. Parfait !"'],
+                    ['initials' => 'KD', 'name' => 'Konan Désirée', 'city' => 'Marcory', 'color' => $colors[1], 'stars' => 5,
+                     'text' => '"Budget serré, étudiante en master. Rezi m\'a montré des studios meublés dans mon budget à Marcory. J\'ai pu négocier 2 mois d\'avance au lieu de 6. Super !"'],
+                    ['initials' => 'YK', 'name' => 'Yves Kouassi', 'city' => 'Plateau', 'color' => $colors[2], 'stars' => 5,
+                     'text' => '"Mutation d\'urgence à Abidjan. La géolocalisation m\'a aidé à trouver près du bureau. Emménagement en 1 semaine, tout équipé. Fini les hôtels chers !"'],
+                    ['initials' => 'ML', 'name' => 'Marie-Louise Brou', 'city' => 'Yopougon', 'color' => $colors[3], 'stars' => 4,
+                     'text' => '"Divorcée avec 2 enfants, je cherchais près des écoles. Rezi m\'a aidée à trouver un 3 pièces meublé avec jardin à Yopougon. Les enfants adorent. Nouvelle vie !"'],
+                    ['initials' => 'AB', 'name' => 'Amadou Bakayoko', 'city' => 'Riviera', 'color' => $colors[4], 'stars' => 5,
+                     'text' => '"Entrepreneur, je voyage souvent. Mon appartement Rezi à Riviera est ma base parfaite. Wifi, clim, sécurité 24h. Le proprio comprend mes besoins business."'],
+                    ['initials' => 'FC', 'name' => 'Fatima Cissé', 'city' => 'Deux Plateaux', 'color' => $colors[5], 'stars' => 5,
+                     'text' => '"Stage ONG 6 mois. Rezi m\'a évité les galères : photos vraies, prix fixe, contrat clair. La propriétaire m\'a même prêté des draps en attendant mes affaires."'],
+                    ['initials' => 'JA', 'name' => 'Jean-Baptiste Akpa', 'city' => 'Angré', 'color' => $colors[6], 'stars' => 5,
+                     'text' => '"Cadre expatrié, j\'ai comparé 15 résidences en 2 jours sur la carte Rezi. Trouvé une villa 4 chambres à Angré pour toute la famille. Les enfants vont à l\'école française."'],
+                    ['initials' => 'NK', 'name' => 'Nawa Kané', 'city' => 'Cocody', 'color' => $colors[7], 'stars' => 4,
+                     'text' => '"Première location à Abidjan, j\'avais peur des arnaques. Rezi m\'a rassuré : profils vérifiés, visites virtuelles, pas d\'argent avant signature. Merci !"'],
+                ];
+
+                // Construire la liste à afficher : vrais avis si disponibles, fallback sinon
+                if (!empty($testimonials) && $testimonials->isNotEmpty()) {
+                    $displayTestimonials = $testimonials->map(function ($t, $i) use ($colors) {
+                        $name = $t['name'] ?? 'Utilisateur';
+                        $words = preg_split('/\s+/', trim($name));
+                        $initials = strtoupper(
+                            substr($words[0] ?? '', 0, 1) . substr($words[1] ?? '', 0, 1)
+                        );
+                        return [
+                            'initials' => $initials ?: 'U',
+                            'name'     => $name,
+                            'city'     => $t['city'] ?? 'Abidjan',
+                            'color'    => $colors[$i % count($colors)],
+                            'stars'    => $t['rating'] ?? 5,
+                            'text'     => '"' . $t['content'] . '"',
+                            'verified' => true,
+                        ];
+                    })->all();
+                } else {
+                    $displayTestimonials = $fallbackTestimonials;
+                }
                 @endphp
 
                 <section class="py-10 sm:py-14 bg-[#F2F2F2] overflow-hidden">
@@ -47,7 +81,7 @@
                                 <p class="text-xs font-semibold text-[#F16A00] uppercase tracking-widest mb-1">Avis vérifiés</p>
                                 <h2 class="font-sans text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight">
                                     Ils ont trouvé leur logement
-                                    <span class="text-gradient-primary">avec Rezi Studio Meublé Faya</span>
+                                    <span class="text-gradient-primary">avec Rezi</span>
                                 </h2>
                             </div>
                             <div class="flex items-center gap-3 bg-white border border-amber-100 shadow-sm rounded-2xl px-5 py-3 shrink-0">
@@ -67,7 +101,7 @@
                     {{-- Carousel marquee infini --}}
                     <div class="rezi-marquee-wrap">
                         <div id="testimonials-track" class="rezi-marquee-track" role="list" aria-label="Témoignages clients">
-                            @foreach(array_merge($testimonials, $testimonials) as $t)
+                            @foreach(array_merge($displayTestimonials, $displayTestimonials) as $t)
                             <article role="listitem" class="w-72 shrink-0 bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col gap-3 hover:shadow-md transition-shadow duration-200">
                                 {{-- Stars --}}
                                 <div class="flex gap-0.5">
