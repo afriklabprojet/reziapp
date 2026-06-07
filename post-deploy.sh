@@ -16,6 +16,8 @@ echo "[2/7] Migrations..."
 php artisan migrate --force
 
 echo "[3/7] Caches de production..."
+# Load .env vars so config:cache picks up APP_KEY (www-data owns .env, root runs this script)
+set -a; source .env; set +a
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
