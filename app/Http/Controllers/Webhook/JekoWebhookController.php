@@ -190,14 +190,20 @@ class JekoWebhookController extends Controller
             ]);
         } else {
             $reason = $data['failureReason'] ?? $data['message'] ?? 'Transfert échoué';
-            $payout->markAsFailed($reason);
 
-            // Rembourser le solde du propriétaire
-            $balance = \App\Models\OwnerBalance::where('user_id', $payout->user_id)->first();
-            if ($balance) {
-                $balance->increment('available_balance', $payout->gross_amount);
-                $balance->decrement('total_withdrawn', $payout->net_amount);
-            }
+            DB::transaction(function () use ($payout, $reason) {
+                $payout->markAsFailed($reason);
+
+                // Rembourser le solde du propriétaire de façon atomique
+                $balance = \App\Models\OwnerBalance::where('user_id', $payout->user_id)
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($balance) {
+                    $balance->increment('available_balance', $payout->gross_amount);
+                    $balance->decrement('total_withdrawn', $payout->net_amount);
+                }
+            });
 
             Log::warning('Jeko webhook: Transfer failed → Balance refunded', [
                 'payout_id' => $payout->id,
