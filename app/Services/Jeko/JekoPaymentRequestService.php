@@ -4,6 +4,7 @@ namespace App\Services\Jeko;
 
 use App\Models\Booking;
 use App\Models\BookingInsurance;
+use App\Models\Payment;
 use App\Models\SponsoredListing;
 use App\Models\SubscriptionPayment;
 use Illuminate\Http\Client\RequestException;
@@ -120,21 +121,25 @@ class JekoPaymentRequestService
         );
     }
 
-    public function createBookingPaymentRequest(Booking $booking, string $paymentMethod, array $options = []): array
+    /**
+     * Create a Jeko payment request for a booking.
+     *
+     * The Payment record must already be created (via PaymentService::createBookingPayment)
+     * so that wallet/referral credits have been atomically deducted. This method uses
+     * the post-credit total_amount from the Payment record as the charge amount sent to Jeko.
+     */
+    public function createBookingPaymentRequest(Booking $booking, string $paymentMethod, Payment $payment): array
     {
         if (! $this->isEnabled()) {
             return $this->failure(self::ERROR_JEKO_DISABLED);
         }
 
-        $reference = 'REZI-BK-'.$booking->id.'-'.Str::random(8);
-        $baseAmount = ($booking->payment_split && $booking->deposit_amount > 0)
-            ? (float) $booking->deposit_amount
-            : (float) $booking->total_amount;
+        $booking->loadMissing('user');
 
-        // Deduct wallet/referral credits from the amount to charge via Jeko
-        $walletDeduct   = ! empty($options['use_wallet_credit'])   ? (float) ($booking->user->wallet_credit   ?? 0) : 0;
-        $referralDeduct = ! empty($options['use_referral_credit']) ? (float) ($booking->user->referral_balance ?? 0) : 0;
-        $chargeAmount   = max(0.0, $baseAmount - $walletDeduct - $referralDeduct);
+        $reference = 'REZI-BK-'.$booking->id.'-'.Str::random(8);
+
+        // Use the post-credit amount from the already-created Payment record
+        $chargeAmount = (float) $payment->total_amount;
 
         if ($chargeAmount < 100) {
             return $this->failure(self::ERROR_MINIMUM_AMOUNT);
@@ -158,9 +163,10 @@ class JekoPaymentRequestService
 
         return $this->sendPaymentRequest(
             $payload,
-            success: function (array $data) use ($booking, $reference, $paymentMethod, $amountCents): array {
+            success: function (array $data) use ($booking, $payment, $reference, $paymentMethod, $amountCents): array {
                 Log::info('Jeko booking payment request created', [
                     'booking_id' => $booking->id,
+                    'payment_id' => $payment->id,
                     'jeko_payment_id' => $data['id'] ?? null,
                     'reference' => $reference,
                     'amount_cents' => $amountCents,
@@ -170,6 +176,14 @@ class JekoPaymentRequestService
                 $booking->update([
                     'payment_reference' => $reference,
                     'payment_method' => $paymentMethod,
+                ]);
+
+                // Store Jeko's payment ID on the Payment record for webhook reconciliation
+                $payment->update([
+                    'metadata' => array_merge($payment->metadata ?? [], [
+                        'jeko_payment_id' => $data['id'] ?? null,
+                        'jeko_reference' => $reference,
+                    ]),
                 ]);
 
                 return [
