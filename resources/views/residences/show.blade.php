@@ -222,7 +222,7 @@
         {{-- ═══════════════════════════════════
          Sticky Section Navigation (Airbnb)
         ═══════════════════════════════════ --}}
-        <div x-data="stickyNav"
+        <div x-data="stickyNav()"
              x-show="visible"
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0 -translate-y-1"
@@ -898,7 +898,7 @@
 
                         {{-- Itinéraire interactif --}}
                         @if ($residence->latitude && $residence->longitude)
-                            <div x-data="directionsWidget" class="mt-4">
+                            <div x-data="directionsWidget({{ $residence->id }}, '/api/v1/maps')" class="mt-4">
                                 <button @click="getDirections()" :disabled="loading"
                                     class="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition disabled:opacity-50">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -947,7 +947,7 @@
 
                     {{-- Points d'intérêt à proximité --}}
                     @if ($residence->latitude && $residence->longitude)
-                        <div id="proximite" class="py-8 border-b border-gray-200" x-data="nearbyPOI">
+                        <div id="proximite" class="py-8 border-b border-gray-200" x-data="nearbyPOI({{ $residence->id }}, '/api/v1/maps')">
                             <h2 class="text-[22px] font-semibold text-gray-900 mb-2">À proximité</h2>
                             <p class="text-gray-500 text-sm mb-5">Ce qui se trouve autour de ce logement</p>
 
@@ -993,7 +993,7 @@
 
                     {{-- Street View --}}
                     @if ($residence->latitude && $residence->longitude)
-                        <div id="streetview" class="py-8 border-b border-gray-200" x-data="streetViewWidget">
+                        <div id="streetview" class="py-8 border-b border-gray-200" x-data="streetViewWidget({{ $residence->id }}, '/api/v1/maps')">
                             <template x-if="available">
                                 <div>
                                     <h2 class="text-[22px] font-semibold text-gray-900 mb-2">Vue du quartier</h2>
@@ -1016,7 +1016,7 @@
 
                     {{-- Zones accessibles (Isochrone) --}}
                     @if ($residence->latitude && $residence->longitude)
-                        <div id="isochrone" class="py-8 border-b border-gray-200" x-data="isochroneWidget">
+                        <div id="isochrone" class="py-8 border-b border-gray-200" x-data="isochroneWidget({{ $residence->id }}, '/api/v1/maps', {{ $residence->latitude }}, {{ $residence->longitude }}, {{ Js::encode($residence->title) }})">
                             <h2 class="text-[22px] font-semibold text-gray-900 mb-2">Zones accessibles</h2>
                             <p class="text-gray-500 text-sm mb-4">Tout ce qui est accessible à pied depuis ce logement</p>
 
@@ -1811,261 +1811,12 @@
             });
         </script>
 
-        {{-- Maps Alpine.js widgets --}}
-        <script nonce="{{ $cspNonce }}">
-            document.addEventListener('alpine:init', function () {
-            const RESIDENCE_ID = {{ $residence->id }};
-            const API_BASE = '/api/v1/maps';
-
-            /**
-             * Widget : Points d'intérêt à proximité
-             */
-            Alpine.data('nearbyPOI', function () {
-                return {
-                    groups: [],
-                    loading: true,
-                    expanded: null,
-                    async init() {
-                        try {
-                            const res = await fetch(`${API_BASE}/residences/${RESIDENCE_ID}/nearby`);
-                            const json = await res.json();
-                            if (json.success) this.groups = json.data;
-                        } catch (e) {
-                            console.error('POI error:', e);
-                        } finally {
-                            this.loading = false;
-                        }
-                    }
-                };
-            });
-
-            /**
-             * Widget : Itinéraire (directions)
-             */
-            Alpine.data('directionsWidget', function () {
-                return {
-                    mode: 'driving',
-                    modes: [
-                        { value: 'driving', icon: '🚗', label: 'Voiture' },
-                        { value: 'walking', icon: '🚶', label: 'À pied' },
-                        { value: 'transit', icon: '🚌', label: 'Transport' },
-                    ],
-                    result: null,
-                    loading: false,
-                    error: null,
-                    showSteps: false,
-                    async getDirections() {
-                        this.loading = true;
-                        this.error = null;
-                        try {
-                            const pos = await this.getUserPosition();
-                            const res = await fetch(`${API_BASE}/residences/${RESIDENCE_ID}/directions?lat=${pos.lat}&lng=${pos.lng}&mode=${this.mode}`);
-                            const json = await res.json();
-                            if (json.success) {
-                                this.result = json.data;
-                            } else {
-                                this.error = json.message || 'Itinéraire non disponible';
-                            }
-                        } catch (e) {
-                            this.error = 'Activez la géolocalisation pour calculer l\'itinéraire';
-                        } finally {
-                            this.loading = false;
-                        }
-                    },
-                    getUserPosition() {
-                        return new Promise((resolve, reject) => {
-                            if (!navigator.geolocation) return reject('Géolocalisation non supportée');
-                            navigator.geolocation.getCurrentPosition(
-                                p => resolve({ lat: p.coords.latitude, lng: p.coords.longitude }),
-                                () => reject('Position refusée'),
-                                { timeout: 10000, maximumAge: 300000 }
-                            );
-                        });
-                    }
-                };
-            });
-
-            /**
-             * Widget : Street View
-             */
-            Alpine.data('streetViewWidget', function () {
-                return {
-                    available: false,
-                    imageUrl: null,
-                    panorama: [],
-                    async init() {
-                        try {
-                            const res = await fetch(`${API_BASE}/residences/${RESIDENCE_ID}/streetview`);
-                            const json = await res.json();
-                            if (json.available) {
-                                this.available = true;
-                                this.imageUrl = json.image_url;
-                                this.panorama = json.panorama || [];
-                            }
-                        } catch (e) {
-                            console.error('Street View error:', e);
-                        }
-                    }
-                };
-            });
-
-            /**
-             * Widget : Isochrone (zones accessibles)
-             */
-            Alpine.data('isochroneWidget', function () {
-                return {
-                    profile: 'walking',
-                    profiles: [
-                        { value: 'walking', icon: '🚶', label: 'À pied' },
-                        { value: 'cycling', icon: '🚴', label: 'Vélo' },
-                        { value: 'driving', icon: '🚗', label: 'Voiture' },
-                    ],
-                    data: null,
-                    loading: false,
-                    error: null,
-                    map: null,
-                    async init() {
-                        await this.fetchIsochrone();
-                    },
-                    async fetchIsochrone() {
-                        this.loading = true;
-                        this.error = null;
-                        try {
-                            const res = await fetch(`${API_BASE}/residences/${RESIDENCE_ID}/isochrone?profile=${this.profile}&minutes[]=5&minutes[]=10&minutes[]=15`);
-                            const json = await res.json();
-                            if (json.success) {
-                                this.data = json.data;
-                                this.$nextTick(() => this.renderMap(json.data));
-                            } else {
-                                this.error = json.message;
-                            }
-                        } catch (e) {
-                            this.error = 'Zones accessibles non disponibles';
-                        } finally {
-                            this.loading = false;
-                        }
-                    },
-                    renderMap(geojson) {
-                        const container = this.$refs.isochroneMap;
-                        if (!container || !globalThis.google?.maps) return;
-
-                        if (this.map) {
-                            this.polygons?.forEach((polygon) => polygon.setMap(null));
-                        }
-
-                        this.map = new google.maps.Map(container, {
-                            container: container,
-                            center: { lat: {{ $residence->latitude }}, lng: {{ $residence->longitude }} },
-                            zoom: 13,
-                            disableDefaultUI: true,
-                            streetViewControl: false,
-                            fullscreenControl: false,
-                            mapTypeControl: false,
-                        });
-
-                        const colors = ['#ef4444', '#eab308', '#22c55e']; // 15min, 10min, 5min (reverse order for layering)
-                        this.polygons = [];
-                        const bounds = new google.maps.LatLngBounds();
-
-                        new google.maps.Marker({
-                            position: { lat: {{ $residence->latitude }}, lng: {{ $residence->longitude }} },
-                            map: this.map,
-                            title: @js($residence->name),
-                        });
-
-                        if (!geojson?.features) return;
-
-                        const features = [...geojson.features].reverse();
-                        features.forEach((feature, idx) => {
-                            const geometry = feature.geometry || {};
-                            const polygonSets = geometry.type === 'MultiPolygon'
-                                ? geometry.coordinates
-                                : [geometry.coordinates];
-
-                            polygonSets.forEach((polygonSet) => {
-                                const outerRing = polygonSet?.[0] || [];
-                                const path = outerRing.map(([lng, lat]) => {
-                                    const point = { lat, lng };
-                                    bounds.extend(point);
-                                    return point;
-                                });
-
-                                if (!path.length) return;
-
-                                const polygon = new google.maps.Polygon({
-                                    paths: path,
-                                    strokeColor: colors[idx] || '#888',
-                                    strokeOpacity: 0.6,
-                                    strokeWeight: 1.5,
-                                    fillColor: colors[idx] || '#888',
-                                    fillOpacity: 0.2,
-                                    map: this.map,
-                                });
-
-                                this.polygons.push(polygon);
-                            });
-                        });
-
-                        if (!bounds.isEmpty()) {
-                            this.map.fitBounds(bounds, 30);
-                        }
-                    }
-                };
-            }); // isochroneWidget
-
-            }); // alpine:init
-        </script>
+        {{-- Map widgets are registered in app.js (residence-show-maps.js) --}}
     @endif
 
     @if ($residence->latitude && $residence->longitude)
         <x-google-maps-loader />
     @endif
 
-    {{-- Sticky Section Navigation Alpine component --}}
-    <script nonce="{{ $cspNonce }}">
-        document.addEventListener('alpine:init', function () {
-        Alpine.data('stickyNav', function () {
-            return {
-                visible: false,
-                navActive: '',
-                sectionIds: ['photos', 'equipements', 'calendrier', 'avis', 'emplacement', 'hote'],
-                sentinel: null,
-                ticking: false,
-                init() {
-                    this.sentinel = document.getElementById('photo-section');
-                    window.addEventListener('scroll', () => {
-                        if (!this.ticking) {
-                            requestAnimationFrame(() => {
-                                this.onScroll();
-                                this.ticking = false;
-                            });
-                            this.ticking = true;
-                        }
-                    }, { passive: true });
-                },
-                onScroll() {
-                    if (this.sentinel) {
-                        const rect = this.sentinel.getBoundingClientRect();
-                        this.visible = rect.bottom < 80;
-                    }
-                    let current = '';
-                    for (const id of this.sectionIds) {
-                        const el = document.getElementById(id);
-                        if (el && el.getBoundingClientRect().top <= 140) {
-                            current = id;
-                        }
-                    }
-                    this.navActive = current;
-                },
-                navScrollTo(id) {
-                    const el = document.getElementById(id);
-                    if (!el) return;
-                    const y = el.getBoundingClientRect().top + window.scrollY - 140;
-                    window.scrollTo({ top: y, behavior: 'smooth' });
-                }
-            };
-        }); // stickyNav
-
-        }); // alpine:init
-    </script>
+    {{-- stickyNav registered in app.js (residence-show-maps.js) --}}
 @endpush
