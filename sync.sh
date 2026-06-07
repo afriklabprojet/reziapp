@@ -26,6 +26,7 @@ rsync -az --delete -e "ssh $SSH_OPTS" \
   --exclude='vendor' \
   --exclude='node_modules' \
   --exclude='.env' \
+  --exclude='public/hot' \
   --exclude='public/storage' \
   --exclude='storage/app/public' \
   --exclude='storage/app/private' \
