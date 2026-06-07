@@ -19,7 +19,7 @@ return [
     */
 
     'company' => [
-        'name' => env('REZI_COMPANY_NAME', 'Rezi Studio Meublé Faya'),
+        'name' => env('REZI_COMPANY_NAME', 'rezi app'),
         'email' => env('REZI_COMPANY_EMAIL', 'contact@reziapp.ci'),
         'phone' => env('REZI_COMPANY_PHONE', '+225 07 00 00 00 00'),
         'phone_raw' => env('REZI_COMPANY_PHONE_RAW', '+2250700000000'),
