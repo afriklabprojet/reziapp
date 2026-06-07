@@ -87,6 +87,7 @@ class ResidenceSearchTest extends TestCase
     public function can_filter_by_price_range(): void
     {
         $cheapResidence = Residence::factory()->create([
+            'name' => 'XCheapResidenceUnique',
             'price_per_month' => 100000,
             'status' => 'approved',
             'is_available' => true,
@@ -95,6 +96,7 @@ class ResidenceSearchTest extends TestCase
         ]);
 
         $expensiveResidence = Residence::factory()->create([
+            'name' => 'XExpensiveResidenceUnique',
             'price_per_month' => 500000,
             'status' => 'approved',
             'is_available' => true,
@@ -119,6 +121,7 @@ class ResidenceSearchTest extends TestCase
     public function can_filter_by_type(): void
     {
         $villa = Residence::factory()->create([
+            'name' => 'XVillaResidenceUnique',
             'type' => 'villa',
             'status' => 'approved',
             'is_available' => true,
@@ -127,6 +130,7 @@ class ResidenceSearchTest extends TestCase
         ]);
 
         $apartment = Residence::factory()->create([
+            'name' => 'XApartmentResidenceUnique',
             'type' => 'apartment',
             'status' => 'approved',
             'is_available' => true,
@@ -150,6 +154,7 @@ class ResidenceSearchTest extends TestCase
     public function can_filter_by_bedrooms_and_bathrooms(): void
     {
         $smallResidence = Residence::factory()->create([
+            'name' => 'XSmallResidenceUnique',
             'bedrooms' => 1,
             'bathrooms' => 1,
             'status' => 'approved',
@@ -159,6 +164,7 @@ class ResidenceSearchTest extends TestCase
         ]);
 
         $largeResidence = Residence::factory()->create([
+            'name' => 'XLargeResidenceUnique',
             'bedrooms' => 4,
             'bathrooms' => 3,
             'status' => 'approved',
@@ -183,6 +189,7 @@ class ResidenceSearchTest extends TestCase
     public function search_without_coordinates_returns_all_residences(): void
     {
         $residence = Residence::factory()->create([
+            'name' => 'XAllResidencesUnique',
             'status' => 'approved',
             'is_available' => true,
             'latitude' => 5.3600,
