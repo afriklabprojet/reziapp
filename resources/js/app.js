@@ -64,6 +64,7 @@ import residenceMap from './pages/residence-map';
 import promotionForm from './pages/promotion-form';
 import languageSelector from './components/language-selector';
 import otpInputForm from './components/otp-input';
+import mobileHeader from './components/mobile-header';
 import { navigationState, newsletterForm, scrollReveal, themeToggle } from './components/ui-state';
 
 // Register Alpine components before start
@@ -131,6 +132,7 @@ Alpine.data('residenceMap', (config) => residenceMap(config));
 Alpine.data('promotionForm', (config) => promotionForm(config));
 Alpine.data('languageSelector', (config) => languageSelector(config));
 Alpine.data('otpInputForm', () => otpInputForm());
+Alpine.data('mobileHeader', (transparent = false) => mobileHeader(Boolean(transparent)));
 Alpine.data('themeToggle', () => themeToggle());
 Alpine.data('newsletterForm', (subscribeUrl, csrfToken) => newsletterForm(subscribeUrl, csrfToken));
 Alpine.data('navigationState', (threshold = 8) => navigationState(Number(threshold)));

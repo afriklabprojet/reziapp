@@ -1,19 +1,11 @@
 {{-- Header mobile amélioré --}}
 @props(['title' => '', 'showBack' => false, 'showSearch' => false, 'transparent' => false])
 
-<header x-data="{
-    scrolled: false,
-    menuOpen: false,
-    init() {
-        const update = () => { this.scrolled = window.scrollY > 20; };
-        update();
-        window.addEventListener('scroll', update, { passive: true });
-    }
-}"
+<header x-data="mobileHeader({{ $transparent ? 'true' : 'false' }})"
     class="fixed top-0 inset-x-0 z-40 md:hidden transition-all duration-300 pt-safe"
     :class="{
-        'bg-white/98 shadow-sm': scrolled || !{{ $transparent ? 'true' : 'false' }},
-        'bg-transparent': !scrolled && {{ $transparent ? 'true' : 'false' }}
+        'bg-white/98 shadow-sm': scrolled || !transparent,
+        'bg-transparent': !scrolled && transparent
     }">
 
     <div class="flex items-center justify-between h-14 px-3">
@@ -23,10 +15,8 @@
                 <button type="button" @click="history.back()"
                     class="p-2.5 rounded-full hover:bg-gray-100/80 active:bg-gray-200 active:scale-95 transition-all duration-200 min-w-11 min-h-11 flex items-center justify-center"
                     :class="{
-                        'text-white hover:bg-white/20 active:bg-white/30': !scrolled &&
-                            {{ $transparent ? 'true' : 'false' }},
-                        'text-gray-700': scrolled || !
-                            {{ $transparent ? 'true' : 'false' }}
+                        'text-white hover:bg-white/20 active:bg-white/30': !scrolled && transparent,
+                        'text-gray-700': scrolled || !transparent
                     }"
                     aria-label="Retour">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -44,9 +34,8 @@
         @if ($title)
             <h1 class="flex-1 text-center font-semibold truncate px-2 text-sm tracking-tight"
                 :class="{
-                    'text-white': !scrolled && {{ $transparent ? 'true' : 'false' }},
-                    'text-gray-900': scrolled || !
-                        {{ $transparent ? 'true' : 'false' }}
+                    'text-white': !scrolled && transparent,
+                    'text-gray-900': scrolled || !transparent
                 }">
                 {{ $title }}
             </h1>
@@ -59,10 +48,8 @@
                     aria-label="Rechercher des résidences"
                     class="p-2.5 rounded-full hover:bg-gray-100/80 active:bg-gray-200 active:scale-95 transition-all duration-200 min-w-11 min-h-11 flex items-center justify-center"
                     :class="{
-                        'text-white hover:bg-white/20 active:bg-white/30': !scrolled &&
-                            {{ $transparent ? 'true' : 'false' }},
-                        'text-gray-700': scrolled || !
-                            {{ $transparent ? 'true' : 'false' }}
+                        'text-white hover:bg-white/20 active:bg-white/30': !scrolled && transparent,
+                        'text-gray-700': scrolled || !transparent
                     }">
                     <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -80,9 +67,8 @@
             <button @click="menuOpen = !menuOpen"
                 class="p-2.5 rounded-full hover:bg-gray-100/80 active:bg-gray-200 active:scale-95 transition-all duration-200 min-w-11 min-h-11 flex items-center justify-center"
                 :class="{
-                    'text-white hover:bg-white/20 active:bg-white/30': !scrolled &&
-                        {{ $transparent ? 'true' : 'false' }},
-                    'text-gray-700': scrolled || !{{ $transparent ? 'true' : 'false' }}
+                    'text-white hover:bg-white/20 active:bg-white/30': !scrolled && transparent,
+                    'text-gray-700': scrolled || !transparent
                 }"
                 aria-label="Ouvrir le menu" :aria-expanded="menuOpen">
                 <svg x-show="!menuOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
