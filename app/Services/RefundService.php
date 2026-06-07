@@ -94,6 +94,14 @@ class RefundService
                     'amount' => $refund->amount,
                     'method' => $refund->method,
                 ]);
+            } elseif ($result['pending_manual'] ?? false) {
+                // Virement bancaire : reste en "processing" jusqu'à validation admin — pas d'erreur
+                Log::info('Refund queued for manual processing', [
+                    'refund_id' => $refund->id,
+                    'amount' => $refund->amount,
+                    'method' => $refund->method,
+                    'transaction_id' => $result['transaction_id'] ?? null,
+                ]);
             } else {
                 throw new \Exception($result['error'] ?? 'Erreur lors du traitement');
             }
@@ -182,11 +190,10 @@ class RefundService
 
     /**
      * Process refund via bank transfer
+     * Reste en "processing" jusqu'à validation manuelle par un admin.
      */
     protected function processBankTransferRefund(Refund $refund): array
     {
-        // Les virements bancaires nécessitent un traitement manuel
-        // Le refund reste en status "processing" jusqu'à validation par un admin
         Log::info('RefundService: Bank transfer refund queued for manual processing', [
             'refund_id' => $refund->id,
             'amount' => $refund->amount,
@@ -194,7 +201,8 @@ class RefundService
         ]);
 
         return [
-            'success' => true,
+            'success' => false,
+            'pending_manual' => true,
             'transaction_id' => 'BANK-'.Refund::generateTransactionId(),
         ];
     }
