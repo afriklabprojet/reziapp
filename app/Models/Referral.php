@@ -64,7 +64,12 @@ class Referral extends Model
         ]);
     }
 
-    public function reward(float $referrerReward, float $referredReward, string $type = 'credit'): void
+    /**
+     * Marque le referral comme récompensé.
+     * N'effectue PAS les crédits — utiliser ReferralService::rewardReferral()
+     * qui gère la concurrence avec lockForUpdate.
+     */
+    public function markRewarded(float $referrerReward, float $referredReward, string $type = 'credit'): void
     {
         $this->update([
             'status' => 'rewarded',
@@ -73,16 +78,6 @@ class Referral extends Model
             'referred_reward' => $referredReward,
             'reward_type' => $type,
         ]);
-
-        // Créditer le parrain
-        if ($type === 'credit' && $referrerReward > 0) {
-            $this->referrer->increment('referral_balance', $referrerReward);
-        }
-
-        // Créditer le filleul
-        if ($type === 'credit' && $referredReward > 0) {
-            $this->referred->increment('referral_balance', $referredReward);
-        }
     }
 
     public function cancel(): void
