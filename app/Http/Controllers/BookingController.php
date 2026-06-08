@@ -437,6 +437,55 @@ class BookingController extends Controller
         }
     }
 
+    /**
+     * Télécharger le reçu de location (réservations terminées uniquement)
+     */
+    public function downloadReceipt(Booking $booking): \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
+    {
+        if ($booking->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($booking->status !== 'completed') {
+            abort(404);
+        }
+
+        $booking->loadMissing('residence');
+
+        $filename = 'receipt-booking-' . $booking->uuid . '.txt';
+
+        $content = implode("\n", [
+            '===========================',
+            '       REZI - REÇU DE LOCATION',
+            '===========================',
+            '',
+            'Référence : ' . $booking->uuid,
+            'Date       : ' . now()->format('d/m/Y'),
+            '',
+            '--- BIEN ---',
+            'Résidence  : ' . ($booking->residence->title ?? 'N/A'),
+            'Adresse    : ' . ($booking->residence->address ?? 'N/A'),
+            '',
+            '--- SÉJOUR ---',
+            'Arrivée    : ' . $booking->check_in?->format('d/m/Y'),
+            'Départ     : ' . $booking->check_out?->format('d/m/Y'),
+            'Nuits      : ' . ($booking->nights ?? 'N/A'),
+            '',
+            '--- PAIEMENT ---',
+            'Montant    : ' . number_format((float) $booking->total_amount, 0, ',', ' ') . ' FCFA',
+            'Statut     : Payé',
+            '',
+            '===========================',
+            'Merci de votre confiance.',
+            '===========================',
+        ]);
+
+        return response($content, 200, [
+            'Content-Type'        => 'text/plain; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
     // =============================================
     // PARTIE PROPRIÉTAIRE
     // =============================================
