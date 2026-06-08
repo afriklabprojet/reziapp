@@ -7,7 +7,7 @@
 {{-- Les meta OG/JSON-LD spécifiques sont poussés via @push sans dupliquer <x-seo-meta> --}}
 @push('meta')
     @php
-        $ogImage = $residence->photos->first()?->url ?? asset('images/og-default.jpg');
+        $ogImage = $residence->photos->first()?->url ?? asset('images/og/default.png');
         $ogDescription = Str::limit(strip_tags($residence->description ?? ''), 160);
         $ogTitle = $residence->title . ' - Rezi App';
         $ogUrl = url()->current();
@@ -28,7 +28,7 @@
     {{-- Keywords --}}
     <meta name="keywords" content="résidence meublée, {{ $residence->commune }}, {{ $residence->quartier }}, location, {{ $residence->city ?? '' }}" />
 
-    {{-- JSON-LD Structured Data — JSON_HEX_TAG prevents </script> injection --}}
+    {{-- JSON-LD Structured Data — JSON_HEX_TAG prevents script-tag injection --}}
     <script type="application/ld+json">
     {!! json_encode([
         '@context' => 'https://schema.org',
@@ -524,11 +524,9 @@
             x-transition:leave-end="opacity-0"
             class="gallery-modal"
             @keydown.escape.window="closeGallery()"
-            x-bind:open="galleryOpen"
             aria-modal="true"
-            role="dialog"
-            x-cloak
-            aria-label="Galerie photos">
+            aria-label="Galerie photos"
+            x-cloak>
 
             {{-- Header sticky —  flèche retour + titre --}}
             <div class="gallery-header">
@@ -918,53 +916,70 @@
                                 @endforeach
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-10 mt-8">
-                                @foreach ($residence->reviews->take(6) as $review)
-                                    <div x-data="{ expanded: false }">
-                                        <div class="flex items-center gap-3 mb-3">
-                                            @if ($review->user->avatar ?? false)
-                                                <img loading="lazy" src="{{ storage_url($review->user->avatar) }}"
-                                                    alt="{{ $review->user->name }}"
-                                                    class="w-10 h-10 rounded-full object-cover">
-                                            @else
-                                                <div
-                                                    class="w-10 h-10 rounded-full bg-linear-to-br from-[#FF8A1F] to-[#CC5A00] flex items-center justify-center text-white font-semibold">
-                                                    {{ substr($review->user->name ?? 'A', 0, 1) }}</div>
-                                            @endif
-                                            <div>
-                                                <p class="font-semibold text-gray-900 text-sm">
-                                                    {{ $review->user->name ?? 'Anonyme' }}</p>
-                                                <p class="text-gray-400 text-xs flex items-center gap-0.5">
-                                                    @for ($s = 0; $s < 5; $s++)
-                                                        <svg aria-hidden="true"
-                                                            class="w-2.5 h-2.5 {{ $s < ($review->rating ?? 5) ? 'text-amber-400' : 'text-gray-300' }}"
-                                                            fill="currentColor" viewBox="0 0 20 20">
-                                                            <path
-                                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                        </svg>
-                                                    @endfor
-                                                    <span class="ml-1">·
-                                                        {{ $review->stay_end_date?->translatedFormat('F Y') ?? $review->created_at->translatedFormat('F Y') }}</span>
-                                                </p>
+                            {{-- Reviews list — first 6 server-rendered, "load more" via AJAX --}}
+                            <div
+                                x-data="reviewPager('{{ route('reviews.index', $residence) }}', {{ $residence->reviews->take(6)->map(fn($r) => [
+                                    'id' => $r->id,
+                                    'user_name' => $r->user->name ?? 'Anonyme',
+                                    'user_avatar' => $r->user->avatar ? storage_url($r->user->avatar) : null,
+                                    'user_initial' => strtoupper(substr($r->user->name ?? 'A', 0, 1)),
+                                    'rating' => $r->rating ?? 5,
+                                    'comment' => $r->comment ?? '',
+                                    'date' => $r->stay_end_date?->translatedFormat('F Y') ?? $r->created_at->translatedFormat('F Y'),
+                                ]) }})"
+                            >
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-10 mt-8" id="reviews-list">
+                                    <template x-for="review in reviews" :key="review.id">
+                                        <div x-data="{ expanded: false }">
+                                            <div class="flex items-center gap-3 mb-3">
+                                                <template x-if="review.user_avatar">
+                                                    <img loading="lazy" :src="review.user_avatar" :alt="review.user_name"
+                                                        class="w-10 h-10 rounded-full object-cover">
+                                                </template>
+                                                <template x-if="!review.user_avatar">
+                                                    <div class="w-10 h-10 rounded-full bg-linear-to-br from-[#FF8A1F] to-[#CC5A00] flex items-center justify-center text-white font-semibold"
+                                                        x-text="review.user_initial"></div>
+                                                </template>
+                                                <div>
+                                                    <p class="font-semibold text-gray-900 text-sm" x-text="review.user_name"></p>
+                                                    <p class="text-gray-400 text-xs flex items-center gap-0.5">
+                                                        <template x-for="s in 5" :key="s">
+                                                            <svg aria-hidden="true"
+                                                                :class="s <= review.rating ? 'text-amber-400' : 'text-gray-300'"
+                                                                class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                                            </svg>
+                                                        </template>
+                                                        <span class="ml-1" x-text="'· ' + review.date"></span>
+                                                    </p>
+                                                </div>
                                             </div>
+                                            <p class="text-gray-600 text-[15px] leading-relaxed"
+                                                :class="{ 'line-clamp-4': !expanded }"
+                                                x-text="review.comment"></p>
+                                            <template x-if="review.comment.length > 200">
+                                                <button type="button" @click="expanded = !expanded"
+                                                    class="mt-2 text-sm font-semibold text-gray-900 underline hover:no-underline">
+                                                    <span x-text="expanded ? 'Réduire' : 'Lire la suite'"></span>
+                                                </button>
+                                            </template>
                                         </div>
-                                        <p class="text-gray-600 text-[15px] leading-relaxed" :class="{ 'line-clamp-4': !expanded }">
-                                            {{ $review->comment }}</p>
-                                        @if (strlen($review->comment ?? '') > 200)
-                                            <button type="button" @click="expanded = !expanded"
-                                                class="mt-2 text-sm font-semibold text-gray-900 underline hover:no-underline">
-                                                <span x-text="expanded ? 'Réduire' : 'Lire la suite'">Lire la suite</span>
-                                            </button>
-                                        @endif
-                                    </div>
-                                @endforeach
+                                    </template>
+                                </div>
+
+                                @if ($residence->reviews_count > 6)
+                                    <button type="button" @click="loadMore()"
+                                        x-show="hasMore"
+                                        x-cloak
+                                        class="mt-8 px-6 py-3 border border-gray-900 rounded-lg text-sm font-semibold text-gray-900 hover:bg-gray-50 transition flex items-center gap-2">
+                                        <svg x-show="loading" aria-hidden="true" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                        </svg>
+                                        <span x-text="loading ? 'Chargement…' : 'Afficher plus de commentaires ({{ $residence->reviews_count }})' "></span>
+                                    </button>
+                                @endif
                             </div>
-                            @if ($residence->reviews_count > 6)
-                                <button
-                                    class="mt-8 px-6 py-3 border border-gray-900 rounded-lg text-sm font-semibold text-gray-900 hover:bg-gray-50 transition">
-                                    Afficher les {{ $residence->reviews_count }} commentaires
-                                </button>
-                            @endif
                         @else
                             <h2 class="text-[22px] font-semibold text-gray-900 mb-3">Aucun avis pour le moment</h2>
                             <p class="text-gray-500 text-sm">Soyez le premier à partager votre expérience.</p>
