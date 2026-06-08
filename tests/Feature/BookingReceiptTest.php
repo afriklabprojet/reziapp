@@ -87,25 +87,16 @@ class BookingReceiptTest extends TestCase
     #[Test]
     public function receipt_download_returns_404_for_non_completed_booking(): void
     {
-        $policy = CancellationPolicy::first();
-        $owner  = User::factory()->create(['role' => 'owner']);
-        $residence = Residence::factory()->create([
-            'owner_id'               => $owner->id,
-            'cancellation_policy_id' => $policy->id,
-            'status'                 => 'approved',
-        ]);
-
-        $confirmedBooking = Booking::factory()->create([
-            'uuid'         => (string) Str::uuid(),
+        $confirmedBooking = \App\Models\Booking::factory()->create([
             'user_id'      => $this->guest->id,
-            'residence_id' => $residence->id,
+            'residence_id' => $this->booking->residence_id,
             'status'       => 'confirmed',
         ]);
 
         $response = $this->actingAs($this->guest)
             ->get(route('bookings.receipt.download', $confirmedBooking));
 
-        $response->assertStatus(404);
+        $response->assertNotFound();
     }
 
     #[Test]
