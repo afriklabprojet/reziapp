@@ -228,6 +228,8 @@ class GeoSearchTest extends TestCase
      */
     public function test_search_filters_by_price(): void
     {
+        // Le filtre min/max_price porte sur price_per_month en BDD (200 000–300 000 FCFA/mois)
+        // La réponse retourne le prix journalier : price_per_month / 30
         $response = $this->postJson(self::GEO_SEARCH_API, [
             'latitude' => self::COCODY_CENTER['latitude'],
             'longitude' => self::COCODY_CENTER['longitude'],
@@ -241,8 +243,8 @@ class GeoSearchTest extends TestCase
         $prices = collect($response->json('data'))->pluck('price');
 
         foreach ($prices as $price) {
-            $this->assertGreaterThanOrEqual(200000, $price);
-            $this->assertLessThanOrEqual(300000, $price);
+            $this->assertGreaterThanOrEqual(round(200000 / 30), $price);
+            $this->assertLessThanOrEqual(round(300000 / 30), $price);
         }
     }
 
