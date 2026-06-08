@@ -117,6 +117,18 @@ class HomeController extends Controller
             });
         });
 
+        // Statistiques avis — moyenne et nombre réels
+        $reviewStats = Cache::remember('home_review_stats', $cacheTtl, function () {
+            $row = \App\Models\Review::where('status', 'approved')
+                ->selectRaw('ROUND(AVG(rating), 1) as avg_rating, COUNT(*) as total')
+                ->first();
+
+            return [
+                'avg'   => $row->avg_rating > 0 ? number_format((float) $row->avg_rating, 1) : null,
+                'total' => (int) $row->total,
+            ];
+        });
+
         // Catégories actives avec compteur (approved + available)
         $categories = Cache::remember('home_categories', $cacheTtl, function () {
             return Category::active()
@@ -133,6 +145,7 @@ class HomeController extends Controller
             'popularZones',
             'stats',
             'testimonials',
+            'reviewStats',
             'categories',
         ));
     }
