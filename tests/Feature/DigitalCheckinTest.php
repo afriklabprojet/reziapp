@@ -114,4 +114,19 @@ class DigitalCheckinTest extends TestCase
 
         $response->assertStatus(404);
     }
+
+    #[Test]
+    public function test_non_owner_cannot_confirm_checkin(): void
+    {
+        $otherUser = User::factory()->create();
+
+        $response = $this->actingAs($otherUser)
+            ->post(route('checkin.confirm', $this->checkin->qr_token));
+
+        $response->assertForbidden();
+        $this->assertDatabaseMissing('digital_checkins', [
+            'id'     => $this->checkin->id,
+            'status' => DigitalCheckin::STATUS_CONFIRMED,
+        ]);
+    }
 }
