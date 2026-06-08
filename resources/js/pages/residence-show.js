@@ -28,20 +28,34 @@ export function residencePage(config = {}) {
                 if (el) observer.observe(el);
             });
 
-            window.addEventListener('keydown', (e) => {
-                if (!this.galleryOpen) return;
-                if (e.key === 'Escape') this.closeGallery();
-            });
+            // Native dialog cancel (Escape) fires before our listener — sync state.
+            const dialog = document.querySelector('.gallery-modal');
+            if (dialog) {
+                dialog.addEventListener('cancel', (e) => {
+                    e.preventDefault();
+                    this.closeGallery();
+                });
+            }
+        },
+
+        _galleryDialog() {
+            return document.querySelector('.gallery-modal');
         },
 
         openGallery() {
             this.galleryOpen = true;
-            document.body.style.overflow = 'hidden';
+            const dialog = this._galleryDialog();
+            if (dialog && typeof dialog.showModal === 'function' && !dialog.open) {
+                dialog.showModal();
+            }
         },
 
         closeGallery() {
             this.galleryOpen = false;
-            document.body.style.overflow = '';
+            const dialog = this._galleryDialog();
+            if (dialog && typeof dialog.close === 'function' && dialog.open) {
+                dialog.close();
+            }
         },
 
         shareResidence() {
@@ -65,6 +79,46 @@ export function residencePage(config = {}) {
                 setTimeout(() => toast.remove(), 300);
             }, 2500);
         }
+    };
+}
+
+/**
+ * Review Pager — lazy-loads additional reviews via the AJAX endpoint.
+ * First 6 reviews are passed in as initialReviews to avoid a round-trip on load.
+ */
+export function reviewPager(url, initialReviews = []) {
+    return {
+        reviews: initialReviews,
+        page: 1,
+        hasMore: initialReviews.length >= 6,
+        loading: false,
+
+        async loadMore() {
+            if (this.loading) return;
+            this.loading = true;
+            this.page += 1;
+            try {
+                const res = await fetch(`${url}?page=${this.page}&per_page=6`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json' },
+                });
+                const data = await res.json();
+                const incoming = (data.reviews?.data ?? data.reviews ?? []).map(r => ({
+                    id: r.id,
+                    user_name: r.user?.name ?? 'Anonyme',
+                    user_avatar: r.user?.avatar_url ?? r.user?.avatar ?? null,
+                    user_initial: (r.user?.name ?? 'A').charAt(0).toUpperCase(),
+                    rating: r.rating ?? 5,
+                    comment: r.comment ?? '',
+                    date: r.date ?? '',
+                }));
+                this.reviews = [...this.reviews, ...incoming];
+                this.hasMore = incoming.length >= 6;
+            } catch (_) {
+                this.page -= 1;
+            } finally {
+                this.loading = false;
+            }
+        },
     };
 }
 
