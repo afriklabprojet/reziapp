@@ -46,6 +46,10 @@ class DigitalCheckinController extends Controller
             abort(403);
         }
 
+        if (($checkin->booking?->status ?? '') !== 'confirmed') {
+            abort(422, 'Le check-in ne peut être confirmé que pour une réservation confirmée.');
+        }
+
         $checkin->update([
             'status'       => DigitalCheckin::STATUS_CONFIRMED,
             'confirmed_at' => now(),
