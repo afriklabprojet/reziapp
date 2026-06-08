@@ -402,6 +402,7 @@ class BookingController extends Controller
             'residence.photos',
             'residence.owner',
             'cancellationPolicy',
+            'payments',
         ]);
 
         return view('bookings.show', compact('booking'));
