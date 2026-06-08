@@ -442,9 +442,7 @@ class BookingController extends Controller
      */
     public function downloadReceipt(Booking $booking): \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
     {
-        if ($booking->user_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('view', $booking);
 
         if ($booking->status !== 'completed') {
             abort(404);
