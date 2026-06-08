@@ -6,20 +6,37 @@
 {{-- SEO: utilise uniquement @section title/description consommés par le layout --}}
 {{-- Les meta OG/JSON-LD spécifiques sont poussés via @push sans dupliquer <x-seo-meta> --}}
 @push('meta')
-    {{-- Open Graph spécifique à la résidence (le layout gère déjà title/description/canonical) --}}
+    @php
+        $ogImage = $residence->photos->first()?->url ?? asset('images/og-default.jpg');
+        $ogDescription = Str::limit(strip_tags($residence->description ?? ''), 160);
+        $ogTitle = $residence->title . ' - Rezi App';
+        $ogUrl = url()->current();
+        $photoImages = $residence->photos->map(fn($p) => $p->url)->filter()->values()->all();
+    @endphp
+    {{-- Open Graph --}}
     <meta property="og:type" content="place" />
-    <meta property="og:image" content="{{ $residence->photos->first()?->url }}" />
+    <meta property="og:title" content="{{ $ogTitle }}" />
+    <meta property="og:description" content="{{ $ogDescription }}" />
+    <meta property="og:url" content="{{ $ogUrl }}" />
+    <meta property="og:image" content="{{ $ogImage }}" />
     <meta property="og:image:alt" content="{{ $residence->title }}" />
+    {{-- Twitter Card --}}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ $ogTitle }}" />
+    <meta name="twitter:description" content="{{ $ogDescription }}" />
+    <meta name="twitter:image" content="{{ $ogImage }}" />
+    {{-- Keywords --}}
     <meta name="keywords" content="résidence meublée, {{ $residence->commune }}, {{ $residence->quartier }}, location, {{ $residence->city ?? '' }}" />
 
-    {{-- JSON-LD Structured Data --}}
+    {{-- JSON-LD Structured Data — JSON_HEX_TAG prevents </script> injection --}}
     <script type="application/ld+json">
     {!! json_encode([
         '@context' => 'https://schema.org',
         '@type' => 'LodgingBusiness',
         'name' => $residence->title,
         'description' => Str::limit(strip_tags($residence->description ?? ''), 300),
-        'image' => $residence->photos->first()?->url,
+        'image' => count($photoImages) > 1 ? $photoImages : ($photoImages[0] ?? null),
+        'url' => $ogUrl,
         'address' => [
             '@type' => 'PostalAddress',
             'addressLocality' => $residence->commune,
@@ -37,7 +54,7 @@
             'ratingValue' => $residence->average_rating,
             'reviewCount' => $residence->reviews_count,
         ] : null,
-    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_HEX_TAG) !!}
     </script>
 @endpush
 
@@ -452,7 +469,7 @@
          SECTION 2 — Photo Grid (70/30)
     ═══════════════════════════════════ --}}
         <div class="max-w-280 mx-auto px-0 sm:px-6" id="photo-section">
-            <div class="photo-grid" id="photos">
+            <div class="photo-grid" id="photos" @if($totalPhotos === 1) style="grid-template-columns:1fr;grid-template-rows:1fr;" @endif>
                 @if ($mainPhoto)
                     <div class="photo-item photo-main" @click="openGallery(0)">
                         <img src="{{ storage_url($mainPhoto->path) }}" alt="{{ $residence->title }}"
@@ -476,9 +493,11 @@
                             alt="{{ $residence->title }} {{ $index + 2 }}">
                     </div>
                 @endforeach
-                @for ($i = $sidePhotos->count(); $i < 4; $i++)
-                    <div class="photo-item bg-gray-100 hidden sm:block"></div>
-                @endfor
+                @if ($totalPhotos > 1)
+                    @for ($i = $sidePhotos->count(); $i < 4; $i++)
+                        <div class="photo-item bg-gray-100 hidden sm:block"></div>
+                    @endfor
+                @endif
                 @if ($totalPhotos > 1)
                     <button @click="openGallery(0)"
                         class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-900 border border-white/60 shadow-lg hover:bg-white transition-all duration-200 hover:scale-105 flex items-center gap-2">
@@ -506,6 +525,8 @@
             class="gallery-modal"
             @keydown.escape.window="closeGallery()"
             x-bind:open="galleryOpen"
+            aria-modal="true"
+            role="dialog"
             x-cloak
             aria-label="Galerie photos">
 
@@ -744,11 +765,12 @@
                                     </div>
                                 </div>
                             @endif
-                            <button @click="showAll = !showAll"
-                                class="mt-6 px-6 py-3 border border-gray-900 rounded-lg text-sm font-semibold text-gray-900 hover:bg-gray-50 transition">
-                                <span
-                                    x-text="showAll ? 'Masquer' : 'Afficher les {{ $residence->amenities->count() }} équipements'"></span>
-                            </button>
+                            @if ($residence->amenities->count() > 10)
+                                <button @click="showAll = !showAll"
+                                    class="mt-6 px-6 py-3 border border-gray-900 rounded-lg text-sm font-semibold text-gray-900 hover:bg-gray-50 transition">
+                                    <span x-text="showAll ? 'Masquer' : 'Afficher les {{ $residence->amenities->count() }} équipements'"></span>
+                                </button>
+                            @endif
                         @else
                             <p class="text-gray-400 text-sm py-4">Aucun équipement listé pour le moment.</p>
                         @endif
@@ -788,14 +810,16 @@
                                     </template>
                                     <template x-for="d in dim(cm,cy)" :key="'d1-'+d">
                                         <div class="py-1">
-                                            <span
+                                            <button type="button"
                                                 class="inline-flex items-center justify-center w-9 h-9 text-sm transition-colors"
                                                 :class="dayClass(d, cm, cy)"
+                                                :disabled="isBlocked(d,cm,cy)"
+                                                :aria-label="fmt(d,cm,cy)"
                                                 @click="selectDate(d, cm, cy)"
                                                 @mouseenter="!isBlocked(d,cm,cy) && (hoverDate = (checkIn && !checkOut) ? fmt(d,cm,cy) : '')"
                                                 @mouseleave="hoverDate = ''"
                                                 x-text="d"
-                                            ></span>
+                                            ></button>
                                         </div>
                                     </template>
                                 </div>
@@ -820,14 +844,16 @@
                                     </template>
                                     <template x-for="d in dim(m2,y2)" :key="'d2-'+d">
                                         <div class="py-1">
-                                            <span
+                                            <button type="button"
                                                 class="inline-flex items-center justify-center w-9 h-9 text-sm transition-colors"
                                                 :class="dayClass(d, m2, y2)"
+                                                :disabled="isBlocked(d,m2,y2)"
+                                                :aria-label="fmt(d,m2,y2)"
                                                 @click="selectDate(d, m2, y2)"
                                                 @mouseenter="!isBlocked(d,m2,y2) && (hoverDate = (checkIn && !checkOut) ? fmt(d,m2,y2) : '')"
                                                 @mouseleave="hoverDate = ''"
                                                 x-text="d"
-                                            ></span>
+                                            ></button>
                                         </div>
                                     </template>
                                 </div>
@@ -894,7 +920,7 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-10 mt-8">
                                 @foreach ($residence->reviews->take(6) as $review)
-                                    <div>
+                                    <div x-data="{ expanded: false }">
                                         <div class="flex items-center gap-3 mb-3">
                                             @if ($review->user->avatar ?? false)
                                                 <img loading="lazy" src="{{ storage_url($review->user->avatar) }}"
@@ -922,12 +948,13 @@
                                                 </p>
                                             </div>
                                         </div>
-                                        <p class="text-gray-600 text-[15px] leading-relaxed line-clamp-4">
+                                        <p class="text-gray-600 text-[15px] leading-relaxed" :class="{ 'line-clamp-4': !expanded }">
                                             {{ $review->comment }}</p>
                                         @if (strlen($review->comment ?? '') > 200)
-                                            <button
-                                                class="mt-2 text-sm font-semibold text-gray-900 underline hover:no-underline">Lire
-                                                la suite</button>
+                                            <button type="button" @click="expanded = !expanded"
+                                                class="mt-2 text-sm font-semibold text-gray-900 underline hover:no-underline">
+                                                <span x-text="expanded ? 'Réduire' : 'Lire la suite'">Lire la suite</span>
+                                            </button>
                                         @endif
                                     </div>
                                 @endforeach
