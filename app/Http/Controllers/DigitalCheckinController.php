@@ -42,7 +42,7 @@ class DigitalCheckinController extends Controller
         $checkin = DigitalCheckin::where('qr_token', $token)->firstOrFail();
 
         $residence = $checkin->booking?->residence;
-        if ($residence && $residence->owner_id !== Auth::id()) {
+        if (! $residence || $residence->owner_id !== Auth::id()) {
             abort(403);
         }
 
