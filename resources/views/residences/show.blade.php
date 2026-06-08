@@ -559,7 +559,7 @@
             <div class="gallery-main">
                 {{-- Slides (toutes les images côte à côte, CSS transform pour naviguer) --}}
                 <div class="gallery-slides" x-ref="slides"
-                    :style="`transform: translateX(-${currentPhoto * 100}%)`">
+                    :style="{ transform: 'translateX(-' + (currentPhoto * 100) + '%)' }">
                     @foreach ($photos as $photo)
                         <div class="gallery-slide">
                             <img src="{{ storage_url($photo->path) }}"
