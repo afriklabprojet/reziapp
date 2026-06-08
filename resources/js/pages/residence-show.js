@@ -13,6 +13,8 @@ export function residencePage(config = {}) {
         photoUrls: config?.photoUrls || [],
         scrolled: false,
         activeSection: 'photos',
+        _touchStartX: null,
+        _touchStartY: null,
 
         init() {
             window.addEventListener('scroll', () => {
@@ -37,18 +39,7 @@ export function residencePage(config = {}) {
                 if (!this.galleryOpen) return;
                 if (e.key === 'ArrowLeft') this.prevPhoto();
                 if (e.key === 'ArrowRight') this.nextPhoto();
-            });
-        },
-
-        // Preload adjacent photos for smoother navigation
-        preloadAdjacent() {
-            const urls = [
-                this.photoUrls[this.currentPhoto - 1],
-                this.photoUrls[this.currentPhoto + 1],
-            ].filter(Boolean);
-            urls.forEach(url => {
-                const img = new Image();
-                img.src = url;
+                if (e.key === 'Escape') this.closeGallery();
             });
         },
 
@@ -56,17 +47,70 @@ export function residencePage(config = {}) {
             this.currentPhoto = index;
             this.galleryOpen = true;
             document.body.style.overflow = 'hidden';
-            this.$nextTick(() => this.preloadAdjacent());
+            this.$nextTick(() => this._scrollThumbIntoView());
+        },
+
+        closeGallery() {
+            this.galleryOpen = false;
+            document.body.style.overflow = '';
+        },
+
+        goToPhoto(index) {
+            this.currentPhoto = index;
+            this.$nextTick(() => this._scrollThumbIntoView());
         },
 
         prevPhoto() {
-            this.currentPhoto = this.currentPhoto > 0 ? this.currentPhoto - 1 : this.totalPhotos - 1;
-            this.preloadAdjacent();
+            if (this.currentPhoto > 0) {
+                this.currentPhoto--;
+                this.$nextTick(() => this._scrollThumbIntoView());
+            }
         },
 
         nextPhoto() {
-            this.currentPhoto = this.currentPhoto < this.totalPhotos - 1 ? this.currentPhoto + 1 : 0;
-            this.preloadAdjacent();
+            if (this.currentPhoto < this.totalPhotos - 1) {
+                this.currentPhoto++;
+                this.$nextTick(() => this._scrollThumbIntoView());
+            }
+        },
+
+        // Scroll la miniature active au centre du strip
+        _scrollThumbIntoView() {
+            const strip = this.$refs.strip;
+            if (!strip) return;
+            const thumb = strip.children[this.currentPhoto];
+            if (!thumb) return;
+            const stripRect = strip.getBoundingClientRect();
+            const thumbRect = thumb.getBoundingClientRect();
+            const offset = thumbRect.left - stripRect.left - (stripRect.width / 2) + (thumbRect.width / 2);
+            strip.scrollLeft += offset;
+        },
+
+        // Swipe tactile
+        touchStart(e) {
+            if (e.touches.length !== 1) return;
+            this._touchStartX = e.touches[0].clientX;
+            this._touchStartY = e.touches[0].clientY;
+        },
+
+        touchMove(e) {
+            // Empêche le scroll de la page quand on swipe horizontalement
+            if (!this._touchStartX) return;
+            const dx = Math.abs(e.touches[0].clientX - this._touchStartX);
+            const dy = Math.abs(e.touches[0].clientY - this._touchStartY);
+            if (dx > dy) e.preventDefault();
+        },
+
+        touchEnd(e) {
+            if (!this._touchStartX) return;
+            const dx = e.changedTouches[0].clientX - this._touchStartX;
+            const dy = e.changedTouches[0].clientY - this._touchStartY;
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+                if (dx < 0) this.nextPhoto();
+                else this.prevPhoto();
+            }
+            this._touchStartX = null;
+            this._touchStartY = null;
         },
 
         shareResidence() {
