@@ -1296,8 +1296,11 @@
                             <div>
                                 <h3 class="font-semibold text-gray-900 mb-3">Règlement intérieur</h3>
                                 <ul class="space-y-3 text-sm text-gray-600">
-                                    <li>Arrivée : à partir de {{ $residence->check_in_time ?? '14h00' }}</li>
-                                    <li>Départ : avant {{ $residence->check_out_time ?? '12h00' }}</li>
+                                    @php
+                                        $formatTime = fn($t, $fallback) => $t ? preg_replace('/^(\d{2}):(\d{2}).*$/', '$1h$2', $t) : $fallback;
+                                    @endphp
+                                    <li>Arrivée : à partir de {{ $formatTime($residence->check_in_time, '14h00') }}</li>
+                                    <li>Départ : avant {{ $formatTime($residence->check_out_time, '12h00') }}</li>
                                     <li>{{ $residence->max_guests ?? 4 }} voyageurs maximum</li>
                                     @if ($residence->house_rules)
                                         @php
@@ -1317,7 +1320,7 @@
                             <div>
                                 <h3 class="font-semibold text-gray-900 mb-3">Santé et sécurité</h3>
                                 @php
-                                    $safetyKeywords = ['fumée', 'monoxyde', 'premiers secours', 'extincteur', 'sécurité', 'safety', 'smoke', 'carbon'];
+                                    $safetyKeywords = ['fumée', 'monoxyde', 'premiers secours', 'extincteur', 'détecteur', 'alarme incendie', 'safety', 'smoke', 'carbon', 'fire extinguisher'];
                                     $safetyAmenities = $residence->amenities->filter(function ($a) use ($safetyKeywords) {
                                         foreach ($safetyKeywords as $kw) {
                                             if (stripos($a->name ?? '', $kw) !== false) return true;
