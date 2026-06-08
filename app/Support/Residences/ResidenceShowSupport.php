@@ -41,7 +41,7 @@ class ResidenceShowSupport
         return [
             'residence' => $residence,
             'similarResidences' => $this->getSimilarResidences($residence),
-            'ownerPhone' => $residence->owner->phone ?? '+225 00 00 00 00 00',
+            'ownerPhone' => $residence->owner->phone ?? null,
             'ownerResidencesCount' => $residence->owner->residences()->approved()->count(),
             'canReview' => $this->canReviewResidence($residence, $user),
             'canContact' => $this->canContactResidence($residence, $user),
