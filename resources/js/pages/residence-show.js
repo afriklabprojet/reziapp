@@ -1,20 +1,13 @@
 /**
  * Residence Page - Alpine.js component for residence detail page
- * Extracted from resources/views/residences/show.blade.php
- *
- * Usage in Blade:
- *   x-data="residencePage(@js(['totalPhotos' => $allPhotos->count(), 'title' => $residence->title]))"
+ * Usage: x-data="residencePage(@js([...]))"
  */
 export function residencePage(config = {}) {
     return {
         galleryOpen: false,
-        currentPhoto: 0,
         totalPhotos: config?.totalPhotos || 0,
-        photoUrls: config?.photoUrls || [],
         scrolled: false,
         activeSection: 'photos',
-        _touchStartX: null,
-        _touchStartY: null,
 
         init() {
             window.addEventListener('scroll', () => {
@@ -37,80 +30,18 @@ export function residencePage(config = {}) {
 
             window.addEventListener('keydown', (e) => {
                 if (!this.galleryOpen) return;
-                if (e.key === 'ArrowLeft') this.prevPhoto();
-                if (e.key === 'ArrowRight') this.nextPhoto();
                 if (e.key === 'Escape') this.closeGallery();
             });
         },
 
-        openGallery(index) {
-            this.currentPhoto = index;
+        openGallery() {
             this.galleryOpen = true;
             document.body.style.overflow = 'hidden';
-            this.$nextTick(() => this._scrollThumbIntoView());
         },
 
         closeGallery() {
             this.galleryOpen = false;
             document.body.style.overflow = '';
-        },
-
-        goToPhoto(index) {
-            this.currentPhoto = index;
-            this.$nextTick(() => this._scrollThumbIntoView());
-        },
-
-        prevPhoto() {
-            if (this.currentPhoto > 0) {
-                this.currentPhoto--;
-                this.$nextTick(() => this._scrollThumbIntoView());
-            }
-        },
-
-        nextPhoto() {
-            if (this.currentPhoto < this.totalPhotos - 1) {
-                this.currentPhoto++;
-                this.$nextTick(() => this._scrollThumbIntoView());
-            }
-        },
-
-        // Scroll la miniature active au centre du strip
-        _scrollThumbIntoView() {
-            const strip = this.$refs.strip;
-            if (!strip) return;
-            const thumb = strip.children[this.currentPhoto];
-            if (!thumb) return;
-            const stripRect = strip.getBoundingClientRect();
-            const thumbRect = thumb.getBoundingClientRect();
-            const offset = thumbRect.left - stripRect.left - (stripRect.width / 2) + (thumbRect.width / 2);
-            strip.scrollLeft += offset;
-        },
-
-        // Swipe tactile
-        touchStart(e) {
-            if (e.touches.length !== 1) return;
-            this._touchStartX = e.touches[0].clientX;
-            this._touchStartY = e.touches[0].clientY;
-        },
-
-        touchMove(e) {
-            // Empêche le scroll de la page quand on swipe horizontalement
-            if (!this._touchStartX) return;
-            const dx = Math.abs(e.touches[0].clientX - this._touchStartX);
-            const dy = Math.abs(e.touches[0].clientY - this._touchStartY);
-            if (dx > dy) e.preventDefault();
-        },
-
-        touchEnd(e) {
-            if (!this._touchStartX) return;
-            const dx = e.changedTouches[0].clientX - this._touchStartX;
-            const dy = e.changedTouches[0].clientY - this._touchStartY;
-            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-                if (dx < 0) this.nextPhoto();
-                else this.prevPhoto();
-            }
-            this._touchStartX = null;
-            this._touchStartY = null;
         },
 
         shareResidence() {
@@ -139,9 +70,7 @@ export function residencePage(config = {}) {
 
 /**
  * Booking Form - Alpine.js component for quick booking sidebar
- *
- * Usage in Blade:
- *   x-data="bookingForm(@js([...config]))"
+ * Usage: x-data="bookingForm(@js([...config]))"
  */
 export function bookingForm(config) {
     return {
@@ -176,18 +105,16 @@ export function bookingForm(config) {
         // UI State
         loading: false,
         checking: false,
-        available: null, // null = not checked, true/false
+        available: null,
         availabilityMessage: '',
         serverPrice: null,
         showPriceBreakdown: false,
         error: '',
 
         init() {
-            // Watch date changes to check availability
             this.$watch('checkIn', () => this.onDatesChange());
             this.$watch('checkOut', () => this.onDatesChange());
 
-            // Listen for calendar date selection
             window.addEventListener('calendar-dates-selected', (e) => {
                 if (e.detail?.checkIn !== undefined) {
                     this.checkIn = e.detail.checkIn;
@@ -196,11 +123,8 @@ export function bookingForm(config) {
                     this.checkOut = e.detail.checkOut;
                 }
             });
-
-            // Outside-click handled directly on the picker via Alpine's @click.outside
         },
 
-        // Computed
         get totalGuests() {
             return this.adults + this.children;
         },
@@ -227,7 +151,6 @@ export function bookingForm(config) {
         },
 
         get unitPrice() {
-            // Use best price based on duration
             if (this.nights >= 30 && this.pricePerMonth > 0) {
                 return { amount: this.pricePerMonth, unit: 'mois', perNight: Math.round(this.pricePerMonth / 30) };
             }
@@ -260,13 +183,11 @@ export function bookingForm(config) {
         get discount() {
             if (this.serverPrice?.discount) return this.serverPrice.discount;
             if (this.promoApplied) return this.promoDiscount;
-            // Weekly discount
             if (this.nights >= 7 && this.nights < 30 && this.pricePerWeek > 0) {
                 const fullPrice = this.nights * this.pricePerNight;
                 const weeklyPrice = this.subtotal;
                 return fullPrice > weeklyPrice ? fullPrice - weeklyPrice : 0;
             }
-            // Monthly discount
             if (this.nights >= 30 && this.pricePerMonth > 0) {
                 const fullPrice = this.nights * this.pricePerNight;
                 const monthlyPrice = this.subtotal;
@@ -300,7 +221,6 @@ export function bookingForm(config) {
             return '';
         },
 
-        // Methods
         isDateBlocked(dateStr) {
             return this.unavailableDates.includes(dateStr);
         },
@@ -341,7 +261,7 @@ export function bookingForm(config) {
                     await this.fetchPrice();
                 }
             } catch (_e) {
-                this.available = true; // Assume available on error
+                this.available = true;
             } finally {
                 this.checking = false;
             }
@@ -369,7 +289,7 @@ export function bookingForm(config) {
                     this.serverPrice = data.price;
                 }
             } catch (_e) {
-                // Use client-side calculation as fallback
+                // fallback client-side calculation
             } finally {
                 this.loading = false;
             }
@@ -411,10 +331,6 @@ export function bookingForm(config) {
 
 /**
  * Residence Map - Initialize Leaflet map for residence location
- *
- * Usage in Blade:
- *   <script type="application/json" id="map-config">@json(['lat' => ..., 'lng' => ...])</script>
- *   Then call initResidenceMap() after DOM is ready
  */
 export function initResidenceMap(config) {
     if (!window.L) return;
