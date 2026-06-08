@@ -191,6 +191,18 @@
                                         ✏️ Modifier la réservation
                                     </a>
                                 @endif
+
+                                {{-- Check-in QR — confirmed upcoming bookings only --}}
+                                @if ($booking->status === 'confirmed' && $booking->check_in?->isFuture())
+                                    <a href="{{ route('bookings.checkin', $booking) }}"
+                                       class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.243m-4.243 0H7.757M10 6h4M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                        Mon QR Check-in
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     @endif
