@@ -397,9 +397,9 @@
                             {{ number_format($totalCredit, 0, ',', ' ') }} FCFA de crédits disponibles
                         </p>
                         <p class="text-xs text-orange-700 mt-0.5">
-                            @if ($walletBal > 0)Wallet : {{ number_format($walletBal, 0, ',', ' ') }} FCFA@endif
+                            @if ($walletBal > 0)Wallet : {{ number_format($walletBal, 0, ',', ' ') }} FCFA @endif
                             @if ($walletBal > 0 && $referralBal > 0) · @endif
-                            @if ($referralBal > 0)Parrainage : {{ number_format($referralBal, 0, ',', ' ') }} FCFA@endif
+                            @if ($referralBal > 0)Parrainage : {{ number_format($referralBal, 0, ',', ' ') }} FCFA @endif
                         </p>
                     </div>
                     <a href="{{ route('residences.search') }}"
