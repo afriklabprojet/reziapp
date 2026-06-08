@@ -5,7 +5,7 @@
 set -euo pipefail
 
 DEPLOY_PATH="/var/www/reziapp"
-PHP_VERSION="8.2"
+PHP_VERSION="8.4"
 
 cd "$DEPLOY_PATH"
 
