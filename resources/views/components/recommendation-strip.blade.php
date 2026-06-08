@@ -140,8 +140,8 @@
                         <!-- Prix overlay -->
                         <div class="absolute bottom-3 left-3">
                             <span class="px-3 py-1.5 bg-white/95 backdrop-blur-sm text-gray-900 font-bold text-sm rounded-xl shadow">
-                                <span x-text="formatPrice(item.price_per_day ?? item.price_per_month)"></span>
-                                <span class="font-normal text-xs text-gray-500" x-text="item.price_per_day ? '/jour' : '/mois'"></span>
+                                <span x-text="formatPrice(item.price_per_day ?? Math.round((item.price_per_month ?? 0) / 30))"></span>
+                                <span class="font-normal text-xs text-gray-500">/jour</span>
                             </span>
                         </div>
                     </div>
