@@ -378,6 +378,37 @@
                 </a>
             </div>
 
+            {{-- ────────────── BANNIÈRE CRÉDITS DISPONIBLES ────────────── --}}
+            @php
+                $walletBal   = (float) (auth()->user()->wallet_credit ?? 0);
+                $referralBal = (float) (auth()->user()->referral_balance ?? 0);
+                $totalCredit = $walletBal + $referralBal;
+            @endphp
+            @if ($totalCredit > 0)
+                <div class="flex items-center gap-4 bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6">
+                    <div class="w-10 h-10 bg-[#FFE7D1] rounded-lg flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5 text-[#F16A00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-orange-800">
+                            {{ number_format($totalCredit, 0, ',', ' ') }} FCFA de crédits disponibles
+                        </p>
+                        <p class="text-xs text-orange-700 mt-0.5">
+                            @if ($walletBal > 0)Wallet : {{ number_format($walletBal, 0, ',', ' ') }} FCFA@endif
+                            @if ($walletBal > 0 && $referralBal > 0) · @endif
+                            @if ($referralBal > 0)Parrainage : {{ number_format($referralBal, 0, ',', ' ') }} FCFA@endif
+                        </p>
+                    </div>
+                    <a href="{{ route('residences.search') }}"
+                        class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 bg-[#F16A00] hover:bg-[#CC5A00] text-white text-sm font-semibold rounded-lg transition">
+                        Réserver maintenant
+                    </a>
+                </div>
+            @endif
+
             {{-- ────────────── BANNIÈRE AVIS EN ATTENTE ────────────── --}}
             @if ($reviewsAwaitingFeedback > 0)
                 <div class="flex items-center gap-4 bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
