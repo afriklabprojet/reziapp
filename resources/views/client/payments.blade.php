@@ -176,6 +176,12 @@
                                     @if ($payment->fee > 0)
                                         <p class="text-xs text-gray-400">dont {{ number_format($payment->fee, 0, ',', ' ') }} FCFA de frais</p>
                                     @endif
+                                    @if ((float) ($payment->wallet_credit_used ?? 0) > 0)
+                                        <p class="text-xs text-orange-500">- {{ number_format((float) $payment->wallet_credit_used, 0, ',', ' ') }} FCFA crédit wallet</p>
+                                    @endif
+                                    @if ((float) ($payment->referral_credit_used ?? 0) > 0)
+                                        <p class="text-xs text-green-600">- {{ number_format((float) $payment->referral_credit_used, 0, ',', ' ') }} FCFA crédit parrainage</p>
+                                    @endif
                                 </div>
                             </div>
 
