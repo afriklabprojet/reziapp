@@ -79,119 +79,85 @@
             transform: scale(1.04);
         }
 
-        /* ── Gallery Lightbox — style Airbnb ── */
+        /* ── Gallery Lightbox — style Airbnb (fond blanc, scroll vertical) ── */
         .gallery-modal {
             position: fixed;
             inset: 0;
             z-index: 9999;
-            background: #000;
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            justify-content: stretch;
-            overflow: hidden;
-        }
-
-        /* Zone principale : occupe tout l'espace hors strip */
-        .gallery-main {
-            flex: 1;
-            min-height: 0;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        /* Conteneur de slides — une rangée horizontale */
-        .gallery-slides {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.35s cubic-bezier(.25,.46,.45,.94);
-            will-change: transform;
-        }
-
-        .gallery-slide {
-            flex: 0 0 100%;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .gallery-slide img {
+            background: #fff;
+            overflow-y: auto;
+            overflow-x: hidden;
+            overscroll-behavior: contain;
+            padding: 0;
+            margin: 0;
             max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            user-select: none;
-            -webkit-user-drag: none;
+            width: 100%;
+            border: none;
         }
 
-        /* Strip miniatures en bas */
-        .gallery-strip {
-            flex: 0 0 auto;
-            height: 80px;
-            background: rgba(0,0,0,0.7);
+        .gallery-header {
+            position: sticky;
+            top: 0;
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 8px 12px;
-            overflow-x: auto;
-            scroll-behavior: smooth;
-            scrollbar-width: none;
+            justify-content: space-between;
+            padding: 14px 24px;
+            z-index: 10;
         }
-        .gallery-strip::-webkit-scrollbar { display: none; }
 
-        .gallery-thumb {
-            flex: 0 0 auto;
-            width: 56px;
-            height: 56px;
-            border-radius: 6px;
+        .gallery-content {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 24px 24px 64px;
+        }
+
+        .gallery-row-single {
+            width: 100%;
+            border-radius: 12px;
             overflow: hidden;
+            margin-bottom: 8px;
+            height: 480px;
             cursor: pointer;
-            border: 2px solid transparent;
-            transition: border-color 0.2s, opacity 0.2s;
-            opacity: 0.55;
         }
-        .gallery-thumb.active {
-            border-color: #fff;
-            opacity: 1;
-        }
-        .gallery-thumb img {
+
+        .gallery-row-single img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
+            transition: opacity 0.2s;
         }
 
-        /* Boutons nav */
-        .gallery-nav-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255,255,255,0.12);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
+        .gallery-row-double {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
+            height: 320px;
+        }
+
+        .gallery-photo-cell {
+            border-radius: 12px;
+            overflow: hidden;
             cursor: pointer;
-            transition: background 0.2s;
-            z-index: 10;
         }
-        .gallery-nav-btn:hover { background: rgba(255,255,255,0.25); }
-        .gallery-nav-btn.prev { left: 16px; }
-        .gallery-nav-btn.next { right: 16px; }
 
-        @media (max-width: 640px) {
-            .gallery-nav-btn { width: 36px; height: 36px; }
-            .gallery-strip { height: 64px; }
-            .gallery-thumb { width: 44px; height: 44px; }
+        .gallery-photo-cell img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: opacity 0.2s;
+        }
+
+        @media (max-width: 768px) {
+            .gallery-row-single { height: 56vw; border-radius: 0; }
+            .gallery-row-double { grid-template-columns: 1fr; height: auto; }
+            .gallery-photo-cell { height: 52vw; border-radius: 0; }
+            .gallery-header { padding: 12px 16px; }
+            .gallery-content { padding: 12px 0 48px; }
         }
 
         /* ── Booking Card ── */
@@ -534,72 +500,58 @@
             @keydown.escape.window="closeGallery()"
             x-bind:open="galleryOpen"
             x-cloak
-            aria-label="Galerie photos"
-            x-ref="galleryDialog"
-            @touchstart.passive="touchStart($event)"
-            @touchmove.prevent="touchMove($event)"
-            @touchend.passive="touchEnd($event)">
+            aria-label="Galerie photos">
 
-            {{-- Barre supérieure : fermer + compteur --}}
-            <div class="absolute top-0 left-0 right-0 flex items-center justify-between px-4 py-3 z-20">
-                <button @click="closeGallery()"
-                    class="text-white bg-black/40 hover:bg-black/70 rounded-full p-2 transition"
-                    aria-label="Fermer">
-                    <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            {{-- Header sticky —  flèche retour + titre --}}
+            <div class="gallery-header">
+                <button @click="closeGallery()" class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition"
+                    aria-label="Fermer la galerie">
+                    <svg aria-hidden="true" class="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                 </button>
-                <span class="text-white/90 text-sm font-medium bg-black/40 px-3 py-1 rounded-full tabular-nums">
-                    <span x-text="currentPhoto + 1"></span>&thinsp;/&thinsp;{{ $totalPhotos }}
-                </span>
-                <div class="w-9"></div>{{-- spacer symétrie --}}
+                <span class="text-sm font-semibold text-gray-900">{{ $totalPhotos }} photos</span>
+                <div class="w-10"></div>
             </div>
 
-            {{-- Zone principale avec slides --}}
-            <div class="gallery-main">
-                {{-- Slides (toutes les images côte à côte, CSS transform pour naviguer) --}}
-                <div class="gallery-slides" x-ref="slides"
-                    :style="{ transform: 'translateX(-' + (currentPhoto * 100) + '%)' }">
-                    @foreach ($photos as $photo)
-                        <div class="gallery-slide">
-                            <img src="{{ storage_url($photo->path) }}"
-                                alt="{{ $residence->title }} {{ $loop->iteration }}"
-                                loading="{{ $loop->first ? 'eager' : 'lazy' }}"
-                                draggable="false">
+            {{-- Grille scrollable style Airbnb : 1 grande, puis paires côte à côte --}}
+            <div class="gallery-content">
+                @php
+                    $photosList = $photos->values();
+                    $total = $photosList->count();
+                    $i = 0;
+                @endphp
+                @while ($i < $total)
+                    @if ($i % 3 === 0)
+                        {{-- Photo pleine largeur --}}
+                        <div class="gallery-row-single">
+                            <img src="{{ storage_url($photosList[$i]->path) }}"
+                                alt="{{ $residence->title }} {{ $i + 1 }}"
+                                loading="{{ $i === 0 ? 'eager' : 'lazy' }}">
                         </div>
-                    @endforeach
-                </div>
-
-                {{-- Boutons navigation gauche/droite --}}
-                <button @click="prevPhoto()" class="gallery-nav-btn prev" aria-label="Photo précédente"
-                    x-show="currentPhoto > 0">
-                    <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </button>
-                <button @click="nextPhoto()" class="gallery-nav-btn next" aria-label="Photo suivante"
-                    x-show="currentPhoto < totalPhotos - 1">
-                    <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                </button>
+                        @php $i++; @endphp
+                    @else
+                        {{-- Paire côte à côte --}}
+                        <div class="gallery-row-double">
+                            <div class="gallery-photo-cell">
+                                <img src="{{ storage_url($photosList[$i]->path) }}"
+                                    alt="{{ $residence->title }} {{ $i + 1 }}"
+                                    loading="lazy">
+                            </div>
+                            @if ($i + 1 < $total)
+                                <div class="gallery-photo-cell">
+                                    <img src="{{ storage_url($photosList[$i + 1]->path) }}"
+                                        alt="{{ $residence->title }} {{ $i + 2 }}"
+                                        loading="lazy">
+                                </div>
+                            @else
+                                <div class="gallery-photo-cell bg-gray-100"></div>
+                            @endif
+                        </div>
+                        @php $i += 2; @endphp
+                    @endif
+                @endwhile
             </div>
-
-            {{-- Strip miniatures en bas --}}
-            @if ($totalPhotos > 1)
-            <div class="gallery-strip" x-ref="strip">
-                @foreach ($photos as $photo)
-                    <div class="gallery-thumb"
-                        :class="{ active: currentPhoto === {{ $loop->index }} }"
-                        @click="goToPhoto({{ $loop->index }})"
-                        x-ref="thumb{{ $loop->index }}">
-                        <img src="{{ storage_url($photo->path) }}"
-                            alt="{{ $residence->title }} miniature {{ $loop->iteration }}"
-                            loading="lazy">
-                    </div>
-                @endforeach
-            </div>
-            @endif
         </dialog>
 
         {{-- ═══════════════════════════════════
