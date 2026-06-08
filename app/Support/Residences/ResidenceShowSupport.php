@@ -4,7 +4,14 @@ declare(strict_types=1);
 
 namespace App\Support\Residences;
 
+use App\Models\Booking;
+use App\Models\BookingRequest;
+use App\Models\BlockedDate;
+use App\Models\MarketPriceData;
+use App\Models\OwnerBadge;
 use App\Models\Residence;
+use App\Models\Review;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
 class ResidenceShowSupport
@@ -42,7 +49,7 @@ class ResidenceShowSupport
             'residence' => $residence,
             'similarResidences' => $this->getSimilarResidences($residence),
             'ownerPhone' => $residence->owner->phone ?? null,
-            'ownerResidencesCount' => $residence->owner->residences()->approved()->count(),
+            'ownerResidencesCount' => $this->getOwnerResidencesCount($residence),
             'canReview' => $this->canReviewResidence($residence, $user),
             'canContact' => $this->canContactResidence($residence, $user),
             'unavailableDates' => $this->getResidenceUnavailableDates($residence),
@@ -55,6 +62,19 @@ class ResidenceShowSupport
             'isSuperhost' => $isSuperhost,
             'priceSuggestion' => $this->getResidencePriceSuggestion($residence),
         ];
+    }
+
+    private function getOwnerResidencesCount(Residence $residence): int
+    {
+        if ($residence->owner === null) {
+            return 0;
+        }
+
+        return Cache::remember(
+            "owner:{$residence->owner_id}:residences_count",
+            config('rezi.cache_ttl'),
+            fn () => $residence->owner->residences()->approved()->count(),
+        );
     }
 
     private function getSimilarResidences(Residence $residence)
@@ -78,20 +98,28 @@ class ResidenceShowSupport
 
     private function resolveResidenceUrgencyMetrics(Residence $residence): array
     {
+        $lastConfirmedAt = Booking::where('residence_id', $residence->id)
+            ->whereIn('status', ['confirmed', 'completed'])
+            ->orderByDesc('confirmed_at')
+            ->value('confirmed_at');
+
+        $lastBookedDaysAgo = $lastConfirmedAt !== null
+            ? (int) Carbon::parse($lastConfirmedAt)->diffInDays(now())
+            : null;
+
+        $isSuperhost = OwnerBadge::where('user_id', $residence->owner_id)
+            ->where('badge_type', OwnerBadge::TYPE_SUPERHOST)
+            ->where('status', OwnerBadge::STATUS_ACTIVE)
+            ->where(function ($query) {
+                $query->whereNull('expires_at')->orWhere('expires_at', '>', now());
+            })
+            ->exists();
+
         return [
             $residence->active_viewers_24h ?? 0,
             $residence->bookings_this_month ?? 0,
-            \App\Models\Booking::where('residence_id', $residence->id)
-                ->whereIn('status', ['confirmed', 'completed'])
-                ->where('confirmed_at', '>=', now()->subDays(14))
-                ->count(),
-            \App\Models\OwnerBadge::where('user_id', $residence->owner_id)
-                ->where('badge_type', \App\Models\OwnerBadge::TYPE_SUPERHOST)
-                ->where('status', \App\Models\OwnerBadge::STATUS_ACTIVE)
-                ->where(function ($query) {
-                    $query->whereNull('expires_at')->orWhere('expires_at', '>', now());
-                })
-                ->exists(),
+            $lastBookedDaysAgo,
+            $isSuperhost,
         ];
     }
 
@@ -104,16 +132,15 @@ class ResidenceShowSupport
             return [$responseRate, $avgResponseTime];
         }
 
-        $totalRequests = \App\Models\BookingRequest::where('residence_id', $residence->id)
+        $stats = BookingRequest::where('residence_id', $residence->id)
             ->where('created_at', '>=', now()->subDays(90))
-            ->count();
-        $respondedRequests = \App\Models\BookingRequest::where('residence_id', $residence->id)
-            ->where('created_at', '>=', now()->subDays(90))
-            ->whereNotNull('responded_at')
-            ->count();
+            ->selectRaw('COUNT(*) as total, SUM(responded_at IS NOT NULL) as responded')
+            ->first();
+
+        $total = (int) ($stats->total ?? 0);
 
         return [
-            $totalRequests > 0 ? round($respondedRequests / $totalRequests * 100) : null,
+            $total > 0 ? round((int) $stats->responded / $total * 100) : null,
             null,
         ];
     }
@@ -123,7 +150,7 @@ class ResidenceShowSupport
         $suggestion = null;
 
         if ($residence->commune) {
-            $marketPrice = \App\Models\MarketPriceData::query()
+            $marketPrice = MarketPriceData::query()
                 ->selectRaw('AVG(avg_price_per_night) as avg_price, AVG(median_price_per_night) as median_price')
                 ->where('commune', $residence->commune)
                 ->where('bedrooms', $residence->bedrooms)
@@ -150,11 +177,11 @@ class ResidenceShowSupport
             return false;
         }
 
-        $hasCompletedBooking = \App\Models\Booking::where('user_id', $user->id)
+        $hasCompletedBooking = Booking::where('user_id', $user->id)
             ->where('residence_id', $residence->id)
             ->where('status', 'completed')
             ->exists();
-        $hasAlreadyReviewed = \App\Models\Review::where('user_id', $user->id)
+        $hasAlreadyReviewed = Review::where('user_id', $user->id)
             ->where('residence_id', $residence->id)
             ->exists();
 
@@ -167,7 +194,7 @@ class ResidenceShowSupport
             return false;
         }
 
-        return \App\Models\Booking::where('user_id', $user->id)
+        return Booking::where('user_id', $user->id)
             ->where('residence_id', $residence->id)
             ->whereNotIn('status', ['cancelled', 'expired'])
             ->exists();
@@ -179,19 +206,19 @@ class ResidenceShowSupport
             "residence:{$residence->id}:unavailable_dates",
             900,
             function () use ($residence) {
-                $blockedDates = \App\Models\BlockedDate::getBlockedDatesArray(
+                $blockedDates = BlockedDate::getBlockedDatesArray(
                     $residence->id,
                     now()->toDateString(),
                     now()->addMonths(6)->toDateString(),
                 );
-                $bookedDates = \App\Models\Booking::where('residence_id', $residence->id)
+                $bookedDates = Booking::where('residence_id', $residence->id)
                     ->whereIn('status', ['confirmed', 'pending', 'paid'])
                     ->where('check_out', '>=', now())
                     ->get()
                     ->flatMap(function ($booking) {
                         $dates = [];
-                        $current = \Carbon\Carbon::parse($booking->check_in);
-                        $end = \Carbon\Carbon::parse($booking->check_out);
+                        $current = Carbon::parse($booking->check_in);
+                        $end = Carbon::parse($booking->check_out);
 
                         while ($current < $end) {
                             $dates[] = $current->format('Y-m-d');
