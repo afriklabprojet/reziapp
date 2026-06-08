@@ -452,7 +452,7 @@ class BookingController extends Controller
 
         $booking->loadMissing('residence');
 
-        $filename = 'receipt-booking-' . $booking->uuid . '.txt';
+        $safeFilename = 'receipt-booking-' . preg_replace('/[^a-zA-Z0-9\-]/', '', $booking->uuid) . '.txt';
 
         $content = implode("\n", [
             '===========================',
@@ -482,7 +482,7 @@ class BookingController extends Controller
 
         return response($content, 200, [
             'Content-Type'        => 'text/plain; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="' . $safeFilename . '"',
         ]);
     }
 
