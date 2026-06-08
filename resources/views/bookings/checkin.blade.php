@@ -37,7 +37,6 @@
                     class="w-full h-full"
                 >
             </div>
-            <p class="mt-4 text-xs text-gray-400 font-mono break-all">{{ $checkin->qr_token }}</p>
         </div>
 
         {{-- Résidence info --}}
