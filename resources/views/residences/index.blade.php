@@ -16,7 +16,7 @@
             'url' => route('residences.show', $r),
             'name' => $r->name,
         ])->values()->toArray(),
-    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) !!}
     </script>
     @endpush
 
