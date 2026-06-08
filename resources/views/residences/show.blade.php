@@ -79,7 +79,7 @@
             transform: scale(1.04);
         }
 
-        /* ── Gallery Lightbox — style Airbnb (fond blanc, scroll vertical) ── */
+        /* ── Gallery Lightbox — style Airbnb (fond blanc, scroll vertical, titre gauche + grille droite) ── */
         .gallery-modal {
             position: fixed;
             inset: 0;
@@ -107,41 +107,39 @@
             z-index: 10;
         }
 
-        .gallery-content {
-            max-width: 1040px;
+        /* Layout : titre à gauche (sticky) + grille photos à droite */
+        .gallery-body {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 0;
+            max-width: 1120px;
             margin: 0 auto;
-            padding: 24px 24px 64px;
+            padding: 32px 24px 80px;
+            align-items: start;
         }
 
-        .gallery-row-single {
-            width: 100%;
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 8px;
-            height: 480px;
-            cursor: pointer;
+        .gallery-section-title {
+            position: sticky;
+            top: 70px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #111827;
+            line-height: 1.3;
+            padding-right: 24px;
         }
 
-        .gallery-row-single img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            transition: opacity 0.2s;
-        }
-
-        .gallery-row-double {
+        /* Grille 2 colonnes côte à côte */
+        .gallery-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 8px;
-            margin-bottom: 8px;
-            height: 320px;
         }
 
         .gallery-photo-cell {
             border-radius: 12px;
             overflow: hidden;
-            cursor: pointer;
+            cursor: default;
+            aspect-ratio: 4/3;
         }
 
         .gallery-photo-cell img {
@@ -149,15 +147,24 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            transition: opacity 0.2s;
         }
 
-        @media (max-width: 768px) {
-            .gallery-row-single { height: 56vw; border-radius: 0; }
-            .gallery-row-double { grid-template-columns: 1fr; height: auto; }
-            .gallery-photo-cell { height: 52vw; border-radius: 0; }
+        @media (max-width: 900px) {
+            .gallery-body {
+                grid-template-columns: 1fr;
+                padding: 16px 16px 64px;
+            }
+            .gallery-section-title {
+                position: static;
+                font-size: 18px;
+                padding: 0 0 16px 0;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .gallery-grid { grid-template-columns: 1fr; gap: 6px; }
+            .gallery-photo-cell { border-radius: 8px; }
             .gallery-header { padding: 12px 16px; }
-            .gallery-content { padding: 12px 0 48px; }
         }
 
         /* ── Booking Card ── */
@@ -514,43 +521,18 @@
                 <div class="w-10"></div>
             </div>
 
-            {{-- Grille scrollable style Airbnb : 1 grande, puis paires côte à côte --}}
-            <div class="gallery-content">
-                @php
-                    $photosList = $photos->values();
-                    $total = $photosList->count();
-                    $i = 0;
-                @endphp
-                @while ($i < $total)
-                    @if ($i % 3 === 0)
-                        {{-- Photo pleine largeur --}}
-                        <div class="gallery-row-single">
-                            <img src="{{ storage_url($photosList[$i]->path) }}"
-                                alt="{{ $residence->title }} {{ $i + 1 }}"
-                                loading="{{ $i === 0 ? 'eager' : 'lazy' }}">
+            {{-- Layout : titre section à gauche (sticky), grille 2 colonnes à droite --}}
+            <div class="gallery-body">
+                <div class="gallery-section-title">{{ $residence->title }}</div>
+                <div class="gallery-grid">
+                    @foreach ($photos as $photo)
+                        <div class="gallery-photo-cell">
+                            <img src="{{ storage_url($photo->path) }}"
+                                alt="{{ $residence->title }} {{ $loop->iteration }}"
+                                loading="{{ $loop->first ? 'eager' : 'lazy' }}">
                         </div>
-                        @php $i++; @endphp
-                    @else
-                        {{-- Paire côte à côte --}}
-                        <div class="gallery-row-double">
-                            <div class="gallery-photo-cell">
-                                <img src="{{ storage_url($photosList[$i]->path) }}"
-                                    alt="{{ $residence->title }} {{ $i + 1 }}"
-                                    loading="lazy">
-                            </div>
-                            @if ($i + 1 < $total)
-                                <div class="gallery-photo-cell">
-                                    <img src="{{ storage_url($photosList[$i + 1]->path) }}"
-                                        alt="{{ $residence->title }} {{ $i + 2 }}"
-                                        loading="lazy">
-                                </div>
-                            @else
-                                <div class="gallery-photo-cell bg-gray-100"></div>
-                            @endif
-                        </div>
-                        @php $i += 2; @endphp
-                    @endif
-                @endwhile
+                    @endforeach
+                </div>
             </div>
         </dialog>
 
