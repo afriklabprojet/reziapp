@@ -578,6 +578,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Verify QR (accessible without auth so owner sees login button if not logged in)
 Route::get('/checkin/verify/{token}', [\App\Http\Controllers\DigitalCheckinController::class, 'verify'])
+    ->middleware(['throttle:30,1'])
     ->name('checkin.verify');
 
 // Confirm check-in (POST, requires auth)
