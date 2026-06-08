@@ -559,8 +559,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Sprint 3 — Modification de réservation post-booking
         Route::get('/{booking}/modify', [App\Http\Controllers\BookingModificationController::class, 'create'])->name('modify');
         Route::post('/{booking}/modify', [App\Http\Controllers\BookingModificationController::class, 'store'])->name('modify.store');
+
+        // Digital check-in (guest side)
+        Route::get('/{booking}/checkin', [\App\Http\Controllers\DigitalCheckinController::class, 'show'])
+            ->name('checkin');
     });
 });
+
+/*
+|--------------------------------------------------------------------------
+| Digital Check-in QR Verification (owner scan)
+|--------------------------------------------------------------------------
+*/
+
+// Verify QR (accessible without auth so owner sees login button if not logged in)
+Route::get('/checkin/verify/{token}', [\App\Http\Controllers\DigitalCheckinController::class, 'verify'])
+    ->name('checkin.verify');
+
+// Confirm check-in (POST, requires auth)
+Route::post('/checkin/confirm/{token}', [\App\Http\Controllers\DigitalCheckinController::class, 'confirm'])
+    ->middleware(['auth'])
+    ->name('checkin.confirm');
 
 // Routes propriétaire pour les réservations
 Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
