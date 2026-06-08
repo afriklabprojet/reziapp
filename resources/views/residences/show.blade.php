@@ -573,7 +573,7 @@
                             @else
                                 <div
                                     class="w-14 h-14 rounded-full bg-gray-900 flex items-center justify-center text-white text-xl font-bold">
-                                    H
+                                    {{ substr($residence->owner->name ?? 'H', 0, 1) }}
                                 </div>
                             @endif
                             @if ($residence->owner?->identity_verified)
@@ -1316,17 +1316,44 @@
                             </div>
                             <div>
                                 <h3 class="font-semibold text-gray-900 mb-3">Santé et sécurité</h3>
-                                <ul class="space-y-3 text-sm text-gray-600">
-                                    <li>Détecteur de fumée</li>
-                                    <li>Détecteur de monoxyde de carbone</li>
-                                    <li>Trousse de premiers secours</li>
-                                </ul>
+                                @php
+                                    $safetyKeywords = ['fumée', 'monoxyde', 'premiers secours', 'extincteur', 'sécurité', 'safety', 'smoke', 'carbon'];
+                                    $safetyAmenities = $residence->amenities->filter(function ($a) use ($safetyKeywords) {
+                                        foreach ($safetyKeywords as $kw) {
+                                            if (stripos($a->name ?? '', $kw) !== false) return true;
+                                        }
+                                        return false;
+                                    });
+                                @endphp
+                                @if ($safetyAmenities->isNotEmpty())
+                                    <ul class="space-y-3 text-sm text-gray-600">
+                                        @foreach ($safetyAmenities as $sa)
+                                            <li>{{ $sa->name }}</li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <p class="text-sm text-gray-400">Informations non renseignées</p>
+                                @endif
                             </div>
                             <div>
                                 <h3 class="font-semibold text-gray-900 mb-3">Conditions d'annulation</h3>
+                                @php
+                                    $cancelPolicy ??= null;
+                                    $cancelLabel ??= $residence->cancellation_policy;
+                                    $isFlex48 ??= false;
+                                @endphp
                                 <ul class="space-y-3 text-sm text-gray-600">
-                                    <li>Gratuite pendant 48h</li>
-                                    <li>Consultez les détails complets de la politique d'annulation</li>
+                                    @if ($cancelLabel)
+                                        <li>
+                                            @if ($isFlex48)
+                                                Annulation gratuite jusqu'à 48h avant l'arrivée
+                                            @else
+                                                {{ $cancelLabel }}
+                                            @endif
+                                        </li>
+                                    @else
+                                        <li>Consultez les détails complets de la politique d'annulation</li>
+                                    @endif
                                 </ul>
                             </div>
                         </div>
