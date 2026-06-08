@@ -110,11 +110,12 @@ class SendNewsletterCampaign implements ShouldQueue
         $cards = '';
         foreach ($residences as $residence) {
             $photoUrl = $residence->primaryPhoto?->url ?? $appUrl.'/images/placeholder.jpg';
-            $price = $residence->price_per_day > 0
-                ? number_format($residence->price_per_day, 0, ',', ' ').' FCFA/j'
-                : ($residence->price_per_month > 0
-                    ? number_format($residence->price_per_month, 0, ',', ' ').' FCFA/mois'
-                    : 'Prix sur demande');
+            $dailyPrice = $residence->price_per_day > 0
+                ? $residence->price_per_day
+                : ($residence->price_per_month > 0 ? round($residence->price_per_month / 30) : 0);
+            $price = $dailyPrice > 0
+                ? number_format($dailyPrice, 0, ',', ' ').' FCFA/j'
+                : 'Prix sur demande';
             $url = $appUrl.'/residences/'.$residence->id;
             $commune = $residence->commune ?? 'Abidjan';
             $title = htmlspecialchars($residence->title ?? $residence->name ?? 'Résidence');
