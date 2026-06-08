@@ -127,7 +127,7 @@
 
 {{-- Structured Data / JSON-LD --}}
 <script type="application/ld+json" nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
-{!! json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+{!! json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_HEX_TAG) !!}
 </script>
 
 {{-- Breadcrumb Schema --}}
@@ -142,7 +142,7 @@
         'name' => $crumb['name'],
         'item' => $crumb['url'],
     ])->values()->toArray(),
-], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_HEX_TAG) !!}
 </script>
 @endif
 
@@ -172,7 +172,7 @@
         config('rezi.social.instagram'),
         config('rezi.social.twitter'),
     ])),
-], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_HEX_TAG) !!}
 </script>
 @endif
 
@@ -190,7 +190,7 @@
             'text' => $faq['answer'],
         ],
     ])->values()->toArray(),
-], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_HEX_TAG) !!}
 </script>
 @endif
 
