@@ -153,6 +153,22 @@
                         </div>
                     </div>
 
+                    <!-- Reçu de location (réservations terminées) -->
+                    @if ($booking->status === 'completed')
+                        <div class="bg-white rounded-xl shadow-sm p-6">
+                            <h3 class="font-semibold text-gray-900 mb-4">Documents</h3>
+                            <div class="flex flex-wrap gap-3">
+                                <a href="{{ route('bookings.receipt.download', $booking) }}"
+                                   class="inline-flex items-center gap-2 rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                    </svg>
+                                    Télécharger le reçu
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+
                     <!-- Politique d'annulation -->
                     <div class="bg-white rounded-xl shadow-sm p-6">
                         <h3 class="font-semibold text-gray-900 mb-3">Politique d'annulation</h3>
