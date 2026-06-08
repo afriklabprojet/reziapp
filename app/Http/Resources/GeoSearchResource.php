@@ -25,8 +25,8 @@ class GeoSearchResource extends JsonResource
             'title' => $this->name,
 
             // Prix
-            'price' => (float) $this->price_per_month,
-            'price_formatted' => number_format($this->price_per_month, 0, ',', ' ').' FCFA/mois',
+            'price' => $this->price,
+            'price_formatted' => number_format($this->price, 0, ',', ' ').' FCFA/jour',
 
             // Localisation
             'location' => [
