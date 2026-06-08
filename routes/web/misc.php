@@ -578,7 +578,7 @@ Route::get('/checkin/verify/{token}', [\App\Http\Controllers\DigitalCheckinContr
 
 // Confirm check-in (POST, requires auth)
 Route::post('/checkin/confirm/{token}', [\App\Http\Controllers\DigitalCheckinController::class, 'confirm'])
-    ->middleware(['auth'])
+    ->middleware(['auth', 'verified'])
     ->name('checkin.confirm');
 
 // Routes propriétaire pour les réservations
