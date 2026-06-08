@@ -158,6 +158,8 @@ class ContactController extends Controller
      */
     public function updateStatus(Request $request, Contact $contact): JsonResponse
     {
+        $this->authorize('update', $contact);
+
         $validated = $request->validate([
             'status' => ['required', 'in:viewed,responded,closed'],
         ]);
