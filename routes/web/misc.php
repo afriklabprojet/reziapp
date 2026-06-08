@@ -563,6 +563,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Digital check-in (guest side)
         Route::get('/{booking}/checkin', [\App\Http\Controllers\DigitalCheckinController::class, 'show'])
             ->name('checkin');
+
+        // Téléchargement du reçu (réservations terminées uniquement)
+        Route::get('/{booking}/receipt/download', [App\Http\Controllers\BookingController::class, 'downloadReceipt'])
+            ->name('receipt.download');
     });
 });
 
