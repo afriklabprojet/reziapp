@@ -79,22 +79,119 @@
             transform: scale(1.04);
         }
 
-        /* ── Gallery Lightbox ── */
+        /* ── Gallery Lightbox — style Airbnb ── */
         .gallery-modal {
             position: fixed;
             inset: 0;
             z-index: 9999;
-            background: rgba(0, 0, 0, 0.92);
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: stretch;
+            overflow: hidden;
+        }
+
+        /* Zone principale : occupe tout l'espace hors strip */
+        .gallery-main {
+            flex: 1;
+            min-height: 0;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Conteneur de slides — une rangée horizontale */
+        .gallery-slides {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.35s cubic-bezier(.25,.46,.45,.94);
+            will-change: transform;
+        }
+
+        .gallery-slide {
+            flex: 0 0 100%;
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .gallery-modal img {
-            max-width: 90vw;
-            max-height: 85vh;
+        .gallery-slide img {
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
-            border-radius: 8px;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        /* Strip miniatures en bas */
+        .gallery-strip {
+            flex: 0 0 auto;
+            height: 80px;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+        }
+        .gallery-strip::-webkit-scrollbar { display: none; }
+
+        .gallery-thumb {
+            flex: 0 0 auto;
+            width: 56px;
+            height: 56px;
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.2s, opacity 0.2s;
+            opacity: 0.55;
+        }
+        .gallery-thumb.active {
+            border-color: #fff;
+            opacity: 1;
+        }
+        .gallery-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Boutons nav */
+        .gallery-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s;
+            z-index: 10;
+        }
+        .gallery-nav-btn:hover { background: rgba(255,255,255,0.25); }
+        .gallery-nav-btn.prev { left: 16px; }
+        .gallery-nav-btn.next { right: 16px; }
+
+        @media (max-width: 640px) {
+            .gallery-nav-btn { width: 36px; height: 36px; }
+            .gallery-strip { height: 64px; }
+            .gallery-thumb { width: 44px; height: 44px; }
         }
 
         /* ── Booking Card ── */
@@ -409,7 +506,7 @@
                 @for ($i = $sidePhotos->count(); $i < 4; $i++)
                     <div class="photo-item bg-gray-100 hidden sm:block"></div>
                 @endfor
-                @if ($totalPhotos > 5)
+                @if ($totalPhotos > 1)
                     <button @click="openGallery(0)"
                         class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-900 border border-white/60 shadow-lg hover:bg-white transition-all duration-200 hover:scale-105 flex items-center gap-2">
                         <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
@@ -426,45 +523,84 @@
         {{-- ═══════════════════════════════════
          Gallery Lightbox Modal
     ═══════════════════════════════════ --}}
-        <dialog x-show="galleryOpen" x-transition.opacity class="gallery-modal" @keydown.escape.window="galleryOpen = false"
-            x-bind:open="galleryOpen" x-cloak aria-label="Galerie photos">
-            <button @click="galleryOpen = false"
-                class="absolute top-5 left-5 text-white bg-black/40 hover:bg-black/60 rounded-full p-2.5 transition z-10"
-                aria-label="Fermer">
-                <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <div class="absolute top-5 right-5 text-white/80 text-sm font-medium bg-black/30 px-3 py-1.5 rounded-full">
-                <span x-text="currentPhoto + 1"></span> / {{ $totalPhotos }}
+        <dialog x-show="galleryOpen"
+            x-transition:enter="transition-opacity duration-200"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition-opacity duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="gallery-modal"
+            @keydown.escape.window="closeGallery()"
+            x-bind:open="galleryOpen"
+            x-cloak
+            aria-label="Galerie photos"
+            x-ref="galleryDialog"
+            @touchstart.passive="touchStart($event)"
+            @touchmove.prevent="touchMove($event)"
+            @touchend.passive="touchEnd($event)">
+
+            {{-- Barre supérieure : fermer + compteur --}}
+            <div class="absolute top-0 left-0 right-0 flex items-center justify-between px-4 py-3 z-20">
+                <button @click="closeGallery()"
+                    class="text-white bg-black/40 hover:bg-black/70 rounded-full p-2 transition"
+                    aria-label="Fermer">
+                    <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <span class="text-white/90 text-sm font-medium bg-black/40 px-3 py-1 rounded-full tabular-nums">
+                    <span x-text="currentPhoto + 1"></span>&thinsp;/&thinsp;{{ $totalPhotos }}
+                </span>
+                <div class="w-9"></div>{{-- spacer symétrie --}}
             </div>
-            <button @click="prevPhoto()"
-                class="absolute left-4 sm:left-6 text-white bg-black/40 hover:bg-black/60 rounded-full w-10 h-10 flex items-center justify-center transition"
-                aria-label="Précédent">
-                <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                </svg>
-            </button>
-            <button @click="nextPhoto()"
-                class="absolute right-4 sm:right-6 text-white bg-black/40 hover:bg-black/60 rounded-full w-10 h-10 flex items-center justify-center transition"
-                aria-label="Suivant">
-                <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-            </button>
-            {{-- Single dynamic image (loads only current photo) --}}
-              <img alt=""
-                  x-bind:src="(photoUrls || [])[currentPhoto] || ''"
-                  x-bind:alt="'Visuel ' + (currentPhoto + 1)"
-                 x-transition:enter="transition-opacity duration-200"
-                 x-transition:enter-start="opacity-0"
-                 x-transition:enter-end="opacity-100"
-                 class="select-none max-h-full max-w-full object-contain"
-                 loading="lazy">
-           </dialog>
+
+            {{-- Zone principale avec slides --}}
+            <div class="gallery-main">
+                {{-- Slides (toutes les images côte à côte, CSS transform pour naviguer) --}}
+                <div class="gallery-slides" x-ref="slides"
+                    :style="`transform: translateX(-${currentPhoto * 100}%)`">
+                    @foreach ($photos as $photo)
+                        <div class="gallery-slide">
+                            <img src="{{ storage_url($photo->path) }}"
+                                alt="{{ $residence->title }} {{ $loop->iteration }}"
+                                loading="{{ $loop->first ? 'eager' : 'lazy' }}"
+                                draggable="false">
+                        </div>
+                    @endforeach
+                </div>
+
+                {{-- Boutons navigation gauche/droite --}}
+                <button @click="prevPhoto()" class="gallery-nav-btn prev" aria-label="Photo précédente"
+                    x-show="currentPhoto > 0">
+                    <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <button @click="nextPhoto()" class="gallery-nav-btn next" aria-label="Photo suivante"
+                    x-show="currentPhoto < totalPhotos - 1">
+                    <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
+
+            {{-- Strip miniatures en bas --}}
+            @if ($totalPhotos > 1)
+            <div class="gallery-strip" x-ref="strip">
+                @foreach ($photos as $photo)
+                    <div class="gallery-thumb"
+                        :class="{ active: currentPhoto === {{ $loop->index }} }"
+                        @click="goToPhoto({{ $loop->index }})"
+                        x-ref="thumb{{ $loop->index }}">
+                        <img src="{{ storage_url($photo->path) }}"
+                            alt="{{ $residence->title }} miniature {{ $loop->iteration }}"
+                            loading="lazy">
+                    </div>
+                @endforeach
+            </div>
+            @endif
+        </dialog>
 
         {{-- ═══════════════════════════════════
          SECTION 3 — Two-Column Layout
