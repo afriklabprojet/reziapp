@@ -278,6 +278,32 @@
                                 FCFA</span>
                         </div>
 
+                        @php
+                            $bookingPayment = $booking->payments->sortByDesc('created_at')->first();
+                            $walletUsed   = (float) ($bookingPayment?->wallet_credit_used ?? 0);
+                            $referralUsed = (float) ($bookingPayment?->referral_credit_used ?? 0);
+                        @endphp
+                        @if ($walletUsed > 0 || $referralUsed > 0)
+                            <div class="mt-3 pt-3 border-t border-gray-100 space-y-1.5">
+                                @if ($walletUsed > 0)
+                                    <div class="flex justify-between text-sm text-orange-600">
+                                        <span>Crédit wallet appliqué</span>
+                                        <span>-{{ number_format($walletUsed, 0, ',', ' ') }} FCFA</span>
+                                    </div>
+                                @endif
+                                @if ($referralUsed > 0)
+                                    <div class="flex justify-between text-sm text-green-600">
+                                        <span>Crédit parrainage appliqué</span>
+                                        <span>-{{ number_format($referralUsed, 0, ',', ' ') }} FCFA</span>
+                                    </div>
+                                @endif
+                                <div class="flex justify-between text-sm font-semibold text-gray-900 pt-1 border-t border-gray-100">
+                                    <span>Payé via mobile</span>
+                                    <span>{{ number_format(max(0, $booking->total_amount - $walletUsed - $referralUsed), 0, ',', ' ') }} FCFA</span>
+                                </div>
+                            </div>
+                        @endif
+
                         <!-- Statut paiement -->
                         <div class="mt-4 pt-4 border-t border-gray-200">
                             @if ($booking->payment_status === 'paid')
