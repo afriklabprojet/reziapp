@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Messages de l'application Rezi Studio Meublé Faya - French
+    | Messages de l'application Rezi App - French
     |--------------------------------------------------------------------------
     */
 

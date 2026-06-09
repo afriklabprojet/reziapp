@@ -81,14 +81,14 @@
             "sizes": "1280x720",
             "type": "image/png",
             "form_factor": "wide",
-            "label": "Page d'accueil Rezi Studio Meublé Faya — version desktop"
+            "label": "Page d'accueil Rezi App — version desktop"
         },
         {
             "src": "/images/screenshots/home-mobile.png",
             "sizes": "375x812",
             "type": "image/png",
             "form_factor": "narrow",
-            "label": "Page d'accueil Rezi Studio Meublé Faya — version mobile"
+            "label": "Page d'accueil Rezi App — version mobile"
         }
     ],
     "shortcuts": [
