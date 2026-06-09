@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
+use App\Contracts\NotificationInterface;
 use App\Models\Message;
 use App\Models\NotificationLog;
 use App\Models\NotificationPreference;
@@ -13,7 +16,7 @@ use Illuminate\Support\Facades\Mail;
 use Minishlink\WebPush\Subscription;
 use Minishlink\WebPush\WebPush;
 
-class NotificationService
+class NotificationService implements NotificationInterface
 {
     private const ALLOWED_PUSH_HOST_SUFFIXES = [
         'fcm.googleapis.com',
