@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
+use App\Contracts\PaymentGatewayInterface;
 use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\Payout;
@@ -13,7 +16,7 @@ use App\Services\Jeko\JekoPaymentRequestService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class JekoPaymentService
+class JekoPaymentService implements PaymentGatewayInterface
 {
     use HandlesJekoTransfers;
 
