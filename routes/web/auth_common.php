@@ -56,8 +56,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/enable', [\App\Http\Controllers\TwoFactorController::class, 'enable'])->name('enable');
         Route::delete('/disable', [\App\Http\Controllers\TwoFactorController::class, 'disable'])->name('disable');
         Route::get('/challenge', [\App\Http\Controllers\TwoFactorController::class, 'challenge'])->name('challenge');
-        Route::post('/verify', [\App\Http\Controllers\TwoFactorController::class, 'verify'])->name('verify');
-        Route::post('/verify-recovery', [\App\Http\Controllers\TwoFactorController::class, 'verifyRecovery'])->name('verify-recovery');
+        Route::post('/verify', [\App\Http\Controllers\TwoFactorController::class, 'verify'])->name('verify')->middleware('throttle:5,1');
+        Route::post('/verify-recovery', [\App\Http\Controllers\TwoFactorController::class, 'verifyRecovery'])->name('verify-recovery')->middleware('throttle:5,1');
         Route::get('/recovery-codes', [\App\Http\Controllers\TwoFactorController::class, 'showRecoveryCodes'])->name('recovery-codes');
         Route::post('/recovery-codes/confirm', [\App\Http\Controllers\TwoFactorController::class, 'confirmRecoveryCodes'])->name('recovery-codes.confirm');
         Route::post('/recovery-codes/regenerate', [\App\Http\Controllers\TwoFactorController::class, 'regenerateRecoveryCodes'])->name('recovery-codes.regenerate');
