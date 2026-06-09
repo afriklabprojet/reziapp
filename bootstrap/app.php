@@ -86,6 +86,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'ensure.owner' => \App\Http\Middleware\EnsureOwnership::class,
             'identity.verified' => \App\Http\Middleware\EnsureIdentityVerified::class,
             '2fa' => \App\Http\Middleware\EnsureTwoFactor::class,
+            '2fa.required' => \App\Http\Middleware\RequireTwoFactorForPrivilegedUsers::class,
             'audit' => \App\Http\Middleware\AuditApiActions::class,
         ]);
 
