@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\HasGeoSearch;
+use App\Models\Concerns\HasPricing;
 use App\Observers\ResidenceObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,6 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Residence extends Model
 {
     use HasFactory;
+    use HasGeoSearch;
+    use HasPricing;
     use SoftDeletes;
 
     // Type de location
@@ -184,76 +188,17 @@ class Residence extends Model
 
     // ===== ACCESSORS (compatibilité avec les vues) =====
 
-    /**
-     * Alias: $residence->title → $residence->name
-     * 110+ vues utilisent ->title au lieu de ->name
-     */
+    /** Alias: $residence->title → $residence->name — 110+ views use ->title */
     public function getTitleAttribute(): string
     {
         return $this->name ?? '';
     }
 
-    /**
-     * Alias: $residence->price_per_night → tarif journalier
-     * Retourne le prix par jour, avec fallback depuis le tarif mensuel.
-     */
-    public function getPricePerNightAttribute(): ?string
-    {
-        if ($this->price_per_day && $this->price_per_day > 0) {
-            return $this->price_per_day;
-        }
-
-        if ($this->price_per_month && $this->price_per_month > 0) {
-            return (string) round($this->price_per_month / 30);
-        }
-
-        return null;
-    }
-
-    /**
-     * $residence->price → prix d'affichage (toujours le tarif journalier)
-     * Toutes les locations sont à la journée.
-     */
-    public function getPriceAttribute(): float
-    {
-        if (($this->price_per_day ?? 0) > 0) {
-            return (float) $this->price_per_day;
-        }
-
-        if (($this->price_per_month ?? 0) > 0) {
-            return (float) round($this->price_per_month / 30);
-        }
-
-        return 0;
-    }
-
-    /**
-     * Label de période pour le prix d'affichage → toujours "jour"
-     */
-    public function getPriceLabelAttribute(): string
-    {
-        return 'jour';
-    }
-
-    /**
-     * Prix d'affichage — toujours le tarif journalier.
-     */
-    public function getDisplayPriceAttribute(): float
-    {
-        return $this->price;
-    }
-
-    /**
-     * Label du type de location (Appartement, Résidence meublée, Hôtel)
-     */
     public function getTypeLocationLabelAttribute(): string
     {
         return self::TYPES_LOCATION[$this->type_location] ?? 'Résidence meublée';
     }
 
-    /**
-     * Détermine le price_period attendu en fonction du type_location.
-     */
     public function getExpectedPricePeriodAttribute(): string
     {
         return self::TYPE_LOCATION_PRICE_MAP[$this->type_location] ?? self::PRICE_PERIOD_DAY;
@@ -626,248 +571,6 @@ class Residence extends Model
         $this->increment('contacts_count');
     }
 
-    /**
-     * Calculate distance from given coordinates using Haversine formula
-     *
-     * @param float $lat Latitude
-     * @param float $lng Longitude
-     * @return float Distance in meters
-     */
-    public function distanceFrom(float $lat, float $lng): float
-    {
-        $earthRadius = 6371000; // Earth radius in meters
-
-        $latFrom = deg2rad($lat);
-        $lngFrom = deg2rad($lng);
-        $latTo = deg2rad($this->latitude);
-        $lngTo = deg2rad($this->longitude);
-
-        $latDelta = $latTo - $latFrom;
-        $lngDelta = $lngTo - $lngFrom;
-
-        $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) +
-            cos($latFrom) * cos($latTo) * pow(sin($lngDelta / 2), 2)));
-
-        return $angle * $earthRadius;
-    }
-
-    /**
-     * Scope to find residences within radius.
-     *
-     * MySQL path (production): two-stage spatial query
-     *   1. MBRContains(<bbox POLYGON>, location)  — uses SPATIAL INDEX, eliminates ~90% of rows
-     *   2. ST_Distance_Sphere(location, <point>) <= $radius  — precise great-circle refinement
-     *
-     * SQLite path (tests): Haversine via bounding-box + whereRaw (SQLite has no spatial functions).
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param float $lat Latitude of search centre
-     * @param float $lng Longitude of search centre
-     * @param int $radius Radius in metres
-     * @param bool $sortByDistance Order results ascending by distance
-     */
-    public function scopeWithinRadius($query, float $lat, float $lng, int $radius, bool $sortByDistance = true)
-    {
-        // Bounding-box deltas in degrees
-        $latDelta = $radius / 111320;
-        $lngDelta = $radius / (111320 * cos(deg2rad($lat)));
-
-        $minLat = $lat - $latDelta;
-        $maxLat = $lat + $latDelta;
-        $minLng = $lng - $lngDelta;
-        $maxLng = $lng + $lngDelta;
-
-        $driver = $query->getConnection()->getDriverName();
-
-        if ($driver === 'sqlite') {
-            return $this->scopeWithinRadiusSqlite(
-                $query,
-                $lat,
-                $lng,
-                $radius,
-                $minLat,
-                $maxLat,
-                $minLng,
-                $maxLng,
-                $sortByDistance,
-            );
-        }
-
-        // MySQL: MBRContains drives the SPATIAL INDEX; ST_Distance_Sphere refines
-        // Use sprintf with fixed-point notation to guarantee locale-independent pure-decimal output
-        // that cannot contain SQL metacharacters regardless of PHP locale settings.
-        $bboxWkt  = sprintf(
-            'POLYGON((%.10f %.10f,%.10f %.10f,%.10f %.10f,%.10f %.10f,%.10f %.10f))',
-            $minLng,
-            $minLat,
-            $maxLng,
-            $minLat,
-            $maxLng,
-            $maxLat,
-            $minLng,
-            $maxLat,
-            $minLng,
-            $minLat,
-        );
-        $bboxExpr = "ST_GeomFromText('{$bboxWkt}', 4326)";
-        $ptExpr   = sprintf("ST_GeomFromText('POINT(%.10f %.10f)', 4326)", $lng, $lat);
-
-        $query = $query
-            ->whereRaw("MBRContains({$bboxExpr}, location)")
-            ->whereRaw("ST_Distance_Sphere(location, {$ptExpr}) <= ?", [$radius])
-            ->selectRaw("*, ST_Distance_Sphere(location, {$ptExpr}) AS distance_meters");
-
-        if ($sortByDistance) {
-            $query->orderBy('distance_meters', 'asc');
-        }
-
-        return $query;
-    }
-
-    /**
-     * SQLite fallback for scopeWithinRadius (test environment).
-     * Uses Haversine via bounding box + whereRaw — no spatial index available.
-     */
-    private function scopeWithinRadiusSqlite(
-        $query,
-        float $lat,
-        float $lng,
-        int $radius,
-        float $minLat,
-        float $maxLat,
-        float $minLng,
-        float $maxLng,
-        bool $sortByDistance,
-    ) {
-        $earthRadius = 6371000;
-        $radConst = 0.017453293;
-
-        $distanceExpr = "(
-            {$earthRadius} * acos(
-                CASE
-                    WHEN (
-                        cos({$lat} * {$radConst}) * cos(latitude * {$radConst}) *
-                        cos(longitude * {$radConst} - ({$lng}) * {$radConst}) +
-                        sin({$lat} * {$radConst}) * sin(latitude * {$radConst})
-                    ) > 1.0 THEN 1.0
-                    WHEN (
-                        cos({$lat} * {$radConst}) * cos(latitude * {$radConst}) *
-                        cos(longitude * {$radConst} - ({$lng}) * {$radConst}) +
-                        sin({$lat} * {$radConst}) * sin(latitude * {$radConst})
-                    ) < -1.0 THEN -1.0
-                    ELSE (
-                        cos({$lat} * {$radConst}) * cos(latitude * {$radConst}) *
-                        cos(longitude * {$radConst} - ({$lng}) * {$radConst}) +
-                        sin({$lat} * {$radConst}) * sin(latitude * {$radConst})
-                    )
-                END
-            )
-        )";
-
-        $query = $query
-            ->whereBetween('latitude', [$minLat, $maxLat])
-            ->whereBetween('longitude', [$minLng, $maxLng])
-            ->whereRaw("{$distanceExpr} <= ?", [$radius])
-            ->selectRaw("*, {$distanceExpr} AS distance_meters");
-
-        if ($sortByDistance) {
-            $query->orderBy('distance_meters', 'asc');
-        }
-
-        return $query;
-    }
-
-    /**
-     * Scope to find residences sorted by distance only (without radius limit).
-     *
-     * MySQL path: MBRContains on a 50 km bounding box drives the SPATIAL INDEX,
-     * then ST_Distance_Sphere orders the candidate set.
-     *
-     * SQLite path: Haversine with no bounding-box pre-filter (full scan acceptable
-     * in test environments with small datasets).
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param float $lat Latitude of search centre
-     * @param float $lng Longitude of search centre
-     * @param int $limit Maximum number of results
-     */
-    public function scopeNearestTo($query, float $lat, float $lng, int $limit = 20)
-    {
-        $driver = $query->getConnection()->getDriverName();
-
-        if ($driver === 'sqlite') {
-            return $this->scopeNearestToSqlite($query, $lat, $lng, $limit);
-        }
-
-        // Use a 50 km bounding box so the SPATIAL INDEX prunes distant rows
-        $nearbyRadiusMeters = 50000;
-        $latDelta = $nearbyRadiusMeters / 111320;
-        $lngDelta = $nearbyRadiusMeters / (111320 * cos(deg2rad($lat)));
-
-        $minLat = $lat - $latDelta;
-        $maxLat = $lat + $latDelta;
-        $minLng = $lng - $lngDelta;
-        $maxLng = $lng + $lngDelta;
-
-        $bboxWkt  = sprintf(
-            'POLYGON((%.10f %.10f,%.10f %.10f,%.10f %.10f,%.10f %.10f,%.10f %.10f))',
-            $minLng,
-            $minLat,
-            $maxLng,
-            $minLat,
-            $maxLng,
-            $maxLat,
-            $minLng,
-            $maxLat,
-            $minLng,
-            $minLat,
-        );
-        $bboxExpr = "ST_GeomFromText('{$bboxWkt}', 4326)";
-        $ptExpr   = sprintf("ST_GeomFromText('POINT(%.10f %.10f)', 4326)", $lng, $lat);
-
-        return $query
-            ->whereRaw("MBRContains({$bboxExpr}, location)")
-            ->selectRaw("*, ST_Distance_Sphere(location, {$ptExpr}) AS distance_meters")
-            ->orderBy('distance_meters', 'asc')
-            ->limit($limit);
-    }
-
-    /**
-     * SQLite fallback for scopeNearestTo (test environment).
-     */
-    private function scopeNearestToSqlite($query, float $lat, float $lng, int $limit)
-    {
-        $earthRadius = 6371000;
-        $radConst = 0.017453293;
-
-        $distanceExpr = "(
-            {$earthRadius} * acos(
-                CASE
-                    WHEN (
-                        cos({$lat} * {$radConst}) * cos(latitude * {$radConst}) *
-                        cos(longitude * {$radConst} - ({$lng}) * {$radConst}) +
-                        sin({$lat} * {$radConst}) * sin(latitude * {$radConst})
-                    ) > 1.0 THEN 1.0
-                    WHEN (
-                        cos({$lat} * {$radConst}) * cos(latitude * {$radConst}) *
-                        cos(longitude * {$radConst} - ({$lng}) * {$radConst}) +
-                        sin({$lat} * {$radConst}) * sin(latitude * {$radConst})
-                    ) < -1.0 THEN -1.0
-                    ELSE (
-                        cos({$lat} * {$radConst}) * cos(latitude * {$radConst}) *
-                        cos(longitude * {$radConst} - ({$lng}) * {$radConst}) +
-                        sin({$lat} * {$radConst}) * sin(latitude * {$radConst})
-                    )
-                END
-            )
-        )";
-
-        return $query
-            ->selectRaw("*, {$distanceExpr} AS distance_meters")
-            ->orderBy('distance_meters', 'asc')
-            ->limit($limit);
-    }
-
     // ==========================================
     // MARKETING RELATIONS
     // ==========================================
@@ -912,39 +615,4 @@ class Residence extends Model
         return $this->sponsoredListings()->active()->exists();
     }
 
-    /**
-     * Obtenir le meilleur prix avec promotion
-     */
-    public function getBestPrice(): array
-    {
-        $originalPrice = $this->price_per_day;
-        $activePromotion = $this->activePromotions()->first();
-
-        if (!$activePromotion) {
-            return [
-                'original' => $originalPrice,
-                'final' => $originalPrice,
-                'discount' => 0,
-                'discount_percent' => 0,
-                'promotion' => null,
-            ];
-        }
-
-        $discount = $activePromotion->discount_type === 'percentage'
-            ? ($originalPrice * $activePromotion->discount_value / 100)
-            : $activePromotion->discount_value;
-
-        $finalPrice = max(0, $originalPrice - $discount);
-        $discountPercent = $originalPrice > 0
-            ? round(($discount / $originalPrice) * 100)
-            : 0;
-
-        return [
-            'original' => $originalPrice,
-            'final' => $finalPrice,
-            'discount' => $discount,
-            'discount_percent' => $discountPercent,
-            'promotion' => $activePromotion,
-        ];
-    }
 }
