@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa'])
+Route::middleware(['auth', 'verified', 'role:owner,admin', '2fa.required', '2fa'])
     ->prefix('owner')
     ->name('owner.')
     ->group(function () {
