@@ -322,6 +322,7 @@ class ChatService
                 $conversation->update(['unread_owner_count' => 0, 'owner_last_seen_at' => now()]);
             }
 
+            $user->invalidateUnreadMessagesCache();
             $this->broadcastMessagesRead($conversation, $user);
         }
 

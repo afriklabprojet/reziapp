@@ -13,6 +13,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -456,17 +457,28 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     }
 
     /**
-     * Nombre de messages non lus
+     * Nombre de messages non lus (mis en cache 60s par utilisateur).
      */
     public function unreadMessagesCount(): int
     {
-        return Message::whereHas('conversation', function ($query) {
-            $query->where('user_id', $this->id)
-                ->orWhere('owner_id', $this->id);
-        })
-        ->where('sender_id', '!=', $this->id)
-        ->whereNull('read_at')
-        ->count();
+        return Cache::remember("unread_msgs_{$this->id}", 60, function () {
+            return Message::whereHas('conversation', function ($query) {
+                $query->where('user_id', $this->id)
+                    ->orWhere('owner_id', $this->id);
+            })
+            ->where('sender_id', '!=', $this->id)
+            ->whereNull('read_at')
+            ->count();
+        });
+    }
+
+    /**
+     * Invalide le cache du compteur de messages non lus.
+     * À appeler après lecture ou envoi d'un message.
+     */
+    public function invalidateUnreadMessagesCache(): void
+    {
+        Cache::forget("unread_msgs_{$this->id}");
     }
 
     /**
