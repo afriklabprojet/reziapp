@@ -5,4 +5,4 @@ Disallow: /owner/
 Disallow: /client/
 Disallow: /api/
 
-Sitemap: https://rezi.ci/sitemap.xml
+Sitemap: https://reziapp.ci/sitemap.xml
