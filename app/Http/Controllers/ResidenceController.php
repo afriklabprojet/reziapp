@@ -156,8 +156,8 @@ class ResidenceController extends Controller
             },
         );
 
-        $priceMin = (int) ($residences->min('price') ?: 0);
-        $priceMax = (int) ($residences->max('price') ?: 500000);
+        $priceMin = (int) ($residences->min('price_per_day') ?: 0);
+        $priceMax = (int) ($residences->max('price_per_day') ?: 500000);
         $types = $residences->pluck('type')->unique()->filter()->sort()->values();
 
         return view('residences.map', compact('residences', 'communes', 'priceMin', 'priceMax', 'types'));
