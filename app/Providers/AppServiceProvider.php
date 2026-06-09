@@ -34,6 +34,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -56,6 +57,7 @@ class AppServiceProvider extends ServiceProvider
     {
         if ($this->app->environment('production')) {
             URL::forceScheme('https');
+            $this->validateProductionConfig();
         }
 
         $this->registerPolicies();
@@ -63,6 +65,22 @@ class AppServiceProvider extends ServiceProvider
         $this->configureRateLimiting();
         $this->registerViewComposers();
         $this->registerEventListeners();
+    }
+
+    private function validateProductionConfig(): void
+    {
+        $missing = [];
+
+        if (empty(config('sentry.dsn'))) {
+            $missing[] = 'SENTRY_LARAVEL_DSN';
+        }
+        if (empty(config('services.jeko.secret'))) {
+            $missing[] = 'JEKO_SECRET';
+        }
+
+        if ($missing !== []) {
+            Log::channel('critical')->warning('Production config missing', ['keys' => $missing]);
+        }
     }
 
     /**
