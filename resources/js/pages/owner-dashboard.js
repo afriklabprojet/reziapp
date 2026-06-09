@@ -163,6 +163,16 @@ export default function ownerDashboard(config = {}) {
             }
         },
 
+        toggleReply(reviewId) {
+            if (this.replyingTo === reviewId) {
+                this.replyingTo = null;
+            } else {
+                this.replyingTo = reviewId;
+                this.replyText = '';
+                this.$nextTick(() => this.$refs['replyInput' + reviewId]?.focus());
+            }
+        },
+
         async submitReviewReply(reviewId) {
             if (!this.replyText.trim()) return;
             this.replySending = true;

@@ -3,7 +3,7 @@
 @section('title', 'Mon Espace - Rezi App')
 
 @section('client-content')
-    <div x-data="{ loaded: false }" x-init="$nextTick(() => { setTimeout(() => loaded = true, 80) })">
+    <div x-data="clientDashboard()" x-init="init()">
 
         {{-- ============================== SKELETON LOADER (Airbnb-style shimmer) ============================== --}}
         <div x-show="!loaded" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"

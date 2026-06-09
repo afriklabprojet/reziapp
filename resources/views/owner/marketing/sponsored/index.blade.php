@@ -196,7 +196,7 @@
 
         {{-- ====== Success/Error messages ====== --}}
         @if (session('success'))
-            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)" x-transition
+            <div x-data="autoHide(4000)" x-show="show" x-transition
                 class="flex items-center gap-3 px-4 py-3 bg-green-50 border border-green-200 rounded-xl text-sm text-green-700">
                 <svg class="w-5 h-5 shrink-0 text-green-500" fill="none" stroke="currentColor" stroke-width="2"
                     viewBox="0 0 24 24">
@@ -207,7 +207,7 @@
             </div>
         @endif
         @if (session('error'))
-            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" x-transition
+            <div x-data="autoHide(5000)" x-show="show" x-transition
                 class="flex items-center gap-3 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
                 <svg class="w-5 h-5 shrink-0 text-red-500" fill="none" stroke="currentColor" stroke-width="2"
                     viewBox="0 0 24 24">

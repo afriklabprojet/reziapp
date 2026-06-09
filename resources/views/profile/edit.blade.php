@@ -207,8 +207,7 @@
                         Enregistrer
                     </button>
                     @if (session('status') === 'profile-updated')
-                        <span class="text-sm text-green-600 flex items-center" x-data="{ show: true }" x-show="show"
-                            x-init="setTimeout(() => show = false, 3000)">
+                        <span class="text-sm text-green-600 flex items-center" x-data="autoHide(3000)" x-show="show">
                             <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd"
                                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -273,8 +272,7 @@
                         Modifier le mot de passe
                     </button>
                     @if (session('status') === 'password-updated')
-                        <span class="text-sm text-green-600 flex items-center" x-data="{ show: true }" x-show="show"
-                            x-init="setTimeout(() => show = false, 3000)">
+                        <span class="text-sm text-green-600 flex items-center" x-data="autoHide(3000)" x-show="show">
                             <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd"
                                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"

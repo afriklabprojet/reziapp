@@ -19,7 +19,7 @@
 
         {{-- Success message --}}
         @if (session('success'))
-            <div x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 4000)"
+            <div x-data="autoHide(4000)" x-show="show" x-transition
                 class="mb-6 bg-green-50 border border-green-200 rounded-2xl p-4 flex items-center gap-3">
                 <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

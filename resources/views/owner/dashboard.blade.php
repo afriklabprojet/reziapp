@@ -1016,7 +1016,7 @@
                                                     @else
                                                         {{-- Inline reply toggle --}}
                                                         <button
-                                                            @click="replyingTo === {{ $review->id }} ? replyingTo = null : (replyingTo = {{ $review->id }}, replyText = '', $nextTick(() => $refs.replyInput{{ $review->id }}?.focus()))"
+                                                            @click="toggleReply({{ $review->id }})"
                                                             class="inline-flex items-center text-[11px] text-[#CC5A00] font-medium mt-1.5 gap-0.5 hover:text-[#A34700] transition-colors">
                                                             <svg class="w-3 h-3" fill="none" stroke="currentColor"
                                                                 stroke-width="2" viewBox="0 0 24 24">

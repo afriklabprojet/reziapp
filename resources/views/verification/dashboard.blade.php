@@ -21,7 +21,7 @@
 
         {{-- ============================== FLASH MESSAGES ============================== --}}
         @if (session('success'))
-            <div x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 5000)"
+            <div x-data="autoHide(5000)" x-show="show" x-transition
                 class="flex items-center gap-3 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl">
                 <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd"
@@ -53,7 +53,7 @@
             </div>
         @endif
         @if (session('status') === 'verification-link-sent')
-            <div x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 5000)"
+            <div x-data="autoHide(5000)" x-show="show" x-transition
                 class="flex items-center gap-3 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl">
                 <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd"
@@ -70,7 +70,7 @@
             </div>
         @endif
         @if (session('info'))
-            <div x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 5000)"
+            <div x-data="autoHide(5000)" x-show="show" x-transition
                 class="flex items-center gap-3 px-4 py-3 bg-blue-50 border border-blue-200 rounded-xl">
                 <svg class="w-5 h-5 text-blue-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd"

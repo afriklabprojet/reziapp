@@ -138,6 +138,18 @@ Alpine.data('themeToggle', () => themeToggle());
 Alpine.data('newsletterForm', (subscribeUrl, csrfToken) => newsletterForm(subscribeUrl, csrfToken));
 Alpine.data('navigationState', (threshold = 8) => navigationState(Number(threshold)));
 Alpine.data('scrollReveal', (threshold = 400) => scrollReveal(Number(threshold)));
+Alpine.data('autoHide', (delay = 4000) => ({
+    show: true,
+    init() { setTimeout(() => { this.show = false; }, delay); },
+}));
+Alpine.data('clientDashboard', () => ({
+    loaded: false,
+    init() {
+        this.$nextTick(() => {
+            setTimeout(() => { this.loaded = true; }, 80);
+        });
+    },
+}));
 
 // Expose globals needed by some pages
 globalThis.initBookingStore = initBookingStore;
