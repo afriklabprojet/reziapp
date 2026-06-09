@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Notifications\LoyaltyTierUpgraded;
+use App\Models\Concerns\HasLoyalty;
+use App\Models\Concerns\HasRoles;
+use App\Models\Concerns\HasVerification;
+use App\Models\Concerns\HasWithdrawalPin;
 use App\Notifications\ResetPasswordFr;
 use App\Notifications\VerifyEmailFr;
 use Filament\Models\Contracts\FilamentUser;
@@ -14,7 +17,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
@@ -22,6 +24,10 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens;
     use HasFactory;
+    use HasLoyalty;
+    use HasRoles;
+    use HasVerification;
+    use HasWithdrawalPin;
     use Notifiable;
 
     /**
@@ -116,159 +122,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
             'loyalty_total_spent' => 'decimal:2',
             'loyalty_tier_upgraded_at' => 'datetime',
         ];
-    }
-
-    // ===== LOYAUTÉ =====
-
-    /** Définition des paliers de fidélité */
-    public const LOYALTY_TIERS = [
-        'standard'  => ['label' => 'Standard', 'color' => 'gray',   'min_bookings' => 0,  'discount' => 0,  'icon' => '⬜'],
-        'bronze'    => ['label' => 'Bronze',   'color' => 'amber',  'min_bookings' => 3,  'discount' => 5,  'icon' => '🥉'],
-        'silver'    => ['label' => 'Silver',   'color' => 'slate',  'min_bookings' => 8,  'discount' => 10, 'icon' => '🥈'],
-        'gold'      => ['label' => 'Gold',     'color' => 'yellow', 'min_bookings' => 20, 'discount' => 15, 'icon' => '🥇'],
-        'platinum'  => ['label' => 'Platinum', 'color' => 'violet', 'min_bookings' => 50, 'discount' => 20, 'icon' => '💎'],
-    ];
-
-    /** Pourcentage de réduction lié au tier actuel */
-    public function getLoyaltyDiscountAttribute(): int
-    {
-        return self::LOYALTY_TIERS[$this->loyalty_tier ?? 'standard']['discount'] ?? 0;
-    }
-
-    /** Label lisible du tier */
-    public function getLoyaltyTierLabelAttribute(): string
-    {
-        return self::LOYALTY_TIERS[$this->loyalty_tier ?? 'standard']['label'] ?? 'Standard';
-    }
-
-    /** Icône du tier */
-    public function getLoyaltyTierIconAttribute(): string
-    {
-        return self::LOYALTY_TIERS[$this->loyalty_tier ?? 'standard']['icon'] ?? '⬜';
-    }
-
-    /** Recalcule et met à jour le tier de fidélité */
-    public function recalculateLoyaltyTier(): void
-    {
-        $bookings = $this->loyalty_bookings_count ?? 0;
-        $newTier  = 'standard';
-
-        foreach (array_reverse(self::LOYALTY_TIERS) as $tier => $config) {
-            if ($bookings >= $config['min_bookings']) {
-                $newTier = $tier;
-                break;
-            }
-        }
-
-        if ($newTier !== $this->loyalty_tier) {
-            $oldTier = $this->loyalty_tier ?? 'standard';
-            $this->loyalty_tier = $newTier;
-            $this->loyalty_tier_upgraded_at = now();
-            $this->save();
-
-            // Notifier l'utilisateur de son passage au palier supérieur
-            // (uniquement si upgrade réel, pas downgrade)
-            $tierKeys = array_keys(self::LOYALTY_TIERS);
-            $oldIdx   = array_search($oldTier, $tierKeys, true);
-            $newIdx   = array_search($newTier, $tierKeys, true);
-
-            if ($newIdx !== false && $oldIdx !== false && $newIdx > $oldIdx) {
-                $this->notify(new LoyaltyTierUpgraded($newTier, $oldTier));
-            }
-        }
-    }
-
-    /**
-     * Check if user is admin (inclut super_admin qui hérite de tous les droits admin)
-     */
-    public function isAdmin(): bool
-    {
-        return in_array($this->role, ['admin', 'super_admin'], true);
-    }
-
-    /**
-     * Check if user is super admin (accès total, peut gérer les admins)
-     */
-    public function isSuperAdmin(): bool
-    {
-        return $this->role === 'super_admin';
-    }
-
-    /**
-     * Check if user is owner
-     */
-    public function isOwner(): bool
-    {
-        return $this->role === 'owner';
-    }
-
-    /**
-     * Check if user is regular user
-     */
-    public function isUser(): bool
-    {
-        return $this->role === 'user';
-    }
-
-    /**
-     * Check if user has specific role
-     */
-    public function hasRole(string $role): bool
-    {
-        return $this->role === $role;
-    }
-
-    /**
-     * Check if user has any of the given roles
-     */
-    public function hasAnyRole(array $roles): bool
-    {
-        return in_array($this->role, $roles, true);
-    }
-
-    /**
-     * Check if user is a guest (temporary account)
-     */
-    public function isGuest(): bool
-    {
-        return (bool) $this->is_guest;
-    }
-
-    /**
-     * Create or find a guest user by email
-     */
-    public static function createOrFindGuest(string $email, string $name, ?string $phone = null): self
-    {
-        $user = self::where('email', $email)->first();
-
-        if ($user) {
-            // If existing user is not a guest, return them
-            if (!$user->is_guest) {
-                return $user;
-            }
-            // Update guest info
-            $user->update([
-                'name' => $name,
-                'phone' => $phone ?? $user->phone,
-            ]);
-
-            return $user;
-        }
-
-        // Create new guest user
-        $guest = self::create([
-            'name' => $name,
-            'email' => $email,
-            'phone' => $phone,
-            'password' => bcrypt(Str::random(32)),
-        ]);
-        // Champs protégés : assignment explicite
-        $guest->role = 'user';
-        $guest->is_guest = true;
-        $guest->guest_token = Str::random(64);
-        $guest->save();
-
-        return $guest;
     }
 
     /**
@@ -775,198 +628,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     public function emergencyContacts()
     {
         return $this->hasMany(EmergencyContact::class);
-    }
-
-    /**
-     * Calculer le prochain niveau de vérification.
-     * Utilisé par IdentityVerification::approve() pour MAJ automatique.
-     */
-    public function getNextVerificationLevel(): string
-    {
-        $points = 0;
-
-        if ($this->email_verified_at || $this->email_verified) {
-            $points += 10;
-        }
-        if ($this->phone_verified) {
-            $points += 20;
-        }
-        // +40 pour identité (sera true après approve)
-        $points += 40;
-
-        if ($this->profile_photo || $this->avatar) {
-            $points += 5;
-        }
-        if ($this->created_at && $this->created_at->isBefore(now()->subMonths(6))) {
-            $points += 10;
-        }
-        if ($this->reviews()->where('rating', '>=', 4)->count() >= 3) {
-            $points += 15;
-        }
-
-        $points = min($points, 100);
-
-        return match (true) {
-            $points >= 80 => 'trusted',
-            $points >= 60 => 'premium',
-            $points >= 40 => 'standard',
-            $points >= 20 => 'basic',
-            default => 'none',
-        };
-    }
-
-    /**
-     * Vérifier si l'identité est vérifiée et valide
-     */
-    public function isIdentityVerified(): bool
-    {
-        return (bool) $this->identity_verified;
-    }
-
-    /**
-     * Vérifier si le téléphone est vérifié
-     */
-    public function isPhoneVerified(): bool
-    {
-        return (bool) $this->phone_verified;
-    }
-
-    /**
-     * Vérifier si l'email est vérifié
-     */
-    public function isEmailVerified(): bool
-    {
-        return $this->email_verified_at !== null || (bool) $this->email_verified;
-    }
-
-    /**
-     * Vérifier si le profil KYC est complet (identité + téléphone + email)
-     */
-    public function isFullyVerified(): bool
-    {
-        return $this->isIdentityVerified()
-            && $this->isPhoneVerified()
-            && $this->isEmailVerified();
-    }
-
-    /**
-     * Vérifier si l'utilisateur est suspendu
-     */
-    public function isSuspended(): bool
-    {
-        if (! $this->is_suspended) {
-            return false;
-        }
-
-        // Suspension temporaire expirée ?
-        if ($this->suspended_until && $this->suspended_until->isPast()) {
-            $this->update([
-                'is_suspended' => false,
-                'suspended_until' => null,
-                'suspension_reason' => null,
-            ]);
-
-            return false;
-        }
-
-        return true;
-    }
-
-    // ===== WITHDRAWAL PIN SECURITY =====
-
-    /**
-     * Vérifier si le propriétaire a configuré un PIN de retrait.
-     */
-    public function hasWithdrawalPin(): bool
-    {
-        return ! empty($this->withdrawal_pin);
-    }
-
-    /**
-     * Définir ou mettre à jour le PIN de retrait (hashé).
-     */
-    public function setWithdrawalPin(string $pin): void
-    {
-        $this->update([
-            'withdrawal_pin' => \Illuminate\Support\Facades\Hash::make($pin),
-            'withdrawal_pin_set_at' => now(),
-            'withdrawal_pin_attempts' => 0,
-            'withdrawal_pin_locked_until' => null,
-        ]);
-    }
-
-    /**
-     * Vérifier si le PIN de retrait est correct.
-     */
-    public function verifyWithdrawalPin(string $pin): bool
-    {
-        // Vérifier si le compte est verrouillé
-        if ($this->isWithdrawalPinLocked()) {
-            return false;
-        }
-
-        if (\Illuminate\Support\Facades\Hash::check($pin, $this->withdrawal_pin)) {
-            // Réinitialiser les tentatives après succès
-            $this->update([
-                'withdrawal_pin_attempts' => 0,
-                'withdrawal_pin_locked_until' => null,
-            ]);
-
-            return true;
-        }
-
-        // Incrémenter les tentatives échouées
-        $attempts = $this->withdrawal_pin_attempts + 1;
-        $data = ['withdrawal_pin_attempts' => $attempts];
-
-        // Verrouiller après 5 tentatives échouées (30 min)
-        if ($attempts >= 5) {
-            $data['withdrawal_pin_locked_until'] = now()->addMinutes(30);
-            \Illuminate\Support\Facades\Log::warning('Withdrawal PIN locked', [
-                'user_id' => $this->id,
-                'attempts' => $attempts,
-                'locked_until' => $data['withdrawal_pin_locked_until'],
-                'ip' => request()->ip(),
-            ]);
-        }
-
-        $this->update($data);
-
-        return false;
-    }
-
-    /**
-     * Vérifier si les retraits sont verrouillés (trop de tentatives de PIN).
-     */
-    public function isWithdrawalPinLocked(): bool
-    {
-        if (! $this->withdrawal_pin_locked_until) {
-            return false;
-        }
-
-        if ($this->withdrawal_pin_locked_until->isPast()) {
-            // Déverrouiller automatiquement
-            $this->update([
-                'withdrawal_pin_attempts' => 0,
-                'withdrawal_pin_locked_until' => null,
-            ]);
-
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Minutes restantes avant déverrouillage du PIN.
-     */
-    public function withdrawalPinLockRemainingMinutes(): int
-    {
-        if (! $this->withdrawal_pin_locked_until || $this->withdrawal_pin_locked_until->isPast()) {
-            return 0;
-        }
-
-        return (int) now()->diffInMinutes($this->withdrawal_pin_locked_until, false);
     }
 
     public function sendEmailVerificationNotification(): void
