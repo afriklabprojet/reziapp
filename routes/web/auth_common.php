@@ -45,6 +45,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Mes contacts envoyés
     Route::get('/my-contacts', [ContactController::class, 'myContacts'])->name('contacts.mine');
 
+    // 2FA obligatoire — setup guidé pour owner/admin sans 2FA activé
+    Route::get('/security/setup-2fa', [\App\Http\Controllers\TwoFactorController::class, 'setup'])
+        ->name('security.setup-2fa');
+
     // Double authentification (2FA)
     Route::prefix('two-factor')->name('two-factor.')->group(function () {
         Route::get('/setup', [\App\Http\Controllers\TwoFactorController::class, 'setup'])->name('setup');
