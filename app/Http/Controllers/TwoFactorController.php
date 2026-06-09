@@ -101,7 +101,7 @@ class TwoFactorController extends Controller
         ]);
 
         session()->forget('2fa_setup_secret');
-        session(['2fa_verified' => true]);
+        session(['2fa_verified' => true, '2fa_verified_at' => time()]);
 
         // Stocker les codes en session pour affichage unique
         session(['2fa_recovery_codes_display' => $recoveryCodes]);
@@ -245,7 +245,7 @@ class TwoFactorController extends Controller
 
         // Vérifier si l'appareil est de confiance (auto-skip 2FA)
         if ($this->isTrustedDevice($user)) {
-            session(['2fa_verified' => true]);
+            session(['2fa_verified' => true, '2fa_verified_at' => time()]);
 
             return redirect()->intended(
                 $user->isOwner() ? route('owner.dashboard') : route('client.dashboard'),
@@ -286,7 +286,7 @@ class TwoFactorController extends Controller
             return back()->with('error', 'Code invalide. Vérifiez votre application d\'authentification.');
         }
 
-        session(['2fa_verified' => true]);
+        session(['2fa_verified' => true, '2fa_verified_at' => time()]);
         $user->update(['last_security_check' => now()]);
 
         // Se souvenir de cet appareil si demandé (30 jours)
@@ -351,7 +351,7 @@ class TwoFactorController extends Controller
             'last_security_check' => now(),
         ]);
 
-        session(['2fa_verified' => true]);
+        session(['2fa_verified' => true, '2fa_verified_at' => time()]);
 
         // Avertir si peu de codes restants
         $remaining = count($codes);
