@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth:sanctum', 'role:admin', 'throttle:api'])
+Route::middleware(['auth:sanctum', 'role:admin', '2fa.required', 'throttle:api'])
     ->prefix('admin')
     ->name('api.admin.')
     ->group(function () {
