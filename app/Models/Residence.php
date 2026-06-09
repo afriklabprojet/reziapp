@@ -552,17 +552,23 @@ class Residence extends Model
     }
 
     /**
-     * Scope: Par équipements (tous les équipements requis)
+     * Scope: Par équipements (tous les équipements requis doivent être présents).
+     *
+     * Remplace les N sous-requêtes EXISTS imbriquées par un seul JOIN avec HAVING,
+     * ce qui réduit la complexité de O(N×rows) à O(rows) quelle que soit la taille
+     * du tableau $amenityIds.
      */
-    public function scopeWithAmenities($query, array $amenityIds)
+    public function scopeWithAmenities($query, array $amenityIds): void
     {
-        foreach ($amenityIds as $amenityId) {
-            $query->whereHas('amenities', function ($q) use ($amenityId) {
-                $q->where('amenities.id', $amenityId);
-            });
+        if (empty($amenityIds)) {
+            return;
         }
 
-        return $query;
+        $count = count($amenityIds);
+
+        $query->whereHas('amenities', static function ($q) use ($amenityIds) {
+            $q->whereIn('amenities.id', $amenityIds);
+        }, '>=', $count);
     }
 
     /**
