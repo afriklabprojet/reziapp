@@ -93,7 +93,9 @@ class WhatsAppWebhookController extends Controller
 
         $payload = $request->all();
 
-        Log::info('WhatsApp webhook received', ['payload' => $payload]);
+        Log::info('WhatsApp webhook received', [
+            'entry_count' => count($payload['entry'] ?? []),
+        ]);
 
         try {
             // Structure du webhook Meta
@@ -237,7 +239,10 @@ class WhatsAppWebhookController extends Controller
                 $this->sendWelcomeMessage($from, $name);
             }
 
-            Log::info("WhatsApp incoming message from {$from}", ['content' => $content]);
+            Log::info('WhatsApp incoming message processed', [
+                'type' => $type,
+                'has_user' => isset($user),
+            ]);
         }
     }
 
