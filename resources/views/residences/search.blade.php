@@ -181,7 +181,7 @@
                                         :class="filters.category === '{{ $cat->slug }}' ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'"
                                         class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition whitespace-nowrap">
                                         @if($cat->icon)
-                                            <span class="text-base leading-none">{!! $cat->icon !!}</span>
+                                            <span class="text-base leading-none">{{ $cat->icon }}</span>
                                         @endif
                                         {{ $cat->name }}
                                     </button>
