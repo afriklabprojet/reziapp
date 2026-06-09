@@ -291,7 +291,7 @@ class GeolocationService
 
         $this->registerCacheKey($geohash, $cacheKey);
 
-        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($latitude, $longitude, $radius) {
+        return (int) Cache::remember($cacheKey, self::CACHE_TTL, function () use ($latitude, $longitude, $radius) {
             return Residence::approved()
                 ->available()
                 ->withinRadius($latitude, $longitude, $radius)

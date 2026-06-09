@@ -70,7 +70,7 @@ class ResidenceShowSupport
             return 0;
         }
 
-        return Cache::remember(
+        return (int) Cache::remember(
             "owner:{$residence->owner_id}:residences_count",
             config('rezi.cache_ttl'),
             fn () => $residence->owner->residences()->approved()->count(),
