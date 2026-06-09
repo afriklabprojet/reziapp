@@ -1,22 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
 use App\Models\Contact;
+use App\Models\User;
 use App\Services\AnalyticsService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class AnalyticsController extends Controller
 {
-    protected AnalyticsService $analyticsService;
+    public function __construct(
+        protected AnalyticsService $analyticsService,
+    ) {}
 
-    public function __construct(AnalyticsService $analyticsService)
+    /**
+     * Retourne les IDs de résidences de l'owner, mis en cache 5 minutes.
+     * Évite de répéter la même requête dans chaque méthode du controller.
+     */
+    private function ownerResidenceIds(User $owner): Collection
     {
-        $this->analyticsService = $analyticsService;
+        return Cache::remember(
+            "owner_residence_ids_{$owner->id}",
+            300,
+            static fn () => $owner->residences()->pluck('id'),
+        );
     }
 
     /**
@@ -40,7 +55,7 @@ class AnalyticsController extends Controller
         $stats = $this->analyticsService->getDashboardStats($owner, $startDate, $endDate);
 
         // Taux d'occupation
-        $residenceIds = $owner->residences()->pluck('id');
+        $residenceIds = $this->ownerResidenceIds($owner);
         $firstResidenceId = $residenceIds->first() ?? 0;
         $occupancy = $this->analyticsService->getOccupancyRate($residenceIds, $startDate, $endDate);
 
@@ -79,7 +94,7 @@ class AnalyticsController extends Controller
             ? Carbon::parse($request->end_date)->endOfDay()
             : now()->endOfMonth();
 
-        $residenceIds = $owner->residences()->pluck('id');
+        $residenceIds = $this->ownerResidenceIds($owner);
         $revenueStats = $this->analyticsService->getRevenueStats($residenceIds, $startDate, $endDate);
 
         // Statistiques calculées
@@ -113,7 +128,7 @@ class AnalyticsController extends Controller
             ? Carbon::parse($request->end_date)->endOfDay()
             : now()->endOfMonth();
 
-        $residenceIds = $owner->residences()->pluck('id');
+        $residenceIds = $this->ownerResidenceIds($owner);
         $viewsStats = $this->analyticsService->getViewsStats($residenceIds, $startDate, $endDate);
 
         // Statistiques calculées
@@ -163,7 +178,7 @@ class AnalyticsController extends Controller
             : now()->endOfMonth();
 
         $stats = $this->analyticsService->getDashboardStats($owner, $startDate, $endDate);
-        $residenceIds = $owner->residences()->pluck('id');
+        $residenceIds = $this->ownerResidenceIds($owner);
         $occupancy = $this->analyticsService->getOccupancyRate($residenceIds, $startDate, $endDate);
 
         return response()->json([
@@ -194,7 +209,7 @@ class AnalyticsController extends Controller
         $type = $request->get('type', 'summary');
         $data = $this->analyticsService->getExportData($owner, $startDate, $endDate, $type);
 
-        $residenceIds = $owner->residences()->pluck('id');
+        $residenceIds = $this->ownerResidenceIds($owner);
         $occupancy = $this->analyticsService->getOccupancyRate($residenceIds, $startDate, $endDate);
         $stats = $this->analyticsService->getDashboardStats($owner, $startDate, $endDate);
 
