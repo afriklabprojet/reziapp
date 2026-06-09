@@ -314,7 +314,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
      */
     public function unreadMessagesCount(): int
     {
-        return Cache::remember("unread_msgs_{$this->id}", 60, function () {
+        return (int) Cache::remember("unread_msgs_{$this->id}", 60, function () {
             return Message::whereHas('conversation', function ($query) {
                 $query->where('user_id', $this->id)
                     ->orWhere('owner_id', $this->id);
@@ -459,7 +459,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
      */
     public function totalReferralEarnings(): int
     {
-        return $this->referralsMade()
+        return (int) $this->referralsMade()
             ->where('status', 'rewarded')
             ->sum('referrer_reward');
     }
