@@ -121,7 +121,7 @@ export default function bookingCreateForm(config) {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const days = Math.round((ci - today) / 86400000);
-            return days > 30 && (this.price?.total ?? 0) > 0;
+            return days > 30 && this.priceTotalAmount() > 0;
         },
 
         /** Sprint 3 — Date label for balance due (check_in - 30 days) */
@@ -253,6 +253,51 @@ export default function bookingCreateForm(config) {
 
         formatCurrency(amount) {
             return formatFCFA(amount);
+        },
+
+        priceTotalAmount() {
+            return this.price ? (this.price.total_amount || 0) : 0;
+        },
+
+        priceSubtotal() {
+            return this.price ? (this.price.subtotal || 0) : 0;
+        },
+
+        priceAvgPerNight() {
+            return this.price ? (this.price.avg_price_per_night || 0) : 0;
+        },
+
+        priceNights() {
+            return this.price ? (this.price.nights || 0) : 0;
+        },
+
+        priceNightsLabel() {
+            const nights = this.priceNights();
+            return this.formatCurrency(this.priceAvgPerNight()) + ' × ' + nights + ' jour' + (nights > 1 ? 's' : '');
+        },
+
+        priceCleaningFee() {
+            return this.price ? (this.price.cleaning_fee || 0) : 0;
+        },
+
+        priceServiceFee() {
+            return this.price ? (this.price.service_fee || 0) : 0;
+        },
+
+        priceTaxes() {
+            return this.price ? (this.price.taxes || 0) : 0;
+        },
+
+        priceLongStayDiscount() {
+            return this.price ? (this.price.long_stay_discount || 0) : 0;
+        },
+
+        priceCouponDiscount() {
+            return this.price ? ((this.price.promo_discount || 0) + (this.price.coupon_discount || 0)) : 0;
+        },
+
+        halfTotalAmount() {
+            return Math.round(this.priceTotalAmount() * 0.5);
         },
 
         async calculatePrice() {
