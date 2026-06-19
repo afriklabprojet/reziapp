@@ -1086,7 +1086,7 @@
                                     <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition cursor-pointer"
                                          @click="expanded === group.type ? expanded = null : expanded = group.type">
                                         <div class="flex items-center gap-2 mb-2">
-                                            <span class="text-xl" x-text="group.icon"></span>
+                                            <span class="flex-shrink-0 w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-rose-500" x-html="group.svg"></span>
                                             <span class="font-medium text-sm text-gray-900" x-text="group.label"></span>
                                             <span class="ml-auto text-xs text-gray-400 bg-gray-200 px-1.5 py-0.5 rounded-full" x-text="group.count"></span>
                                         </div>
