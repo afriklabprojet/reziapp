@@ -170,7 +170,7 @@
                                             @csrf
                                             <button type="submit"
                                                 class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition"
-                                                onclick="return confirm('Voulez-vous signer ce contrat ?')">
+                                                 data-confirm='Voulez-vous signer ce contrat ?'>
                                                 <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -191,7 +191,7 @@
                                                 Résiliation en attente
                                             </span>
                                             <form action="{{ route('client.contracts.cancel-termination', $contract) }}" method="POST"
-                                                  onsubmit="return confirm('Annuler votre demande de résiliation ?')">
+                                                   data-confirm='Annuler votre demande de résiliation ?'>
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"

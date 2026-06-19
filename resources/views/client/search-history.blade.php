@@ -11,7 +11,7 @@
         </div>
         @if ($searches->count() > 0)
             <form action="{{ route('client.search-history.clear') }}" method="POST"
-                onsubmit="return confirm('Supprimer tout l\'historique ?')">
+                 data-confirm='Supprimer tout l\'historique ?'>
                 @csrf
                 @method('DELETE')
                 <button type="submit"

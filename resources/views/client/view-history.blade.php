@@ -11,7 +11,7 @@
         </div>
         @if ($views->count() > 0)
             <form action="{{ route('client.view-history.clear') }}" method="POST"
-                onsubmit="return confirm('Supprimer tout l\'historique des visites ?')">
+                 data-confirm='Supprimer tout l\'historique des visites ?'>
                 @csrf
                 @method('DELETE')
                 <button type="submit"

@@ -87,7 +87,7 @@
 
         @if($document->user_id === auth()->id())
         <div class="p-6 border-t bg-gray-50 flex items-center justify-end gap-3">
-            <form action="{{ route('documents.destroy', $document) }}" method="POST" onsubmit="return confirm('Supprimer ce document ?')">
+            <form action="{{ route('documents.destroy', $document) }}" method="POST"  data-confirm='Supprimer ce document ?'>
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="text-sm text-red-600 hover:text-red-800 font-medium">Supprimer</button>

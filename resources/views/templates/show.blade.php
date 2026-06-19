@@ -31,7 +31,7 @@
                 @if(!$template->is_system && $template->user_id === auth()->id())
                 <div class="flex items-center gap-2">
                     <a href="{{ route('templates.edit', $template) }}" class="btn-secondary text-sm">Modifier</a>
-                    <form action="{{ route('templates.destroy', $template) }}" method="POST" onsubmit="return confirm('Supprimer ce modèle ?')">
+                    <form action="{{ route('templates.destroy', $template) }}" method="POST"  data-confirm='Supprimer ce modèle ?'>
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="text-sm text-red-600 hover:text-red-800 font-medium px-3 py-2">Supprimer</button>

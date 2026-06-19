@@ -71,7 +71,7 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"
-                                                onclick="return confirm('Supprimer cette collection ?')"
+                                                 data-confirm='Supprimer cette collection ?'
                                                 class="w-full text-left px-4 py-2 hover:bg-red-50 text-sm text-red-600">
                                                 Supprimer
                                             </button>

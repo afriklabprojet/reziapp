@@ -121,7 +121,7 @@
                                     <form action="{{ route('history.saved-searches.delete', $search) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" onclick="return confirm('Supprimer cette recherche ?')"
+                                        <button type="submit"  data-confirm='Supprimer cette recherche ?'
                                                 class="text-sm text-red-600 hover:text-red-700">
                                             Supprimer
                                         </button>

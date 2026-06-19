@@ -131,7 +131,7 @@
 
                                         <form action="{{ route('verification.emergency.destroy', $contact) }}"
                                             method="POST" class="inline"
-                                            onsubmit="return confirm('Supprimer ce contact d\'urgence ?')">
+                                             data-confirm='Supprimer ce contact d\'urgence ?'>
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"

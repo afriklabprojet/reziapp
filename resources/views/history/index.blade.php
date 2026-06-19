@@ -30,7 +30,7 @@
                         <form action="{{ route('history.clear') }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" onclick="return confirm('Effacer tout l\'historique ?')"
+                            <button type="submit"  data-confirm='Effacer tout l\'historique ?'
                                 class="inline-flex items-center gap-2 px-4 py-2 text-red-600 border border-red-200 rounded-xl hover:bg-red-50 transition-colors">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

@@ -158,7 +158,7 @@
                                     </button>
 
                                     <form action="{{ route('client.reviews.delete', $review) }}" method="POST"
-                                          onsubmit="return confirm('Supprimer définitivement cet avis ?')">
+                                           data-confirm='Supprimer définitivement cet avis ?'>
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
