@@ -268,6 +268,52 @@
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
+
+                            {{-- Prix hebdomadaire --}}
+                            <div>
+                                <label for="price_per_week" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Prix par semaine (FCFA)
+                                </label>
+                                <input type="number" id="price_per_week" name="price_per_week"
+                                    min="0" step="1000"
+                                    class="input-field @error('price_per_week') border-red-500 @enderror"
+                                    value="{{ old('price_per_week', $residence->price_per_week) }}"
+                                    placeholder="Optionnel">
+                                @error('price_per_week')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Prix mensuel --}}
+                            <div>
+                                <label for="price_per_month" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Prix par mois (FCFA)
+                                </label>
+                                <input type="number" id="price_per_month" name="price_per_month"
+                                    min="0" step="5000"
+                                    class="input-field @error('price_per_month') border-red-500 @enderror"
+                                    value="{{ old('price_per_month', $residence->price_per_month) }}"
+                                    placeholder="Optionnel">
+                                @error('price_per_month')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- Frais de ménage --}}
+                        <div class="mt-4">
+                            <label for="cleaning_fee" class="block text-sm font-medium text-gray-700 mb-1">
+                                Frais de ménage (FCFA)
+                            </label>
+                            <input type="number" id="cleaning_fee" name="cleaning_fee"
+                                min="0" step="500"
+                                class="input-field @error('cleaning_fee') border-red-500 @enderror"
+                                value="{{ old('cleaning_fee', $residence->cleaning_fee) }}"
+                                placeholder="0 = inclus dans le prix">
+                            <p class="text-xs text-gray-400 mt-1">Facturé une fois par séjour. Laissez vide ou 0 si inclus.</p>
+                            @error('cleaning_fee')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
@@ -421,14 +467,6 @@
                             </div>
                         </div>
 
-                        <div class="mt-4">
-                            <label class="flex items-center">
-                                <input type="checkbox" name="instant_book" value="1"
-                                    {{ old('instant_book', $residence->instant_book) ? 'checked' : '' }}
-                                    class="form-checkbox h-5 w-5 text-blue-600">
-                                <span class="ml-2 text-sm text-gray-700">Réservation instantanée (sans validation manuelle)</span>
-                            </label>
-                        </div>
                     </div>
 
                     <!-- Règles de la maison -->
@@ -470,6 +508,55 @@
                                     <span class="ml-2 text-sm text-gray-700">🎉 Fêtes autorisées</span>
                                 </label>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Politique d'annulation -->
+                    <div class="card">
+                        <h2 class="text-xl font-semibold text-gray-900 mb-4">Politique d'annulation</h2>
+
+                        <div class="space-y-3">
+                            @foreach ($cancellationPolicies as $policy)
+                                <label class="flex items-start p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer {{ old('cancellation_policy_id', $residence->cancellation_policy_id) == $policy->id ? 'border-[#F16A00] bg-[#FFF4EB]' : '' }}">
+                                    <input type="radio" name="cancellation_policy_id" value="{{ $policy->id }}"
+                                        {{ old('cancellation_policy_id', $residence->cancellation_policy_id) == $policy->id ? 'checked' : '' }}
+                                        class="mt-1 form-radio h-4 w-4 text-[#F16A00]">
+                                    <span class="ml-3">
+                                        <span class="block text-sm font-semibold text-gray-900">{{ $policy->display_name }}</span>
+                                        <span class="block text-xs text-gray-500 mt-0.5">{{ $policy->description }}</span>
+                                    </span>
+                                </label>
+                            @endforeach
+                            <label class="flex items-start p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer {{ old('cancellation_policy_id', $residence->cancellation_policy_id) === null ? 'border-gray-400 bg-gray-50' : '' }}">
+                                <input type="radio" name="cancellation_policy_id" value=""
+                                    {{ old('cancellation_policy_id', $residence->cancellation_policy_id) === null ? 'checked' : '' }}
+                                    class="mt-1 form-radio h-4 w-4 text-gray-500">
+                                <span class="ml-3">
+                                    <span class="block text-sm font-semibold text-gray-900">Non définie</span>
+                                </span>
+                            </label>
+                        </div>
+                        @error('cancellation_policy_id')
+                            <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Visite virtuelle -->
+                    <div class="card">
+                        <h2 class="text-xl font-semibold text-gray-900 mb-4">Visite virtuelle</h2>
+
+                        <div>
+                            <label for="virtual_tour_url" class="block text-sm font-medium text-gray-700 mb-1">
+                                Lien de visite virtuelle (URL)
+                            </label>
+                            <input type="url" id="virtual_tour_url" name="virtual_tour_url"
+                                class="input-field @error('virtual_tour_url') border-red-500 @enderror"
+                                value="{{ old('virtual_tour_url', $residence->virtual_tour_url) }}"
+                                placeholder="https://my.matterport.com/...">
+                            <p class="text-xs text-gray-400 mt-1">Lien Matterport, YouTube 360° ou autre visite virtuelle.</p>
+                            @error('virtual_tour_url')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
