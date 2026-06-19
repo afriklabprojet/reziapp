@@ -52,6 +52,8 @@ class Residence extends Model
         self::TYPE_LOC_HOTEL     => self::PRICE_PERIOD_DAY,
     ];
 
+    protected $hidden = ['location'];
+
     protected $fillable = [
         'owner_id',
         'category_id',
