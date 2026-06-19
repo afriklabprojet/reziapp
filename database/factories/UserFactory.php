@@ -41,4 +41,26 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    /**
+     * Owner state — sets role and enables 2FA (required for owner routes).
+     */
+    public function owner(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'owner',
+            'two_factor_enabled' => true,
+        ]);
+    }
+
+    /**
+     * Admin state — sets role and enables 2FA (required for admin routes).
+     */
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'admin',
+            'two_factor_enabled' => true,
+        ]);
+    }
 }
