@@ -6,8 +6,11 @@
              LEFT SIDE – BRANDING (Desktop)
         ══════════════════════════════════════ --}}
         <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden">
-            {{-- Image d'arrière-plan --}}
-            <img src="{{ asset('images/login-bg.jpg') }}" alt="" aria-hidden="true"
+            {{-- Image d'arrière-plan : vraie photo de résidence si dispo --}}
+            @php
+                $bgPhoto = $featuredResidence?->photos->first()?->url ?? asset('images/login-bg.jpg');
+            @endphp
+            <img src="{{ $bgPhoto }}" alt="" aria-hidden="true"
                 class="absolute inset-0 w-full h-full object-cover" loading="eager">
 
             {{-- Overlay sombre pour lisibilité du texte --}}
@@ -28,12 +31,11 @@
                 {{-- Logo + Nom --}}
                 <div class="mb-10 text-center">
                     <div
-                        class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-2xl mx-auto mb-4">
-                        <span class="text-2xl font-extrabold text-[#F16A00]">R</span>
+                        class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-2xl mx-auto mb-4 p-2">
+                        <img src="{{ asset('images/logo-rezi.png') }}?v=2" alt="Rezi App Logo" class="h-full w-auto object-contain">
                     </div>
                     <h1 class="text-4xl font-extrabold tracking-tight">Rezi App</h1>
-                    <p class="text-sm text-gray-400 mt-1 font-medium tracking-wider uppercase">Location meublée en
-                        Afrique de l'Ouest</p>
+                    <p class="text-sm text-gray-400 mt-1 font-medium tracking-wider uppercase">Location meublée</p>
                 </div>
 
                 {{-- Headline --}}
@@ -91,21 +93,45 @@
                     </div>
                 </div>
 
+                {{-- Résidence en vedette --}}
+                @if($featuredResidence)
+                <div class="mt-10 w-full max-w-sm bg-white/10 border border-white/20 rounded-2xl p-4 backdrop-blur-sm">
+                    <div class="flex items-center gap-3">
+                        @if($featuredResidence->photos->first())
+                        <img src="{{ $featuredResidence->photos->first()->url }}"
+                             alt="{{ $featuredResidence->title }}"
+                             class="w-14 h-14 rounded-xl object-cover shrink-0">
+                        @endif
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold text-white truncate">{{ $featuredResidence->title }}</p>
+                            <p class="text-xs text-gray-400 truncate">{{ $featuredResidence->commune ?? $featuredResidence->city }}</p>
+                            <div class="flex items-center gap-1 mt-0.5">
+                                <svg class="w-3.5 h-3.5 text-[#FF8A1F]" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                                <span class="text-xs text-[#FF8A1F] font-semibold">{{ number_format($featuredResidence->reviews_avg_rating ?? $featuredResidence->average_rating, 1) }}</span>
+                                <span class="text-xs text-gray-500">· {{ number_format($featuredResidence->price_per_month, 0, ',', ' ') }} FCFA/mois</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
                 {{-- Stats --}}
-                <div class="mt-12 flex items-center gap-6">
+                <div class="mt-6 flex items-center gap-6">
                     <div class="text-center">
-                        <div class="text-2xl font-extrabold text-[#FF8A1F]">500+</div>
+                        <div class="text-2xl font-extrabold text-[#FF8A1F]">{{ $stats['residences'] }}</div>
                         <div class="text-xs text-gray-500 font-medium uppercase tracking-wide mt-0.5">Résidences</div>
                     </div>
                     <div class="w-px h-10 bg-white/10"></div>
                     <div class="text-center">
-                        <div class="text-2xl font-extrabold text-white">10k+</div>
+                        <div class="text-2xl font-extrabold text-white">{{ $stats['users'] }}</div>
                         <div class="text-xs text-gray-500 font-medium uppercase tracking-wide mt-0.5">Utilisateurs</div>
                     </div>
                     <div class="w-px h-10 bg-white/10"></div>
                     <div class="text-center">
-                        <div class="text-2xl font-extrabold text-white">15</div>
-                        <div class="text-xs text-gray-500 font-medium uppercase tracking-wide mt-0.5">Communes</div>
+                        <div class="text-2xl font-extrabold text-white">{{ $stats['cities'] }}</div>
+                        <div class="text-xs text-gray-500 font-medium uppercase tracking-wide mt-0.5">Villes</div>
                     </div>
                 </div>
 
@@ -136,8 +162,8 @@
                 {{-- Mobile branding --}}
                 <div class="lg:hidden text-center mb-8">
                     <div
-                        class="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-                        <span class="text-lg font-extrabold text-[#FF8A1F]">R</span>
+                        class="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg p-1.5">
+                        <img src="{{ asset('images/logo-rezi.png') }}?v=2" alt="Rezi App Logo" class="h-full w-auto object-contain">
                     </div>
                     <p class="text-xs text-gray-400 font-medium uppercase tracking-widest">Rezi App · Location meublée</p>
                 </div>
@@ -150,44 +176,6 @@
 
                 {{-- Session Status --}}
                 <x-auth-session-status class="mb-4" :status="session('status')" />
-
-                {{-- Social Login --}}
-                <div class="grid grid-cols-2 gap-3 mb-6">
-                    <a href="{{ route('socialite.redirect', 'google') }}"
-                        class="flex items-center justify-center gap-2.5 px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-700 text-sm font-medium hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm transition-all active:scale-95">
-                        <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24">
-                            <path fill="#4285F4"
-                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                            <path fill="#34A853"
-                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                            <path fill="#FBBC05"
-                                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                            <path fill="#EA4335"
-                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-                        </svg>
-                        Google
-                    </a>
-
-                    <a href="{{ route('socialite.redirect', 'facebook') }}"
-                        class="flex items-center justify-center gap-2.5 px-4 py-3 bg-[#1877F2] rounded-xl text-white text-sm font-medium hover:bg-[#1565D8] hover:shadow-sm transition-all active:scale-95">
-                        <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                        </svg>
-                        Facebook
-                    </a>
-                </div>
-
-                {{-- Divider --}}
-                <div class="relative my-6">
-                    <div class="absolute inset-0 flex items-center" aria-hidden="true">
-                        <div class="w-full border-t border-gray-200"></div>
-                    </div>
-                    <div class="relative flex justify-center">
-                        <span class="px-4 bg-white text-xs font-medium text-gray-400 uppercase tracking-wide">ou par
-                            email</span>
-                    </div>
-                </div>
 
                 {{-- Login Form --}}
                 <form method="POST" action="{{ route('login') }}" class="space-y-5">
