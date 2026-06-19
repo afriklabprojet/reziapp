@@ -294,6 +294,7 @@ class BookingFlowTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->owner)
+            ->withSession(['2fa_verified_at' => time()])
             ->get(route('owner.bookings.index'));
 
         $response->assertStatus(200);
@@ -317,6 +318,7 @@ class BookingFlowTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->owner)
+            ->withSession(['2fa_verified_at' => time()])
             ->get(route('owner.bookings.show', $booking));
 
         $response->assertStatus(200);
@@ -336,6 +338,7 @@ class BookingFlowTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->owner)
+            ->withSession(['2fa_verified_at' => time()])
             ->get(route('owner.bookings.show', $booking));
 
         $response->assertStatus(403);
@@ -351,6 +354,7 @@ class BookingFlowTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->owner)
+            ->withSession(['2fa_verified_at' => time()])
             ->put(route('owner.bookings.cancel', $booking), [
                 'reason' => 'Travaux urgents',
             ]);
@@ -411,6 +415,7 @@ class BookingFlowTest extends TestCase
     public function owner_can_view_calendar(): void
     {
         $response = $this->actingAs($this->owner)
+            ->withSession(['2fa_verified_at' => time()])
             ->get(route('owner.bookings.calendar', $this->residence));
 
         $response->assertStatus(200);
