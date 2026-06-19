@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $residence->title . ' - Rezi App')
+@section('title', $residence->title . ' - ' . config('app.name'))
 @section('description', Str::limit(strip_tags($residence->description ?? ''), 160))
 
 {{-- SEO: utilise uniquement @section title/description consommés par le layout --}}
@@ -9,7 +9,7 @@
     @php
         $ogImage = $residence->photos->first()?->url ?? asset('images/og/default.png');
         $ogDescription = Str::limit(strip_tags($residence->description ?? ''), 160);
-        $ogTitle = $residence->title . ' - Rezi App';
+        $ogTitle = $residence->title . ' - ' . config('app.name');
         $ogUrl = url()->current();
         $photoImages = $residence->photos->map(fn($p) => $p->url)->filter()->values()->all();
     @endphp
@@ -40,7 +40,7 @@
         'address' => [
             '@type' => 'PostalAddress',
             'addressLocality' => $residence->commune,
-            'addressRegion' => $residence->city ?? 'Abidjan',
+            'addressRegion' => $residence->city ?? config('rezi.defaults.city'),
             'addressCountry' => 'CI',
         ],
         'geo' => $residence->latitude ? [
@@ -572,8 +572,9 @@
                                 {{ $residence->commune ?? ($residence->city ?? '') }}
                             </h2>
                             <p class="text-gray-500 text-sm mt-1">
-                                {{ $residence->max_guests ?? 4 }}
-                                voyageur{{ ($residence->max_guests ?? 4) > 1 ? 's' : '' }}
+                                @php $defaultMaxGuests = config('rezi.defaults.max_guests') @endphp
+                                {{ $residence->max_guests ?? $defaultMaxGuests }}
+                                voyageur{{ ($residence->max_guests ?? $defaultMaxGuests) > 1 ? 's' : '' }}
                                 <span class="mx-1">·</span>
                                 {{ $residence->bedrooms ?? 1 }} chambre{{ ($residence->bedrooms ?? 1) > 1 ? 's' : '' }}
                                 <span class="mx-1">·</span>
@@ -777,7 +778,8 @@
                     {{-- Calendar --}}
                     <div id="calendrier" class="py-8 border-b border-gray-200" x-data="residenceCalendar({{ \Illuminate\Support\Js::encode(['unavailable' => $unavailableDates ?? []]) }})">
                         <h2 class="text-[22px] font-semibold text-gray-900 mb-2">
-                            {{ $residence->min_nights ?? 2 }} nuit{{ ($residence->min_nights ?? 2) > 1 ? 's' : '' }}
+                            @php $defaultMinNights = config('rezi.defaults.min_nights') @endphp
+                            {{ $residence->min_nights ?? $defaultMinNights }} nuit{{ ($residence->min_nights ?? $defaultMinNights) > 1 ? 's' : '' }}
                             minimum
                         </h2>
                         <p class="text-gray-500 text-sm mb-6">
@@ -883,7 +885,7 @@
                                 </div>
                                 <p class="text-lg font-semibold text-gray-900">Coup de cœur voyageurs</p>
                                 <p class="text-sm text-gray-500 text-center mt-1 max-w-sm">Ce logement fait partie des
-                                    mieux notés sur Rezi App, d'après les commentaires et évaluations des voyageurs.</p>
+                                    mieux notés sur {{ config('app.name') }}, d'après les commentaires et évaluations des voyageurs.</p>
                             </div>
 
                             @php
@@ -1323,7 +1325,7 @@
                                         <svg class="w-8 h-8 shrink-0 text-rose-400 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
                                         </svg>
-                                        <p class="text-sm text-gray-500 leading-relaxed">Pour protéger votre paiement, ne transférez jamais d'argent et ne communiquez pas en dehors de Rezi App.</p>
+                                        <p class="text-sm text-gray-500 leading-relaxed">Pour protéger votre paiement, ne transférez jamais d'argent et ne communiquez pas en dehors de {{ config('app.name') }}.</p>
                                     </div>
                                 </div>
 
@@ -1341,9 +1343,9 @@
                                     @php
                                         $formatTime = fn($t, $fallback) => $t ? preg_replace('/^(\d{2}):(\d{2}).*$/', '$1h$2', $t) : $fallback;
                                     @endphp
-                                    <li>Arrivée : à partir de {{ $formatTime($residence->check_in_time, '14h00') }}</li>
-                                    <li>Départ : avant {{ $formatTime($residence->check_out_time, '12h00') }}</li>
-                                    <li>{{ $residence->max_guests ?? 4 }} voyageurs maximum</li>
+                                    <li>Arrivée : à partir de {{ $formatTime($residence->check_in_time, config('rezi.defaults.check_in_time')) }}</li>
+                                    <li>Départ : avant {{ $formatTime($residence->check_out_time, config('rezi.defaults.check_out_time')) }}</li>
+                                    <li>{{ $residence->max_guests ?? config('rezi.defaults.max_guests') }} voyageurs maximum</li>
                                     @if ($residence->house_rules)
                                         @php
                                             $rules = $residence->house_rules;
@@ -1412,14 +1414,14 @@
     'pricePerNight' => $pricePerNight,
     'pricePerWeek' => $residence->price_per_week ?? 0,
     'pricePerMonth' => $residence->price_per_month ?? 0,
-    'maxGuests' => $residence->max_guests ?? 10,
-    'minNights' => $residence->min_nights ?? 1,
-    'maxNights' => $residence->max_nights ?? 365,
+    'maxGuests' => $residence->max_guests ?? config('rezi.defaults.max_guests'),
+    'minNights' => $residence->min_nights ?? config('rezi.defaults.min_nights'),
+    'maxNights' => $residence->max_nights ?? config('rezi.defaults.max_nights'),
     'instantBook' => (bool) $residence->instant_book,
     'residenceId' => $residence->id,
     'unavailableDates' => $unavailableDates ?? [],
     'cleaningFee' => $residence->cleaning_fee ?? 0,
-    'stateTax' => (int) config('rezi.pricing.state_tax', 1000),
+    'stateTax' => (int) config('rezi.pricing.state_tax'),
     'isAuthenticated' => auth()->check(),
 ]) }})">
 
@@ -1600,7 +1602,7 @@
                                             </div>
                                         </div>
                                         <p class="text-xs text-gray-400 pt-1">Ce logement accepte
-                                            {{ $residence->max_guests ?? 10 }} voyageurs maximum, bébés non comptés.</p>
+                                            {{ $residence->max_guests ?? config('rezi.defaults.max_guests') }} voyageurs maximum, bébés non comptés.</p>
                                         <button type="button" @click="showGuestPicker = false"
                                             class="w-full text-sm font-semibold text-gray-900 underline hover:no-underline text-right">
                                             Fermer
@@ -1790,7 +1792,7 @@
                                 <template x-if="!reportSent">
                                     <div>
                                         <h3 class="text-lg font-bold text-gray-900 mb-1">Signaler cette annonce</h3>
-                                        <p class="text-sm text-gray-500 mb-4">Aidez-nous à garder Rezi App sûr. Décrivez le problème rencontré.</p>
+                                        <p class="text-sm text-gray-500 mb-4">Aidez-nous à garder {{ config('app.name') }} sûr. Décrivez le problème rencontré.</p>
 
                                         <form method="POST" action="{{ route('residences.report', $residence) }}"
                                             @submit.prevent="
