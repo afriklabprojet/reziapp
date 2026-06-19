@@ -20,7 +20,7 @@ class RequireTwoFactorForPrivilegedUsers
             return $next($request);
         }
 
-        if ($user->two_factor_enabled || app()->environment('testing')) {
+        if ($user->two_factor_enabled) {
             return $next($request);
         }
 
