@@ -1,5 +1,5 @@
 <x-app-layout>
-    @section('title', 'Inscription - Rezi')
+    @section('title', 'Inscription - Rezi App')
 
     <div class="min-h-[calc(100vh-56px)] md:min-h-[calc(100vh-64px)] flex" x-data="{
         showPassword: false,
@@ -64,7 +64,7 @@
                 </div>
 
                 {{-- Headline --}}
-                <h1 class="text-4xl font-bold text-center mb-4">Rejoignez Rezi</h1>
+                <h1 class="text-4xl font-bold text-center mb-4">Rejoignez Rezi App</h1>
                 <p class="text-xl text-[#FFE7D1] text-center mb-12 max-w-md">
                     Créez votre compte et accédez à des centaines de résidences meublées
                 </p>
@@ -178,7 +178,7 @@
                 {{-- Header --}}
                 <div class="text-center mb-6">
                     <h2 class="text-3xl font-bold text-gray-900">Créer un compte</h2>
-                    <p class="mt-2 text-gray-600">Rejoignez la communauté Rezi</p>
+                    <p class="mt-2 text-gray-600">Rejoignez la communauté Rezi App</p>
                 </div>
 
                 {{-- Progress Steps --}}
