@@ -136,6 +136,9 @@ class UpdateResidenceRequest extends FormRequest
 
             // Catégorie
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
+
+            // Politique d'annulation
+            'cancellation_policy_id' => ['nullable', 'integer', 'exists:cancellation_policies,id'],
         ];
     }
 
@@ -262,6 +265,7 @@ class UpdateResidenceRequest extends FormRequest
             'photos' => 'photos',
             'amenities' => 'équipements',
             'category_id' => 'catégorie',
+            'cancellation_policy_id' => 'politique d\'annulation',
         ];
     }
 }
