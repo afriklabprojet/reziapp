@@ -26,7 +26,7 @@
   <div class="header">
     <a href="{{ config('app.url') }}" style="text-decoration:none;">
       <img src="{{ asset('images/logo-rezi.png') }}" alt="Rezi App">
-      <span class="brand">Rezi <span>App</span></span>
+      <span class="brand">Rezi App <span>App</span></span>
     </a>
   </div>
   <div class="content">
