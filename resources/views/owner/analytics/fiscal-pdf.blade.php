@@ -351,7 +351,7 @@
             <p class="footer-note">Document généré automatiquement - Référence:
                 REZI-FISCAL-{{ $year }}-{{ strtoupper(substr(md5($data['owner']['email'] . $year), 0, 8)) }}
             </p>
-            <p class="footer-note">Rezi App - Plateforme de location de résidences meublées en Afrique de l'Ouest</p>
+            <p class="footer-note">Rezi App - Plateforme de location de résidences meublées</p>
             <p class="footer-note">© {{ date('Y') }} Rezi App - Tous droits réservés</p>
         </div>
     </div>
