@@ -69,7 +69,7 @@
         <div class="logo">
             <a href="https://reziapp.ci" style="text-decoration:none; display:inline-block;">
                 <img src="{{ asset('images/logo-rezi.png') }}" alt="Rezi App" style="height:56px; width:auto; vertical-align:middle; display:inline-block;">
-                <span style="display:inline-block; vertical-align:middle; margin-left:12px; font-size:24px; font-weight:800; color:#111827; letter-spacing:-0.5px;">Rezi <span style="color:#f97316;">App</span></span>
+                <span style="display:inline-block; vertical-align:middle; margin-left:12px; font-size:24px; font-weight:800; color:#111827; letter-spacing:-0.5px;">Rezi App <span style="color:#f97316;">App</span></span>
             </a>
         </div>
 
