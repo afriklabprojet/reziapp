@@ -137,7 +137,7 @@ class OwnerController extends Controller
 
         $recentMessages = Conversation::where('owner_id', $user->id)
             ->whereHas('messages')
-            ->with(['user:id,name,profile_photo,avatar', 'residence:id,name', 'latestMessage'])
+            ->with(['user:id,name,profile_photo,avatar', 'residence:id,name', 'lastMessage'])
             ->orderBy('last_message_at', 'desc')
             ->take(3)
             ->get();
