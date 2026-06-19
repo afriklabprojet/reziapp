@@ -58,6 +58,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Valeurs par défaut des résidences
+    |--------------------------------------------------------------------------
+    */
+
+    'defaults' => [
+        'check_in_time'  => env('REZI_DEFAULT_CHECK_IN', '14h00'),
+        'check_out_time' => env('REZI_DEFAULT_CHECK_OUT', '12h00'),
+        'min_nights'     => (int) env('REZI_DEFAULT_MIN_NIGHTS', 1),
+        'max_nights'     => (int) env('REZI_DEFAULT_MAX_NIGHTS', 365),
+        'max_guests'     => (int) env('REZI_DEFAULT_MAX_GUESTS', 4),
+        'city'           => env('REZI_DEFAULT_CITY', 'Abidjan'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Géolocalisation par défaut (Abidjan, Côte d'Ivoire)
     |--------------------------------------------------------------------------
     */
