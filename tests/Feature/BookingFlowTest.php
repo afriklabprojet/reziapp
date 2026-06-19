@@ -428,6 +428,7 @@ class BookingFlowTest extends TestCase
         $otherOwner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
 
         $response = $this->actingAs($otherOwner)
+            ->withSession(['2fa_verified_at' => time()])
             ->get(route('owner.bookings.calendar', $this->residence));
 
         $response->assertStatus(403);
