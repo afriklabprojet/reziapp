@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\City;
+use App\Models\Residence;
 use App\Models\User;
 use App\Services\ReferralService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
@@ -20,7 +23,26 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $stats = Cache::remember('login_page_stats', 3600, function () {
+            $residenceCount = Residence::approved()->available()->count();
+            $userCount = User::count();
+            $cityCount = City::active()->count();
+            return [
+                'residences' => $residenceCount >= 1000 ? round($residenceCount / 1000, 1) . 'k+' : $residenceCount . '+',
+                'users'      => $userCount >= 1000 ? round($userCount / 1000, 0) . 'k+' : $userCount . '+',
+                'cities'     => $cityCount,
+            ];
+        });
+
+        $featuredResidence = Cache::remember('register_featured_residence', 3600, function () {
+            return Residence::approved()->available()->has('photos')
+                ->withAvg('reviews', 'rating')
+                ->orderByDesc('reviews_avg_rating')
+                ->with('photos')
+                ->first();
+        });
+
+        return view('auth.register', compact('stats', 'featuredResidence'));
     }
 
     /**
