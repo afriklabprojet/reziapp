@@ -95,7 +95,8 @@ class HomeController extends Controller
             $reviews = \App\Models\Review::where('status', 'approved')
                 ->where('rating', '>=', 4)
                 ->whereNotNull('comment')
-                ->with('user')
+                ->where('comment', '!=', '')
+                ->with(['user', 'residence'])
                 ->orderByDesc('is_featured')
                 ->orderByDesc('helpful_count')
                 ->orderByDesc('rating')
@@ -108,11 +109,12 @@ class HomeController extends Controller
 
             return $reviews->map(function ($review) {
                 return [
-                    'name' => $review->user->name ?? 'Utilisateur',
-                    'role' => 'Locataire',
+                    'name'    => $review->user->name ?? 'Utilisateur',
+                    'role'    => 'Locataire',
                     'content' => $review->comment,
-                    'avatar' => $review->user->getAvatarUrl(),
-                    'rating' => $review->rating,
+                    'avatar'  => $review->user->getAvatarUrl(),
+                    'rating'  => $review->rating,
+                    'city'    => $review->residence->commune ?? $review->residence->city ?? 'Abidjan',
                 ];
             });
         });
