@@ -63,5 +63,16 @@
                 </x-filament::button>
             </div>
         </form>
+
+        {{-- Residence Defaults --}}
+        <form wire:submit="saveDefaults">
+            {{ $this->defaultsForm }}
+
+            <div class="mt-4">
+                <x-filament::button type="submit">
+                    Enregistrer les valeurs par défaut
+                </x-filament::button>
+            </div>
+        </form>
     </div>
 </x-filament-panels::page>
