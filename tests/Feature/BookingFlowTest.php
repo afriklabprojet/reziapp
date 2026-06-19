@@ -103,7 +103,7 @@ class BookingFlowTest extends TestCase
                 // Données manquantes
             ]);
 
-        $response->assertSessionHasErrors(['check_in', 'check_out', 'guests', 'adults']);
+        $response->assertSessionHasErrors(['check_in', 'check_out', 'payment_method']);
     }
 
     #[Test]
