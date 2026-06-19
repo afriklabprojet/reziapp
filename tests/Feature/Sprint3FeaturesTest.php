@@ -179,6 +179,7 @@ class Sprint3FeaturesTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->owner)
+            ->withSession(['2fa_verified_at' => time()])
             ->post(route('owner.bookings.modifications.approve', $modification));
 
         $response->assertRedirect();
@@ -217,6 +218,7 @@ class Sprint3FeaturesTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->owner)
+            ->withSession(['2fa_verified_at' => time()])
             ->post(route('owner.bookings.modifications.reject', $modification));
 
         $response->assertRedirect();
