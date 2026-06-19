@@ -1164,7 +1164,7 @@
                                 <div class="divide-y divide-gray-50">
                                     @foreach ($recentMessages as $conversation)
                                         @php
-                                            $lastMsg = $conversation->latestMessage;
+                                            $lastMsg = $conversation->lastMessage;
                                             $otherUser = $conversation->user;
                                             $isUnread =
                                                 $lastMsg && $lastMsg->sender_id !== auth()->id() && !$lastMsg->read_at;
