@@ -8,7 +8,7 @@
 <td class="content-cell" style="padding: 28px 40px 8px 40px; text-align: center;">
     {{-- Logo footer --}}
     <p style="margin: 0 0 12px 0;">
-        <a href="{{ config('app.url') }}" style="text-decoration: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 900; color: #f97316; letter-spacing: -0.5px;">Rezi Studio Meublé Faya</a>
+        <a href="{{ config('app.url') }}" style="text-decoration: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 900; color: #f97316; letter-spacing: -0.5px;">Rezi App Studio Meublé Faya</a>
     </p>
 
     {{-- Liens utiles --}}
@@ -26,8 +26,8 @@
 
     {{-- Adresse --}}
     <p style="margin: 16px 0 0 0; font-size: 11px; color: #d1d5db; line-height: 1.6;">
-        Rezi Studio Meublé Faya &mdash; Plateforme de location de résidences meublées &mdash; Abidjan, Côte d'Ivoire<br>
-        &copy; {{ date('Y') }} Rezi Studio Meublé Faya. Tous droits réservés.
+        Rezi App Studio Meublé Faya &mdash; Plateforme de location de résidences meublées &mdash; Abidjan, Côte d'Ivoire<br>
+        &copy; {{ date('Y') }} Rezi App Studio Meublé Faya. Tous droits réservés.
     </p>
 </td>
 </tr>
