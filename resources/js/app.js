@@ -169,3 +169,22 @@ globalThis.copyShareLink = copyShareLink;
 globalThis.confirmEmergency = confirmEmergency;
 
 Alpine.start();
+
+// CSP-safe confirm handler (replaces onsubmit/onclick="return confirm(...)")
+document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('submit', (e) => {
+        const form = e.target;
+        const msg = form.dataset.confirm
+            ?? form.querySelector('[type=submit][data-confirm]')?.dataset.confirm;
+        if (msg && !window.confirm(msg)) {
+            e.preventDefault();
+        }
+    }, true);
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-confirm], a[data-confirm]');
+        if (btn && !window.confirm(btn.dataset.confirm)) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+        }
+    }, true);
+});
