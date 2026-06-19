@@ -11,7 +11,7 @@
 <section x-data="{ menuOpen: false }" class="md:hidden min-h-screen bg-white pb-[calc(5.25rem+env(safe-area-inset-bottom))] text-[#222222]">
     <header class="sticky top-0 z-30 border-b border-[#ebebeb] bg-white/95 px-4 pb-3 pt-[max(env(safe-area-inset-top),0.75rem)] backdrop-blur-xl">
         <div class="flex items-center gap-3">
-            <a href="{{ route('home') }}" class="flex items-center gap-2" aria-label="Accueil Rezi">
+            <a href="{{ route('home') }}" class="flex items-center gap-2" aria-label="Accueil Rezi App">
                 <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="Rezi App" class="h-9 w-auto">
             </a>
 
