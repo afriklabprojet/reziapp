@@ -84,7 +84,7 @@
                     <img loading="lazy" src="{{ asset('images/logo-rezi.png') }}" alt="Rezi App" class="h-10 w-auto">
                 </a>
                 <p class="text-sm leading-relaxed max-w-sm mb-6">
-                    {{ $fc['footer_brand_description'] ?? "La plateforme de référence pour trouver votre résidence meublée en Afrique de l'Ouest. Des centaines de logements vérifiés à portée de clic." }}
+                    {{ $fc['footer_brand_description'] ?? "La plateforme de référence pour trouver votre résidence meublée. Des centaines de logements vérifiés à portée de clic." }}
                 </p>
 
                 {{-- Social Links --}}
