@@ -155,7 +155,7 @@
     'name' => config('app.name'),
     'url' => config('app.url'),
     'logo' => asset('images/logo-rezi.png'),
-    'description' => "Plateforme de location de résidences meublées en Afrique de l'Ouest",
+    'description' => "Plateforme de location de résidences meublées",
     'address' => [
         '@type' => 'PostalAddress',
         'addressLocality' => config('rezi.company.city', 'Abidjan'),
