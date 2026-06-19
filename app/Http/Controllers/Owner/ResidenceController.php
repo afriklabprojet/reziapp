@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreResidenceRequest;
 use App\Http\Requests\UpdateResidenceRequest;
 use App\Models\Amenity;
+use App\Models\CancellationPolicy;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\Photo;
@@ -134,13 +135,14 @@ class ResidenceController extends Controller
     {
         Gate::authorize('update', $residence);
 
-        $residence->load(['photos', 'amenities']);
+        $residence->load(['photos', 'amenities', 'cancellationPolicy']);
         $amenities = Amenity::orderBy('name')->get();
         $communes = config('rezi.communes');
         $countries = Country::active()->orderBy('name')->get();
         $cities = City::active()->ordered()->with('communes')->get();
+        $cancellationPolicies = CancellationPolicy::where('is_active', true)->orderBy('name')->get();
 
-        return view('owner.residences.edit', compact('residence', 'amenities', 'communes', 'countries', 'cities'));
+        return view('owner.residences.edit', compact('residence', 'amenities', 'communes', 'countries', 'cities', 'cancellationPolicies'));
     }
 
     /**
