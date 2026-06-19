@@ -35,6 +35,7 @@ class PlatformSettings extends Page implements HasForms
     public ?array $bookingData = [];
     public ?array $pricingData = [];
     public ?array $generalData = [];
+    public ?array $defaultsData = [];
 
     public function mount(): void
     {
@@ -73,6 +74,15 @@ class PlatformSettings extends Page implements HasForms
             'platform_phone' => $settings->get('platform_phone')?->value ?? '',
             'maintenance_mode' => (bool) ($settings->get('maintenance_mode')?->value ?? false),
         ];
+
+        $this->defaultsData = [
+            'default_check_in_time'  => $settings->get('default_check_in_time')?->value ?? config('rezi.defaults.check_in_time', '14h00'),
+            'default_check_out_time' => $settings->get('default_check_out_time')?->value ?? config('rezi.defaults.check_out_time', '12h00'),
+            'default_min_nights'     => (int) ($settings->get('default_min_nights')?->value ?? config('rezi.defaults.min_nights', 1)),
+            'default_max_nights'     => (int) ($settings->get('default_max_nights')?->value ?? config('rezi.defaults.max_nights', 365)),
+            'default_max_guests'     => (int) ($settings->get('default_max_guests')?->value ?? config('rezi.defaults.max_guests', 4)),
+            'default_city'           => $settings->get('default_city')?->value ?? config('rezi.defaults.city', 'Abidjan'),
+        ];
     }
 
     protected function getForms(): array
@@ -83,6 +93,7 @@ class PlatformSettings extends Page implements HasForms
             'bookingForm',
             'pricingForm',
             'generalForm',
+            'defaultsForm',
         ];
     }
 
@@ -304,6 +315,71 @@ class PlatformSettings extends Page implements HasForms
 
         Notification::make()
             ->title('Paramètres généraux enregistrés')
+            ->success()
+            ->send();
+    }
+
+    public function defaultsForm(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Forms\Components\Section::make('Valeurs par défaut des résidences')
+                    ->description('Valeurs appliquées lorsqu\'une résidence ne renseigne pas ces champs')
+                    ->icon('heroicon-o-home')
+                    ->schema([
+                        Forms\Components\TextInput::make('default_check_in_time')
+                            ->label('Heure d\'arrivée par défaut')
+                            ->placeholder('14h00')
+                            ->maxLength(10)
+                            ->required()
+                            ->helperText('Format libre : 14h00, 14:00, etc.'),
+                        Forms\Components\TextInput::make('default_check_out_time')
+                            ->label('Heure de départ par défaut')
+                            ->placeholder('12h00')
+                            ->maxLength(10)
+                            ->required()
+                            ->helperText('Format libre : 12h00, 12:00, etc.'),
+                        Forms\Components\TextInput::make('default_min_nights')
+                            ->label('Séjour minimum (nuits)')
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(365)
+                            ->suffix('nuits')
+                            ->required(),
+                        Forms\Components\TextInput::make('default_max_nights')
+                            ->label('Séjour maximum (nuits)')
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(730)
+                            ->suffix('nuits')
+                            ->required(),
+                        Forms\Components\TextInput::make('default_max_guests')
+                            ->label('Capacité par défaut')
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(50)
+                            ->suffix('voyageurs')
+                            ->required(),
+                        Forms\Components\TextInput::make('default_city')
+                            ->label('Ville par défaut')
+                            ->maxLength(100)
+                            ->required()
+                            ->helperText('Utilisée dans les métadonnées SEO quand la ville n\'est pas renseignée'),
+                    ])->columns(3),
+            ])
+            ->statePath('defaultsData');
+    }
+
+    public function saveDefaults(): void
+    {
+        $data = $this->defaultsForm->getState();
+
+        foreach ($data as $key => $value) {
+            PlatformSetting::setValue($key, $value);
+        }
+
+        Notification::make()
+            ->title('Valeurs par défaut enregistrées')
             ->success()
             ->send();
     }
