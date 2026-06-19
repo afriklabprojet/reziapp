@@ -571,7 +571,7 @@
             @if($categories->isNotEmpty())
             <nav class="mt-0 bg-white border-b border-gray-200">
                 <div class="max-w-7xl mx-auto">
-                    <div class="flex overflow-x-auto scrollbar-hide px-4 sm:px-6 gap-1 sm:gap-2">
+                    <div class="flex overflow-x-auto scrollbar-hide px-4 sm:px-6 gap-1 sm:gap-2 justify-center">
                         @foreach($categories as $category)
                             <a href="{{ route('residences.index', ['category' => $category->slug]) }}"
                                class="shrink-0 flex flex-col items-center gap-1.5 py-3 px-3 sm:px-4 group cursor-pointer min-w-14 relative">
