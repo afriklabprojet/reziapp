@@ -80,8 +80,7 @@
                             <div>
                                 <p class="text-xs font-semibold text-[#F16A00] uppercase tracking-widest mb-1">Avis vérifiés</p>
                                 <h2 class="font-sans text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight">
-                                    Ils ont trouvé leur logement
-                                    <span class="text-gradient-primary">avec Rezi App</span>
+                                    Ils ont trouvé leur logement <span class="text-gradient-primary">avec Rezi App</span>
                                 </h2>
                             </div>
                             <div class="flex items-center gap-3 bg-white border border-amber-100 shadow-sm rounded-2xl px-5 py-3 shrink-0">
