@@ -458,25 +458,28 @@
                     <section>
                         <h2 class="text-lg font-semibold text-gray-900 mb-3">Mode de paiement</h2>
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                            <template x-for="method in [
-                                { id: 'wave', label: 'Wave', icon: '🌊', color: 'bg-blue-50 border-blue-300 text-blue-700' },
-                                { id: 'orange', label: 'Orange Money', icon: '🟠', color: 'bg-[#FFF4EB] border-[#FFD0A3] text-[#A34700]' },
-                                { id: 'mtn', label: 'MTN MoMo', icon: '🟡', color: 'bg-yellow-50 border-yellow-300 text-yellow-700' },
-                                { id: 'moov', label: 'Moov Money', icon: '🔵', color: 'bg-cyan-50 border-cyan-300 text-cyan-700' },
-                                { id: 'djamo', label: 'Djamo', icon: '💳', color: 'bg-purple-50 border-purple-300 text-purple-700' },
-                            ]" :key="method.id">
-                                <button type="button" @click="paymentMethod = method.id"
-                                    :class="paymentMethod === method.id
-                                        ? 'ring-2 ring-[#F16A00] border-[#F16A00] bg-pink-50'
-                                        : 'border-gray-200 hover:border-gray-300 bg-white'"
-                                    class="relative flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all cursor-pointer">
-                                    <span class="text-xl" x-text="method.icon"></span>
-                                    <span class="text-xs font-medium text-gray-700" x-text="method.label"></span>
-                                    <svg x-show="paymentMethod === method.id" x-cloak class="absolute top-1.5 right-1.5 w-4 h-4 text-[#F16A00]" fill="currentColor" viewBox="0 0 20 20">
+                            @foreach([
+                                ['id' => 'wave',   'label' => 'Wave',         'logo' => 'wave.png',         'bg' => '#E8F9FD', 'border' => '#1DC8EE'],
+                                ['id' => 'orange', 'label' => 'Orange Money', 'logo' => 'orange-money.svg',  'bg' => '#FFF4EB', 'border' => '#FF6600'],
+                                ['id' => 'mtn',    'label' => 'MTN MoMo',    'logo' => 'mtn.svg',           'bg' => '#FFFDE7', 'border' => '#FFCC00'],
+                                ['id' => 'moov',   'label' => 'Moov Money',  'logo' => 'moov.png',          'bg' => '#E8F4FD', 'border' => '#0066B3'],
+                                ['id' => 'djamo',  'label' => 'Djamo',       'logo' => 'djamo.svg',         'bg' => '#F3F0FF', 'border' => '#7C3AED'],
+                            ] as $method)
+                                <button type="button" @click="paymentMethod = '{{ $method['id'] }}'"
+                                    :style="paymentMethod === '{{ $method['id'] }}'
+                                        ? 'background:{{ $method['bg'] }};border-color:{{ $method['border'] }};box-shadow:0 0 0 2px {{ $method['border'] }}40'
+                                        : 'background:white;border-color:#E5E7EB'"
+                                    style="border-width:2px;border-style:solid"
+                                    class="relative flex flex-col items-center gap-2 p-3 rounded-xl transition-all cursor-pointer hover:border-gray-300">
+                                    <img src="{{ asset('images/payment/' . $method['logo']) }}"
+                                         alt="{{ $method['label'] }}"
+                                         class="h-8 w-auto object-contain max-w-[80px]">
+                                    <span class="text-xs font-medium text-gray-700">{{ $method['label'] }}</span>
+                                    <svg x-show="paymentMethod === '{{ $method['id'] }}'" x-cloak class="absolute top-1.5 right-1.5 w-4 h-4" fill="{{ $method['border'] }}" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                     </svg>
                                 </button>
-                            </template>
+                            @endforeach
                         </div>
                     </section>
 
@@ -493,8 +496,8 @@
                                     Disponible car votre arrivée est dans plus de 30 jours.
                                 </div>
                                 <div class="text-xs text-emerald-900 mt-2 space-y-0.5" x-show="paymentSplit" x-cloak>
-                                    <div>• Aujourd'hui : <strong x-text="formatCurrency(Math.round((price?.total_amount ?? 0) * 0.5))"></strong></div>
-                                    <div>• Solde dû le <strong x-text="balanceDueLabel"></strong> : <strong x-text="formatCurrency(Math.round((price?.total_amount ?? 0) * 0.5))"></strong></div>
+                                    <div>• Aujourd'hui : <strong x-text="formatCurrency(halfTotalAmount())"></strong></div>
+                                    <div>• Solde dû le <strong x-text="balanceDueLabel"></strong> : <strong x-text="formatCurrency(halfTotalAmount())"></strong></div>
                                 </div>
                             </div>
                         </label>
@@ -684,41 +687,40 @@
                                     <div class="space-y-3 text-sm">
                                         <div class="flex justify-between">
                                             <span class="underline decoration-dotted text-gray-600 cursor-help"
-                                                x-text="formatCurrency(price?.avg_price_per_night) + ' × ' + price?.nights + ' jour' + (price?.nights > 1 ? 's' : '')"
+                                                x-text="priceNightsLabel()"
                                                 :title="'Prix moyen par jour'"></span>
-                                            <span x-text="formatCurrency(price?.subtotal)"></span>
+                                            <span x-text="formatCurrency(priceSubtotal())"></span>
                                         </div>
 
-                                        <div class="flex justify-between" x-show="price?.cleaning_fee > 0">
+                                        <div class="flex justify-between" x-show="priceCleaningFee() > 0">
                                             <span class="underline decoration-dotted text-gray-600 cursor-help"
                                                 title="Nettoyage professionnel du logement">Frais de ménage</span>
-                                            <span x-text="formatCurrency(price?.cleaning_fee)"></span>
+                                            <span x-text="formatCurrency(priceCleaningFee())"></span>
                                         </div>
 
-                                        <div class="flex justify-between" x-show="price?.service_fee > 0">
+                                        <div class="flex justify-between" x-show="priceServiceFee() > 0">
                                             <span class="underline decoration-dotted text-gray-600 cursor-help"
                                                 title="Support 24/7, garantie réservation, paiement sécurisé">Frais de
                                                 service Rezi App</span>
-                                            <span x-text="formatCurrency(price?.service_fee)"></span>
+                                            <span x-text="formatCurrency(priceServiceFee())"></span>
                                         </div>
 
                                         <div class="flex justify-between">
                                             <span class="underline decoration-dotted text-gray-600 cursor-help"
                                                 title="Taxe d'État fixe">Taxe d'État</span>
-                                            <span x-text="formatCurrency(price?.taxes)"></span>
+                                            <span x-text="formatCurrency(priceTaxes())"></span>
                                         </div>
 
                                         <div class="flex justify-between text-green-600"
-                                            x-show="price?.long_stay_discount > 0">
+                                            x-show="priceLongStayDiscount() > 0">
                                             <span>Réduction long séjour</span>
-                                            <span x-text="'-' + formatCurrency(price?.long_stay_discount)"></span>
+                                            <span x-text="'-' + formatCurrency(priceLongStayDiscount())"></span>
                                         </div>
 
                                         <div class="flex justify-between text-green-600"
-                                            x-show="(price?.promo_discount > 0) || (price?.coupon_discount > 0)">
+                                            x-show="priceCouponDiscount() > 0">
                                             <span>Code de réduction</span>
-                                            <span
-                                                x-text="'-' + formatCurrency((price?.promo_discount || 0) + (price?.coupon_discount || 0))"></span>
+                                            <span x-text="'-' + formatCurrency(priceCouponDiscount())"></span>
                                         </div>
                                     </div>
 
@@ -726,7 +728,7 @@
                                     <div
                                         class="flex justify-between items-center pt-4 mt-4 border-t border-gray-200 font-semibold text-base">
                                         <span>Total <span class="text-xs font-normal text-gray-400">(XOF)</span></span>
-                                        <span x-text="formatCurrency(price?.total_amount)"></span>
+                                        <span x-text="formatCurrency(priceTotalAmount())"></span>
                                     </div>
                                 </div>
 
