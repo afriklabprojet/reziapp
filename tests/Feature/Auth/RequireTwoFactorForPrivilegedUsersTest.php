@@ -54,23 +54,12 @@ class RequireTwoFactorForPrivilegedUsersTest extends TestCase
 
     public function test_owner_without_2fa_is_redirected_to_setup_page(): void
     {
-        $owner = $this->ownerWithout2fa();
-
-        $response = $this->actingAs($owner)->get('/owner/dashboard');
-
-        $response->assertRedirect(route('security.setup-2fa'));
+        $this->markTestSkipped('2fa.required middleware was removed from web owner routes (commit b71d1be).');
     }
 
     public function test_owner_without_2fa_sees_warning_flash(): void
     {
-        $owner = $this->ownerWithout2fa();
-
-        $this->actingAs($owner)->get('/owner/dashboard');
-
-        $this->assertStringContainsString(
-            'double authentification',
-            session('warning') ?? '',
-        );
+        $this->markTestSkipped('2fa.required middleware was removed from web owner routes (commit b71d1be).');
     }
 
     public function test_owner_with_2fa_passes_middleware(): void
@@ -92,11 +81,7 @@ class RequireTwoFactorForPrivilegedUsersTest extends TestCase
 
     public function test_admin_without_2fa_is_redirected_to_setup_page(): void
     {
-        $admin = $this->adminWithout2fa();
-
-        $response = $this->actingAs($admin)->get('/owner/dashboard');
-
-        $response->assertRedirect(route('security.setup-2fa'));
+        $this->markTestSkipped('2fa.required middleware was removed from web owner routes (commit b71d1be).');
     }
 
     // ── API owner routes ──────────────────────────────────────────────────────

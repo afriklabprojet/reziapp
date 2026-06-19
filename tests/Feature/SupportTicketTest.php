@@ -32,7 +32,7 @@ class SupportTicketTest extends TestCase
         $this->skipIfSqlite();
 
         $this->user = User::factory()->create(['role' => 'user']);
-        $this->admin = User::factory()->create(['role' => 'admin']);
+        $this->admin = User::factory()->create(['role' => 'admin', 'two_factor_enabled' => true]);
     }
 
     // ========================================

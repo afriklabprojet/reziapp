@@ -23,7 +23,7 @@ class PrivacyCleanupTest extends TestCase
     {
         parent::setUp();
 
-        $owner = User::factory()->create(['role' => 'owner']);
+        $owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $user  = User::factory()->create(['role' => 'user']);
         $residence = Residence::factory()->create(['owner_id' => $owner->id]);
 

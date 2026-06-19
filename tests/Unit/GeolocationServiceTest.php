@@ -24,7 +24,7 @@ class GeolocationServiceTest extends TestCase
         parent::setUp();
 
         $this->service = new GeolocationService();
-        $this->owner = User::factory()->create(['role' => 'owner']);
+        $this->owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
     }
 
     // =========================================================================

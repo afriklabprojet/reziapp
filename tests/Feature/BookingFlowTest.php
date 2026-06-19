@@ -40,7 +40,7 @@ class BookingFlowTest extends TestCase
             'is_active' => true,
         ]);
 
-        $this->owner = User::factory()->create(['role' => 'owner']);
+        $this->owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $this->guest = User::factory()->create(['role' => 'user']);
         $this->residence = Residence::factory()->create([
             'owner_id' => $this->owner->id,
@@ -326,7 +326,7 @@ class BookingFlowTest extends TestCase
     #[Test]
     public function owner_cannot_view_other_owners_bookings(): void
     {
-        $otherOwner = User::factory()->create(['role' => 'owner']);
+        $otherOwner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $otherResidence = Residence::factory()->create([
             'owner_id' => $otherOwner->id,
             'cancellation_policy_id' => $this->policy->id,
@@ -420,7 +420,7 @@ class BookingFlowTest extends TestCase
     #[Test]
     public function other_owner_cannot_view_calendar(): void
     {
-        $otherOwner = User::factory()->create(['role' => 'owner']);
+        $otherOwner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
 
         $response = $this->actingAs($otherOwner)
             ->get(route('owner.bookings.calendar', $this->residence));

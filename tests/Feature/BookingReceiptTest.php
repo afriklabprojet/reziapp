@@ -32,7 +32,7 @@ class BookingReceiptTest extends TestCase
             'is_active'    => true,
         ]);
 
-        $owner = User::factory()->create(['role' => 'owner']);
+        $owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
 
         $this->guest = User::factory()->create(['role' => 'user']);
 

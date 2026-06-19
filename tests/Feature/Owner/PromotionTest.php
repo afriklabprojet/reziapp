@@ -38,7 +38,7 @@ class PromotionTest extends TestCase
             'is_active'    => true,
         ]);
 
-        $this->owner = User::factory()->create(['role' => 'owner']);
+        $this->owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $this->residence = Residence::factory()->create([
             'owner_id'                => $this->owner->id,
             'cancellation_policy_id'  => $policy->id,
@@ -159,7 +159,7 @@ class PromotionTest extends TestCase
     #[Test]
     public function owner_cannot_create_promotion_for_other_owner_residence(): void
     {
-        $otherOwner = User::factory()->create(['role' => 'owner']);
+        $otherOwner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $otherResidence = Residence::factory()->create(['owner_id' => $otherOwner->id]);
 
         $this->actingAs($this->owner)
@@ -205,7 +205,7 @@ class PromotionTest extends TestCase
     #[Test]
     public function owner_cannot_toggle_other_owner_promotion(): void
     {
-        $otherOwner = User::factory()->create(['role' => 'owner']);
+        $otherOwner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $otherResidence = Residence::factory()->create(['owner_id' => $otherOwner->id]);
         $promotion = Promotion::factory()->active()->create([
             'residence_id' => $otherResidence->id,
@@ -239,7 +239,7 @@ class PromotionTest extends TestCase
     #[Test]
     public function owner_cannot_delete_other_owner_promotion(): void
     {
-        $otherOwner = User::factory()->create(['role' => 'owner']);
+        $otherOwner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $otherResidence = Residence::factory()->create(['owner_id' => $otherOwner->id]);
         $promotion = Promotion::factory()->create([
             'residence_id' => $otherResidence->id,

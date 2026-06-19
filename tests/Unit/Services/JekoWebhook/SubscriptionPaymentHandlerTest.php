@@ -66,7 +66,7 @@ class SubscriptionPaymentHandlerTest extends TestCase
 
     private function makeSubscriptionPayment(): SubscriptionPayment
     {
-        $user = User::factory()->create(['role' => 'owner']);
+        $user = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
 
         $plan = SubscriptionPlan::create([
             'name' => 'Pro',

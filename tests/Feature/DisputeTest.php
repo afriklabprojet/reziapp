@@ -44,9 +44,9 @@ class DisputeTest extends TestCase
             'is_active' => true,
         ]);
 
-        $this->owner = User::factory()->create(['role' => 'owner']);
+        $this->owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $this->guest = User::factory()->create(['role' => 'user']);
-        $this->admin = User::factory()->create(['role' => 'admin']);
+        $this->admin = User::factory()->create(['role' => 'admin', 'two_factor_enabled' => true]);
         $this->residence = Residence::factory()->create([
             'owner_id' => $this->owner->id,
             'cancellation_policy_id' => $policy->id,

@@ -21,7 +21,7 @@ class PaymentProviderResourceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->admin = User::factory()->create(['role' => 'admin']);
+        $this->admin = User::factory()->create(['role' => 'admin', 'two_factor_enabled' => true]);
     }
 
     public function test_page_classes_exist(): void

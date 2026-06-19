@@ -35,7 +35,7 @@ class AutoReplyTest extends TestCase
             'is_active' => true,
         ]);
 
-        $this->owner = User::factory()->create(['role' => 'owner']);
+        $this->owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $this->residence = Residence::factory()->create([
             'owner_id' => $this->owner->id,
             'cancellation_policy_id' => $policy->id,
@@ -182,7 +182,7 @@ class AutoReplyTest extends TestCase
     #[Test]
     public function other_owner_cannot_manage_auto_reply(): void
     {
-        $otherOwner = User::factory()->create(['role' => 'owner']);
+        $otherOwner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $autoReply = AutoReply::create([
             'user_id' => $this->owner->id,
             'name' => 'Not yours',

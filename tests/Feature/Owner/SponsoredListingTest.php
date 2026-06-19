@@ -40,7 +40,7 @@ class SponsoredListingTest extends TestCase
             'is_active' => true,
         ]);
 
-        $this->owner = User::factory()->create(['role' => 'owner']);
+        $this->owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $this->residence = Residence::factory()->create([
             'owner_id' => $this->owner->id,
             'cancellation_policy_id' => $policy->id,
@@ -119,7 +119,7 @@ class SponsoredListingTest extends TestCase
     #[Test]
     public function owner_cannot_sponsor_another_owners_residence(): void
     {
-        $otherOwner = User::factory()->create(['role' => 'owner']);
+        $otherOwner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $otherResidence = Residence::factory()->create([
             'owner_id' => $otherOwner->id,
         ]);
@@ -223,7 +223,7 @@ class SponsoredListingTest extends TestCase
     #[Test]
     public function other_owner_cannot_manage_sponsored(): void
     {
-        $otherOwner = User::factory()->create(['role' => 'owner']);
+        $otherOwner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $sponsored = SponsoredListing::create([
             'residence_id' => $this->residence->id,
             'user_id' => $this->owner->id,

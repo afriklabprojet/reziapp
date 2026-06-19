@@ -25,8 +25,8 @@ class AdminModerationTest extends TestCase
     {
         parent::setUp();
 
-        $this->admin = User::factory()->create(['role' => 'admin']);
-        $this->owner = User::factory()->create(['role' => 'owner']);
+        $this->admin = User::factory()->create(['role' => 'admin', 'two_factor_enabled' => true]);
+        $this->owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $this->regularUser = User::factory()->create(['role' => 'user']);
     }
 

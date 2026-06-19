@@ -400,7 +400,7 @@ class PushNotificationTest extends TestCase
     #[Test]
     public function admin_can_send_broadcast_notification(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = User::factory()->create(['role' => 'admin', 'two_factor_enabled' => true]);
 
         $response = $this->actingAs($admin)
             ->postJson(route('notifications.broadcast'), [

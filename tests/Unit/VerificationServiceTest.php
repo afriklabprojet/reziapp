@@ -172,7 +172,7 @@ class VerificationServiceTest extends TestCase
     public function blacklist_user_suspends_account(): void
     {
         $user = User::factory()->create();
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = User::factory()->create(['role' => 'admin', 'two_factor_enabled' => true]);
 
         $blacklist = $this->service->blacklistUser(
             $user,

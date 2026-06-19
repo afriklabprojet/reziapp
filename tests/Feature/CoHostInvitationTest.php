@@ -29,7 +29,7 @@ class CoHostInvitationTest extends TestCase
     {
         parent::setUp();
 
-        $this->owner = User::factory()->create(['role' => 'owner']);
+        $this->owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $this->residence = Residence::factory()->create([
             'owner_id' => $this->owner->id,
         ]);
@@ -53,7 +53,7 @@ class CoHostInvitationTest extends TestCase
     #[Test]
     public function non_owner_cannot_view_cohosts(): void
     {
-        $otherUser = User::factory()->create(['role' => 'owner']);
+        $otherUser = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
 
         $response = $this->actingAs($otherUser)
             ->get(route('owner.cohosts.index', $this->residence));
@@ -410,7 +410,7 @@ class CoHostInvitationTest extends TestCase
     #[Test]
     public function non_owner_cannot_delete_cohost(): void
     {
-        $otherOwner = User::factory()->create(['role' => 'owner']);
+        $otherOwner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
 
         $cohost = CoHost::create([
             'residence_id' => $this->residence->id,

@@ -18,7 +18,7 @@ class AdminPrivateFileTest extends TestCase
         Storage::fake('private');
 
         /** @var User $admin */
-        $admin = User::factory()->createOne(['role' => 'admin']);
+        $admin = User::factory()->createOne(['role' => 'admin', 'two_factor_enabled' => true]);
         Storage::disk('private')->put(self::PRIVATE_DOCUMENT_PATH, 'sensitive-content');
 
         $response = $this->actingAs($admin)
@@ -53,7 +53,7 @@ class AdminPrivateFileTest extends TestCase
         Storage::fake('private');
 
         /** @var User $admin */
-        $admin = User::factory()->createOne(['role' => 'admin']);
+        $admin = User::factory()->createOne(['role' => 'admin', 'two_factor_enabled' => true]);
 
         $this->actingAs($admin)
             ->get('/admin/files/private/%2E%2E%2F.env')

@@ -40,7 +40,7 @@ class MessagingTest extends TestCase
         Storage::fake('private');
 
         $this->user = User::factory()->create(['role' => 'user']);
-        $this->owner = User::factory()->create(['role' => 'owner']);
+        $this->owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $this->residence = Residence::factory()->create([
             'owner_id' => $this->owner->id,
             'status' => 'approved',

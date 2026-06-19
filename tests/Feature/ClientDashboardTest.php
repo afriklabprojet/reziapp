@@ -40,7 +40,7 @@ class ClientDashboardTest extends TestCase
     #[Test]
     public function owner_is_redirected_from_client_dashboard(): void
     {
-        $owner = User::factory()->create(['role' => 'owner']);
+        $owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
 
         $response = $this->actingAs($owner)
             ->get(route('client.dashboard'));

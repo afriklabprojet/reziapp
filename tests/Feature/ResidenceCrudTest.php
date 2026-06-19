@@ -47,7 +47,7 @@ class ResidenceCrudTest extends TestCase
             'role' => 'owner',
             'identity_verified' => true, // Required by identity.verified middleware
         ]);
-        $this->admin = User::factory()->create(['role' => 'admin']);
+        $this->admin = User::factory()->create(['role' => 'admin', 'two_factor_enabled' => true]);
         $this->regularUser = User::factory()->create(['role' => 'user']);
 
         Storage::fake('public');
@@ -130,7 +130,7 @@ class ResidenceCrudTest extends TestCase
     #[Test]
     public function owner_cannot_update_another_owners_residence(): void
     {
-        $anotherOwner = User::factory()->create(['role' => 'owner']);
+        $anotherOwner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $residence = Residence::factory()->create([
             'owner_id' => $anotherOwner->id,
         ]);

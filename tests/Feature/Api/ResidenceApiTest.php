@@ -42,7 +42,7 @@ class ResidenceApiTest extends TestCase
     #[Test]
     public function index_returns_paginated_residences(): void
     {
-        $owner = User::factory()->create(['role' => 'owner']);
+        $owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         Residence::factory()->count(25)->create([
             'owner_id' => $owner->id,
             'status' => 'approved',
@@ -64,7 +64,7 @@ class ResidenceApiTest extends TestCase
     #[Test]
     public function index_caps_per_page_at_50(): void
     {
-        $owner = User::factory()->create(['role' => 'owner']);
+        $owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         Residence::factory()->count(3)->create([
             'owner_id' => $owner->id,
             'status' => 'approved',
@@ -80,7 +80,7 @@ class ResidenceApiTest extends TestCase
     #[Test]
     public function index_does_not_leak_pending_residences(): void
     {
-        $owner = User::factory()->create(['role' => 'owner']);
+        $owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         Residence::factory()->create([
             'owner_id' => $owner->id,
             'status' => 'pending',
@@ -98,7 +98,7 @@ class ResidenceApiTest extends TestCase
     #[Test]
     public function show_returns_residence_with_relations(): void
     {
-        $owner = User::factory()->create(['role' => 'owner']);
+        $owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $residence = Residence::factory()->create([
             'owner_id' => $owner->id,
             'status' => 'approved',
@@ -127,7 +127,7 @@ class ResidenceApiTest extends TestCase
     #[Test]
     public function owner_can_list_own_residences(): void
     {
-        $owner = User::factory()->create(['role' => 'owner']);
+        $owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         Residence::factory()->count(3)->create([
             'owner_id' => $owner->id,
             'cancellation_policy_id' => $this->policy->id,
@@ -177,8 +177,8 @@ class ResidenceApiTest extends TestCase
     #[Test]
     public function admin_can_approve_residence(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $owner = User::factory()->create(['role' => 'owner']);
+        $admin = User::factory()->create(['role' => 'admin', 'two_factor_enabled' => true]);
+        $owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $residence = Residence::factory()->create([
             'owner_id' => $owner->id,
             'status' => 'pending',
@@ -201,7 +201,7 @@ class ResidenceApiTest extends TestCase
     #[Test]
     public function non_admin_cannot_approve(): void
     {
-        $owner = User::factory()->create(['role' => 'owner']);
+        $owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $residence = Residence::factory()->create([
             'owner_id' => $owner->id,
             'status' => 'pending',

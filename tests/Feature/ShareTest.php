@@ -37,7 +37,7 @@ class ShareTest extends TestCase
             'is_active' => true,
         ]);
 
-        $this->owner = User::factory()->create(['role' => 'owner']);
+        $this->owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
         $this->residence = Residence::factory()->create([
             'owner_id' => $this->owner->id,
             'cancellation_policy_id' => $policy->id,

@@ -33,7 +33,7 @@ class GeoSearchTest extends TestCase
     {
         parent::setUp();
 
-        $this->owner = User::factory()->create(['role' => 'owner']);
+        $this->owner = User::factory()->create(['role' => 'owner', 'two_factor_enabled' => true]);
 
         // Créer des résidences à différentes distances
         $this->createTestResidences();

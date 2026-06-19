@@ -153,7 +153,7 @@ class IcalServiceTest extends TestCase
     private function makeFeed(string $importUrl, string $platform): IcalFeed
     {
         /** @var User $owner */
-        $owner = User::factory()->createOne(['role' => 'owner']);
+        $owner = User::factory()->createOne(['role' => 'owner', 'two_factor_enabled' => true]);
         /** @var Residence $residence */
         $residence = Residence::factory()->createOne(['owner_id' => $owner->id]);
 
