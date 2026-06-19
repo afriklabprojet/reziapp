@@ -42,7 +42,7 @@
                         return [
                             'initials' => $initials ?: 'U',
                             'name'     => $name,
-                            'city'     => $t['city'] ?? 'Abidjan',
+                            'city'     => $t['city'] ?? ($t['residence']['commune'] ?? 'Abidjan'),
                             'color'    => $colors[$i % count($colors)],
                             'stars'    => $t['rating'] ?? 5,
                             'text'     => '"' . $t['content'] . '"',
@@ -87,12 +87,22 @@
                             <div class="flex items-center gap-3 bg-white border border-amber-100 shadow-sm rounded-2xl px-5 py-3 shrink-0">
                                 <div class="text-center">
                                     <div class="flex gap-0.5 justify-center mb-0.5">
+                                        @php $avgRating = isset($reviewStats['avg']) && $reviewStats['avg'] > 0 ? (float) $reviewStats['avg'] : 4.9; @endphp
                                         @for ($i = 0; $i < 5; $i++)
-                                            <svg class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                            <svg class="w-4 h-4 {{ $i < floor($avgRating) ? 'text-amber-400' : 'text-gray-200' }} fill-current" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
                                         @endfor
                                     </div>
-                                    <div class="text-xl font-extrabold text-gray-900 leading-none">4.9<span class="text-sm font-normal text-gray-400">/5</span></div>
-                                    <div class="text-[11px] text-gray-400 mt-0.5">{{ number_format(max(200, ($stats['contacts'] ?? 0) + 150)) }}+ avis</div>
+                                    <div class="text-xl font-extrabold text-gray-900 leading-none">
+                                        {{ isset($reviewStats['avg']) && $reviewStats['avg'] > 0 ? $reviewStats['avg'] : '4.9' }}
+                                        <span class="text-sm font-normal text-gray-400">/5</span>
+                                    </div>
+                                    <div class="text-[11px] text-gray-400 mt-0.5">
+                                        @if(isset($reviewStats['total']) && $reviewStats['total'] > 0)
+                                            {{ number_format($reviewStats['total']) }} avis
+                                        @else
+                                            {{ number_format(max(50, ($stats['contacts'] ?? 0) + 20)) }}+ avis
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>
