@@ -196,7 +196,7 @@ class AuthApiTest extends TestCase
     #[Test]
     public function admin_can_list_users_with_pagination(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = User::factory()->create(['role' => 'admin', 'two_factor_enabled' => true]);
         User::factory()->count(5)->create();
         Sanctum::actingAs($admin);
 
@@ -210,7 +210,7 @@ class AuthApiTest extends TestCase
     #[Test]
     public function admin_cannot_downgrade_own_role(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = User::factory()->create(['role' => 'admin', 'two_factor_enabled' => true]);
         Sanctum::actingAs($admin);
 
         $response = $this->patchJson("/api/v1/admin/users/{$admin->id}/role", [
