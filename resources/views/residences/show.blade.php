@@ -40,7 +40,7 @@
         'address' => [
             '@type' => 'PostalAddress',
             'addressLocality' => $residence->commune,
-            'addressRegion' => $residence->city ?? config('rezi.defaults.city'),
+            'addressRegion' => $residence->city ?? $defCity,
             'addressCountry' => 'CI',
         ],
         'geo' => $residence->latitude ? [
@@ -57,6 +57,16 @@
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_HEX_TAG) !!}
     </script>
 @endpush
+
+@php
+    use App\Models\PlatformSetting;
+    $defCheckIn   = PlatformSetting::getValue('default_check_in_time',  config('rezi.defaults.check_in_time',  '14h00'));
+    $defCheckOut  = PlatformSetting::getValue('default_check_out_time', config('rezi.defaults.check_out_time', '12h00'));
+    $defMinNights = (int) PlatformSetting::getValue('default_min_nights', config('rezi.defaults.min_nights', 1));
+    $defMaxNights = (int) PlatformSetting::getValue('default_max_nights', config('rezi.defaults.max_nights', 365));
+    $defMaxGuests = (int) PlatformSetting::getValue('default_max_guests', config('rezi.defaults.max_guests', 4));
+    $defCity      = PlatformSetting::getValue('default_city', config('rezi.defaults.city', 'Abidjan'));
+@endphp
 
 @push('styles')
     <style>
@@ -572,9 +582,8 @@
                                 {{ $residence->commune ?? ($residence->city ?? '') }}
                             </h2>
                             <p class="text-gray-500 text-sm mt-1">
-                                @php $defaultMaxGuests = config('rezi.defaults.max_guests') @endphp
-                                {{ $residence->max_guests ?? $defaultMaxGuests }}
-                                voyageur{{ ($residence->max_guests ?? $defaultMaxGuests) > 1 ? 's' : '' }}
+                                {{ $residence->max_guests ?? $defMaxGuests }}
+                                voyageur{{ ($residence->max_guests ?? $defMaxGuests) > 1 ? 's' : '' }}
                                 <span class="mx-1">·</span>
                                 {{ $residence->bedrooms ?? 1 }} chambre{{ ($residence->bedrooms ?? 1) > 1 ? 's' : '' }}
                                 <span class="mx-1">·</span>
@@ -778,8 +787,7 @@
                     {{-- Calendar --}}
                     <div id="calendrier" class="py-8 border-b border-gray-200" x-data="residenceCalendar({{ \Illuminate\Support\Js::encode(['unavailable' => $unavailableDates ?? []]) }})">
                         <h2 class="text-[22px] font-semibold text-gray-900 mb-2">
-                            @php $defaultMinNights = config('rezi.defaults.min_nights') @endphp
-                            {{ $residence->min_nights ?? $defaultMinNights }} nuit{{ ($residence->min_nights ?? $defaultMinNights) > 1 ? 's' : '' }}
+                            {{ $residence->min_nights ?? $defMinNights }} nuit{{ ($residence->min_nights ?? $defMinNights) > 1 ? 's' : '' }}
                             minimum
                         </h2>
                         <p class="text-gray-500 text-sm mb-6">
@@ -1343,9 +1351,9 @@
                                     @php
                                         $formatTime = fn($t, $fallback) => $t ? preg_replace('/^(\d{2}):(\d{2}).*$/', '$1h$2', $t) : $fallback;
                                     @endphp
-                                    <li>Arrivée : à partir de {{ $formatTime($residence->check_in_time, config('rezi.defaults.check_in_time')) }}</li>
-                                    <li>Départ : avant {{ $formatTime($residence->check_out_time, config('rezi.defaults.check_out_time')) }}</li>
-                                    <li>{{ $residence->max_guests ?? config('rezi.defaults.max_guests') }} voyageurs maximum</li>
+                                    <li>Arrivée : à partir de {{ $formatTime($residence->check_in_time, $defCheckIn) }}</li>
+                                    <li>Départ : avant {{ $formatTime($residence->check_out_time, $defCheckOut) }}</li>
+                                    <li>{{ $residence->max_guests ?? $defMaxGuests }} voyageurs maximum</li>
                                     @if ($residence->house_rules)
                                         @php
                                             $rules = $residence->house_rules;
@@ -1414,14 +1422,14 @@
     'pricePerNight' => $pricePerNight,
     'pricePerWeek' => $residence->price_per_week ?? 0,
     'pricePerMonth' => $residence->price_per_month ?? 0,
-    'maxGuests' => $residence->max_guests ?? config('rezi.defaults.max_guests'),
-    'minNights' => $residence->min_nights ?? config('rezi.defaults.min_nights'),
-    'maxNights' => $residence->max_nights ?? config('rezi.defaults.max_nights'),
+    'maxGuests' => $residence->max_guests ?? $defMaxGuests,
+    'minNights' => $residence->min_nights ?? $defMinNights,
+    'maxNights' => $residence->max_nights ?? $defMaxNights,
     'instantBook' => (bool) $residence->instant_book,
     'residenceId' => $residence->id,
     'unavailableDates' => $unavailableDates ?? [],
     'cleaningFee' => $residence->cleaning_fee ?? 0,
-    'stateTax' => (int) config('rezi.pricing.state_tax'),
+    'stateTax' => (int) PlatformSetting::getValue('state_tax', config('rezi.pricing.state_tax', 1000)),
     'isAuthenticated' => auth()->check(),
 ]) }})">
 
@@ -1602,7 +1610,7 @@
                                             </div>
                                         </div>
                                         <p class="text-xs text-gray-400 pt-1">Ce logement accepte
-                                            {{ $residence->max_guests ?? config('rezi.defaults.max_guests') }} voyageurs maximum, bébés non comptés.</p>
+                                            {{ $residence->max_guests ?? $defMaxGuests }} voyageurs maximum, bébés non comptés.</p>
                                         <button type="button" @click="showGuestPicker = false"
                                             class="w-full text-sm font-semibold text-gray-900 underline hover:no-underline text-right">
                                             Fermer
