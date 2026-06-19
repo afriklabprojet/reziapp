@@ -19,6 +19,16 @@ class StoreInstantBookingRequest extends FormRequest
         return $this->user() !== null;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'guests'   => (int) $this->input('guests', 1),
+            'adults'   => (int) $this->input('adults', 1),
+            'children' => (int) $this->input('children', 0),
+            'infants'  => (int) $this->input('infants', 0),
+        ]);
+    }
+
     public function rules(): array
     {
         $residence = $this->route('residence');
