@@ -48,7 +48,7 @@
         </div>
     </form>
 
-    <form action="{{ route('owner.sequences.destroy', $sequence) }}" method="POST" onsubmit="return confirm('Supprimer cette séquence ?')">
+    <form action="{{ route('owner.sequences.destroy', $sequence) }}" method="POST"  data-confirm='Supprimer cette séquence ?'>
         @csrf @method('DELETE')
         <button type="submit" class="text-sm text-red-500 hover:text-red-700">Supprimer cette séquence</button>
     </form>

@@ -537,7 +537,7 @@
 
                                             <form method="POST"
                                                 action="{{ route('owner.residences.delete-photo', [$residence, $photo]) }}"
-                                                class="inline" onsubmit="return confirm('Supprimer cette photo ?')">
+                                                class="inline"  data-confirm='Supprimer cette photo ?'>
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"

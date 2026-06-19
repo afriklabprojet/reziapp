@@ -38,14 +38,14 @@
     @endif
 
     {{-- Filter --}}
-    <form class="flex flex-wrap items-center gap-3">
-        <select name="residence_id" onchange="this.form.submit()" class="rounded-xl border-gray-200 text-sm py-2 px-3">
+    <form class="flex flex-wrap items-center gap-3" x-data>
+        <select name="residence_id" @change="$el.closest('form').submit()" class="rounded-xl border-gray-200 text-sm py-2 px-3">
             <option value="">Toutes les résidences</option>
             @foreach($residences as $r)
             <option value="{{ $r->id }}" {{ request('residence_id') == $r->id ? 'selected' : '' }}>{{ $r->name }}</option>
             @endforeach
         </select>
-        <select name="utility_type" onchange="this.form.submit()" class="rounded-xl border-gray-200 text-sm py-2 px-3">
+        <select name="utility_type" @change="$el.closest('form').submit()" class="rounded-xl border-gray-200 text-sm py-2 px-3">
             <option value="">Tous les types</option>
             @foreach(\App\Models\UtilityReading::TYPES as $k => $l)
             <option value="{{ $k }}" {{ request('utility_type') === $k ? 'selected' : '' }}>{{ $l }}</option>

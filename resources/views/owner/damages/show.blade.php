@@ -89,7 +89,7 @@
                 </form>
             </div>
 
-            <form action="{{ route('owner.damages.destroy', $damage) }}" method="POST" onsubmit="return confirm('Supprimer ce rapport ?')">
+            <form action="{{ route('owner.damages.destroy', $damage) }}" method="POST"  data-confirm='Supprimer ce rapport ?'>
                 @csrf @method('DELETE')
                 <button type="submit" class="w-full text-sm text-red-500 hover:text-red-700 text-center">Supprimer ce rapport</button>
             </form>

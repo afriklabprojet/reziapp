@@ -71,7 +71,7 @@
                     <p class="text-lg font-bold text-gray-900">{{ number_format($sub->monthly_premium, 0, ',', ' ') }}</p>
                     <p class="text-xs text-gray-400">FCFA/mois</p>
                     @if($sub->status === 'active')
-                    <form method="POST" action="{{ route('owner.insurance.cancel', $sub) }}" class="mt-2" onsubmit="return confirm('Annuler ce contrat ?')">
+                    <form method="POST" action="{{ route('owner.insurance.cancel', $sub) }}" class="mt-2"  data-confirm='Annuler ce contrat ?'>
                         @csrf @method('PATCH')
                         <button type="submit" class="text-xs text-red-500 hover:text-red-700 font-medium">Annuler</button>
                     </form>

@@ -211,7 +211,7 @@
                                 </a>
 
                                 <form action="{{ route('owner.auto-replies.destroy', $reply) }}" method="POST"
-                                    onsubmit="return confirm('Supprimer cette réponse ?')">
+                                     data-confirm='Supprimer cette réponse ?'>
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="p-2 rounded-lg hover:bg-red-50 transition"

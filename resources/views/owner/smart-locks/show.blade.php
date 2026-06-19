@@ -65,7 +65,7 @@
                 </form>
             </div>
 
-            <form action="{{ route('owner.smart-locks.destroy', $smartLock) }}" method="POST" onsubmit="return confirm('Supprimer cette serrure ?')">
+            <form action="{{ route('owner.smart-locks.destroy', $smartLock) }}" method="POST"  data-confirm='Supprimer cette serrure ?'>
                 @csrf @method('DELETE')
                 <button type="submit" class="w-full text-sm text-red-500 hover:text-red-700 text-center">Supprimer cette serrure</button>
             </form>

@@ -174,7 +174,7 @@
                     {{-- Tri --}}
                     <select name="sort"
                         class="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:ring-2 focus:ring-[#F16A00]/20 focus:border-[#F16A00]"
-                        onchange="this.form.submit()">
+                        @change="$el.closest('form').submit()">
                         <option value="">Trier par date</option>
                         <option value="price" {{ request('sort') === 'price' ? 'selected' : '' }}>Prix</option>
                         <option value="views" {{ request('sort') === 'views' ? 'selected' : '' }}>Vues</option>

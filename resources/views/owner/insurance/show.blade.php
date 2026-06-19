@@ -21,7 +21,7 @@
                 {{ $insurance->status_label }}
             </span>
             @if($insurance->isActive())
-            <form method="POST" action="{{ route('owner.insurance.cancel', $insurance) }}" onsubmit="return confirm('Résilier ce contrat ?')">
+            <form method="POST" action="{{ route('owner.insurance.cancel', $insurance) }}"  data-confirm='Résilier ce contrat ?'>
                 @csrf
                 <input type="hidden" name="reason" value="Résiliation à la demande du propriétaire">
                 <button type="submit" class="px-4 py-1.5 text-sm font-medium text-red-600 border border-red-200 rounded-xl hover:bg-red-50 transition-colors">
@@ -29,7 +29,7 @@
                 </button>
             </form>
             @elseif($insurance->canBeRenewed())
-            <form method="POST" action="{{ route('owner.insurance.renew', $insurance) }}" onsubmit="return confirm('Renouveler ce contrat pour 1 an ?')">
+            <form method="POST" action="{{ route('owner.insurance.renew', $insurance) }}"  data-confirm='Renouveler ce contrat pour 1 an ?'>
                 @csrf
                 <button type="submit" class="px-4 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors">
                     Renouveler

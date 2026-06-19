@@ -87,7 +87,7 @@
 
     {{-- Actions --}}
     <div class="flex gap-3">
-        <form method="POST" action="{{ route('owner.tenant-reviews.destroy', $review) }}" onsubmit="return confirm('Supprimer cet avis ?')">
+        <form method="POST" action="{{ route('owner.tenant-reviews.destroy', $review) }}"  data-confirm='Supprimer cet avis ?'>
             @csrf @method('DELETE')
             <button type="submit" class="px-5 py-2.5 bg-red-50 text-red-600 font-semibold rounded-xl hover:bg-red-100 transition-colors text-sm">
                 Supprimer l'avis

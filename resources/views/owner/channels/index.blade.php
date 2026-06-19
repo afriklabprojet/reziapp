@@ -39,7 +39,7 @@
                         @csrf
                         <button class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-gray-900 text-white hover:bg-gray-800">Synchroniser</button>
                     </form>
-                    <form method="POST" action="{{ route('owner.channels.destroy', $listing) }}" onsubmit="return confirm('Déconnecter ce canal ?')">
+                    <form method="POST" action="{{ route('owner.channels.destroy', $listing) }}"  data-confirm='Déconnecter ce canal ?'>
                         @csrf @method('DELETE')
                         <button class="px-3 py-1.5 text-xs font-semibold rounded-lg text-red-700 hover:bg-red-50">Déconnecter</button>
                     </form>

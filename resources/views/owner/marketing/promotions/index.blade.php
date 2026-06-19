@@ -403,7 +403,7 @@
 
                                 <form action="{{ route('owner.marketing.promotions.destroy', $promotion) }}"
                                     method="POST"
-                                    onsubmit="return confirm('Supprimer cette promotion ? Cette action est irréversible.')">
+                                     data-confirm='Supprimer cette promotion ? Cette action est irréversible.'>
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
@@ -508,7 +508,7 @@
                                                     </svg>
                                                 </a>
                                                 <form action="{{ route('owner.marketing.promotions.destroy', $promotion) }}" method="POST"
-                                                    onsubmit="return confirm('Supprimer cette promotion ?')">
+                                                     data-confirm='Supprimer cette promotion ?'>
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"

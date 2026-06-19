@@ -10,8 +10,8 @@
             <p class="text-sm text-gray-500 mt-1">Synthèse fiscale pour la Côte d'Ivoire</p>
         </div>
         <div class="flex items-center gap-3">
-            <form method="GET" class="flex items-center gap-2">
-                <select name="year" class="rounded-xl border-gray-200 text-sm py-2 px-3" onchange="this.form.submit()">
+            <form method="GET" class="flex items-center gap-2" x-data>
+                <select name="year" class="rounded-xl border-gray-200 text-sm py-2 px-3" @change="$el.closest('form').submit()">
                     @for($y = now()->year; $y >= now()->year - 3; $y--)
                         <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
                     @endfor

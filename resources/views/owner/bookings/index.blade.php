@@ -380,7 +380,7 @@
                                         @if (in_array($booking->status, ['pending', 'confirmed']))
                                             <form action="{{ route('owner.bookings.cancel', $booking) }}" method="POST"
                                                 class="inline"
-                                                onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')">
+                                                 data-confirm='Êtes-vous sûr de vouloir annuler cette réservation ?'>
                                                 @csrf
                                                 @method('PUT')
                                                 <button type="submit"

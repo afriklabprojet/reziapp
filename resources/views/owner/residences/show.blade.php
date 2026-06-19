@@ -439,7 +439,7 @@
                     <h3 class="text-lg font-semibold text-red-600 mb-4">Zone de danger</h3>
 
                     <form method="POST" action="{{ route('owner.residences.destroy', $residence) }}"
-                        onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette résidence ? Cette action est irréversible.')">
+                         data-confirm='Êtes-vous sûr de vouloir supprimer cette résidence ? Cette action est irréversible.'>
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="w-full btn-danger">

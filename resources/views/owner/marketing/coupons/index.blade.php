@@ -517,7 +517,7 @@
                                             </form>
                                             <form action="{{ route('owner.marketing.coupons.destroy', $coupon) }}"
                                                 method="POST" class="inline"
-                                                onsubmit="return confirm('Supprimer définitivement ce code promo ?')">
+                                                 data-confirm='Supprimer définitivement ce code promo ?'>
                                                 @csrf @method('DELETE')
                                                 <button type="submit"
                                                     class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"

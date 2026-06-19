@@ -74,7 +74,7 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
                         </button>
                     </form>
-                    <form action="{{ route('owner.ical.destroy', $feed) }}" method="POST" onsubmit="return confirm('Supprimer ce flux ?')">
+                    <form action="{{ route('owner.ical.destroy', $feed) }}" method="POST"  data-confirm='Supprimer ce flux ?'>
                         @csrf @method('DELETE')
                         <button type="submit" class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100" title="Supprimer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>

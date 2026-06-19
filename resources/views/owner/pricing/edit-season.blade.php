@@ -132,7 +132,7 @@
 
             <div class="flex items-center justify-between mt-6">
                 <form action="{{ route('owner.pricing.destroy-season', [$residence, $season]) }}" method="POST"
-                    onsubmit="return confirm('Supprimer cette saison tarifaire ?')">
+                     data-confirm='Supprimer cette saison tarifaire ?'>
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="text-sm text-red-600 hover:text-red-800 font-medium">Supprimer cette

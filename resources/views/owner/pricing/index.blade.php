@@ -212,7 +212,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-sm text-red-600 hover:text-red-700"
-                                            onclick="return confirm('Supprimer cette saison ?')">
+                                             data-confirm='Supprimer cette saison ?'>
                                             Supprimer
                                         </button>
                                     </form>

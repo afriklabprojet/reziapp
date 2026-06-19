@@ -159,7 +159,7 @@
                         Modifier les permissions
                     </a>
                     <form action="{{ route('owner.cohosts.revoke', [$residence, $cohost]) }}" method="POST"
-                        onsubmit="return confirm('Révoquer l\'accès de {{ $cohost->name }} ?')">
+                         data-confirm='Révoquer l\'accès de {{ $cohost->name }} ?'>
                         @csrf
                         @method('PATCH')
                         <button type="submit" class="text-sm text-red-600 hover:text-red-700 font-semibold transition">
@@ -177,7 +177,7 @@
                         </button>
                     </form>
                     <form action="{{ route('owner.cohosts.destroy', [$residence, $cohost]) }}" method="POST"
-                        onsubmit="return confirm('Supprimer cette invitation ?')">
+                         data-confirm='Supprimer cette invitation ?'>
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="text-sm text-red-600 hover:text-red-700 font-semibold transition">

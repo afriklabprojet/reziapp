@@ -54,7 +54,7 @@
         </div>
     </form>
 
-    <form action="{{ route('owner.guidebooks.destroy', $guidebook) }}" method="POST" onsubmit="return confirm('Supprimer ce guide ?')">
+    <form action="{{ route('owner.guidebooks.destroy', $guidebook) }}" method="POST"  data-confirm='Supprimer ce guide ?'>
         @csrf @method('DELETE')
         <button type="submit" class="text-sm text-red-500 hover:text-red-700">Supprimer ce guide</button>
     </form>

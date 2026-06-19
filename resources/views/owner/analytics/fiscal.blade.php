@@ -25,9 +25,9 @@
         
         <div class="flex items-center gap-3">
             <!-- Sélecteur d'année -->
-            <form method="GET" action="{{ route('owner.analytics.fiscal') }}" class="flex items-center gap-2">
+            <form method="GET" action="{{ route('owner.analytics.fiscal') }}" class="flex items-center gap-2" x-data>
                 <label for="year" class="text-sm text-gray-600">Année:</label>
-                <select name="year" id="year" onchange="this.form.submit()" 
+                <select name="year" id="year" @change="$el.closest('form').submit()" 
                         class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-[#F16A00] focus:border-[#F16A00]">
                     @foreach($availableYears as $y)
                     <option value="{{ $y }}" {{ $y == $year ? 'selected' : '' }}>{{ $y }}</option>

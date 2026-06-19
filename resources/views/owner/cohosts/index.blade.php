@@ -159,7 +159,7 @@
                                 @if ($cohost->status === 'accepted')
                                     <form action="{{ route('owner.cohosts.revoke', [$residence, $cohost]) }}"
                                         method="POST" class="inline"
-                                        onsubmit="return confirm('Révoquer l\'accès de ce co-hôte ?')">
+                                         data-confirm='Révoquer l\'accès de ce co-hôte ?'>
                                         @csrf
                                         <button type="submit" class="p-2 rounded-lg hover:bg-red-50 transition"
                                             title="Révoquer">
@@ -173,7 +173,7 @@
                                 @endif
 
                                 <form action="{{ route('owner.cohosts.destroy', [$residence, $cohost]) }}" method="POST"
-                                    class="inline" onsubmit="return confirm('Supprimer définitivement ce co-hôte ?')">
+                                    class="inline"  data-confirm='Supprimer définitivement ce co-hôte ?'>
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="p-2 rounded-lg hover:bg-red-50 transition"
