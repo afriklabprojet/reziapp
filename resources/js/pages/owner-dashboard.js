@@ -178,7 +178,7 @@ export default function ownerDashboard(config = {}) {
             this.replySending = true;
 
             try {
-                const response = await fetch(`/reviews/${reviewId}/respond`, {
+                const response = await fetch(`/owner/received-reviews/${reviewId}/respond`, {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken,
