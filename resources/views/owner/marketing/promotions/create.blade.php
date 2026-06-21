@@ -3,7 +3,7 @@
 @section('title', 'Nouvelle Promotion')
 
 @section('owner-content')
-    <div x-data="promotionForm({{ \Illuminate\Support\Js::encode([
+    <div x-data="promotionForm({{ alpine_encode([
         'discountType' => old('discount_type', 'percentage'),
         'discountValue'=> old('discount_value', ''),
         'title'        => old('title', ''),
