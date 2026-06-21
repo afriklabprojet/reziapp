@@ -3,7 +3,7 @@
         (\App\Services\UserLocationService::current()['city'] ?? 'Abidjan')))
 
         {{-- APP STATE MANAGEMENT --}}
-        <div x-data="homeHero({{ \Illuminate\Support\Js::encode([
+        <div x-data="homeHero({{ alpine_encode([
             'communes'          => $popularZones->pluck('name')->values(),
             'featuredResidences'=> $featuredResidences->take(8)->map(fn($r) => [
                 'lat'   => $r->latitude,
