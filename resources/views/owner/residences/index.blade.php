@@ -3,7 +3,7 @@
 @section('title', 'Mes résidences - Rezi App')
 
 @section('owner-content')
-    <div x-data="residencesIndex({{ \Illuminate\Support\Js::encode(['csrfToken' => csrf_token()]) }})" class="min-h-screen bg-gray-50/50">
+    <div x-data="residencesIndex({{ alpine_encode(['csrfToken' => csrf_token()]) }})" class="min-h-screen bg-gray-50/50">
 
         {{-- ============================== HEADER ============================== --}}
         <div class="bg-white border-b border-gray-100">
