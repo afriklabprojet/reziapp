@@ -9,7 +9,7 @@ export default function ownerResidenceMap(config = {}) {
 
         init() {
             const renderMap = () => {
-                if (typeof google === 'undefined' || !google.maps) {
+                if (typeof google?.maps?.Map !== 'function') {
                     return;
                 }
 
@@ -52,7 +52,7 @@ export default function ownerResidenceMap(config = {}) {
                 }
             };
 
-            if (typeof google !== 'undefined' && google.maps) {
+            if (typeof google?.maps?.Map === 'function') {
                 renderMap();
             } else {
                 globalThis.__googleMapsCallbacks = globalThis.__googleMapsCallbacks || [];
@@ -77,7 +77,7 @@ export default function ownerResidenceMap(config = {}) {
         },
 
         createInfoWindow() {
-            if (typeof google === 'undefined' || !google.maps) {
+            if (typeof google?.maps?.Map !== 'function') {
                 return null;
             }
 
