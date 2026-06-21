@@ -8,7 +8,7 @@
     'interactive' => true,
 ])
 
-<div x-data="mapSearch({{ \Illuminate\Support\Js::encode([
+<div x-data="mapSearch({{ alpine_encode([
     'center' => $center,
     'zoom' => $zoom,
     'radius' => $radius,
