@@ -4,7 +4,7 @@
 ])
 
 <div
-    x-data="favoritesManager({{ \Illuminate\Support\Js::encode(['isAuthenticated' => auth()->check()]) }})"
+    x-data="favoritesManager({{ alpine_encode(['isAuthenticated' => auth()->check()]) }})"
     x-init="init()"
     class="relative"
     {{ $attributes }}
