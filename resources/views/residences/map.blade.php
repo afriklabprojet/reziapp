@@ -2,7 +2,7 @@
     @section('title', 'Carte des résidences - Rezi App')
 
     <div class="h-[calc(100vh-64px)] flex flex-col"
-        x-data="residenceMap({{ \Illuminate\Support\Js::encode([
+        x-data="residenceMap({{ alpine_encode([
             'residences' => $residences->map(fn($r) => [
                 'id'             => $r->id,
                 'title'          => $r->title ?? $r->name,
