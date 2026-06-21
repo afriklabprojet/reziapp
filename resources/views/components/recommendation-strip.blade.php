@@ -16,7 +16,7 @@
 ])
 
 <section
-    x-data="recommendationStrip({{ \Illuminate\Support\Js::encode($userId) }}, {{ \Illuminate\Support\Js::encode($residences?->map(fn($r) => [
+    x-data="recommendationStrip({{ alpine_encode($userId) }}, {{ alpine_encode($residences?->map(fn($r) => [
         'id'             => $r->id,
         'title'          => $r->title ?? $r->name ?? '',
         'commune'        => $r->commune ?? '',
