@@ -3,7 +3,7 @@
 @section('title', 'Créer une annonce - Rezi App')
 
 @section('owner-content')
-    <div x-data="residenceWizard({{ \Illuminate\Support\Js::encode([
+    <div x-data="residenceWizard({{ alpine_encode([
     'amenities' => $amenities,
     'storeUrl' => route('owner.residences.store'),
     'indexUrl' => route('owner.residences.index'),
