@@ -20,7 +20,7 @@
 @endphp
 
 <div
-    x-data="favoriteButton({{ \Illuminate\Support\Js::encode(['residenceId' => $residenceId, 'isAuthenticated' => auth()->check()]) }})"
+    x-data="favoriteButton({{ alpine_encode(['residenceId' => $residenceId, 'isAuthenticated' => auth()->check()]) }})"
     {{ $attributes->merge(['class' => $class]) }}
 >
     <button
