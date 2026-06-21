@@ -1,6 +1,6 @@
 @props(['filters' => []])
 
-<div x-data="searchForm({{ \Illuminate\Support\Js::encode(['latitude' => $filters['latitude'] ?? null, 'longitude' => $filters['longitude'] ?? null, 'radius' => $filters['radius'] ?? 5]) }})" class="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+<div x-data="searchForm({{ alpine_encode(['latitude' => $filters['latitude'] ?? null, 'longitude' => $filters['longitude'] ?? null, 'radius' => $filters['radius'] ?? 5]) }})" class="bg-white rounded-lg shadow-lg p-4 sm:p-6">
     <form method="GET" action="{{ route('residences.search') }}" class="space-y-4">
         <!-- Recherche par adresse (avec autocomplete Google Maps) -->
         <div>
