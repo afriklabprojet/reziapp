@@ -16,7 +16,7 @@
         <h1 class="text-2xl font-extrabold text-gray-900 mb-8">Modifier la réponse automatique</h1>
 
         <form action="{{ route('owner.auto-replies.update', $autoReply) }}" method="POST" class="space-y-6"
-            x-data="autoReplyForm({{ \Illuminate\Support\Js::encode(['triggerType' => old('trigger_type', $autoReply->trigger_type), 'keywords' => old('trigger_conditions.keywords', $autoReply->trigger_conditions['keywords'] ?? [])]) }})">
+            x-data="autoReplyForm({{ alpine_encode(['triggerType' => old('trigger_type', $autoReply->trigger_type), 'keywords' => old('trigger_conditions.keywords', $autoReply->trigger_conditions['keywords'] ?? [])]) }})">
             @csrf
             @method('PUT')
 
