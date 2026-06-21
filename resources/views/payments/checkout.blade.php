@@ -44,7 +44,7 @@
                     </div>
 
                     <!-- Formulaire -->
-                    <form id="payment-form" class="p-6 space-y-6" x-data="paymentForm({{ \Illuminate\Support\Js::encode([
+                    <form id="payment-form" class="p-6 space-y-6" x-data="paymentForm({{ alpine_encode([
                         'phone' => Auth::user()->phone ?? '',
                         'initiateUrl' => route('payments.initiate', $booking),
                         'returnUrl' => route('payments.return', ':uuid'),
