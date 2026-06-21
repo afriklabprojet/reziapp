@@ -3,7 +3,7 @@
 @section('title', 'Templates de messages')
 
 @section('content')
-<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="templatesManager({{ \Illuminate\Support\Js::encode(['csrfToken' => csrf_token()]) }})">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="templatesManager({{ alpine_encode(['csrfToken' => csrf_token()]) }})">
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
         <div>
