@@ -207,7 +207,7 @@
                     </div>
                     @if($residence->latitude && $residence->longitude)
                         <div
-                            x-data="ownerResidenceMap({{ \Illuminate\Support\Js::encode([
+                            x-data="ownerResidenceMap({{ alpine_encode([
                                 'lat' => (float) $residence->latitude,
                                 'lng' => (float) $residence->longitude,
                                 'title' => $residence->name,
