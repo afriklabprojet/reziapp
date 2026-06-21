@@ -48,7 +48,7 @@ export default function homeHero(config = {}) {
         },
 
         waitAndInitMap() {
-            if (globalThis.google?.maps) {
+            if (typeof globalThis.google?.maps?.Map === 'function') {
                 this.googleMapsRetryCount = 0;
                 this.initHeroMap();
                 return;
@@ -309,7 +309,7 @@ export default function homeHero(config = {}) {
 
         async initHeroMap() {
             if (this.heroMap) return;
-            if (!globalThis.google?.maps) return;
+            if (typeof globalThis.google?.maps?.Map !== 'function') return;
 
             await this.$nextTick();
 
