@@ -61,11 +61,11 @@
                     @endif
                     @if ($residence->price_per_month)
                         <div class="bg-gray-50 rounded-xl p-4">
-                            <span class="text-sm text-gray-500">Par jour</span>
+                            <span class="text-sm text-gray-500">Par mois (référence)</span>
                             <p class="text-2xl font-bold text-[#F16A00]">
                                 {{ number_format($residence->price_per_month, 0, ',', ' ') }} FCFA</p>
                             <span
-                                class="text-xs text-gray-400">{{ number_format($residence->price_per_month / 30, 0, ',', ' ') }}
+                                class="text-xs text-gray-400">= {{ number_format($residence->price_per_month / 30, 0, ',', ' ') }}
                                 FCFA/jour</span>
                         </div>
                     @endif
