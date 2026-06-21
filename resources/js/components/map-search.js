@@ -33,7 +33,7 @@ export default function mapSearch(config = {}) {
         queuedInit: false,
 
         initMap() {
-            if (!globalThis.google?.maps) {
+            if (typeof globalThis.google?.maps?.Map !== 'function') {
                 if (!this.queuedInit) {
                     this.queuedInit = true;
                     globalThis.__googleMapsCallbacks = globalThis.__googleMapsCallbacks || [];
@@ -324,7 +324,7 @@ export default function mapSearch(config = {}) {
         },
 
         fitResidences(residences, userLocation = null) {
-            if (!this.map || !globalThis.google?.maps) return;
+            if (!this.map || typeof globalThis.google?.maps?.Map !== 'function') return;
 
             const bounds = new google.maps.LatLngBounds();
             let hasBounds = false;
