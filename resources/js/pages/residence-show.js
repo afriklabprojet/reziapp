@@ -152,8 +152,8 @@ export function bookingForm(config) {
         instantBook: config.instantBook || false,
         residenceId: config.residenceId || 0,
         unavailableDates: config.unavailableDates || [],
-        cleaningFee: config.cleaningFee || 0,
-        stateTaxConfig: config.stateTax || 0,
+        cleaningFee: parseFloat(config.cleaningFee) || 0,
+        stateTaxConfig: parseInt(config.stateTax) || 0,
         isAuthenticated: config.isAuthenticated || false,
 
         // UI State
@@ -220,17 +220,17 @@ export function bookingForm(config) {
         },
 
         get serviceFee() {
-            if (this.serverPrice?.service_fee !== undefined) return this.serverPrice.service_fee;
+            if (this.serverPrice?.service_fee !== undefined) return parseFloat(this.serverPrice.service_fee) || 0;
             return 0;
         },
 
         get stateTax() {
-            if (this.serverPrice?.taxes !== undefined) return this.serverPrice.taxes;
+            if (this.serverPrice?.taxes !== undefined) return parseFloat(this.serverPrice.taxes) || 0;
             return this.stateTaxConfig;
         },
 
         get totalCleaningFee() {
-            if (this.serverPrice?.cleaning_fee !== undefined) return this.serverPrice.cleaning_fee;
+            if (this.serverPrice?.cleaning_fee !== undefined) return parseFloat(this.serverPrice.cleaning_fee) || 0;
             return this.cleaningFee;
         },
 
@@ -251,7 +251,7 @@ export function bookingForm(config) {
         },
 
         get total() {
-            if (this.serverPrice?.total_amount) return this.serverPrice.total_amount;
+            if (this.serverPrice?.total_amount) return parseFloat(this.serverPrice.total_amount) || 0;
             return this.subtotal + this.serviceFee + this.stateTax + this.totalCleaningFee - this.discount;
         },
 
