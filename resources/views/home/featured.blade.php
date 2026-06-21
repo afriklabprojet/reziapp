@@ -93,10 +93,6 @@
                                                 <span
                                                     class="text-lg font-bold text-gray-900">{{ number_format($residence->price_per_day) }}</span>
                                                 <span class="text-xs text-gray-500">F/jour</span>
-                                            @elseif(($residence->price_per_month ?? 0) > 0)
-                                                <span
-                                                    class="text-lg font-bold text-gray-900">{{ number_format(round($residence->price_per_month / 30)) }}</span>
-                                                <span class="text-xs text-gray-500">F/jour</span>
                                             @else
                                                 <span class="text-sm font-semibold text-gray-600">Prix sur demande</span>
                                             @endif
