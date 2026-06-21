@@ -109,18 +109,14 @@ class SeasonalPrice extends Model
      */
     public function calculatePrice(int $nights): float
     {
+        // All pricing is per-day. price_per_month and price_per_week are monthly/weekly
+        // totals stored for reference; convert to daily rate before multiplying by nights.
         if ($nights >= 30 && $this->price_per_month) {
-            $months = floor($nights / 30);
-            $remainingNights = $nights % 30;
-
-            return ($months * $this->price_per_month) + ($remainingNights * $this->price_per_night);
+            return $nights * round($this->price_per_month / 30);
         }
 
         if ($nights >= 7 && $this->price_per_week) {
-            $weeks = floor($nights / 7);
-            $remainingNights = $nights % 7;
-
-            return ($weeks * $this->price_per_week) + ($remainingNights * $this->price_per_night);
+            return $nights * round($this->price_per_week / 7);
         }
 
         return $nights * $this->price_per_night;
