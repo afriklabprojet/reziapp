@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" width="200" height="80">
+  <!-- Djamo dark background -->
+  <rect width="200" height="80" rx="12" fill="#1A1A2E"/>
+  <!-- Djamo purple accent card shape -->
+  <rect x="12" y="16" width="36" height="48" rx="6" fill="#7C3AED"/>
+  <rect x="20" y="24" width="20" height="12" rx="3" fill="white" opacity="0.9"/>
+  <circle cx="24" cy="50" r="4" fill="white" opacity="0.6"/>
+  <circle cx="34" cy="50" r="4" fill="white" opacity="0.3"/>
+  <!-- Text -->
+  <text x="60" y="47" font-family="Arial Black, Arial" font-weight="900" font-size="28" fill="white" letter-spacing="-1">djamo</text>
+</svg>

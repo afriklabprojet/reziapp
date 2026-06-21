@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" width="240" height="80">
+  <!-- Orange background pill -->
+  <rect width="240" height="80" rx="12" fill="#FF6600"/>
+  <!-- Orange circle logo mark -->
+  <circle cx="45" cy="40" r="24" fill="white" opacity="0.25"/>
+  <circle cx="45" cy="40" r="16" fill="white"/>
+  <circle cx="45" cy="40" r="9" fill="#FF6600"/>
+  <!-- Text -->
+  <text x="80" y="28" font-family="Arial, sans-serif" font-weight="700" font-size="16" fill="white" letter-spacing="0.5">Orange</text>
+  <text x="80" y="52" font-family="Arial, sans-serif" font-weight="900" font-size="20" fill="white" letter-spacing="-0.5">Money</text>
+</svg>
