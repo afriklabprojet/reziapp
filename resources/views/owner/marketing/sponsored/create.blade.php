@@ -3,7 +3,7 @@
 @section('title', 'Nouvelle campagne sponsorisée')
 
 @section('owner-content')
-    <div class="max-w-3xl mx-auto space-y-6" x-data="sponsoredForm({{ \Illuminate\Support\Js::encode(['packages' => $packages, 'residenceId' => old('residence_id', ''), 'type' => old('type', 'highlighted'), 'duration' => old('duration', '7')]) }})">
+    <div class="max-w-3xl mx-auto space-y-6" x-data="sponsoredForm({{ alpine_encode(['packages' => $packages, 'residenceId' => old('residence_id', ''), 'type' => old('type', 'highlighted'), 'duration' => old('duration', '7')]) }})">
 
         {{-- ====== Header ====== --}}
         <div>
