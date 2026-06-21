@@ -314,7 +314,7 @@
         }
     @endphp
 
-    <div class="bg-white min-h-screen" x-data="residencePage({{ \Illuminate\Support\Js::encode(['totalPhotos' => $totalPhotos, 'title' => $residence->title, 'photoUrls' => $photos->map(fn($p) => storage_url($p->path))->values()->all()]) }})">
+    <div class="bg-white min-h-screen" x-data="residencePage({{ alpine_encode(['totalPhotos' => $totalPhotos, 'title' => $residence->title, 'photoUrls' => $photos->map(fn($p) => storage_url($p->path))->values()->all()]) }})">
 
         {{-- ═══════════════════════════════════
          Sticky Section Navigation (Airbnb)
@@ -785,7 +785,7 @@
                     </div>
 
                     {{-- Calendar --}}
-                    <div id="calendrier" class="py-8 border-b border-gray-200" x-data="residenceCalendar({{ \Illuminate\Support\Js::encode(['unavailable' => $unavailableDates ?? []]) }})">
+                    <div id="calendrier" class="py-8 border-b border-gray-200" x-data="residenceCalendar({{ alpine_encode(['unavailable' => $unavailableDates ?? []]) }})">
                         <h2 class="text-[22px] font-semibold text-gray-900 mb-2">
                             {{ $residence->min_nights ?? $defMinNights }} nuit{{ ($residence->min_nights ?? $defMinNights) > 1 ? 's' : '' }}
                             minimum
@@ -1186,7 +1186,7 @@
 
                     {{-- Zones accessibles (Isochrone) --}}
                     @if ($residence->latitude && $residence->longitude)
-                        <div id="isochrone" class="py-8 border-b border-gray-200" x-data="isochroneWidget({{ $residence->id }}, '/api/v1/maps', {{ $residence->latitude }}, {{ $residence->longitude }}, {{ Js::encode($residence->title) }})">
+                        <div id="isochrone" class="py-8 border-b border-gray-200" x-data="isochroneWidget({{ $residence->id }}, '/api/v1/maps', {{ $residence->latitude }}, {{ $residence->longitude }}, {{ alpine_encode($residence->title) }})">
                             <h2 class="text-[22px] font-semibold text-gray-900 mb-2">Zones accessibles</h2>
                             <p class="text-gray-500 text-sm mb-4">Tout ce qui est accessible à pied depuis ce logement</p>
 
@@ -1466,7 +1466,7 @@
 
                 {{-- ─── RIGHT COLUMN (Sticky Booking) ─── --}}
                 <div class="hidden lg:block lg:w-92.5 shrink-0">
-                    <div class="booking-card" x-data="bookingForm({{ \Illuminate\Support\Js::encode([
+                    <div class="booking-card" x-data="bookingForm({{ alpine_encode([
     'pricePerNight' => $pricePerNight,
     'pricePerWeek' => $residence->price_per_week ?? 0,
     'pricePerMonth' => $residence->price_per_month ?? 0,
@@ -1956,7 +1956,7 @@
         {{-- ═══════════════════════════════════
          Mobile Bottom Bar
     ═══════════════════════════════════ --}}
-        <div x-data="stickyBookingBar({{ \Illuminate\Support\Js::encode(['bookingBaseUrl' => route('bookings.create', $residence)]) }})"
+        <div x-data="stickyBookingBar({{ alpine_encode(['bookingBaseUrl' => route('bookings.create', $residence)]) }})"
             x-show="showBar"
             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-y-full opacity-0"
             x-transition:enter-end="translate-y-0 opacity-100" x-transition:leave="transition ease-in duration-200"
