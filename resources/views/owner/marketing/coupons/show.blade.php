@@ -3,7 +3,7 @@
 @section('title', 'Code promo — ' . $coupon->code)
 
 @section('owner-content')
-    <div x-data="couponShow({{ \Illuminate\Support\Js::encode(['code' => $coupon->code]) }})">
+    <div x-data="couponShow({{ alpine_encode(['code' => $coupon->code]) }})">
 
         {{-- Header --}}
         <div class="mb-6">
