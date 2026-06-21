@@ -30,7 +30,7 @@
             @endif
 
             <form method="POST" action="{{ route('owner.residences.store') }}" enctype="multipart/form-data"
-                x-data="residenceCreateForm({{ \Illuminate\Support\Js::encode([
+                x-data="residenceCreateForm({{ alpine_encode([
                     'description'           => old('description', ''),
                     'houseRules'            => old('house_rules', ''),
                     'typeLocation'          => old('type_location', 'residence_meublee'),
@@ -333,7 +333,7 @@
                         <h2 class="text-xl font-semibold text-gray-900">Localisation</h2>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" x-data="citySelector({{ \Illuminate\Support\Js::encode([
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" x-data="citySelector({{ alpine_encode([
                         'selectedCountry' => old('country_code', 'CI'),
                         'selectedCity'    => old('city', ''),
                         'countries'       => $countries->map(fn($c) => ['code' => $c->code, 'name' => $c->name]),
