@@ -6,6 +6,7 @@ namespace App\Repositories;
 
 use App\Models\Residence;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Repository pour les résidences
@@ -88,10 +89,24 @@ class ResidenceRepository
     }
 
     /**
-     * Crée une nouvelle résidence
+     * Crée une nouvelle résidence.
+     *
+     * MySQL SPATIAL INDEX requires location NOT NULL, but Eloquent cannot set a
+     * POINT column via fill(). We INSERT with ST_GeomFromText inline when both
+     * lat/lng are present, then reload the model so callers get a fully-hydrated
+     * instance with the auto-generated id.
      */
     public function create(array $data): Residence
     {
+        $lat = isset($data['latitude']) ? (float) $data['latitude'] : null;
+        $lng = isset($data['longitude']) ? (float) $data['longitude'] : null;
+
+        if ($lat !== null && $lng !== null && DB::getDriverName() === 'mysql') {
+            $data['location'] = DB::raw(
+                "ST_GeomFromText('POINT({$lng} {$lat})', 4326)"
+            );
+        }
+
         return Residence::create($data);
     }
 
