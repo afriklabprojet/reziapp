@@ -79,7 +79,7 @@
                     <div class="card">
                         <h2 class="text-xl font-semibold text-gray-900 mb-4">Localisation</h2>
 
-                        <div class="space-y-4" x-data="citySelector({{ \Illuminate\Support\Js::encode([
+                        <div class="space-y-4" x-data="citySelector({{ alpine_encode([
                             'selectedCountry' => old('country_code', $residence->country_code ?? 'CI'),
                             'selectedCity'    => old('city', $residence->city ?? ''),
                             'countries'       => $countries->map(fn($c) => ['code' => $c->code, 'name' => $c->name]),
