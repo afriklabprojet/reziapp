@@ -7,7 +7,7 @@ export default function residenceEditForm(config = {}) {
 
         init() {
             this.$nextTick(() => {
-                if (typeof google !== 'undefined' && google.maps) {
+                if (typeof google?.maps?.Map === 'function') {
                     this.initMap();
                 } else {
                     globalThis.__googleMapsCallbacks = globalThis.__googleMapsCallbacks || [];
