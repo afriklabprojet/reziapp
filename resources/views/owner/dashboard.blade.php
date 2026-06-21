@@ -3,7 +3,7 @@
 @section('title', 'Dashboard - Espace Propriétaire | Rezi App')
 
 @section('owner-content')
-    <div x-data="ownerDashboard({{ \Illuminate\Support\Js::encode(['csrfToken' => csrf_token(), 'chartData' => $chartData, 'hostScore' => $hostScore['score']]) }})" x-init="init()" class="min-h-screen bg-gray-50/50">
+    <div x-data="ownerDashboard({{ alpine_encode(['csrfToken' => csrf_token(), 'chartData' => $chartData, 'hostScore' => $hostScore['score']]) }})" x-init="init()" class="min-h-screen bg-gray-50/50">
 
         {{-- ============================== SKELETON LOADER (Airbnb-style shimmer) ============================== --}}
         <div x-ref="skeleton" x-show="!loaded" x-transition:leave="transition ease-in duration-200"
