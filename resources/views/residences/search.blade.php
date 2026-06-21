@@ -77,7 +77,7 @@
         ];
     @endphp
 
-    <div x-data="searchPage({{ \Illuminate\Support\Js::encode($searchPageConfig) }})" x-init="init()" class="h-[calc(100vh-64px)] flex flex-col">
+    <div x-data="searchPage({{ alpine_encode($searchPageConfig) }})" x-init="init()" class="h-[calc(100vh-64px)] flex flex-col">
         <!-- Header avec filtres -->
         <div class="bg-white border-b px-4 py-3">
             <div class="max-w-full mx-auto">
