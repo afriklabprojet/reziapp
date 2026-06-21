@@ -3,7 +3,7 @@
 @section('title', 'Préférences de notifications - Rezi App')
 
 @section('client-content')
-    <div x-data="notificationPreferences({{ \Illuminate\Support\Js::encode([
+    <div x-data="notificationPreferences({{ alpine_encode([
     'preferences' => [
         'messages_email' => $preferences->messages_email,
         'messages_push' => $preferences->messages_push,
