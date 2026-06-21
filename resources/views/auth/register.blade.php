@@ -4,10 +4,10 @@
     <div class="min-h-[calc(100vh-56px)] md:min-h-[calc(100vh-64px)] flex" x-data="{
         showPassword: false,
         showConfirmPassword: false,
-        role: {{ \Illuminate\Support\Js::encode(old('role', 'user')) }},
+        role: {{ alpine_encode(old('role', 'user')) }},
         step: 1,
-        name: {{ \Illuminate\Support\Js::encode(old('name', '')) }},
-        email: {{ \Illuminate\Support\Js::encode(old('email', '')) }}
+        name: {{ alpine_encode(old('name', '')) }},
+        email: {{ alpine_encode(old('email', '')) }}
     }">
         {{-- Left Side - Branding & Benefits (Desktop only) --}}
         <div
