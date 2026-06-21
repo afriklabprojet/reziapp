@@ -44,7 +44,7 @@
                 </select>
             </div>
 
-            <div x-data="leaseTenantSearch({{ \Illuminate\Support\Js::encode([
+            <div x-data="leaseTenantSearch({{ alpine_encode([
                     'selectedId' => old('tenant_id'),
                     'tenants'    => $tenants->map(fn($t) => ['id' => $t->id, 'name' => $t->name, 'email' => $t->email]),
                 ]) }})">
@@ -130,7 +130,7 @@
 
         {{-- Conditions financières --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4"
-            x-data="leaseTypeSection({{ \Illuminate\Support\Js::encode(['leaseType' => old('lease_type', 'short_term')]) }})">
+            x-data="leaseTypeSection({{ alpine_encode(['leaseType' => old('lease_type', 'short_term')]) }})">
             <h2 class="font-semibold text-gray-800 border-b pb-2">Conditions financières</h2>
 
             <div class="grid grid-cols-2 gap-4">
@@ -166,7 +166,7 @@
 
         {{-- Clauses et services avec IA --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4"
-            x-data="leaseClausesSection({{ \Illuminate\Support\Js::encode([
+            x-data="leaseClausesSection({{ alpine_encode([
                 'services'    => old('included_services', []),
                 'clauses'     => old('special_clauses', ''),
                 'generateUrl' => route('owner.ai.generate-clauses'),
