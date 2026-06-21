@@ -12,7 +12,7 @@
         $houseRules = $residence->house_rules ?? [];
     @endphp
 
-    <div class="min-h-screen bg-white" x-data="bookingCreateForm({{ \Illuminate\Support\Js::encode([
+    <div class="min-h-screen bg-white" x-data="bookingCreateForm({{ alpine_encode([
     'maxGuests' => $residence->max_guests ?? 10,
     'minNights' => $residence->min_nights ?? 1,
     'maxNights' => $residence->max_nights ?? 365,
