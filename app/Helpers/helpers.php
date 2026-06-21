@@ -13,6 +13,30 @@ if (! function_exists('csp_nonce')) {
     }
 }
 
+if (! function_exists('alpine_encode')) {
+    /**
+     * Encode data as JSON safe for Alpine.js CSP x-data attributes.
+     *
+     * Uses JSON_UNESCAPED_UNICODE so accented characters (ô, é, etc.) stay as
+     * real UTF-8 bytes instead of \uXXXX sequences. Blade's {{ }} will then
+     * HTML-encode the quotes (" → &quot;) which is correct for HTML attributes,
+     * and Alpine's CSP parser will decode &quot; back to " when it reads the
+     * attribute. Accented chars pass through unchanged in both directions.
+     */
+    function alpine_encode(mixed $data): string
+    {
+        if ($data instanceof \Illuminate\Contracts\Support\Jsonable) {
+            $json = $data->toJson(JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR);
+        } elseif ($data instanceof \Illuminate\Contracts\Support\Arrayable && ! ($data instanceof \JsonSerializable)) {
+            $json = json_encode($data->toArray(), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR);
+        } else {
+            $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR);
+        }
+
+        return $json;
+    }
+}
+
 if (!function_exists('storage_url')) {
     /**
      * Get the URL for a storage path.
