@@ -295,23 +295,9 @@
         $totalPhotos = $photos->count();
 
         // Résolution du prix : toujours le tarif journalier
-        if (($residence->price_per_day ?? 0) > 0) {
-            $displayPrice = $residence->price_per_day;
-            $priceLabel = '/ jour';
-            $pricePerNight = $residence->price_per_day;
-        } elseif (($residence->price_per_month ?? 0) > 0) {
-            $displayPrice = round($residence->price_per_month / 30);
-            $priceLabel = '/ jour';
-            $pricePerNight = round($residence->price_per_month / 30);
-        } elseif (($residence->price_per_week ?? 0) > 0) {
-            $displayPrice = round($residence->price_per_week / 7);
-            $priceLabel = '/ jour';
-            $pricePerNight = round($residence->price_per_week / 7);
-        } else {
-            $displayPrice = 0;
-            $priceLabel = '';
-            $pricePerNight = 0;
-        }
+        $displayPrice = (float) ($residence->price_per_day ?? 0);
+        $priceLabel = $displayPrice > 0 ? '/ jour' : '';
+        $pricePerNight = $displayPrice;
     @endphp
 
     <div class="bg-white min-h-screen" x-data="residencePage({{ alpine_encode(['totalPhotos' => $totalPhotos, 'title' => $residence->title, 'photoUrls' => $photos->map(fn($p) => storage_url($p->path))->values()->all()]) }})">
