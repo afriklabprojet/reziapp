@@ -3,7 +3,7 @@
 @section('title', 'Analytics - Tableau de bord')
 
 @section('owner-content')
-    <div class="space-y-6" x-data="analyticsPage({{ \Illuminate\Support\Js::encode([
+    <div class="space-y-6" x-data="analyticsPage({{ alpine_encode([
     'revenueData' => $stats['revenue']['daily'],
     'viewsData' => $stats['views']['daily'],
     'contactsData' => $stats['contacts']['daily'],
