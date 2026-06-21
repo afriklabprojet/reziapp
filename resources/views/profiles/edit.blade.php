@@ -146,7 +146,7 @@
                     Langues parlées
                 </h2>
             </div>
-            <div class="p-6" x-data="languageSelector({{ \Illuminate\Support\Js::encode(['languages' => old('languages', $profile->languages ?? ['Français'])]) }})">
+            <div class="p-6" x-data="languageSelector({{ alpine_encode(['languages' => old('languages', $profile->languages ?? ['Français'])]) }})">
                 {{-- Langues sélectionnées --}}
                 <div class="flex flex-wrap gap-2 mb-4">
                     <template x-for="(lang, index) in languages" :key="index">
