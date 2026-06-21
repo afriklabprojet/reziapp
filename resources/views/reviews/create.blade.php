@@ -21,7 +21,7 @@
                     <p class="text-gray-600 mt-1">Donnez votre avis sur <strong>{{ $residence->title }}</strong></p>
                 </div>
 
-                <form action="{{ route('reviews.store', $residence) }}" method="POST" x-data="reviewForm({{ \Illuminate\Support\Js::encode(['rating_cleanliness' => old('rating_cleanliness', 0), 'rating_location' => old('rating_location', 0), 'rating_value' => old('rating_value', 0), 'rating_communication' => old('rating_communication', 0)]) }})">
+                <form action="{{ route('reviews.store', $residence) }}" method="POST" x-data="reviewForm({{ alpine_encode(['rating_cleanliness' => old('rating_cleanliness', 0), 'rating_location' => old('rating_location', 0), 'rating_value' => old('rating_value', 0), 'rating_communication' => old('rating_communication', 0)]) }})">
                     @csrf
 
                     <!-- Notes par catégorie -->
