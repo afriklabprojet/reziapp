@@ -251,7 +251,7 @@ class Payment extends Model
     public static function generateReference(): string
     {
         $year = date('Y');
-        $maxId = (int) static::whereYear('created_at', $year)->max('id');
+        $maxId = (int) static::withTrashed()->whereYear('created_at', $year)->max('id');
 
         return sprintf('PAY-%s-%06d', $year, $maxId + 1);
     }
