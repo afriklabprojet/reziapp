@@ -30,7 +30,7 @@ class PricingController extends Controller
     {
         $request->validate([
             'residence_id' => 'required|exists:residences,id',
-            'check_in' => 'required|date|after:today',
+            'check_in' => 'required|date|after_or_equal:today',
             'check_out' => 'required|date|after:check_in',
             'guests' => 'required|integer|min:1',
             'promo_code' => 'nullable|string',
