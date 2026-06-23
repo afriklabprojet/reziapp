@@ -44,7 +44,7 @@ class BookingApiController extends Controller
     {
         $validated = $request->validate([
             'residence_id' => ['required', 'integer', 'exists:residences,id'],
-            'check_in' => ['required', 'date', 'after:today'],
+            'check_in' => ['required', 'date', 'after_or_equal:today'],
             'check_out' => ['required', 'date', 'after:check_in'],
             'guests' => ['required', 'integer', 'min:1', 'max:50'],
             'adults' => ['sometimes', 'integer', 'min:1', 'max:50'],
@@ -241,7 +241,7 @@ class BookingApiController extends Controller
     public function calculatePrice(Request $request, Residence $residence): JsonResponse
     {
         $validated = $request->validate([
-            'check_in' => ['required', 'date', 'after:today'],
+            'check_in' => ['required', 'date', 'after_or_equal:today'],
             'check_out' => ['required', 'date', 'after:check_in'],
             'guests' => ['required', 'integer', 'min:1'],
             'coupon_code' => ['nullable', 'string', 'max:50'],
