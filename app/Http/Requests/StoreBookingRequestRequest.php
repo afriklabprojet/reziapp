@@ -35,7 +35,7 @@ class StoreBookingRequestRequest extends FormRequest
         $maxGuests = $residence?->max_guests ?? 20;
 
         return [
-            'check_in' => 'required|date|after:today',
+            'check_in' => 'required|date|after_or_equal:today',
             'check_out' => 'required|date|after:check_in',
             'guests' => "required|integer|min:1|max:{$maxGuests}",
             'adults' => 'required|integer|min:1',
@@ -55,7 +55,7 @@ class StoreBookingRequestRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'check_in.after' => 'La date d\'arrivée doit être dans le futur.',
+            'check_in.after_or_equal' => 'La date d\'arrivée ne peut pas être dans le passé.',
             'check_out.after' => 'La date de départ doit être après la date d\'arrivée.',
             'guests.max' => 'Cette résidence accepte :max voyageurs maximum.',
         ];
