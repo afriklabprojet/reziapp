@@ -105,7 +105,7 @@ class BookingController extends Controller
     public function calculatePrice(Residence $residence, Request $request)
     {
         $request->validate([
-            'check_in' => 'required|date|after:today',
+            'check_in' => 'required|date|after_or_equal:today',
             'check_out' => 'required|date|after:check_in',
             'guests' => 'required|integer|min:1',
             'promo_code' => 'nullable|string',
@@ -230,7 +230,7 @@ class BookingController extends Controller
             'guest_name' => 'required|string|max:255',
             'guest_email' => 'required|email|max:255',
             'guest_phone' => 'required|string|max:20',
-            'check_in' => 'required|date|after:today',
+            'check_in' => 'required|date|after_or_equal:today',
             'check_out' => 'required|date|after:check_in',
             'guests' => 'required|integer|min:1',
             'message' => 'nullable|string|max:1000',
